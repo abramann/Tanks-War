@@ -39,7 +39,6 @@ void Game::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize graphics");
 	if(FAILED(input->initialize(hInstance, hWnd)))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize input");
-	input->scan();
 	if (FAILED(audio->initialize()))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize audio");
 }
@@ -49,6 +48,7 @@ void Game::run()
 	collision();
 	renderGame();
 	input->reset();
+	input->scan();
 	audio->run();
 }
 void Game::renderGame()
