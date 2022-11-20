@@ -6,7 +6,7 @@ TanksWarfare::TanksWarfare()
 }
 TanksWarfare::~TanksWarfare()
 {
-	releaseAll();
+	safeDelete(groundTex);
 }
 void TanksWarfare::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
 {
