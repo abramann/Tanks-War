@@ -9,7 +9,7 @@ public:
 
 	TextureManger();
 	~TextureManger();
-	bool initialize(char* tFile, Color transpanceyC, Graphics* g);
+	bool initialize(char* tFile, COLOR transpanceyColor, Graphics* g);
 	void onLostDevice();
 	void onResetDevice();
 	void release();
@@ -23,7 +23,7 @@ private:
 
 	Graphics* graphics;
 	char* textureFile;
-	Color transpanceyColor;
+	COLOR transpanceyColor;
 	LPDIRECT3DTEXTURE9 texture;
 	int width, height;
 };

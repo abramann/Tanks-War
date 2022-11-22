@@ -8,7 +8,7 @@ TextureManger::~TextureManger()
 {
 	release();
 }
-bool TextureManger::initialize(char* _textureFile, Color _transpanceyColor, Graphics* g)
+bool TextureManger::initialize(char* _textureFile, COLOR _transpanceyColor, Graphics* g)
 {
 	graphics = g;
 	textureFile = _textureFile;

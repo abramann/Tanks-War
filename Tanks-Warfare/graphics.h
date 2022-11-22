@@ -6,20 +6,22 @@
 #include <d3dx9.h>
 
 #define V2 D3DXVECTOR2
-#define Color D3DCOLOR
-#define COLOR_WHITE D3DCOLOR_XRGB(255,255,255)
+#define COLOR D3DCOLOR
+#define COLOR_ARGB D3DCOLOR_ARGB
+#define COLOR_XRGB D3DCOLOR_XRGB
+#define COLOR_WHITE COLOR_XRGB(255,255,255)
 
 struct SpriteData
 {
 	LPDIRECT3DTEXTURE9 texture;
 	int width, height;
 	int extraWidth, extraHeight;
-	INT textureWidth, textureHeight;
+	int textureWidth, textureHeight;
 	int x, y;
-	double angle;
+	float angle;
 	float scalling;
 	RECT rect;
-	Color filterColor;
+	COLOR filterColor;
 	V2 center;
 };
 class Graphics
@@ -28,17 +30,19 @@ public:
 
 	Graphics();
 	~Graphics();
-	HRESULT initialize(HWND _hWnd, bool _fullscreen);
+	bool initialize(HWND _hWnd, bool _fullscreen);
 	void spriteBegin();
 	void spriteEnd();
 	void spriteDraw(SpriteData sd);
 	void release();
 	HRESULT reset();
-	bool loadTexture(char* textureFile, int& width, int& height, Color transpanceyC, LPDIRECT3DTEXTURE9& texture);
+	bool loadTexture(char* textureFile, int& width, int& height, COLOR transpanceyC, LPDIRECT3DTEXTURE9& texture);
 	HRESULT getDeviceState();
 	HRESULT begin();
 	HRESULT end();
 	HRESULT showBackbuffer();
+	LPDIRECT3DDEVICE9 getDevice()		{ return device3d; }
+	LPD3DXSPRITE getSprite()		{ return sprite; }
 
 private:
 

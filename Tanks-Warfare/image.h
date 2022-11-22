@@ -19,8 +19,8 @@ public:
 	virtual void setImageHeight(int height)			{ spriteData.height = height; }
 	virtual void setExtraImageWidth(int extraWidth)			{ spriteData.extraWidth = extraWidth; }
 	virtual void setExtraImageHeight(int extraHeight)		{ spriteData.extraHeight = extraHeight; }
-	virtual void setFilterColor(Color filterColor)		{ spriteData.filterColor = filterColor; }
-	virtual void setAngle(double angle)		{ spriteData.angle = angle; }
+	virtual void setFilterColor(COLOR filterColor)		{ spriteData.filterColor = filterColor; }
+	virtual void setAngle(float angle)		{ spriteData.angle = angle; }
 	virtual void setCenter(V2 center)		{ spriteData.center = center; }
 	virtual void setRect(RECT rect)		{ spriteData.rect = rect; }
 	virtual void setScalling(float scalling);
@@ -54,7 +54,7 @@ public:
 	virtual float getUpdateDelay()		{ return updateDelay; }
 	virtual int getStartFrame()		{ return startFrame; }
 	virtual int getEndFrame()		{ return endFrame; }
-	virtual Color getFilterColor()		{ return spriteData.filterColor; }
+	virtual COLOR getFilterColor()		{ return spriteData.filterColor; }
 	virtual bool isAnimated()		{ return animate; }
 	virtual void setTexture(TextureManger* tm);
 

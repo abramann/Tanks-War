@@ -6,6 +6,7 @@
 #include "texture.h"
 #include "image.h"
 #include "audio.h"
+#include "textDX.h"
 #include <timeapi.h>
 
 class Game
@@ -23,8 +24,8 @@ public:
 	virtual void updateGame();
 
 	virtual void handleLostGraphicsDevice();
-	virtual void releaseAll();
-	virtual void resetAll();
+	virtual void onLostDevice();
+	virtual void onResetDevice();
 
 	virtual void collision() = 0;
 	virtual void update() = 0;

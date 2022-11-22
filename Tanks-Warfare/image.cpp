@@ -2,7 +2,7 @@
 
 Image::Image()
 {
-	ZeroMemory(&spriteData, sizeof(spriteData));
+	ZeroMemory(&spriteData, sizeof(SpriteData));
 	animate = NULL;
 	frameDelay = 0.0f;	updateDelay = 0.0f;
 	startFrame = 0;		endFrame = 0;	currentFrame = 0;

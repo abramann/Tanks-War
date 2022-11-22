@@ -65,6 +65,9 @@
     <ClInclude Include="tank.h">
       <Filter>Header Files\Unit\Tank</Filter>
     </ClInclude>
+    <ClInclude Include="textDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -98,6 +101,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="textDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

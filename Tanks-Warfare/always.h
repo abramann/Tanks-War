@@ -129,21 +129,7 @@ enum ITEM_SLOT { WEAPON, ARMOR, RING, NORMAL };
 
 // audio cues
 
-// key mappings
-// In this game simple constants are used for key mappings. If variables were used
-// it would be possible to save and restore key mappings from a data file.
-const UCHAR CONSOLE_KEY = '`';         // ` key
-const UCHAR ESC_KEY = VK_ESCAPE;   // escape key
-const UCHAR ALT_KEY = VK_MENU;     // Alt key
-const UCHAR ENTER_KEY = VK_RETURN;   // Enter key
-const UCHAR LEFT_KEY = VK_LEFT;
-const UCHAR RIGHT_KEY = VK_RIGHT;
-const UCHAR UP_KEY = VK_UP;
-const UCHAR DOWN_KEY = VK_DOWN;
-const UCHAR LEFT_KEY2 = 0x41;
-const UCHAR RIGHT_KEY2 = 0x44;
-const UCHAR UP_KEY2 = 0x57;
-const UCHAR DOWN_KEY2 = 0x53;
+
 
 
 //=============================================================================

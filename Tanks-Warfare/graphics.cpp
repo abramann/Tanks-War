@@ -8,19 +8,19 @@ Graphics::Graphics()
 	hWnd = NULL; 
 	fullscreen = NULL;
 	deviceState = NULL;
-	ZeroMemory(&pPresentParameter, sizeof(pPresentParameter));
+	ZeroMemory(&pPresentParameter, sizeof(D3DPRESENT_PARAMETERS));
 }
 Graphics::~Graphics()
 {
 	release();
 }
-HRESULT Graphics::initialize(HWND _hWnd, bool _fullscreen)
+bool Graphics::initialize(HWND _hWnd, bool _fullscreen)
 {
 	hWnd = _hWnd;
 	fullscreen = _fullscreen;
 	direct3d = Direct3DCreate9(D3D_SDK_VERSION);
 	if (FAILED(direct3d))
-		return E_FAIL;
+		return false;
 	try
 	{
 		pPresentParameter.BackBufferWidth = GAME_WIDTH;
@@ -40,19 +40,19 @@ HRESULT Graphics::initialize(HWND _hWnd, bool _fullscreen)
 	}
 	catch (...)
 	{
-		return E_FAIL;
+		return false;
 	}
 
 	DWORD behavior = getBehaviorCompatility();
 	HRESULT hr;
 	hr = direct3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, behavior, &pPresentParameter, &device3d);
 	if (FAILED(hr))
-		return E_FAIL;
+		return false;
 
 	hr = D3DXCreateSprite(device3d, &sprite);
 	if (FAILED(hr))
-		return E_FAIL;
-	return S_OK;
+		return false;
+	return true;
 }
 void Graphics::spriteBegin()
 {
@@ -109,7 +109,7 @@ HRESULT Graphics::showBackbuffer()
 	hr = device3d->Present(NULL, NULL, NULL, NULL);
 	return hr;
 }
-bool Graphics::loadTexture(char* textureFile, int& width, int& height, Color transpanceyC, LPDIRECT3DTEXTURE9& texture)
+bool Graphics::loadTexture(char* textureFile, int& width, int& height, COLOR transpanceyC, LPDIRECT3DTEXTURE9& texture)
 {
 	D3DXIMAGE_INFO info;
 	HRESULT hr;

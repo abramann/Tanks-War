@@ -35,11 +35,12 @@ void Game::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
 	hWnd = _hWnd;
 	fullscreen = _fullscreen;
 
-	if(FAILED(graphics->initialize(hWnd, fullscreen)))
+	if(!graphics->initialize(hWnd, fullscreen))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize graphics");
-	if(FAILED(input->initialize(hInstance, hWnd)))
+	if(!input->initialize(hInstance, hWnd))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize input");
-	if (FAILED(audio->initialize()))
+	input->scan();
+	if (!audio->initialize())
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize audio");
 }
 void Game::run()
@@ -47,9 +48,8 @@ void Game::run()
 	updateGame();
 	collision();
 	renderGame();
-	input->reset();
-	input->scan();
 	audio->run();
+	input->reset();
 }
 void Game::renderGame()
 {
@@ -87,20 +87,19 @@ void Game::handleLostGraphicsDevice()
 		}
 		else if (hr == D3DERR_DEVICENOTRESET)
 		{
-			releaseAll();
+			onLostDevice();
 			HRESULT hr = graphics->reset();
 			if (FAILED(hr))
 				return;
-			resetAll();
+			onResetDevice();
 		}
 		else
 			throw GameError(gameErrorNS::FATAL_ERROR, "Unknown error occurred !");
 	}
 }
-void Game::releaseAll()
+void Game::onLostDevice()
 {
-	
 }
-void Game::resetAll()
+void Game::onResetDevice()
 {
 }

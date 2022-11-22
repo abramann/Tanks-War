@@ -34,7 +34,7 @@ public:
 	// member functions
 
 	// Initialize Audio
-	HRESULT initialize();
+	bool initialize();
 
 	// Perform periodic sound engine tasks.
 	void run();

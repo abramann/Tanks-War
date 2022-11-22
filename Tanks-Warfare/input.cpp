@@ -12,39 +12,39 @@ Input::~Input()
 	mouse->Release();
 	directInput->Release();
 }
-HRESULT Input::initialize(HINSTANCE hInstance, HWND hWnd)
+bool Input::initialize(HINSTANCE hInstance, HWND hWnd)
 {
 	HRESULT hr;
 	hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, NULL);
 	if (FAILED(hr))
-		return E_FAIL;
+		return false;
 
 	hr = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
 	if (FAILED(hr))
-		return E_FAIL;
+		return false;
 
 	hr = keyboard->SetDataFormat(&c_dfDIKeyboard);
 	if (FAILED(hr))
-		return E_FAIL;
+		return false;
 
 	hr = keyboard->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	if (FAILED(hr))
-		return E_FAIL;
+		return false;
 
 	hr = directInput->CreateDevice(GUID_SysMouse, &mouse, NULL);
 	if (FAILED(hr))
-		return E_FAIL;
+		return false;
 
 	hr = mouse->SetDataFormat(&c_dfDIMouse);
 	if (FAILED(hr))
-		return E_FAIL;
+		return false;
 
 	hr = mouse->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	if (FAILED(hr))
-		return E_FAIL;
+		return false;
 
 	reset();
-	return S_OK;
+	return true;
 }
 void Input::scan()
 {

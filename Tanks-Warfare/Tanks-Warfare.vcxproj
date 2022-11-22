@@ -56,10 +56,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableSpecificWarnings>4244;4083;4306</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dinput8.lib;dxguid.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -93,6 +96,7 @@
     <ClInclude Include="tank.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="tanksWarfare.h" />
+    <ClInclude Include="textDX.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="unit.h" />
   </ItemGroup>
@@ -102,10 +106,13 @@
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="textDX.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="tank.cpp" />
     <ClCompile Include="unit.cpp" />
-    <ClCompile Include="winmain.cpp" />
+    <ClCompile Include="winmain.cpp">
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
     <ClCompile Include="game.cpp" />
     <ClCompile Include="tanksWarfare.cpp" />
   </ItemGroup>

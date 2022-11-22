@@ -16,7 +16,7 @@ public:
 
 	Input();
 	~Input();
-	HRESULT initialize(HINSTANCE hInstance, HWND hWnd);
+	bool initialize(HINSTANCE hInstance, HWND hWnd);
 	void scan();
 	void keyDown(BYTE k);
 	void reset();

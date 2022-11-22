@@ -18,7 +18,8 @@ public:
 	void collision();
 	void render();
 	void resetAll();
-	void releaseAll();
+	void onLostDevice();
+	void onResetDevice();
 
 private:
 

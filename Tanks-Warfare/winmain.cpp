@@ -4,16 +4,6 @@
 #include <stdlib.h> // For detecting memory leaks
 #include <crtdbg.h> // For detecting memory leaks
 
-#pragma comment(lib,"d3d9.lib")
-#pragma comment(lib,"d3dx9.lib")
-#pragma comment(lib,"dinput8.lib")
-#pragma comment(lib,"dxguid.lib")
-#pragma comment(lib,"winmm.lib")
-
-#pragma warning(disable: 4305)
-#pragma warning(disable: 4083)
-#pragma warning(disable: 4244)
-
 bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow);
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 bool isFullScreen();
@@ -54,13 +44,13 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	wcx.cbClsExtra = 0;                 // no extra class memory 
 	wcx.cbWndExtra = 0;                 // no extra window memory 
 	wcx.hInstance = hInstance;          // handle to instance 
-	wcx.hIcon = NULL;
-	wcx.hCursor = LoadCursor(NULL, IDC_ARROW);   // predefined arrow 
+	wcx.hIcon = LoadIconA(NULL,"Data//tankswarfare.ico");
+	wcx.hCursor = LoadCursorFromFileA("Data//tankswarfare.cursor");   // predefined arrow 
 	wcx.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);    // black background 
 	wcx.lpszMenuName = NULL;           // name of menu resource 
 	wcx.lpszClassName = "Game Class";     // name of window class 
 	wcx.hIconSm = NULL;                 // small class icon 
-	wcx.hCursor = LoadCursorFromFileA("Data//cursor.ani");
+
 	// Register the window class. 
 	// RegisterClassEx returns 0 on error.
 	if (RegisterClassEx(&wcx) == 0)    // if error

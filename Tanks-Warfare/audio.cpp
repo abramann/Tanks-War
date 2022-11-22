@@ -57,7 +57,7 @@ Audio::~Audio()
 //      3. Create the XACT sound bank(s) you want to use
 //      4. Store indices to the XACT cue(s) your game uses
 //=============================================================================
-HRESULT Audio::initialize()
+bool Audio::initialize()
 {
 	HRESULT result = E_FAIL;
 	HANDLE hFile;
@@ -66,21 +66,20 @@ HRESULT Audio::initialize()
 	HANDLE hMapFile;
 
 	if (coInitialized == false)
-		return E_FAIL;
+		return false;
 
 	result = XACT3CreateEngine(0, &xactEngine);
 	if (FAILED(result) || xactEngine == NULL)
-		return E_FAIL;
+		return false;
 
 	// Initialize & create the XACT runtime 
 	XACT_RUNTIME_PARAMETERS xactParams = { 0 };
 	xactParams.lookAheadTime = XACT_ENGINE_LOOKAHEAD_DEFAULT;
 	result = xactEngine->Initialize(&xactParams);
 	if (FAILED(result))
-		return result;
+		return false;
 
 	// Create an "in memory" XACT wave bank file using memory mapped file IO
-	result = E_FAIL; // default to failure code, replaced on success
 	hFile = CreateFileA(WAVE_BANK, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
@@ -100,10 +99,9 @@ HRESULT Audio::initialize()
 		CloseHandle(hFile);    // mapWaveBank maintains a handle on the file so close this unneeded handle
 	}
 	if (FAILED(result))
-		return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
+		return false;
 
 	// Read and register the sound bank file with XACT.
-	result = E_FAIL;    // default to failure code, replaced on success
 	hFile = CreateFileA(SOUND_BANK, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
@@ -120,9 +118,9 @@ HRESULT Audio::initialize()
 		CloseHandle(hFile);
 	}
 	if (FAILED(result))
-		return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
+		return false;
 
-	return S_OK;
+	return true;
 }
 
 //=============================================================================
