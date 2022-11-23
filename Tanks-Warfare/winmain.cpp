@@ -49,7 +49,7 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	wcx.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);    // black background 
 	wcx.hIconSm = NULL;                 // small class icon 
 	wcx.lpszMenuName = NULL;           // name of menu resource 
-	wcx.lpszClassName = L"Game Class";     // name of window class 
+	wcx.lpszClassName = "Game Class";     // name of window class 
 	// Register the window class. 
 	// RegisterClassEx returns 0 on error.
 	if (RegisterClassEx(&wcx) == 0)    // if error
