@@ -7,100 +7,82 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Header Files\Unit">
-      <UniqueIdentifier>{88df4be7-5466-4081-bcae-27fc246b61b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Unit\Tank">
-      <UniqueIdentifier>{2af8d694-ef72-4591-9ff5-4923fc9e9df8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Unit">
-      <UniqueIdentifier>{60f85b6a-540d-4d93-8883-a103da5a0027}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Unit\Tank">
-      <UniqueIdentifier>{a84ed529-39c5-470f-b65f-3d0601f9d311}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Unit\Tank\E100">
-      <UniqueIdentifier>{9f8fa2bf-0b39-44f8-9007-2e010a0d66a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Unit\Tank\E100">
-      <UniqueIdentifier>{67ef5c41-abb7-4f33-8de8-d6f2a28ad4e6}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="always.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="gameError.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tanksWarfare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="unit.h">
-      <Filter>Header Files\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="e100.h">
-      <Filter>Header Files\Unit\Tank\E100</Filter>
-    </ClInclude>
     <ClInclude Include="tank.h">
-      <Filter>Header Files\Unit\Tank</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tanksWarfare.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="textDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="unit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="always.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="e100.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="winmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tanksWarfare.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="input.cpp">
+    <ClCompile Include="e100.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit.cpp">
-      <Filter>Source Files\Unit</Filter>
+    <ClCompile Include="game.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tank.cpp">
-      <Filter>Source Files\Unit\Tank</Filter>
-    </ClCompile>
-    <ClCompile Include="e100.cpp">
-      <Filter>Source Files\Unit\Tank\E100</Filter>
-    </ClCompile>
-    <ClCompile Include="texture.cpp">
+    <ClCompile Include="graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tank.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tanksWarfare.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="textDX.cpp">

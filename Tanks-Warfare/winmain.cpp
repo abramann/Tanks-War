@@ -16,9 +16,9 @@ LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	return game->messageHandler(hWnd, msg, wParam, lParam);
 }
-int message(char* msg, int type)
+int message(std::string msg, int type)
 {
-	return MessageBoxA(NULL, msg, "Tanks Warfare", type);
+	return MessageBoxA(NULL, msg.c_str(), "Tanks Warfare", type);
 }
 bool AnotherInstance()
 {
@@ -47,10 +47,9 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	wcx.hIcon = LoadIconA(NULL,"Data//tankswarfare.ico");
 	wcx.hCursor = LoadCursorFromFileA("Data//tankswarfare.cursor");   // predefined arrow 
 	wcx.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);    // black background 
-	wcx.lpszMenuName = NULL;           // name of menu resource 
-	wcx.lpszClassName = "Game Class";     // name of window class 
 	wcx.hIconSm = NULL;                 // small class icon 
-
+	wcx.lpszMenuName = NULL;           // name of menu resource 
+	wcx.lpszClassName = L"Game Class";     // name of window class 
 	// Register the window class. 
 	// RegisterClassEx returns 0 on error.
 	if (RegisterClassEx(&wcx) == 0)    // if error

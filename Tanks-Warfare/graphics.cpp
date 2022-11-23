@@ -109,7 +109,7 @@ HRESULT Graphics::showBackbuffer()
 	hr = device3d->Present(NULL, NULL, NULL, NULL);
 	return hr;
 }
-bool Graphics::loadTexture(char* textureFile, int& width, int& height, COLOR transpanceyC, LPDIRECT3DTEXTURE9& texture)
+bool Graphics::loadTexture(const char* textureFile, int& width, int& height, COLOR transpanceyC, LPDIRECT3DTEXTURE9& texture)
 {
 	D3DXIMAGE_INFO info;
 	HRESULT hr;
@@ -145,7 +145,7 @@ bool Graphics::isAdaptereCompatility()
 	D3DDISPLAYMODE dMode;
 	direct3d->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &dMode);
 	pPresentParameter.BackBufferFormat = D3DFMT_X8R8G8B8;
-	UINT modes = direct3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, pPresentParameter.BackBufferFormat);
+	int modes = direct3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, pPresentParameter.BackBufferFormat);
 	if (modes == 0)
 	{
 		throw GameError(gameErrorNS::FATAL_ERROR, "Your adapter doesn't support game format ! try to run as windowed .");

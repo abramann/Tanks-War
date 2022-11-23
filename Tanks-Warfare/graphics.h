@@ -36,7 +36,7 @@ public:
 	void spriteDraw(SpriteData sd);
 	void release();
 	HRESULT reset();
-	bool loadTexture(char* textureFile, int& width, int& height, COLOR transpanceyC, LPDIRECT3DTEXTURE9& texture);
+	bool loadTexture(const char* textureFile, int& width, int& height, COLOR transpanceyC, LPDIRECT3DTEXTURE9& texture);
 	HRESULT getDeviceState();
 	HRESULT begin();
 	HRESULT end();

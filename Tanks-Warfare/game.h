@@ -42,7 +42,7 @@ protected:
 	Audio* audio;
 	HWND hWnd;
 	bool fullscreen;
-	float timeDelta;
+	DWORD timeDelta;
 
 };
 
