@@ -44,7 +44,7 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	wcx.cbClsExtra = 0;                 // no extra class memory 
 	wcx.cbWndExtra = 0;                 // no extra window memory 
 	wcx.hInstance = hInstance;          // handle to instance 
-	wcx.hIcon = LoadIconA(NULL,"Data//tankswarfare.ico");
+	wcx.hIcon = LoadIconA(NULL,"Data//tankswarfare.icon");
 	wcx.hCursor = LoadCursorFromFileA("Data//tankswarfare.cursor");   // predefined arrow 
 	wcx.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);    // black background 
 	wcx.hIconSm = NULL;                 // small class icon 
@@ -62,7 +62,7 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	else
 		style = WS_EX_TOPMOST;
 	// Create window
-	hwnd = CreateWindowA(
+	hwnd = CreateWindow(
 		"Game Class",
 		"Tanks Warfare",             // title bar text
 		style,                  // window style
