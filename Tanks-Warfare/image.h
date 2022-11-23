@@ -36,8 +36,6 @@ public:
 	virtual void setTopRect(int topRect)		{ spriteData.rect.top = topRect; }
 	virtual void setBottomRect(int bottomRect)		{ spriteData.rect.bottom = bottomRect; }
 
-public:
-
 	virtual int getX()		{ return spriteData.x; }
 	virtual int getY()		{ return spriteData.y; }
 	virtual int getWidth()		{ return spriteData.width; }
@@ -55,8 +53,11 @@ public:
 	virtual int getStartFrame()		{ return startFrame; }
 	virtual int getEndFrame()		{ return endFrame; }
 	virtual COLOR getFilterColor()		{ return spriteData.filterColor; }
-	virtual bool isAnimated()		{ return animate; }
+	virtual bool isAnimated() { return animate; }
 	virtual void setTexture(TextureManger* tm);
+
+	virtual void xAdd(int xAdd) { spriteData.x += xAdd; }
+	virtual void yAdd(int yAdd) { spriteData.y += yAdd; }
 
 protected:
 
