@@ -3,7 +3,8 @@
 #include "always.h"
 #include <dinput.h>
 
-#define KEY BYTE
+#define Key BYTE
+#define ZERO_KEY DIK_0
 #define ONE_KEY DIK_1
 #define TWO_KEY DIK_2
 #define THREE_KEY DIK_3
@@ -56,6 +57,7 @@ public:
 	bool initialize(HINSTANCE hInstance, HWND hWnd);
 	void scan();
 	void keyDown(BYTE k);
+	void release();
 	void reset();
 	bool isKeyIn(BYTE k);
 	bool anyKeyPressed();

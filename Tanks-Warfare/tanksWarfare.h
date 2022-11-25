@@ -1,11 +1,11 @@
 #ifndef _TANKSWARFARE_H
 #define _TANKSWARFARE_H
 #include "game.h"
-#include "tank.h"
-#include "e100.h"
+#include "unit.h"
 
-#define FILE_GROUND "Data//Texture//Stone_Floor.png"
-#define FILE_E100 "Data//Texture//tanks//E-100.png"
+constexpr auto FILE_GROUND = "Data//Texture//stone_floor.png";
+constexpr auto FILE_FIRE_SIMPLE = "Data//Texture//Fire//1.png";
+constexpr auto FILE_E100 = "Data//Texture//tanks//e-100.png";
 
 class TanksWarfare : public Game
 {
@@ -17,14 +17,14 @@ public:
 	void update();
 	void collision();
 	void render();
-	void resetAll();
 	void onLostDevice();
 	void onResetDevice();
 
 private:
 
-	TextureManger *groundTex;
+	TextureManger *groundTex,*unitTex;
 	Image ground;
+	Unit unit;
 };
 
 

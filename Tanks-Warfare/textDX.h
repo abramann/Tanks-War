@@ -12,6 +12,7 @@ public:
 	virtual void printf(int x, int y, std::string& text);
 	virtual void onLostDevice();
 	virtual void onResetDevice();
+	virtual void release();
 
 	virtual void setColor(COLOR _color)		{ color = _color; }
 	virtual void setAngle(float _angle)		{ angle = _angle; }
@@ -22,6 +23,7 @@ public:
 private:
 
 	Graphics* graphics;
+
 	LPD3DXFONT dxFont;
 	RECT rect;
 	D3DXMATRIX matrix;

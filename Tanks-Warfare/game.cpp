@@ -9,12 +9,14 @@ Game::Game()
 	fullscreen = NULL;
 	timeDelta = 0;
 }
+
 Game::~Game()
 {
 	SAFE_DELETE(graphics);
 	SAFE_DELETE(input);
 	SAFE_DELETE(audio);
 }
+
 LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
@@ -30,6 +32,7 @@ LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	return DefWindowProcA(hWnd, msg, wParam, lParam);
 }
+
 void Game::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
 {
 	hWnd = _hWnd;
@@ -43,6 +46,7 @@ void Game::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
 	if (!audio->initialize())
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize audio");
 }
+
 void Game::run()
 {
 	updateGame();
@@ -51,6 +55,7 @@ void Game::run()
 	audio->run();
 	input->reset();
 }
+
 void Game::renderGame()
 {
 	graphics->begin();
@@ -59,6 +64,7 @@ void Game::renderGame()
 	handleLostGraphicsDevice();
 	graphics->showBackbuffer();
 }
+
 void Game::updateGame()
 {
 	timeDelta = timeGetTime() - timeDelta;
@@ -75,6 +81,7 @@ void Game::updateGame()
 	update();
 	timeDelta = timeGetTime();
 }
+
 void Game::handleLostGraphicsDevice()
 {
 	HRESULT hr = graphics->getDeviceState();
@@ -97,9 +104,11 @@ void Game::handleLostGraphicsDevice()
 			throw GameError(gameErrorNS::FATAL_ERROR, "Unknown error occurred !");
 	}
 }
+
 void Game::onLostDevice()
 {
 }
+
 void Game::onResetDevice()
 {
 }

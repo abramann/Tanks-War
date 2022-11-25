@@ -6,8 +6,10 @@
 #ifndef _AUDIO_H                // Prevent multiple definitions if this 
 #define _AUDIO_H                // file is included in more than one place
 #define WIN32_LEAN_AND_MEAN
-#define WAVE_BANK "Data//Audio//Win//Wave Bank.xwb"
-#define SOUND_BANK "Data//Audio//Win//Sound Bank.xsb"
+#define Effect const char*
+
+constexpr auto WAVE_BANK = "Data//Audio//Win//Wave Bank.xwb";
+constexpr auto SOUND_BANK = "Data//Audio//Win//Sound Bank.xsb";
 
 #include <xact3.h>
 #include "always.h"

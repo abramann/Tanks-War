@@ -9,7 +9,8 @@
 #define COLOR D3DCOLOR
 #define COLOR_ARGB D3DCOLOR_ARGB
 #define COLOR_XRGB D3DCOLOR_XRGB
-#define COLOR_WHITE COLOR_XRGB(255,255,255)
+
+constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
 
 struct SpriteData
 {

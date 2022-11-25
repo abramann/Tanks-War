@@ -63,7 +63,9 @@ protected:
 
 	TextureManger* textureManger;
 	Graphics* graphics;
+
 	SpriteData spriteData;
+
 	int currentFrame, hFrame, startFrame, endFrame;
 	float updateDelay, frameDelay;
 	bool animate;

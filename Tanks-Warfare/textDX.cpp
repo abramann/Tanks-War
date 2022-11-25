@@ -8,11 +8,12 @@ TextDX::TextDX()
 	ZeroMemory(&rect, sizeof(RECT));
 	ZeroMemory(&matrix, sizeof(D3DMATRIX));
 }
+
 TextDX::~TextDX()
 {
-	if (dxFont != NULL)
-		dxFont->Release();
+	release();
 }
+
 bool TextDX::initialize(int height, bool bold, bool italic, std::string fontFamily, Graphics* g)
 {
 	graphics = g;
@@ -32,6 +33,7 @@ bool TextDX::initialize(int height, bool bold, bool italic, std::string fontFami
 		rect.bottom = GAME_HEIGHT;
 		return true;
 }
+
 void TextDX::printf(int x, int y, std::string& text)
 {
 	graphics->spriteBegin();
@@ -43,11 +45,18 @@ void TextDX::printf(int x, int y, std::string& text)
 	dxFont->DrawTextA(graphics->getSprite(), text.c_str(), -1, &rect, DT_LEFT, color);
 	graphics->spriteEnd();
 }
+
 void TextDX::onLostDevice()
 {
 	dxFont->OnLostDevice();
 }
+
 void TextDX::onResetDevice()
 {
 	dxFont->OnResetDevice();
+}
+
+void TextDX::release()
+{
+	SAFE_RELEASE(dxFont);
 }

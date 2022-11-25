@@ -40,6 +40,7 @@ protected:
 	Graphics* graphics;
 	Input* input;
 	Audio* audio;
+
 	HWND hWnd;
 	bool fullscreen;
 	DWORD timeDelta;

@@ -22,6 +22,7 @@ public:
 private:
 
 	Graphics* graphics;
+
 	const char* textureFile;
 	COLOR transpanceyColor;
 	LPDIRECT3DTEXTURE9 texture;

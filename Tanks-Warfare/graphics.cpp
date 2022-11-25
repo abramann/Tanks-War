@@ -10,10 +10,12 @@ Graphics::Graphics()
 	deviceState = NULL;
 	ZeroMemory(&pPresentParameter, sizeof(D3DPRESENT_PARAMETERS));
 }
+
 Graphics::~Graphics()
 {
 	release();
 }
+
 bool Graphics::initialize(HWND _hWnd, bool _fullscreen)
 {
 	hWnd = _hWnd;
@@ -54,14 +56,17 @@ bool Graphics::initialize(HWND _hWnd, bool _fullscreen)
 		return false;
 	return true;
 }
+
 void Graphics::spriteBegin()
 {
 	sprite->Begin(D3DXSPRITE_ALPHABLEND);
 }
+
 void Graphics::spriteEnd()
 {
 	sprite->End();
 }
+
 void Graphics::spriteDraw(SpriteData sd)
 {
 	V2 translate = V2(sd.x, sd.y);
@@ -73,15 +78,14 @@ void Graphics::spriteDraw(SpriteData sd)
 	sprite->SetTransform(&matrix);
 	sprite->Draw(sd.texture, &sd.rect, NULL, NULL, sd.filterColor);
 }
+
 void Graphics::release()
 {
-	if (sprite != NULL)
-		sprite->Release();
-	if (direct3d != NULL)
-		direct3d->Release();
-	if (device3d != NULL)
-		device3d->Release();
+	SAFE_RELEASE(sprite);
+	SAFE_RELEASE(device3d);
+	SAFE_RELEASE(direct3d);
 }
+
 HRESULT Graphics::reset()
 {
 	sprite->OnLostDevice();
@@ -89,6 +93,7 @@ HRESULT Graphics::reset()
 	sprite->OnResetDevice();
 	return result;
 }
+
 HRESULT Graphics::begin()
 {
 	device3d->Clear(NULL, NULL, D3DCLEAR_TARGET, D3DCOLOR_ARGB(22, 212, 0, 0), 1.0f, NULL);
@@ -102,6 +107,7 @@ HRESULT Graphics::end()
 	hr = device3d->EndScene();
 	return hr;
 }
+
 HRESULT Graphics::showBackbuffer()
 {
 	deviceState = device3d->TestCooperativeLevel();
@@ -109,6 +115,7 @@ HRESULT Graphics::showBackbuffer()
 	hr = device3d->Present(NULL, NULL, NULL, NULL);
 	return hr;
 }
+
 bool Graphics::loadTexture(const char* textureFile, int& width, int& height, COLOR transpanceyC, LPDIRECT3DTEXTURE9& texture)
 {
 	D3DXIMAGE_INFO info;
@@ -140,6 +147,7 @@ bool Graphics::loadTexture(const char* textureFile, int& width, int& height, COL
 		return false;
 	return true;
 }
+
 bool Graphics::isAdaptereCompatility()
 {
 	D3DDISPLAYMODE dMode;
@@ -161,10 +169,12 @@ bool Graphics::isAdaptereCompatility()
 	}
 	return false;
 }
+
 HRESULT Graphics::getDeviceState()
 {
 	return device3d->TestCooperativeLevel();
 }
+
 DWORD Graphics::getBehaviorCompatility()
 {
 	DWORD behavior;
