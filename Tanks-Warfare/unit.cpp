@@ -3,9 +3,8 @@
 Unit::Unit()
 {
 	audio = new Audio;
-	health = UNIT_HEALTH;
-	speed = UNIT_SPEED;
-
+	health = 0;
+	speed = 0;
 	sinA = 0; cosA = 0;
 	updateInput = false; playAudio = false;
 	ZeroMemory(&key, sizeof(key));
@@ -27,6 +26,7 @@ void Unit::initialize(int _width, int _height, int extraWidth, int extraHeight, 
 
 void Unit::inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key)
 {
+	key = new Key[4];
 	updateInput = true;
 	input = _input;
 	key[FORWARD] = forward_key;
@@ -37,6 +37,7 @@ void Unit::inputInitialize(Input* _input, Key forward_key, Key back_key, Key rig
 
 void Unit::audioInitialize(Effect forward_eff, Effect back_eff, Effect right_eff, Effect left_eff)
 {
+	effect = new Effect[4];
 	playAudio = true;
 	effect[FORWARD] = forward_eff;
 	effect[BACK] = back_eff;
@@ -94,6 +95,8 @@ void Unit::executeLeft(float frameTime)
 void Unit::release()
 {
 	SAFE_DELETE(audio);
+	SAFE_DELETE_ARRAY(key);
+	SAFE_DELETE_ARRAY(effect);
 }
 
 void Unit::mathUpdate()

@@ -6,7 +6,7 @@
 #ifndef _AUDIO_H                // Prevent multiple definitions if this 
 #define _AUDIO_H                // file is included in more than one place
 #define WIN32_LEAN_AND_MEAN
-#define Effect const char*
+#define Effect std::string
 
 constexpr auto WAVE_BANK = "Data//Audio//Win//Wave Bank.xwb";
 constexpr auto SOUND_BANK = "Data//Audio//Win//Sound Bank.xsb";
@@ -43,11 +43,11 @@ public:
 
 	// Play sound specified by cue from sound bank.
 	// If cue does not exist no error occurs, there is simply no sound played.
-	void playCue(const char cue[]);
+	void playCue(Effect cue);
 
 	// Stop a playing sound specified by cue from sound bank.
 	// If cue does not exist no error occurs.
-	void stopCue(const char cue[]);
+	void stopCue(Effect cue);
 };
 
 #endif

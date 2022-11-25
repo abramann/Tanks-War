@@ -4,7 +4,7 @@
 #include "unit.h"
 
 constexpr auto FILE_GROUND = "Data//Texture//stone_floor.png";
-constexpr auto FILE_FIRE_SIMPLE = "Data//Texture//Fire//1.png";
+constexpr auto FILE_FIRE_SIMPLE = "Data//Texture//Fire//fire-simple.png";
 constexpr auto FILE_E100 = "Data//Texture//tanks//e-100.png";
 
 class TanksWarfare : public Game
@@ -14,6 +14,7 @@ public:
 	TanksWarfare();
 	~TanksWarfare();
 	void initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen);
+	void NewFunction();
 	void update();
 	void collision();
 	void render();

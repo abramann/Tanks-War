@@ -137,11 +137,11 @@ void Audio::run()
 // play sound specified by cue from sound bank
 // if cue does not exist no error occurs, there is simply no sound played
 //=============================================================================
-void Audio::playCue(const char cue[])
+void Audio::playCue(Effect cue)
 {
 	if (soundBank == NULL)
 		return;
-	cueI = soundBank->GetCueIndex(cue);        // get cue index from sound bank
+	cueI = soundBank->GetCueIndex(cue.c_str());        // get cue index from sound bank
 	soundBank->Play(cueI, 0, 0, NULL);
 }
 
@@ -149,10 +149,10 @@ void Audio::playCue(const char cue[])
 // stop a playing sound specified by cue from sound bank
 // if cue does not exist no error occurs
 //=============================================================================
-void Audio::stopCue(const char cue[])
+void Audio::stopCue(Effect cue)
 {
 	if (soundBank == NULL)
 		return;
-	cueI = soundBank->GetCueIndex(cue);        // get cue index from sound bank
+	cueI = soundBank->GetCueIndex(cue.c_str());        // get cue index from sound bank
 	soundBank->Stop(cueI, XACT_FLAG_SOUNDBANK_STOP_IMMEDIATE);
 }

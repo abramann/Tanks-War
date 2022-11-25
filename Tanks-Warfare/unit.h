@@ -54,9 +54,9 @@ protected:
 	
 	Audio* audio;
 	Input* input;
+	Key* key;
+	Effect* effect;
 
-	Key key[MAX_CONTROL];	
-	Effect effect[MAX_CONTROL];
 	float health, speed;
 	bool updateInput, playAudio;
 
