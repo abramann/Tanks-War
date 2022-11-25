@@ -70,13 +70,13 @@ void Unit::inputUpdate(float frameTime)
 
 void Unit::executeForward(float frameTime)
 {
-	yAdd(speed * frameTime);
+	yAdd(-(speed * frameTime));
 	audio->playCue(effect[FORWARD]);
 }
 
 void Unit::executeBack(float frameTime)
 {
-	yAdd(-(speed * frameTime));
+	yAdd(speed * frameTime);
 	audio->playCue(effect[BACK]);
 }
 
