@@ -3,16 +3,21 @@
 #include "always.h"
 #include "texture.h"
 
+#define FRAMES		3
+#define FRAMECURRENT	0
+#define FRAMESTART		1
+#define FRAMEEND		2
+
 class Image
 {
 public:
 
 	Image();
 	~Image();
-	virtual void initialize(int width, int height, int extraWidth, int extraHeight, bool ani, int _currentFrame, int _startFrame, int _endFrame, float _updateDelay, TextureManger* _textureManger, Graphics* _graphics);
+	virtual void initialize(int width, int height, int extraWidth, int extraHeight, bool _animate, int currentFrame, int startFrame, int endFrame, float _updateDelay, TextureManger* _textureManger, Graphics* _graphics);
 	virtual void update(float frameTime);
 	virtual void draw();
-
+	virtual void release();
 	virtual void setX(int x)		{ spriteData.x = x; }
 	virtual void setY(int y)		{ spriteData.y = y; }
 	virtual void setImageWidth(int width)		{ spriteData.width = width; }
@@ -26,16 +31,17 @@ public:
 	virtual void setScalling(float scalling);
 	virtual void setFrameDelay(float newFrameDelay)		{ frameDelay = newFrameDelay; }
 	virtual void setUpdateDelay(float newUpdateDelay)		{ updateDelay = newUpdateDelay; }
-	virtual void setStartFrame(int newStartFrame)		{ startFrame = newStartFrame; }
-	virtual void setEndFrame(int newEndFrame)		{ endFrame = newEndFrame; }
-	virtual void setCurrentFrame(int newCurrentFrame)		{ currentFrame = newCurrentFrame; }
+	virtual void setStartFrame(int newStartFrame)		{ frame[FRAMESTART] = newStartFrame; }
+	virtual void setEndFrame(int newEndFrame)		{ frame[FRAMEEND] = newEndFrame; }
+	virtual void setCurrentFrame(int newCurrentFrame)		{ frame[FRAMECURRENT] = newCurrentFrame; }
 	virtual void setAnimate(bool newAnimate)		{ animate = newAnimate; }
-	virtual void setFrameRect(int frame, float time);
+	virtual void setFrameRect(int frame, int frames);
 	virtual void setRightRect(int rightRect)		{ spriteData.rect.right = rightRect; }
 	virtual void setLeftRect(int leftRect)		{ spriteData.rect.left = leftRect; }
 	virtual void setTopRect(int topRect)		{ spriteData.rect.top = topRect; }
 	virtual void setBottomRect(int bottomRect)		{ spriteData.rect.bottom = bottomRect; }
-
+	virtual void setTexture(TextureManger* tm);
+	
 	virtual int getX()		{ return spriteData.x; }
 	virtual int getY()		{ return spriteData.y; }
 	virtual int getWidth()		{ return spriteData.width; }
@@ -50,11 +56,10 @@ public:
 	virtual float getScalling()		{ return spriteData.scalling; }
 	virtual float getFrameDelay()		{ return frameDelay; }
 	virtual float getUpdateDelay()		{ return updateDelay; }
-	virtual int getStartFrame()		{ return startFrame; }
-	virtual int getEndFrame()		{ return endFrame; }
+	virtual int	getStartFrame()		{ return frame[FRAMESTART]; }
+	virtual int getEndFrame()		{ return frame[FRAMEEND]; }
 	virtual COLOR getFilterColor()		{ return spriteData.filterColor; }
 	virtual bool isAnimated() { return animate; }
-	virtual void setTexture(TextureManger* tm);
 
 	virtual void xAdd(int xAdd) { spriteData.x += xAdd; }
 	virtual void yAdd(int yAdd) { spriteData.y += yAdd; }
@@ -63,16 +68,17 @@ protected:
 
 	TextureManger* textureManger;
 	Graphics* graphics;
+	int* frame;
 
 	SpriteData spriteData;
-
-	int currentFrame, hFrame, startFrame, endFrame;
 	float updateDelay, frameDelay;
 	bool animate;
 	
 private:
 
-	virtual void setGraphics(Graphics* g)		{ graphics = g; }
+	HANDLE threadHandle;
+	int threadPara;
+
 };
 
 

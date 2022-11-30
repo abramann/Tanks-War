@@ -5,42 +5,38 @@ Image::Image()
 	ZeroMemory(&spriteData, sizeof(SpriteData));
 	animate = NULL;
 	frameDelay = 0.0f;	updateDelay = 0.0f;
-	startFrame = 0;		endFrame = 0;	currentFrame = 0;
 }
 
 Image::~Image()
 {
+	release();
 }
 
-void Image::initialize(int width, int height, int extraWidth, int extraHeight, bool _animate, int _currentFrame, int _startFrame, int _endFrame, float _updateDelay, TextureManger* _textureManger, Graphics* _graphics)
+void Image::initialize(int width, int height, int extraWidth, int extraHeight, bool _animate, int currentFrame, int startFrame, int endFrame, float _updateDelay, TextureManger* _textureManger, Graphics* _graphics)
 {
-	setGraphics(_graphics);
-	setTexture(_textureManger);
-	setCurrentFrame(_currentFrame);
-	setStartFrame(_startFrame);
-	setEndFrame(_endFrame);
-	setFrameDelay(_updateDelay);
-	setScalling(1.0f);
-	setAnimate(_animate);
-	if (width == 0 || height == 0)
-	{
-		width = getTextureWidth();
-		height = getTextureHeight();
-	}
-
-	setImageWidth(width);
-	setImageHeight(height);
-	setExtraImageWidth(extraWidth);
-	setExtraImageHeight(extraHeight);
-	setFilterColor(COLOR_WHITE);
-	RECT rect;
-	rect.right = currentFrame * width + extraWidth;
-	rect.left = rect.right - width;
-	rect.top = extraHeight;
-	rect.bottom = height + extraHeight;
-	setRect(rect);
-	V2 center = V2(width / 2, height / 2);
-	setCenter(center);
+	frame = new int[FRAMES];
+	graphics = _graphics;
+	textureManger = _textureManger;
+	spriteData.texture = textureManger->getTexture();
+	spriteData.textureWidth = textureManger->getWidth();
+	spriteData.textureHeight = textureManger->getHeight();
+	frame[FRAMECURRENT] = currentFrame;
+	frame[FRAMESTART] = startFrame;
+	frame[FRAMEEND] = endFrame;
+	updateDelay = _updateDelay;
+	animate = _animate;
+	spriteData.scalling = 1.0f;
+	if (width <= 0)
+		width = textureManger->getWidth();
+	if (height <= 0)
+		height = textureManger->getHeight();
+	
+	spriteData.width = width;
+	spriteData.height = height;
+	spriteData.extraWidth = extraWidth;
+	spriteData.extraHeight = extraHeight;
+	spriteData.center = V2(width / 2, height / 2);
+	spriteData.filterColor = COLOR_WHITE;
 }
 
 void Image::draw()
@@ -50,22 +46,23 @@ void Image::draw()
 	graphics->spriteEnd();
 }
 
+void Image::release()
+{
+	SAFE_DELETE(frame);
+}
+
 void Image::update(float frameTime)
 {
 	frameDelay += frameTime;
 	if (animate && frameDelay >= updateDelay)
 	{
 		frameDelay = 0;
-		if (currentFrame == endFrame)
-			currentFrame = startFrame;
+		if (frame[FRAMECURRENT] == frame[FRAMEEND])
+			frame[FRAMECURRENT] = frame[FRAMEEND];
 		else
-			currentFrame++;
-
-		int rightRect = currentFrame * getWidth() + getExtraImageWidth();
-		setRightRect(rightRect);
-		int leftRect = rightRect - getWidth() + getExtraImageWidth();
-		setLeftRect(leftRect);
+			frame[FRAMECURRENT]++;
 	}
+	setFrameRect(frame[FRAMECURRENT], 0);
 }
 
 void Image::setScalling(float scalling)	
@@ -74,16 +71,27 @@ void Image::setScalling(float scalling)
 	spriteData.center = V2(spriteData.width*scalling / 2, spriteData.height*scalling / 2);
 }
 
-void Image::setFrameRect(int frame, float time)
+void Image::setFrameRect(int frame, int frames)
 {
-	spriteData.rect.right = frame*spriteData.width;
-	spriteData.rect.left = spriteData.rect.right - spriteData.width;
+	if (WaitForSingleObject(threadHandle, 0) == 0x102)		// Is thread running ?
+		return;		// Thread is running
+	RECT rect;
+	rect.right = frame * spriteData.width + getExtraImageWidth();
+	rect.left = rect.right - spriteData.width;
+	rect.top = 0;
+	rect.bottom = spriteData.height;
+	setRect(rect);
+	if (frames != 0)
+	{
+		threadPara = frames;
+		CreateThread(0, 0,(LPTHREAD_START_ROUTINE) &waitFrame, &threadPara, 0, 0);
+	}
 }
 
-void Image::setTexture(TextureManger* tm)
+void Image::setTexture(TextureManger* _textureManger)
 {
-	textureManger = tm;
+	textureManger = _textureManger;
 	spriteData.texture = textureManger->getTexture();
-	spriteData.textureWidth = tm->getWidth();
-	spriteData.textureHeight = tm->getHeight();
+	spriteData.textureWidth = _textureManger->getWidth();
+	spriteData.textureHeight = _textureManger->getHeight();
 }

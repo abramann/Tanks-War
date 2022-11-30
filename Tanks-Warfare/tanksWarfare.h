@@ -5,7 +5,7 @@
 
 constexpr auto FILE_GROUND = "Data//Texture//stone_floor.png";
 constexpr auto FILE_FIRE_SIMPLE = "Data//Texture//Fire//fire-simple.png";
-constexpr auto FILE_E100 = "Data//Texture//tanks//e-100.png";
+constexpr auto FILE_E100 = "Data//Texture//tank//e-100.png";
 
 class TanksWarfare : public Game
 {

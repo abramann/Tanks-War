@@ -1,5 +1,7 @@
 #include "graphics.h"
 
+UINT64  frameCounter = 0;
+
 Graphics::Graphics()
 {
 	direct3d = NULL;
@@ -113,6 +115,8 @@ HRESULT Graphics::showBackbuffer()
 	deviceState = device3d->TestCooperativeLevel();
 	HRESULT hr;
 	hr = device3d->Present(NULL, NULL, NULL, NULL);
+	if(SUCCEEDED(hr))
+		frameCounter++;
 	return hr;
 }
 

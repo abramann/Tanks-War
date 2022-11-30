@@ -18,13 +18,13 @@ void TanksWarfare::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
 	audio->playCue("Theme");
 	if (!groundTex->initialize(FILE_GROUND, COLOR_WHITE, graphics))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize /Media/Texture/Stone_Floor.png");
-	if (!unitTex->initialize(FILE_FIRE_SIMPLE, COLOR_WHITE, graphics))
+	if (!unitTex->initialize(FILE_E100, COLOR_WHITE, graphics))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize /Media/Texture/Fire/fire-simple.png");
 
 	ground.initialize(0, 0, 0, 0, 0, 1, 1, 1, 0, groundTex, graphics);
-	unit.initialize(0, 0, 0, 0, 1, 1, 1, 100, 2, unitTex, graphics);
+	unit.initialize(96,800, 0, 0, 1, 1,3, 100, 2, unitTex, graphics);
 	unit.inputInitialize(input, W_KEY, S_KEY, D_KEY, A_KEY);
-	unit.audioInitialize("Tank_Forward", "Tank_Back", "Tanks_fast", "Tank_fast");
+	unit.audioInitialize("Tank_Forward", "Tank_Back", "Tanks_Idle", "Tank_Idle","Tank_Death");
 	unit.setScalling(2.0f);
 	unit.setX(300);
 	unit.setY(300);
@@ -33,10 +33,13 @@ void TanksWarfare::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
 
 void TanksWarfare::collision()
 {
+	if (input->isKeyIn(O_KEY))
+		unit.setHealth(0);
 }
 
 void TanksWarfare::update()
 {
+	ground.update(timeDelta);
 	unit.update(timeDelta);
 }
 

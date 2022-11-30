@@ -12,13 +12,10 @@
 #include "gameError.h"
 #include <windows.h>
 
-//=============================================================================
-//                  Constants
-//=============================================================================
+extern UINT64 frameCounter;
 
 const UINT GAME_WIDTH = 1024;               // width of game in pixels
 const UINT GAME_HEIGHT = 768;               // height of game in pixels
-
 
 // game
 const double PI = 3.14159265;
@@ -31,10 +28,17 @@ const int chatFontSize = 12;
 const int chatX = 605;
 const int chatY = 640;
 
-// audio cues
-
-
-
+inline void waitTime(float time)
+{
+	Sleep(time);
+}
+inline void waitFrame(int framesWait)
+{
+	framesWait += frameCounter;
+	while (true)
+		if (framesWait < frameCounter)
+			break;
+}
 
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.
