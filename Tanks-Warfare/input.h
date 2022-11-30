@@ -3,7 +3,7 @@
 #include "always.h"
 #include <dinput.h>
 
-#define Key WORD
+#define Key BYTE
 #define ZERO_KEY DIK_0
 #define ONE_KEY DIK_1
 #define TWO_KEY DIK_2
