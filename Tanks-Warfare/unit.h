@@ -58,8 +58,6 @@ private:
 
 	void mathUpdate();
 
-	float sinA, cosA;
-
 protected:
 	
 	Audio* audio;
@@ -69,6 +67,7 @@ protected:
 
 	float health, speed;
 	bool updateInput;
+	float sinA, cosA;
 
 };
 

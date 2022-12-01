@@ -112,8 +112,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	game = new TanksWarfare;
-	MSG msg;
 	HWND hWnd = NULL;
 	fullscreen = isFullScreen();
 	if (!CreateMainWindow(hWnd, hInstance, nCmdShow))
@@ -122,6 +120,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 1;
 	}
 
+	game = new TanksWarfare;
+	MSG msg;
 	try
 	{
 		game->initialize(hInstance, hWnd, fullscreen);

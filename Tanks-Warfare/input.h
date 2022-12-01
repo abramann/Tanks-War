@@ -1,5 +1,6 @@
 #ifndef _INPUT_H
 #define _INPUT_H
+#define DIRECTINPUT_VERSION 0x0800
 #include "always.h"
 #include <dinput.h>
 

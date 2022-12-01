@@ -14,7 +14,9 @@ Image::~Image()
 
 void Image::initialize(int width, int height, int extraWidth, int extraHeight, bool _animate, int currentFrame, int startFrame, int endFrame, float _updateDelay, TextureManger* _textureManger, Graphics* _graphics)
 {
-	frame = new int[FRAMES];
+	if (IsBadWritePtr(frame, FRAMES))
+		frame = new Frame[FRAMES];
+
 	graphics = _graphics;
 	textureManger = _textureManger;
 	spriteData.texture = textureManger->getTexture();
@@ -30,7 +32,7 @@ void Image::initialize(int width, int height, int extraWidth, int extraHeight, b
 		width = textureManger->getWidth();
 	if (height <= 0)
 		height = textureManger->getHeight();
-	
+
 	spriteData.width = width;
 	spriteData.height = height;
 	spriteData.extraWidth = extraWidth;
@@ -84,7 +86,7 @@ void Image::setFrameRect(int frame, int frames)
 	if (frames != 0)
 	{
 		threadPara = frames;
-		CreateThread(0, 0,(LPTHREAD_START_ROUTINE) &waitFrame, &threadPara, 0, 0);
+		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)& waitFrame, &threadPara, 0, 0);
 	}
 }
 

@@ -3,6 +3,7 @@
 #include "always.h"
 #include "texture.h"
 
+#define Frame int
 #define FRAMES		3
 #define FRAMECURRENT	0
 #define FRAMESTART		1
@@ -68,7 +69,7 @@ protected:
 
 	TextureManger* textureManger;
 	Graphics* graphics;
-	int* frame;
+	Frame* frame;
 
 	SpriteData spriteData;
 	float updateDelay, frameDelay;

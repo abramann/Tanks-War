@@ -16,17 +16,20 @@ Unit::~Unit()
 
 void Unit::initialize(int _width, int _height, int extraWidth, int extraHeight, int _currentFrame, int _startFrame, int _endFrame, float _health, float _speed, TextureManger* _textureManger, Graphics* _graphics)
 {
-	Image::initialize(_width, _height, extraWidth, extraHeight, false, _currentFrame, _startFrame, _endFrame, NULL, _textureManger, _graphics);
 	audio->initialize();
 	setHealth(_health);
 	setSpeed(_speed);
+	Image::initialize(_width, _height, extraWidth, extraHeight, false, _currentFrame, _startFrame, _endFrame, NULL, _textureManger, _graphics);
 }
 
 void Unit::inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key)
 {
-	key = new Key[UNIT_KEYS];
+	input = _input;
 	updateInput = true;
 	input = _input;
+	if (IsBadWritePtr(key, UNIT_KEYS))
+		key = new Key[UNIT_KEYS];
+
 	key[KEYFORWARD] = forward_key;
 	key[KEYBACK] = back_key;
 	key[KEYRIGHT] = right_key;
@@ -35,7 +38,9 @@ void Unit::inputInitialize(Input* _input, Key forward_key, Key back_key, Key rig
 
 void Unit::audioInitialize(Effect forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff)
 {
-	effect = new Effect[UNIT_EFFECTS];
+	if (IsBadWritePtr(effect, UNIT_EFFECTS))
+		effect = new Effect[UNIT_EFFECTS];
+
 	effect[EFFECTFORWARD] = forward_eff;
 	effect[EFFECTBACK] = back_eff;
 	effect[EFFECTRIGHT] = right_eff;
