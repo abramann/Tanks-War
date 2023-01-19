@@ -8,8 +8,10 @@ Unit::Unit()
 	sinA = 0; cosA = 0;
 	key = 0;
 	effect = 0;
-	updateInput = false;
 	playAudio = false;
+	handleInput = false;
+	deathExecuted = false;
+	render = true;
 }
 
 Unit::~Unit()
@@ -26,14 +28,13 @@ void Unit::initialize(int width, int height, int columns, int rows, bool _animat
 	Image::initialize(width, height, columns, rows, false, _updateDelay, _textureManger, _graphics);
 	if (IsBadReadPtr(_death,sizeof(Image)))
 		return;
-	deathColumns = death->getColumn();
-	deathRows = death->getRow();
+
 }
 
 void Unit::inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key)
 {
+	handleInput = true;
 	input = _input;
-	updateInput = true;
 	if (IsBadReadPtr(key, UNIT_KEYS))
 		key = new Key[UNIT_KEYS];
 
@@ -58,22 +59,31 @@ void Unit::audioInitialize(Effect forward_eff, Effect back_eff, Effect right_eff
 
 void Unit::update(float frameTime)
 {
-	
-	if (health <= 0)
+	if (!deathExecuted)
 	{
-		if (column == 1 || row == 1)
+		if (health <= 0)
 			executeDeath();
-		else if (column == 8 && row == 8)
-			return;
+
+		mathUpdate();
 	}
-	else if (updateInput)
-			inputUpdate(frameTime);
+	else if (column == spriteData.columns && row == spriteData.rows)
+	{
+		render = false;
+		return;
+	}
+	if (handleInput)
+		inputUpdate(frameTime);
 
-	if (playAudio);
-	audio->run();
+	if (playAudio)
+		audio->run();
 
-	this->mathUpdate();
 	Image::update(frameTime);
+}
+
+void Unit::draw()
+{
+	if (render)
+		Image::draw();
 }
 
 void Unit::inputUpdate(float frameTime)
@@ -120,10 +130,19 @@ void Unit::executeLeft(float frameTime)
 
 void Unit::executeDeath()
 {
-	updateInput = false;
-	Image::Image(*death);
+	handleInput = false;
+	deathExecuted = true;
+	int currentX = spriteData.x;
+	int currentY = spriteData.y;
+	spriteData = death->getSpriteData();
+	spriteData.x = currentX;
+	spriteData.y = currentY;
+	
+	animate = death->isAnimated();
+	
 	if (playAudio)
 		audio->playCue(effect[EFFECTDEATH]);
+	
 }
 
 void Unit::release()

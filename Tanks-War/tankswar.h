@@ -9,8 +9,9 @@
 #define TEXTURE_GROUND		  0
 #define TEXTURE_PLAYERTANK	  1
 #define TEXTURE_EXPLOSION	  2
-#define IMAGES 1
+#define IMAGES 2
 #define IMAGE_GROUND 0
+#define IMAGE_EXPLOSION 1
 #define UNITS 1
 #define UNIT_TANK 0
 

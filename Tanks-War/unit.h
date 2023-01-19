@@ -13,9 +13,11 @@
 #define EFFECTLEFT		3
 #define EFFECTDEATH		4
 #define FRAMEDEATH FRAMEEND
+#define HP		// Health taken by HP
+#define PX		// Speed taken by PX
 
-const int UNIT_HEALTH = 100; // Default unit health
-const int UNIT_SPEED = 10; // Default unit speed
+//	const int UNIT_HEALTH = 100 HP; // Default unit health
+//	const int UNIT_SPEED = 1 PX; // Default unit speed
 
 #include "always.h"
 #include "image.h"
@@ -32,6 +34,7 @@ public:
 	virtual void inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key);
 	virtual void audioInitialize(Effect _forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff);
 	virtual void update(float frameTime);
+	virtual void draw();
 	virtual void inputUpdate(float frameTime);
 	virtual void release();
 	virtual void executeForward(float frameTime);
@@ -62,16 +65,17 @@ protected:
 	
 	Audio* audio;
 	Input* input;
-	TextureManger* deathTex;
+	Image* death;
 	Key* key;
 	Effect* effect;
 
-	Image* death;
-	int deathColumns, deathRows;
+	bool render;
 	float health, speed;
 	bool updateInput;
+	bool deathExecuted;
 	float sinA, cosA;
 	bool playAudio;
+	bool handleInput;
 };
 
 

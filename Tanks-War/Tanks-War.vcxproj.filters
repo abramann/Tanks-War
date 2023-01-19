@@ -57,9 +57,6 @@
     <ClInclude Include="gameerror.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="unitd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="image.cpp">
@@ -99,9 +96,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="textdx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unitd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

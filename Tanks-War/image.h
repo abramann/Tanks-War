@@ -49,6 +49,7 @@ public:
 	virtual int	getRow() { return row; }
 	virtual int getColumn() { return column; }
 	virtual COLOR getFilterColor()		{ return spriteData.filterColor; }
+	virtual SpriteData getSpriteData() { return spriteData; }
 	virtual bool isAnimated() { return animate; }
 
 	virtual void xAdd(int xAdd) { spriteData.x += xAdd; }
@@ -61,7 +62,7 @@ protected:
 
 	SpriteData spriteData;
 	float updateDelay, frameDelay;
-	int column, row;
+	int column, row; // current column and row seted
 	bool animate;
 
 private:
