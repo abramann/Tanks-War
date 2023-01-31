@@ -21,7 +21,6 @@ public:
 
 	Map();
 	~Map();
-	// rows and columns for texture
 	virtual bool initialize(std::string mapPath, int bitmaps, TextureManger* _textureManger, Graphics* _graphics);
 	virtual bool read(std::string map);
 	virtual void draw();
