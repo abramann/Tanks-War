@@ -28,7 +28,6 @@ void Unit::initialize(int width, int height, int columns, int rows, bool _animat
 	Image::initialize(width, height, columns, rows, false, _updateDelay, _textureManger, _graphics);
 	if (IsBadReadPtr(_death,sizeof(Image)))
 		return;
-
 }
 
 void Unit::inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key)

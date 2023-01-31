@@ -152,6 +152,12 @@ bool Graphics::loadTexture(const char* textureFile, int& width, int& height, COL
 	return true;
 }
 
+HRESULT Graphics::createLine(ID3DXLine** line)
+{
+	HRESULT result = D3DXCreateLine(device3d, line);
+	return result;
+}
+
 bool Graphics::isAdaptereCompatility()
 {
 	D3DDISPLAYMODE dMode;

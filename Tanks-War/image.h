@@ -13,8 +13,8 @@ public:
 	virtual void update(float frameTime);
 	virtual void draw();
 	virtual void release();
-	virtual void setX(int x)		{ spriteData.x = x; }
-	virtual void setY(int y)		{ spriteData.y = y; }
+	virtual Image* setX(int x) { spriteData.x = x; return this; }
+	virtual Image* setY(int y) { spriteData.y = y; return this; }
 	virtual void setImageWidth(int width)		{ spriteData.width = width; }
 	virtual void setImageHeight(int height)			{ spriteData.height = height; }
 	virtual void setFilterColor(COLOR filterColor)		{ spriteData.filterColor = filterColor; }

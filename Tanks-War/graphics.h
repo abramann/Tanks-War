@@ -38,6 +38,7 @@ public:
 	void release();
 	HRESULT reset();
 	bool loadTexture(const char* textureFile, int& width, int& height, COLOR _transpanceyColor, LPDIRECT3DTEXTURE9& texture);
+	HRESULT createLine(ID3DXLine** line);
 	HRESULT getDeviceState();
 	HRESULT begin();
 	HRESULT end();
