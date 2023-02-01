@@ -26,9 +26,9 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
 	audio->playCue("Theme");
 	
 	image[IMAGE_EXPLOSION].initialize(128, 128, 8, 7, true, 200, &texture[TEXTURE_EXPLOSION], graphics);
-	unit[UNIT_TANK].initialize(60, 60, 1, 1, false, 0, 100, 0.5f, &image[IMAGE_EXPLOSION], &texture[TEXTURE_PLAYERTANK], graphics);
+	unit[UNIT_TANK].initialize(60, 60, 1, 1, false, 0, 100, 0.5f, &image[IMAGE_EXPLOSION], &texture[TEXTURE_PLAYERTANK],&map, graphics);
 	unit[UNIT_TANK].inputInitialize(input, W_KEY, S_KEY, D_KEY, A_KEY);
-	unit[UNIT_TANK].setX(300)->setY(300);
+	unit[UNIT_TANK].setX(500)->setY(500);
 	map.initialize("map.txt", 2, &texture[TEXTURE_MAP], graphics);
 }
 

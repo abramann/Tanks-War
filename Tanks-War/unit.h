@@ -23,6 +23,7 @@
 #include "image.h"
 #include "audio.h"
 #include "input.h"
+#include "map.h"
 
 class Unit : public Image
 {
@@ -30,7 +31,7 @@ public:
 
 	Unit();
 	~Unit();
-	virtual void initialize(int width, int height, int columns, int rows, bool _animate, float _updateDelay, float _health, float _speed, Image* _death, TextureManger* _textureManger, Graphics* _graphics);
+	virtual void initialize(int width, int height, int columns, int rows, bool _animate, float _updateDelay, float _health, float _speed, Image* _death, TextureManger* _textureManger, Map* _map, Graphics* _graphics);
 	virtual void inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key);
 	virtual void audioInitialize(Effect _forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff);
 	virtual void update(float frameTime);
@@ -68,6 +69,7 @@ protected:
 	Image* death;
 	Key* key;
 	Effect* effect;
+	Map* map;
 
 	bool render;
 	float health, speed;

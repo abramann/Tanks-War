@@ -2,7 +2,6 @@
 #include "texture.h"
 #include <fstream>
 
-
 Map::Map()
 {
 }
@@ -51,6 +50,14 @@ bool Map::initialize(std::string mapPath, int bitmaps, TextureManger* _textureMa
 			rect.left = map[h][w] * mapData.bitmapData.width; rect.right = (map[h][w] + 1)*mapData.bitmapData.width;
 			bitmap[h][w].setRect(rect);
 			bitmap[h][w].setX(w*mapData.bitmapData.width)->setY(h*mapData.bitmapData.height);
+			if (map[h][w] == 0)
+			{
+				Space space;
+				space.x1 = w*mapData.bitmapData.width; space.x2 = space.x1 + mapData.bitmapData.width;
+				space.y1 = h*mapData.bitmapData.height; space.y2 = space.y1 + mapData.bitmapData.height;
+				noSpace.push_back(space);
+				
+			}
 		}
 	}
 	/*
@@ -97,6 +104,7 @@ bool Map::read(std::string mapPath)
 	if (mapData.width == 0 | mapData.height == 0)
 		return false;
 
+	
 	map = new char*[mapData.height];
 	for (int i = 0; i < mapData.height; i++)
 	{
@@ -128,6 +136,9 @@ bool Map::read(std::string mapPath)
 		{
 			map[i][j] = line[j * 2];
 			map[i][j] = std::stoi(&map[i][j]);
+			if (map[i][j] == 0)
+			{
+			}
 		}
 
 		i++;
@@ -147,6 +158,18 @@ void Map::draw()
 			bitmap[h][w].draw();
 		}
 	}
+}
+
+bool Map::canBePassed(int x, int y)
+{
+	for (auto space : noSpace)
+	{
+		if (space.x1 < x & x < space.x2)
+			if (space.y1 < y & y < space.y2)
+				return false;
+	}
+
+	return true;
 }
 
 

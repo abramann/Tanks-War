@@ -19,11 +19,12 @@ Unit::~Unit()
 	release();
 }
 
-void Unit::initialize(int width, int height, int columns, int rows, bool _animate, float _updateDelay, float _health, float _speed, Image* _death, TextureManger* _textureManger, Graphics* _graphics)
+void Unit::initialize(int width, int height, int columns, int rows, bool _animate, float _updateDelay, float _health, float _speed, Image* _death, TextureManger* _textureManger, Map* _map, Graphics* _graphics)
 {
 	health = _health;
 	speed = _speed;
 	death = _death;
+	map = _map;
 	audio->initialize();
 	Image::initialize(width, height, columns, rows, false, _updateDelay, _textureManger, _graphics);
 	if (IsBadReadPtr(_death,sizeof(Image)))
@@ -99,6 +100,10 @@ void Unit::inputUpdate(float frameTime)
 
 void Unit::executeForward(float frameTime)
 {
+	int newY = spriteData.y -(speed * frameTime);
+	if (!map->canBePassed(spriteData.x, newY))
+		return;
+
 	yAdd(-(speed * frameTime));
 	if (playAudio)
 		audio->playCue(effect[EFFECTFORWARD]);
@@ -106,22 +111,32 @@ void Unit::executeForward(float frameTime)
 
 void Unit::executeBack(float frameTime)
 {
-	yAdd(speed * frameTime);
+	int newY = spriteData.y + (speed * frameTime);
+	if (!map->canBePassed(spriteData.x, newY))
+		return;
 
+	yAdd(speed * frameTime);
 	if (playAudio)
 		audio->playCue(effect[EFFECTBACK]);
 }
 
 void Unit::executeRight(float frameTime)
 {
+	int newX = spriteData.x + (speed * frameTime);
+	if (!map->canBePassed(newX, spriteData.y))
+		return;
+
 	xAdd(speed * frameTime);
-	
 	if (playAudio)
 		audio->playCue(effect[EFFECTRIGHT]);
 }
 
 void Unit::executeLeft(float frameTime)
 {
+	int newX = spriteData.x - (speed * frameTime);
+	if (!map->canBePassed(newX, spriteData.y))
+		return;
+
 	xAdd(-(speed * frameTime));
 	if (playAudio)
 		audio->playCue(effect[EFFECTLEFT]);

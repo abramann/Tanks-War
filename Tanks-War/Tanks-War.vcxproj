@@ -156,14 +156,13 @@
   <ItemGroup>
     <ClInclude Include="always.h" />
     <ClInclude Include="audio.h" />
-    <ClInclude Include="e100.h" />
     <ClInclude Include="fire.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameerror.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
-    <ClInclude Include="Map.h" />
+    <ClInclude Include="map.h" />
     <ClInclude Include="tank.h" />
     <ClInclude Include="tankswar.h" />
     <ClInclude Include="textdx.h" />
@@ -172,13 +171,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="audio.cpp" />
-    <ClCompile Include="e100.cpp" />
     <ClCompile Include="fire.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="input.cpp" />
-    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="map.cpp" />
     <ClCompile Include="tank.cpp" />
     <ClCompile Include="tankswar.cpp" />
     <ClCompile Include="textdx.cpp" />
