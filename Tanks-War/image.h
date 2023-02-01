@@ -13,13 +13,14 @@ public:
 	virtual void update(float frameTime);
 	virtual void draw();
 	virtual void release();
+	virtual void setXY(V2 xy) { setX(xy.x)->setY(xy.y); }
 	virtual Image* setX(int x) { spriteData.x = x; return this; }
 	virtual Image* setY(int y) { spriteData.y = y; return this; }
 	virtual void setImageWidth(int width)		{ spriteData.width = width; }
 	virtual void setImageHeight(int height)			{ spriteData.height = height; }
 	virtual void setFilterColor(COLOR filterColor)		{ spriteData.filterColor = filterColor; }
 	virtual void setAngle(float angle)		{ spriteData.angle = angle; }
-	virtual void setCenter(V2 center)		{ spriteData.center = center; }
+	// virtual void setCenter(V2 center)		{ spriteData.center = center; }
 	virtual void setRect(RECT rect)		{ spriteData.rect = rect; }
 	virtual void setScalling(float scalling);
 	virtual void setFrameDelay(float newFrameDelay)		{ frameDelay = newFrameDelay; }
@@ -41,7 +42,9 @@ public:
 	virtual int getTextureWidth()		{ return textureManger->getWidth(); }
 	virtual int getTextureHeight()		{ return textureManger->getWidth(); }
 	virtual double getAngle()		{ return spriteData.angle; }
-	virtual V2 getCenter()		{ return spriteData.center; }
+	virtual V2 getCenter() { return V2(getCenterX(), getCenterY()); }
+	virtual int getCenterX() { return spriteData.x + spriteData.width / 2; }
+	virtual int getCenterY() { return spriteData.y + spriteData.height / 2; }
 	virtual RECT getRect()		{ return spriteData.rect; }
 	virtual float getScalling()		{ return spriteData.scalling; }
 	virtual float getFrameDelay()		{ return frameDelay; }

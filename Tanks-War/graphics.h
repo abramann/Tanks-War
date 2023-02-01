@@ -6,6 +6,7 @@
 #include <d3dx9.h>
 
 #define V2 D3DXVECTOR2
+#define ZERO_V2(v2) (v2 == V2(0,0))
 #define COLOR D3DCOLOR
 #define COLOR_ARGB D3DCOLOR_ARGB
 #define COLOR_XRGB D3DCOLOR_XRGB

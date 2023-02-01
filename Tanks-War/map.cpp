@@ -160,19 +160,41 @@ void Map::draw()
 	}
 }
 
-bool Map::canBePassed(int x, int y)
+int Map::passX(int x, int x0, int y)
+{
+
+	for (auto space : noSpace)
+	{
+		if (space.x1 <= x & x <= space.x2)
+			if (space.y1 <= y & y <= space.y2)
+			{
+				if (abs(space.x2 - x0) < abs(space.x1 - x0))
+					return space.x2;
+				else
+					return space.x1;
+			}
+	}
+
+	return 0;
+}
+
+int Map::passY(int x, int y, int y0)
 {
 	for (auto space : noSpace)
 	{
-		if (space.x1 < x & x < space.x2)
-			if (space.y1 < y & y < space.y2)
-				return false;
+		
+		if (space.y1 <= y & y <= space.y2)
+			if (space.x1 <= x & x <= space.x2)
+			{
+				if (abs(space.y2 - y0) > abs(space.y1 - y0))
+					return space.y1;
+				else
+					return space.y2;
+			}
 	}
 
-	return true;
+	return 0;
 }
-
-
 
 
 
