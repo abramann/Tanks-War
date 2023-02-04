@@ -42,6 +42,7 @@ private:
 	TextureManger* texture;
 	Image* image;
 	Unit* unit;
+	Tank tank;
 	Map map;
 
 };

@@ -9,7 +9,7 @@ Tank::~Tank()
 	release();
 }
 
-void Tank::initialize(int width, int height, float _health, float _speed, TextureManger* _textureManger, Graphics* _graphics)
+void Tank::initialize(int width, int height, float _health, float _speed, Image* _death, Map* _map, TextureManger* _textureManger, Graphics* _graphics)
 {
 	/*
 	if (IsBadWritePtr(rect, TANK_RECTS))
@@ -23,7 +23,7 @@ void Tank::initialize(int width, int height, float _health, float _speed, Textur
 		rect[i].bottom = height;
 	}
 	*/
-	//Unit::initialize(width, height, 1, 1, false, 0, _health, _speed, _textureManger, _graphics);
+	Unit::initialize(width, height, 1, 1, false, 0, _health, _speed, _death, _map, _textureManger, _graphics);
 }
 
 void Tank::inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key, Key attack_key, TextureManger* _fireTex)
@@ -58,29 +58,50 @@ void Tank::inputUpdate(float frameTime)
 
 void Tank::release()
 {
-	SAFE_DELETE(rect);
+	//SAFE_DELETE(rect);
 }
 
 void Tank::executeForward(float frameTime)
 {
+	float powSin = getSinSign() * pow(sinA, 2);
+	float powCos = getCosSign() * pow(cosA, 2);
+	float extraX = -powSin * cos(spriteData.angle / 2)	*	spriteData.width;
+	float extraY = -powCos*sin(spriteData.angle / 2)	*	spriteData.height;
+	float x = spriteData.x + (speed * powSin);
+	float y = spriteData.y - (speed * powCos) - extraY;
+
+	x = map->passX(x, spriteData.x, y);
+	//x += speed/extraX;
+	setX(x);
+
+	y = map->passY(x, y, spriteData.y);
+	y += extraY;
+	setY(y);
+
+	/*
 	spriteData.x += cosA * speed * frameTime;
 	spriteData.y += sinA * speed * frameTime;
+	*/
 }
 
 void Tank::executeBack(float frameTime)
 {
-	spriteData.x -= frameTime * cosA * speed;
-	spriteData.y -= frameTime * sinA * speed;
+	float powSin = getSinSign() * pow(sinA, 2);
+	float powCos = getCosSign() * pow(cosA, 2);
+	float x = spriteData.x - (speed * powSin);
+	float y = spriteData.y + (speed * powCos);
+	setX(x)->setY(y);
+	return;
 }
 
 void Tank::executeRight(float frameTime)
 {
-	spriteData.angle += frameTime * PI / 128;
+	spriteData.angle +=  PI / 4;
 }
 
 void Tank::executeLeft(float frameTime)
 {
-	spriteData.angle -= frameTime * PI / 128;
+	spriteData.angle -=  PI / 4;
 }
 
 void Tank::executeAttack(float frameTime)

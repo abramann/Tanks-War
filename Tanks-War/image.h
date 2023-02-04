@@ -14,13 +14,13 @@ public:
 	virtual void draw();
 	virtual void release();
 	virtual void setXY(V2 xy) { setX(xy.x)->setY(xy.y); }
-	virtual Image* setX(int x) { spriteData.x = x; return this; }
-	virtual Image* setY(int y) { spriteData.y = y; return this; }
+	virtual Image* setX(float x) { spriteData.x = x; return this; }
+	virtual Image* setY(float y) { spriteData.y = y; return this; }
 	virtual void setImageWidth(int width)		{ spriteData.width = width; }
 	virtual void setImageHeight(int height)			{ spriteData.height = height; }
 	virtual void setFilterColor(COLOR filterColor)		{ spriteData.filterColor = filterColor; }
 	virtual void setAngle(float angle)		{ spriteData.angle = angle; }
-	// virtual void setCenter(V2 center)		{ spriteData.center = center; }
+	 virtual void setCenter(V2 center)		{ spriteData.center = center; }
 	virtual void setRect(RECT rect)		{ spriteData.rect = rect; }
 	virtual void setScalling(float scalling);
 	virtual void setFrameDelay(float newFrameDelay)		{ frameDelay = newFrameDelay; }

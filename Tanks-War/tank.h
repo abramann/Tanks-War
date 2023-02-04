@@ -28,7 +28,7 @@ public:
 
 	Tank();
 	~Tank();
-	virtual void initialize(int width, int height, float _health, float _speed, TextureManger* _textureManger, Graphics* _graphics);
+	virtual void initialize(int width, int height, float _health, float _speed, Image* _death, Map* _map, TextureManger* _textureManger, Graphics* _graphics);
 	virtual void inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key, Key attack_key, TextureManger* _fireTex);
 	virtual void audioInitialize(Effect _forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff, Effect shot_eff, Effect hit_eff);
 	virtual void inputUpdate(float frameTime);

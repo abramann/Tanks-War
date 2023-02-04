@@ -30,8 +30,8 @@ public:
 	virtual bool initialize(std::string mapPath, int bitmaps, TextureManger* _textureManger, Graphics* _graphics);
 	virtual bool read(std::string map);
 	virtual void draw();
-	int Map::passX(int x, int x0, int y);
-	int Map::passY(int x, int y, int y0);
+	virtual float passX(float x, float x0, float y);
+	virtual float passY(float x, float y, float y0);
 
 protected:
 

@@ -26,10 +26,11 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
 	audio->playCue("Theme");
 	
 	image[IMAGE_EXPLOSION].initialize(128, 128, 8, 7, true, 200, &texture[TEXTURE_EXPLOSION], graphics);
-	unit[UNIT_TANK].initialize(60, 60, 1, 1, false, 0, 100, 0.2f, &image[IMAGE_EXPLOSION], &texture[TEXTURE_PLAYERTANK],&map, graphics);
-	unit[UNIT_TANK].inputInitialize(input, W_KEY, S_KEY, D_KEY, A_KEY);
-	unit[UNIT_TANK].setX(500)->setY(500);
+	tank.initialize(0, 0, 9.0f, 5.5f, &image[IMAGE_EXPLOSION], &map, &texture[TEXTURE_PLAYERTANK], graphics);
+	tank.inputInitialize(input, W_KEY, S_KEY, D_KEY, A_KEY, K_KEY, &texture[TEXTURE_EXPLOSION]);
+	tank.setX(GAME_WIDTH / 2)->setY(GAME_HEIGHT / 2)->setFilterColor(COLOR_XRGB( 255, 100, 100));
 	map.initialize("map.txt", 2, &texture[TEXTURE_MAP], graphics);
+	
 }
 
 void TanksWar::collision()
@@ -39,18 +40,15 @@ void TanksWar::collision()
 
 void TanksWar::update()
 {
-	image[IMAGE_MAP].update(timeDelta);
-	if (input->isKeyIn(O_KEY))
-		unit[UNIT_TANK].setHealth(0);
 
-	unit[UNIT_TANK].update(timeDelta);
+	tank.update(timeDelta);
 }
 
 void TanksWar::render()
 {
 	map.draw();
-	unit[UNIT_TANK].setScalling(1.0f);
-	unit[UNIT_TANK].draw();
+	tank.setScalling(1.0f);
+	tank.draw();
 }
 
 void TanksWar::onResetDevice()

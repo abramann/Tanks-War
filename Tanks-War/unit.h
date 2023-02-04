@@ -31,7 +31,7 @@ public:
 
 	Unit();
 	~Unit();
-	virtual void initialize(int width, int height, int columns, int rows, bool _animate, float _updateDelay, float _health, float _speed, Image* _death, TextureManger* _textureManger, Map* _map, Graphics* _graphics);
+	virtual void initialize(int width, int height, int columns, int rows, bool _animate, float _updateDelay, float _health, float _speed, Image* _death, Map* _map, TextureManger* _textureManger, Graphics* _graphics);
 	virtual void inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key);
 	virtual void audioInitialize(Effect _forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff);
 	virtual void update(float frameTime);
@@ -54,9 +54,12 @@ public:
 
 	virtual float getHealth() { return health; }
 	virtual float getSpeed() { return speed; }
+
 	virtual bool getUpdateInput() { return updateInput; }
-	float getAngleSin() { return sinA; }
-	float getAngleCos() { return cosA; }
+	float getSin() { return sinA; }
+	float getCos() { return cosA; }
+	int getSinSign() { if (sinA > 0) return 1; if (sinA < 0)return -1; return 0; }
+	int getCosSign() { if (cosA > 0) return 1; if (cosA < 0)return -1; return 0; }
 
 private:
 

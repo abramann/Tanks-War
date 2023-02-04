@@ -14,8 +14,8 @@
 
 extern UINT64 frameCounter;
 
-const UINT GAME_WIDTH = 1024;               // width of game in pixels
-const UINT GAME_HEIGHT = 768;               // height of game in pixels
+const UINT GAME_WIDTH = 640;               // width of game in pixels
+const UINT GAME_HEIGHT = 480;               // height of game in pixels
 
 // game
 const double PI = 3.14159265;

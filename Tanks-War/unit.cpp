@@ -19,7 +19,7 @@ Unit::~Unit()
 	release();
 }
 
-void Unit::initialize(int width, int height, int columns, int rows, bool _animate, float _updateDelay, float _health, float _speed, Image* _death, TextureManger* _textureManger, Map* _map, Graphics* _graphics)
+void Unit::initialize(int width, int height, int columns, int rows, bool _animate, float _updateDelay, float _health, float _speed, Image* _death, Map* _map, TextureManger* _textureManger, Graphics* _graphics)
 {
 	health = _health;
 	speed = _speed;
@@ -100,65 +100,27 @@ void Unit::inputUpdate(float frameTime)
 
 void Unit::executeForward(float frameTime)
 {
-	int newY = spriteData.y - (speed * frameTime);
-	newY = map->passY(spriteData.x + spriteData.width / 2, newY, spriteData.y);
-	if (newY != 0)
-	{
-		setY(newY);
-	}
-	else
-	{
-		yAdd(-(speed * frameTime));
-	}
-
-	yAdd(-(speed * frameTime));
+	int y = spriteData.y - (speed * frameTime);
+	y = map->passY(spriteData.x + spriteData.width / 2, y, spriteData.y);
+	setY(y);
 	if (playAudio)
 		audio->playCue(effect[EFFECTFORWARD]);
 }
 
 void Unit::executeBack(float frameTime)
 {
-	int newY = getCenterX() - (speed * frameTime) + spriteData.height / 2;
-	newY = map->passY(spriteData.x, newY, spriteData.y);
-	if (newY != 0)
-	{
-		setY(newY);
-	}
-	else
-	{
-		yAdd(+(speed * frameTime));
-	}
-	/*
-	int newY = getCenterY() + (speed * frameTime);
-	if (!map->canBePassed(spriteData.x, newY + spriteData.height / 2))
-		return;
-
-	yAdd(speed * frameTime);
-	*/
+	int y = spriteData.y + (speed * frameTime) + spriteData.height;
+	y = map->passY(spriteData.x, y, spriteData.y) - spriteData.height;
+	setY(y);
 	if (playAudio)
 		audio->playCue(effect[EFFECTBACK]);
 }
 
 void Unit::executeRight(float frameTime)
 {
-	int newX = spriteData.x + spriteData.width + (frameTime*speed);
-	newX = map->passX(newX, spriteData.x, spriteData.y);
-	if (newX != 0)
-	{
-		newX -= spriteData.width;
-		setX(newX);
-	}
-	else
-	{
-		xAdd(+(speed * frameTime));
-	}
-	/*
-	int newX = getCenterX() + (speed * frameTime);
-	if (!map->canBePassed(newX + spriteData.width / 2, spriteData.y))
-		return;
-
-	xAdd(speed * frameTime);
-	*/
+	int x = spriteData.x + (frameTime*speed) + spriteData.width;
+	x = map->passX(x, spriteData.x, spriteData.y) - spriteData.width;
+	setX(x);
 	if (playAudio)
 		audio->playCue(effect[EFFECTRIGHT]);
 }
@@ -167,20 +129,14 @@ void Unit::executeLeft(float frameTime)
 {
 	int newX = spriteData.x - (speed * frameTime);
 	newX = map->passX(newX, spriteData.x, spriteData.y);
-	if (newX != 0)
-	{
-		setX(newX);
-	}
-	else
-	{
-		xAdd(-(speed * frameTime));
-	}
+	setX(newX);
 	if (playAudio)
 		audio->playCue(effect[EFFECTLEFT]);
 }
 
 void Unit::executeDeath()
 {
+	return;
 	handleInput = false;
 	deathExecuted = true;
 	int currentX = spriteData.x;

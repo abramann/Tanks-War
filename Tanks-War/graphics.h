@@ -18,7 +18,7 @@ struct SpriteData
 	LPDIRECT3DTEXTURE9 texture;
 	int width, height;
 	int textureWidth, textureHeight;
-	int x, y;
+	float x, y;
 	int columns, rows;
 	float angle;
 	float scalling;

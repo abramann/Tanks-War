@@ -31,10 +31,6 @@ bool Map::initialize(std::string mapPath, int bitmaps, TextureManger* _textureMa
 
 	mapData.bitmapData.width = textureManger->getWidth() / bitmaps;
 	mapData.bitmapData.height = textureManger->getHeight();
-		
-	// temp code
-	mapData.bitmapData.width = 50;
-	mapData.bitmapData.height = 50;
 	///
 	bitmap = new Image*[mapData.height];
 	for (int i = 0; i < mapData.height; i++)
@@ -160,9 +156,8 @@ void Map::draw()
 	}
 }
 
-int Map::passX(int x, int x0, int y)
+float Map::passX(float x, float x0, float y)
 {
-
 	for (auto space : noSpace)
 	{
 		if (space.x1 <= x & x <= space.x2)
@@ -175,14 +170,31 @@ int Map::passX(int x, int x0, int y)
 			}
 	}
 
-	return 0;
+	return x;
 }
 
+float Map::passY(float x, float y, float y0)
+{
+	for (auto space : noSpace)
+	{
+		if (space.x1 <= x & x <= space.x2)
+			if (space.y1 <= y & y <= space.y2)
+			{
+				if (abs(space.y2 - y0) > abs(space.y1 - y0))
+					return space.y1;
+				else
+					return space.y2;
+			}
+	}
+
+	return y;
+}
+
+/*
 int Map::passY(int x, int y, int y0)
 {
 	for (auto space : noSpace)
 	{
-		
 		if (space.y1 <= y & y <= space.y2)
 			if (space.x1 <= x & x <= space.x2)
 			{
@@ -193,8 +205,8 @@ int Map::passY(int x, int y, int y0)
 			}
 	}
 
-	return 0;
+	return y;
 }
-
+*/
 
 
