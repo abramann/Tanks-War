@@ -4,7 +4,6 @@
 #include "always.h"
 #include <dinput.h>
 
-#define Key BYTE
 #define ZERO_KEY DIK_0
 #define ONE_KEY DIK_1
 #define TWO_KEY DIK_2
@@ -48,6 +47,8 @@
 #define RSHIFT_KEY DIK_RSHIFT
 #define LSHIFT_KEY DIK_LSHIFT
 
+typedef BYTE Key;
+
 class Input
 {
 
@@ -65,9 +66,9 @@ public:
 
 private:
 
-	LPDIRECTINPUT8 directInput;
-	LPDIRECTINPUTDEVICE8 keyboard, mouse;
-	BYTE keyboardState[256];
+	LPDIRECTINPUT8 m_lpDirectInput;
+	LPDIRECTINPUTDEVICE8 m_lpKeyboard, m_lpMouse;
+	BYTE m_keyboardState[256];
 
 };
 

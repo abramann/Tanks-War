@@ -48,9 +48,6 @@
     <ClInclude Include="tankswar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="textdx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="gameerror.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -90,9 +87,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tankswar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="textdx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="map.cpp">

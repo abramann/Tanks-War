@@ -4,44 +4,49 @@
 #include "image.h"
 #include <vector>
 
-struct Space {
-	int x1, y1;
-	int x2, y2;
+struct Space
+{
+	int32_t x1, y1;
+	int32_t x2, y2;
 };
 
-struct BitmapData {
-	int bitmaps;
-	int width, height;
+struct BitmapData
+{
+	uint16_t width, height;
 };
 
 struct MapData
 {
-	std::string path;
-	int width, height;
-	BitmapData bitmapData;
+	std::string name;
+	uint16_t width, height;
+	uint8_t bitmaps;
+	std::vector<uint8_t> preventedBM;
 };
+
+constexpr uint32_t UNDEFINED_POSITION = 0xFFFF;
 
 class Map
 {
+
 public:
 
 	Map();
 	~Map();
-	virtual bool initialize(std::string mapPath, int bitmaps, TextureManger* _textureManger, Graphics* _graphics);
-	virtual bool read(std::string map);
+	virtual bool initialize(const char* path, TextureManger* textureManger, Graphics* graphics);
+	virtual bool read(const char* map);
 	virtual void draw();
-	virtual float passX(float x, float x0, float y);
-	virtual float passY(float x, float y, float y0);
+	virtual const float passX(float x, float x0, float y);
+	virtual const float passY(float x, float y, float y0);
 
 protected:
 
-	Image** bitmap;
-	Graphics* graphics;
-	TextureManger* textureManger;
-	std::vector<Space> noSpace;
-
-	MapData mapData;
-	char **map;
+	Graphics* m_pGraphics;
+	TextureManger* m_pTextureManger;
+	std::vector<Space> m_noSpace;
+	MapData m_mapData;
+	BitmapData m_bitmapData;
+	char **m_ppMap;
+	std::vector<uint32_t> m_startVertex, m_lenVertex;
 
 };
 

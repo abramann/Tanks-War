@@ -1,17 +1,10 @@
 #include "unit.h"
 
-Unit::Unit()
+Unit::Unit() : m_health(0), m_speed(0), m_sinA(0),
+	m_cosA(0), m_playAudio(false), m_handleInput(false), m_deathExecuted(false),
+	m_render(true)
 {
-	audio = new Audio;
-	health = 0;
-	speed = 0;
-	sinA = 0; cosA = 0;
-	key = 0;
-	effect = 0;
-	playAudio = false;
-	handleInput = false;
-	deathExecuted = false;
-	render = true;
+	m_audio = new Audio;
 }
 
 Unit::~Unit()
@@ -19,161 +12,155 @@ Unit::~Unit()
 	release();
 }
 
-void Unit::initialize(int width, int height, int columns, int rows, bool _animate, float _updateDelay, float _health, float _speed, Image* _death, Map* _map, TextureManger* _textureManger, Graphics* _graphics)
+void Unit::initialize(int width, int height, int columns, int rows, bool animate, float updateDelay, float health, float speed, Image* death, Map* map, TextureManger* textureManger, Graphics* graphics)
 {
-	health = _health;
-	speed = _speed;
-	death = _death;
-	map = _map;
-	audio->initialize();
-	Image::initialize(width, height, columns, rows, false, _updateDelay, _textureManger, _graphics);
-	if (IsBadReadPtr(_death,sizeof(Image)))
+	m_health = health;
+	m_speed = speed;
+	m_death = death;
+	m_map = map;
+	m_audio->initialize();
+	Image::initialize(width, height, columns, rows, false, updateDelay, textureManger, graphics);
+	if (IsBadReadPtr(death,sizeof(Image)))
 		return;
 }
 
-void Unit::inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key)
+void Unit::inputInitialize(Input* input, Key forward_key, Key back_key, Key right_key, Key left_key)
 {
-	handleInput = true;
-	input = _input;
-	if (IsBadReadPtr(key, UNIT_KEYS))
-		key = new Key[UNIT_KEYS];
-
-	key[KEYFORWARD] = forward_key;
-	key[KEYBACK] = back_key;
-	key[KEYRIGHT] = right_key;
-	key[KEYLEFT] = left_key;
+	m_handleInput = true;
+	m_input = input;
+	m_key.push_back(forward_key);
+	m_key.push_back(back_key);
+	m_key.push_back(right_key);
+	m_key.push_back(left_key);
 }
 
 void Unit::audioInitialize(Effect forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff)
 {
-	playAudio = true;
-	if (IsBadWritePtr(effect, UNIT_EFFECTS))
-		effect = new Effect[UNIT_EFFECTS];
-
-	effect[EFFECTFORWARD] = forward_eff;
-	effect[EFFECTBACK] = back_eff;
-	effect[EFFECTRIGHT] = right_eff;
-	effect[EFFECTLEFT] = left_eff;
-	effect[EFFECTDEATH] = death_eff;
+	m_playAudio = true;
+	m_effect.push_back(forward_eff); // EFFECTFORWARD
+	m_effect.push_back(back_eff);	// EFFECTBACK
+	m_effect.push_back(right_eff);  // EFFECTRIGHT
+	m_effect.push_back(left_eff);	// EFFECTLEFT
+	m_effect.push_back(death_eff);	// EFFECTDEATH
 }
 
 void Unit::update(float frameTime)
 {
-	if (!deathExecuted)
+	if (!m_deathExecuted)
 	{
-		if (health <= 0)
+		if (m_health <= 0)
 			executeDeath();
 
 		mathUpdate();
 	}
-	else if (column == spriteData.columns && row == spriteData.rows)
+	else if (m_column == m_spriteData.columns & m_row == m_spriteData.rows)
 	{
-		render = false;
+		m_render = false;
 		return;
 	}
-	if (handleInput)
+	if (m_handleInput)
 		inputUpdate(frameTime);
 
-	if (playAudio)
-		audio->run();
+	if (m_playAudio)
+		m_audio->run();
 
 	Image::update(frameTime);
 }
 
 void Unit::draw()
 {
-	if (render)
+	if (m_render)
 		Image::draw();
 }
 
 void Unit::inputUpdate(float frameTime)
 {
-	if (input->isKeyIn(key[KEYFORWARD]))
+	if (m_input->isKeyIn(m_key[KEYFORWARD]))
 		executeForward(frameTime);
-	if (input->isKeyIn(key[KEYBACK]))
+	if (m_input->isKeyIn(m_key[KEYBACK]))
 		executeBack(frameTime);
-	if (input->isKeyIn(key[KEYRIGHT]))
+	if (m_input->isKeyIn(m_key[KEYRIGHT]))
 		executeRight(frameTime);
-	if (input->isKeyIn(key[KEYLEFT]))
+	if (m_input->isKeyIn(m_key[KEYLEFT]))
 		executeLeft(frameTime);
 }
 
 void Unit::executeForward(float frameTime)
 {
-	int y = spriteData.y - (speed * frameTime);
-	y = map->passY(spriteData.x + spriteData.width / 2, y, spriteData.y);
+	int y = m_spriteData.y - (m_speed * frameTime);
+	y = m_map->passY(m_spriteData.x + m_spriteData.width / 2, y, m_spriteData.y);
 	setY(y);
-	if (playAudio)
-		audio->playCue(effect[EFFECTFORWARD]);
+	if (m_playAudio)
+		m_audio->playCue(m_effect[EFFECTFORWARD]);
 }
 
 void Unit::executeBack(float frameTime)
 {
-	int y = spriteData.y + (speed * frameTime) + spriteData.height;
-	y = map->passY(spriteData.x, y, spriteData.y) - spriteData.height;
+	int y = m_spriteData.y + (m_speed * frameTime) + m_spriteData.height;
+	y = m_map->passY(m_spriteData.x, y, m_spriteData.y) - m_spriteData.height;
 	setY(y);
-	if (playAudio)
-		audio->playCue(effect[EFFECTBACK]);
+	if (m_playAudio)
+		m_audio->playCue(m_effect[EFFECTBACK]);
 }
 
 void Unit::executeRight(float frameTime)
 {
-	int x = spriteData.x + (frameTime*speed) + spriteData.width;
-	x = map->passX(x, spriteData.x, spriteData.y) - spriteData.width;
+	int x = m_spriteData.x + (frameTime*m_speed) + m_spriteData.width;
+	x = m_map->passX(x, m_spriteData.x, m_spriteData.y) - m_spriteData.width;
 	setX(x);
-	if (playAudio)
-		audio->playCue(effect[EFFECTRIGHT]);
+	if (m_playAudio)
+		m_audio->playCue(m_effect[EFFECTRIGHT]);
 }
 
 void Unit::executeLeft(float frameTime)
 {
-	int newX = spriteData.x - (speed * frameTime);
-	newX = map->passX(newX, spriteData.x, spriteData.y);
+	int newX = m_spriteData.x - (m_speed * frameTime);
+	newX = m_map->passX(newX, m_spriteData.x, m_spriteData.y);
 	setX(newX);
-	if (playAudio)
-		audio->playCue(effect[EFFECTLEFT]);
+	if (m_playAudio)
+		m_audio->playCue(m_effect[EFFECTLEFT]);
 }
 
 void Unit::executeDeath()
 {
 	return;
-	handleInput = false;
-	deathExecuted = true;
-	int currentX = spriteData.x;
-	int currentY = spriteData.y;
-	spriteData = death->getSpriteData();
-	spriteData.x = currentX;
-	spriteData.y = currentY;
+	m_handleInput = false;
+	m_deathExecuted = true;
+	int currentX = m_spriteData.x;
+	int currentY = m_spriteData.y;
+	m_spriteData = m_death->getSpriteData();
+	m_spriteData.x = currentX;
+	m_spriteData.y = currentY;
 	
-	animate = death->isAnimated();
+	m_animate = m_death->isAnimated();
 	
-	if (playAudio)
-		audio->playCue(effect[EFFECTDEATH]);
+	if (m_playAudio)
+		m_audio->playCue(m_effect[EFFECTDEATH]);
 	
 }
 
 void Unit::release()
 {
-	SAFE_DELETE(audio);
-	SAFE_DELETE_ARRAY(key);
-	SAFE_DELETE_ARRAY(effect);
+	SAFE_DELETE(m_audio);
+	//SAFE_DELETE_ARRAY(m_key);
+	//SAFE_DELETE_ARRAY(m_effect);
 }
 
 void Unit::mathUpdate()
 {
-	sinA = sin(getAngle());
-	if (sinA > 1)
-		sinA = 1;
-	else if (sinA < -1)
-		sinA = -1;
-	else if (abs(sinA) < 0.0001)
-		sinA = 0;
-	cosA = cos(getAngle());
-	if (cosA > 1)
-		cosA = 1;
-	else if (cosA < -1)
-		cosA = -1;
-	else if (abs(cosA) < 0.0001)
-		cosA = 0;
+	m_sinA = sin(getAngle());
+	if (m_sinA > 1)
+		m_sinA = 1;
+	else if (m_sinA < -1)
+		m_sinA = -1;
+	else if (abs(m_sinA) < 0.0001)
+		m_sinA = 0;
+	m_cosA = cos(getAngle());
+	if (m_cosA > 1)
+		m_cosA = 1;
+	else if (m_cosA < -1)
+		m_cosA = -1;
+	else if (abs(m_cosA) < 0.0001)
+		m_cosA = 0;
 }
 

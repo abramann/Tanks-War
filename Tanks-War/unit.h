@@ -43,23 +43,23 @@ public:
 	virtual void executeRight(float frameTime);
 	virtual void executeLeft(float frameTime);
 	virtual void executeDeath();
-	virtual void healthIncrease(float increase) { health += increase; }
-	virtual void healthDecrease(float decrease) { health -= decrease; }
-	virtual void speedIncrease(float increase) { speed += increase; }
-	virtual void speedDecrease(float decrease) { speed -= decrease; }
+	virtual void healthIncrease(float increase) { m_health += increase; }
+	virtual void healthDecrease(float decrease) { m_health -= decrease; }
+	virtual void speedIncrease(float increase) { m_speed += increase; }
+	virtual void speedDecrease(float decrease) { m_speed -= decrease; }
 
-	virtual void setHealth(float _health) { health = _health; }
-	virtual void setSpeed(float _speed) { speed = _speed; }
-	virtual void setUpdateInput(bool _updateInput) { updateInput = _updateInput; }
+	virtual void setHealth(float health) { m_health = health; }
+	virtual void setSpeed(float speed) { m_speed = speed; }
+	virtual void setUpdateInput(bool updateInput) { m_updateInput = updateInput; }
 
-	virtual float getHealth() { return health; }
-	virtual float getSpeed() { return speed; }
+	virtual float getHealth() { return m_health; }
+	virtual float getSpeed() { return m_speed; }
 
-	virtual bool getUpdateInput() { return updateInput; }
-	float getSin() { return sinA; }
-	float getCos() { return cosA; }
-	int getSinSign() { if (sinA > 0) return 1; if (sinA < 0)return -1; return 0; }
-	int getCosSign() { if (cosA > 0) return 1; if (cosA < 0)return -1; return 0; }
+	virtual bool getUpdateInput() { return m_updateInput; }
+	float getSin() { return m_sinA; }
+	float getCos() { return m_cosA; }
+	int getSinSign() { return (m_sinA < 0) ? -1 : 1; }
+	int getCosSign() { return (m_cosA < 0) ? -1 : 1; }
 
 private:
 
@@ -67,20 +67,20 @@ private:
 
 protected:
 	
-	Audio* audio;
-	Input* input;
-	Image* death;
-	Key* key;
-	Effect* effect;
-	Map* map;
+	Audio* m_audio;
+	Input* m_input;
+	Image* m_death;
+	std::vector<Key> m_key;
+	std::vector<Effect> m_effect;
+	Map* m_map;
 
-	bool render;
-	float health, speed;
-	bool updateInput;
-	bool deathExecuted;
-	float sinA, cosA;
-	bool playAudio;
-	bool handleInput;
+	bool m_render;
+	float m_health, m_speed;
+	bool m_updateInput;
+	bool m_deathExecuted;
+	float m_sinA, m_cosA;
+	bool m_playAudio;
+	bool m_handleInput;
 };
 
 

@@ -1,20 +1,17 @@
 #include "game.h"
 
-Game::Game()
+Game::Game() : m_timeDelta(0)
 {
-	graphics = new Graphics;
-	input = new Input;
-	audio = new Audio;
-	hWnd = NULL;
-	fullscreen = NULL;
-	timeDelta = 0;
+	m_pGraphics = new Graphics;
+	m_pInput = new Input;
+	m_pAudio = new Audio;
 }
 
 Game::~Game()
 {
-	SAFE_DELETE(graphics);
-	SAFE_DELETE(input);
-	SAFE_DELETE(audio);
+	SAFE_DELETE(m_pGraphics);
+	SAFE_DELETE(m_pInput);
+	SAFE_DELETE(m_pAudio);
 }
 
 LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -25,26 +22,23 @@ LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_KEYDOWN:
-		input->scan();
-		if (input->isKeyIn(ESCAPE_KEY))
+		m_pInput->scan();
+		if (m_pInput->isKeyIn(ESCAPE_KEY))
 			PostQuitMessage(0);
 		break;
 	}
 	return DefWindowProcA(hWnd, msg, wParam, lParam);
 }
 
-void Game::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
+void Game::initialize(HINSTANCE hInstance, HWND hWnd, bool fullscreen)
 {
-	hWnd = _hWnd;
-	fullscreen = _fullscreen;
-
-	if(!graphics->initialize(hWnd, fullscreen))
-		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize graphics");
-	if(!input->initialize(hInstance, hWnd))
-		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize input");
-	input->scan();
-	if (!audio->initialize())
-		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize audio");
+	if(!m_pGraphics->initialize(hWnd, fullscreen))
+		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pGraphics");
+	if(!m_pInput->initialize(hInstance, hWnd))
+		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pInput");
+	m_pInput->scan();
+	if (!m_pAudio->initialize())
+		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pAudio");
 }
 
 void Game::run()
@@ -52,39 +46,39 @@ void Game::run()
 	updateGame();
 	collision();
 	renderGame();
-	audio->run();
-	input->reset();
+	m_pAudio->run();
+	m_pInput->reset();
 }
 
 void Game::renderGame()
 {
-	graphics->begin();
+	m_pGraphics->begin();
 	render();
-	graphics->end();
+	m_pGraphics->end();
 	handleLostGraphicsDevice();
-	graphics->showBackbuffer();
+	m_pGraphics->showBackbuffer();
 }
 
 void Game::updateGame()
 {
-	timeDelta = timeGetTime() - timeDelta;
- 	if (timeDelta < MIN_FRAME_TIME)
+	m_timeDelta = timeGetTime() - m_timeDelta;
+ 	if (m_timeDelta < MIN_FRAME_TIME)
 	{
-		Sleep(MIN_FRAME_TIME - timeDelta);
-		timeDelta = MIN_FRAME_TIME;
+		Sleep(MIN_FRAME_TIME - m_timeDelta);
+		m_timeDelta = MIN_FRAME_TIME;
 	}
-	else if (timeDelta > MAX_FRAME_TIME)
+	else if (m_timeDelta > MAX_FRAME_TIME)
 	{
-		timeDelta = MAX_FRAME_TIME;
+		m_timeDelta = MAX_FRAME_TIME;
 	}
 
 	update();
-	timeDelta = timeGetTime();
+	m_timeDelta = timeGetTime();
 }
 
 void Game::handleLostGraphicsDevice()
 {
-	HRESULT hr = graphics->getDeviceState();
+	HRESULT hr = m_pGraphics->getDeviceState();
 	if (FAILED(hr))
 	{
 		if (hr == D3DERR_DEVICELOST)
@@ -95,7 +89,7 @@ void Game::handleLostGraphicsDevice()
 		else if (hr == D3DERR_DEVICENOTRESET)
 		{
 			onLostDevice();
-			HRESULT hr = graphics->reset();
+			HRESULT hr = m_pGraphics->reset();
 			if (FAILED(hr))
 				return;
 			onResetDevice();

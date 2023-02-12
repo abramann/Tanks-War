@@ -1,10 +1,8 @@
 #include "texture.h"
 
-TextureManger::TextureManger()
+TextureManger::TextureManger() : width(0), height(0), texture(NULL),
+	transpanceyColor(0)
 {
-	width = 0; height = 0;
-	texture = NULL;
-	transpanceyColor = 0;
 }
 
 TextureManger::~TextureManger()

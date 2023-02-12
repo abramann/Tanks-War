@@ -35,10 +35,16 @@ inline void waitTime(float time)
 
 inline void waitFrame(int framesWait)
 {
-	framesWait += frameCounter;
+	framesWait += ::frameCounter;
 	while (true)
-		if (framesWait < frameCounter)
+		if (framesWait < ::frameCounter)
 			break;
+}
+
+inline std::string getTargetEqualStringValue(std::string str)
+{
+	str.erase(0, str.find('=') + 1);
+	return str;
 }
 
 //=============================================================================

@@ -121,7 +121,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
 
 	HWND hWnd = NULL;
-	fullscreen = isFullScreen();
+	fullscreen = false;// = isFullScreen();
 	if (!CreateMainWindow(hWnd, hInstance, nCmdShow))
 	{
 		message("CreateMainWindow() failed !", MB_OK);
@@ -132,8 +132,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG msg;
 	try
 	{
+		double t = ::timeGetTime();
 		game->initialize(hInstance, hWnd, fullscreen);
-
+		t = ::timeGetTime() - t;
 		while (true)
 		{
 			// PeekMessage,non-blocking method for checking for Windows messages.

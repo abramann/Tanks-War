@@ -165,7 +165,6 @@
     <ClInclude Include="map.h" />
     <ClInclude Include="tank.h" />
     <ClInclude Include="tankswar.h" />
-    <ClInclude Include="textdx.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="unit.h" />
   </ItemGroup>
@@ -179,7 +178,6 @@
     <ClCompile Include="map.cpp" />
     <ClCompile Include="tank.cpp" />
     <ClCompile Include="tankswar.cpp" />
-    <ClCompile Include="textdx.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="unit.cpp" />
     <ClCompile Include="winmain.cpp" />
