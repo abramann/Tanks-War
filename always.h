@@ -11,11 +11,12 @@
 
 #include "gameerror.h"
 #include <windows.h>
+//#include <fstream>
 
 extern UINT64 frameCounter;
 
-const UINT GAME_WIDTH = 640;               // width of game in pixels
-const UINT GAME_HEIGHT = 480;               // height of game in pixels
+const uint16_t GAME_WIDTH = 800;               // width of game in pixels
+const uint16_t GAME_HEIGHT = 600;               // height of game in pixels
 
 // game
 const double PI = 3.14159265;
@@ -35,16 +36,29 @@ inline void waitTime(float time)
 
 inline void waitFrame(int framesWait)
 {
-	framesWait += frameCounter;
+	framesWait += ::frameCounter;
 	while (true)
-		if (framesWait < frameCounter)
+		if (framesWait < ::frameCounter)
 			break;
 }
 
-inline int getValueFromString(std::string str)
+inline std::string getTargetEqualStringValue(std::string str)
 {
 	str.erase(0, str.find('=') + 1);
-	return std::stoi(str.c_str());
+	return str;
+}
+
+inline int8_t sign(float value)
+{
+	return (value >= 0) ? 1 : -1;
+}
+
+inline float _round(float value)
+{
+	float rValue = std::ceil(value * 10000) / 10000;
+	if (abs(rValue) > 1)
+		return sign(rValue) * 1;
+	return rValue;
 }
 
 //=============================================================================

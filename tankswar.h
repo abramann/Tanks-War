@@ -6,19 +6,20 @@
 #include "tank.h"
 #include "map.h"
 
-#define TEXTURES			    4
+#define TEXTURES			    5
 #define TEXTURE_PLAYERTANK	    0
 #define TEXTURE_EXPLOSION	    1
 #define TEXTURE_BM0				2
 #define TEXTURE_BM1 			3
+#define TEXTURE_FIRE	4
 #define IMAGES 1
 #define IMAGE_EXPLOSION 0
 #define UNITS 1
 #define UNIT_TANK 0
 
-static std::string file[] = { "Data\\Texture\\Tank\\player-tank.png",
-"Data\\Texture\\Tank\\explosion_animation.png" ,
- "Data\\Texture\\bm0.jpg", "Data\\Texture\\bm1.jpg" };
+static std::string file[] = { "Assets\\Texture\\player-tank.png",
+"Assets\\Texture\\explosion-animation.png" ,
+ "Assets\\Texture\\bm0.jpg", "Assets\\Texture\\bm1.jpg","Assets\\Texture\\bullet_6.png" };
 
 class TanksWar : public Game
 {
@@ -26,7 +27,7 @@ public:
 
 	TanksWar();
 	~TanksWar();
-	void initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen);
+	void initialize(HINSTANCE hInstance, HWND hWnd, bool fullscreen);
 	void update();
 	void collision();
 	void render();
@@ -38,7 +39,7 @@ private:
 	TextureManger* texture;
 	Image* image;
 	Unit* unit;
-	Tank tank;
+	Tank* tank;
 	Map map;
 
 };

@@ -2,17 +2,19 @@
 // Copyright (c) 2011 by: 
 // Charles Kelly
 // audio.h v1.0
-
 #ifndef _AUDIO_H                // Prevent multiple definitions if this 
 #define _AUDIO_H                // file is included in more than one place
 #define WIN32_LEAN_AND_MEAN
-#define Effect std::string
-
-constexpr auto WAVE_BANK = "Data//Audio//Win//Wave Bank.xwb";
-constexpr auto SOUND_BANK = "Data//Audio//Win//Sound Bank.xsb";
-
 #include <xact3.h>
 #include "always.h"
+
+
+typedef std::string Effect;
+
+constexpr auto WAVE_BANK = "Assets//Audio//Win//Wave Bank.xwb";
+constexpr auto SOUND_BANK = "Assets//Audio//Win//Sound Bank.xsb";
+
+
 
 class Audio
 {

@@ -3,10 +3,9 @@
 #include "always.h"
 #include "graphics.h"
 #include "input.h"
-#include "texture.h"
+#include "texturemanger.h"
 #include "image.h"
 #include "audio.h"
-#include "textDX.h"
 #include <timeapi.h>
 
 class Game
@@ -31,19 +30,17 @@ public:
 	virtual void update() = 0;
 	virtual void render() = 0;
 
-	Graphics* getGraphics()	{ return graphics; }
-	Input* getInput()	{ return input; }
-	Audio* getAudio()	{ return audio; }
+	Graphics* getGraphics()	{ return m_pGraphics; }
+	Input* getInput()	{ return m_pInput; }
+	Audio* getAudio()	{ return m_pAudio; }
 
 protected:
 
-	Graphics* graphics;
-	Input* input;
-	Audio* audio;
+	Graphics* m_pGraphics;
+	Input* m_pInput;
+	Audio* m_pAudio;
 
-	HWND hWnd;
-	bool fullscreen;
-	DWORD timeDelta;
+	DWORD m_timeDelta;
 
 };
 

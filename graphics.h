@@ -17,18 +17,19 @@ struct TextureVertices
 	Vertex v4, v5, v6;
 };
 
-#define V2 D3DXVECTOR2
 #define ZERO_V2(v2) (v2 == V2(0,0))
-#define COLOR D3DCOLOR
 #define COLOR_ARGB D3DCOLOR_ARGB
 #define COLOR_XRGB D3DCOLOR_XRGB
+
+typedef D3DCOLOR Color;
+typedef D3DXVECTOR2 V2;
 
 constexpr auto  VERTEX_FVF = D3DFVF_XYZRHW | D3DFVF_TEX1;
 constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
 
 struct SpriteData
 {
-	LPDIRECT3DTEXTURE9 texture;
+	LPDIRECT3DTEXTURE9 lpTexture;
 	int width, height;
 	int textureWidth, textureHeight;
 	float x, y;
@@ -36,7 +37,7 @@ struct SpriteData
 	float angle;
 	float scalling;
 	RECT rect;
-	COLOR filterColor;
+	Color filterColor;
 	V2 center;
 };
 
@@ -46,23 +47,23 @@ public:
 
 	Graphics();
 	~Graphics();
-	bool initialize(HWND _hWnd, bool _fullscreen);
+	bool initialize(HWND hWnd, bool fullscreen);
 	HRESULT createVertexBuffer(UINT length);
 	void spriteBegin();
 	void spriteEnd();
 	void spriteDraw(SpriteData sd);
 	void release();
 	HRESULT reset();
-	bool loadTexture(const char* textureFile, int& width, int& height, COLOR _transpanceyColor, LPDIRECT3DTEXTURE9& texture);
-	void setTexture(LPDIRECT3DTEXTURE9 texture) { device3d->SetTexture(0, texture); }
-	void setVertexBuffer(void* pData, UINT size);
+	bool loadTexture(const char* file, UINT& width, UINT& height, Color transparency, LPDIRECT3DTEXTURE9& texture);
+	void setTexture(LPDIRECT3DTEXTURE9 texture) { m_lpDevice3d->SetTexture(0, texture); }
+	void setVertexBuffer(void* pData, size_t size);
 	HRESULT createLine(ID3DXLine** line);
 	HRESULT begin();
 	HRESULT end();
 	HRESULT showBackbuffer();
 	HRESULT drawPrimitive(UINT startVertex, UINT count);
-	LPDIRECT3DDEVICE9 getDevice()		{ return device3d; }
-	LPD3DXSPRITE getSprite()		{ return sprite; }
+	LPDIRECT3DDEVICE9 getDevice()		{ return m_lpDevice3d; }
+	LPD3DXSPRITE getSprite()		{ return m_sprite; }
 	HRESULT getDeviceState();
 
 private:
@@ -70,15 +71,13 @@ private:
 	bool isAdaptereCompatility();
 	DWORD getBehaviorCompatility();
 
-	LPDIRECT3D9 direct3d;
-	LPDIRECT3DDEVICE9 device3d;
-	LPDIRECT3DVERTEXBUFFER9 m_vb;
-	LPD3DXSPRITE sprite;
-	D3DPRESENT_PARAMETERS pPresentParameter;
-	HWND hWnd;
-	bool fullscreen;
-	DWORD deviceState;
-	UINT m_vertices;
+	LPDIRECT3D9 m_lpDirect3d;
+	LPDIRECT3DDEVICE9 m_lpDevice3d;
+	LPDIRECT3DVERTEXBUFFER9 m_lpVB;
+	LPD3DXSPRITE m_sprite;
+	D3DPRESENT_PARAMETERS m_PresentParameter;
+	DWORD m_deviceState;
+	uint32_t m_vertices;
 };
 
 
