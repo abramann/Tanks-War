@@ -3,7 +3,7 @@
 #include "always.h"
 #include "graphics.h"
 #include "input.h"
-#include "texture.h"
+#include "texturemanger.h"
 #include "image.h"
 #include "audio.h"
 #include <timeapi.h>
@@ -17,7 +17,7 @@ public:
 
 	LRESULT messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	virtual void initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen);
+	virtual void initialize(HINSTANCE hInstance, HWND hWnd, bool fullscreen);
 	virtual void run();
 	virtual void renderGame();
 	virtual void updateGame();

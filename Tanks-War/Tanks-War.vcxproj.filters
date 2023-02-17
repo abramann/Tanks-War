@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Work">
+      <UniqueIdentifier>{dde9bad0-ed2c-4734-9cda-2fba3f6bbb56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -21,19 +24,7 @@
     <ClInclude Include="graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tank.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="unit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="always.h">
@@ -42,33 +33,48 @@
     <ClInclude Include="audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fire.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tankswar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gameerror.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="map.h">
+    <ClInclude Include="texturemanger.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fileio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fire.h">
+      <Filter>Work</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>Work</Filter>
+    </ClInclude>
+    <ClInclude Include="tank.h">
+      <Filter>Work</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>Work</Filter>
+    </ClInclude>
+    <ClInclude Include="unit.h">
+      <Filter>Work</Filter>
+    </ClInclude>
+    <ClInclude Include="image.h">
+      <Filter>Work</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tank.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="winmain.cpp">
@@ -77,20 +83,44 @@
     <ClCompile Include="audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fire.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tankswar.cpp">
+    <ClCompile Include="texturemanger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="menu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fileio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="map.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Work</Filter>
+    </ClCompile>
+    <ClCompile Include="fire.cpp">
+      <Filter>Work</Filter>
+    </ClCompile>
+    <ClCompile Include="image.cpp">
+      <Filter>Work</Filter>
+    </ClCompile>
+    <ClCompile Include="tank.cpp">
+      <Filter>Work</Filter>
+    </ClCompile>
+    <ClCompile Include="tankswar.cpp">
+      <Filter>Work</Filter>
+    </ClCompile>
+    <ClCompile Include="object.cpp">
+      <Filter>Work</Filter>
+    </ClCompile>
+    <ClCompile Include="unit.cpp">
+      <Filter>Work</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

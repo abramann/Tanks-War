@@ -18,10 +18,10 @@ struct TextureVertices
 };
 
 #define ZERO_V2(v2) (v2 == V2(0,0))
-#define COLOR D3DCOLOR
 #define COLOR_ARGB D3DCOLOR_ARGB
 #define COLOR_XRGB D3DCOLOR_XRGB
 
+typedef D3DCOLOR Color;
 typedef D3DXVECTOR2 V2;
 
 constexpr auto  VERTEX_FVF = D3DFVF_XYZRHW | D3DFVF_TEX1;
@@ -37,7 +37,7 @@ struct SpriteData
 	float angle;
 	float scalling;
 	RECT rect;
-	COLOR filterColor;
+	Color filterColor;
 	V2 center;
 };
 
@@ -54,7 +54,7 @@ public:
 	void spriteDraw(SpriteData sd);
 	void release();
 	HRESULT reset();
-	bool loadTexture(const char* textureFile, int& width, int& height, COLOR _transpanceyColor, LPDIRECT3DTEXTURE9& texture);
+	bool loadTexture(const char* file, UINT& width, UINT& height, Color transparency, LPDIRECT3DTEXTURE9& texture);
 	void setTexture(LPDIRECT3DTEXTURE9 texture) { m_lpDevice3d->SetTexture(0, texture); }
 	void setVertexBuffer(void* pData, size_t size);
 	HRESULT createLine(ID3DXLine** line);

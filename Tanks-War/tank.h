@@ -4,23 +4,14 @@
 #include "fire.h"
 
 #define TANK_KEYS			5
-/*
-#define TANK_RECTS			3
-#define TANK_RECTNORMAL		0
-#define TANK_RECTATTACK		1
-#define TANK_RECTDEATH		2
-#define TANK_FRAMESTART		1
-#define TANK_FRAMEEND		3
-#define TANK_FRAMES			3
-#define TANK_FRAMEATTACK	3
-*/
 #define TANK_KEYS			5
 #define TANK_KEYATTACK		4
 #define TANK_EFFECTS		7
 #define TANK_EFFECTSHOT		5
 #define TANK_EFFECTHIT		6
 
-const float TANK_ATTACKDELAY = 1000.0f;
+const auto DEFAULT_FIRE_SPEED = 20;
+const auto DEFAULT_FIRE_HEALTHDECREASE = 40;
 
 class Tank : public Unit
 {
@@ -28,24 +19,26 @@ public:
 
 	Tank();
 	~Tank();
-	virtual void initialize(int width, int height, float _health, float _speed, Image* _death, Map* _map, TextureManger* _textureManger, Graphics* _graphics);
-	virtual void inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key, Key attack_key, TextureManger* _fireTex);
-	virtual void audioInitialize(Effect _forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff, Effect shot_eff, Effect hit_eff);
+	virtual void initialize(int width, int height, float health, float speed, Map* map, TextureManger* death, TextureManger* textureManger, Graphics* graphics);
+	virtual void inputInitialize(Input* input, Key forward_key, Key back_key, Key right_key, Key left_key, Key attack_key, TextureManger* fireTex);
+	virtual void audioInitialize(Effect forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff, Effect shot_eff, Effect hit_eff);
 	virtual void inputUpdate(float frameTime);
+	virtual void update(float frameTime);
+	virtual void draw();
 	virtual void release();
 	virtual void executeForward(float frameTime);
 	virtual void executeBack(float frameTime);
 	virtual void executeRight(float frameTime);
 	virtual void executeLeft(float frameTime);
 	virtual void executeAttack(float frameTime);
-	virtual void setTexture(TextureManger* _textureManger, TextureManger* _fireTex);
+	virtual void setTexture(TextureManger* textureManger, TextureManger* fire);
+	virtual void endFrame();
 
-protected:
+private:
 
-	TextureManger* fireTex;
-	RECT* rect;
-	Fire fire;
-
+	TextureManger* m_pFire;
+	Fire m_fire;
+	FireData m_fireData;
 };
 
 

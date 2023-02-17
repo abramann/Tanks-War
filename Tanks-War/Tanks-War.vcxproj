@@ -156,29 +156,38 @@
   <ItemGroup>
     <ClInclude Include="always.h" />
     <ClInclude Include="audio.h" />
+    <ClInclude Include="fileio.h" />
     <ClInclude Include="fire.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameerror.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="interface.h" />
     <ClInclude Include="map.h" />
+    <ClInclude Include="menu.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="tank.h" />
     <ClInclude Include="tankswar.h" />
-    <ClInclude Include="texture.h" />
+    <ClInclude Include="texturemanger.h" />
+    <ClInclude Include="object.h" />
     <ClInclude Include="unit.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="audio.cpp" />
+    <ClCompile Include="fileio.cpp" />
     <ClCompile Include="fire.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="interface.cpp" />
     <ClCompile Include="map.cpp" />
+    <ClCompile Include="menu.cpp" />
     <ClCompile Include="tank.cpp" />
     <ClCompile Include="tankswar.cpp" />
-    <ClCompile Include="texture.cpp" />
+    <ClCompile Include="texturemanger.cpp" />
+    <ClCompile Include="object.cpp" />
     <ClCompile Include="unit.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>

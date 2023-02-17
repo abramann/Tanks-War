@@ -9,80 +9,88 @@ Tank::~Tank()
 	release();
 }
 
-void Tank::initialize(int width, int height, float health, float speed, Image* death, Map* map, TextureManger* textureManger, Graphics* graphics)
+void Tank::initialize(int width, int height, float health, float speed, Map* map,TextureManger* death, TextureManger* textureManger, Graphics* graphics)
 {
 	Unit::initialize(width, height, 1, 1, false, 0, health, speed, death, map, textureManger, graphics);
 }
 
-void Tank::inputInitialize(Input* input, Key forward_key, Key back_key, Key right_key, Key left_key, Key attack_key, TextureManger* _fireTex)
+void Tank::inputInitialize(Input* input, Key forward_key, Key back_key, Key right_key, Key left_key, Key attack_key, TextureManger* fire)
 {
-	fireTex = _fireTex;
-	//fire.initialize(fireTex, m_graphics);
+	m_pFire = fire;
+	m_fireData.speed = DEFAULT_FIRE_SPEED;
+	m_fireData.healthDecrease = DEFAULT_FIRE_HEALTHDECREASE;
+	m_fire.initialize(m_fireData, &m_pFire[1], m_pMap, m_pFire, m_pGraphics);
 	Unit::inputInitialize(input, forward_key, back_key, right_key, left_key);
 	m_key.push_back(attack_key);
 }
 
 void Tank::audioInitialize(Effect forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff, Effect shot_eff, Effect hit_eff)
 {
-	Unit::audioInitialize(forward_eff, back_eff, right_eff, left_eff, death_eff);
+	Object::audioInitialize(forward_eff, back_eff, right_eff, left_eff, death_eff);
 	m_effect.push_back(shot_eff);
 	m_effect.push_back(hit_eff);
 }
 
 void Tank::inputUpdate(float frameTime)
 {
-	Unit::inputUpdate(frameTime);
-	if (m_input->isKeyIn(m_key[TANK_KEYATTACK]))
-	{
+	Object::inputUpdate(frameTime);
+	if (m_pInput->isKeyIn(m_key[TANK_KEYATTACK]))
 		executeAttack(frameTime);
-	}
+}
+
+void Tank::update(float frameTime)
+{
+	Object::update(frameTime);
+	m_fire.update(frameTime);
+}
+
+void Tank::draw()
+{
+	Object::draw();
+	m_fire.draw();
 }
 
 void Tank::release()
 {
-	//SAFE_DELETE(rect);
 }
 
 void Tank::executeForward(float frameTime)
 {
-
-	float powSin = getSinSign() * pow(m_sinA, 2);
-	float powCos = getCosSign() * pow(m_cosA, 2);
+	float powSin = sign(m_sinA) * pow(m_sinA, 2);
+	float powCos = sign(m_cosA) * pow(m_cosA, 2);
 
 	float extraX = 0;// powSin*((m_spriteData.angle / PI) + 0.5)	*m_spriteData.width;
 
-	float extraY = -powCos*sin(m_spriteData.angle / 2)	*m_spriteData.height;
+	float extraY = -powCos*sin(m_spriteData.angle / 2)	* m_spriteData.height;
 	float x = m_spriteData.x + (m_speed * powSin) - extraX;
 	float y = m_spriteData.y - (m_speed * powCos) - extraY;
-	x = m_map->passX(x, m_spriteData.x, y);
+	x = m_pMap->passX(x, m_spriteData.x, y);
 	x += extraX;
 	setX(x);
 
-	y = m_map->passY(x, y, m_spriteData.y);
+	y = m_pMap->passY(x, y, m_spriteData.y);
 	y += extraY;
 	setY(y);
-
-	/*
-	m_spriteData.x += cosA * speed * frameTime;
-	m_spriteData.y += sinA * speed * frameTime;
-	*/
+	if (m_playAudio)
+		m_pAudio->playCue(m_effect[EFFECT_FORWARD]);
 }
 
 void Tank::executeBack(float frameTime)
 {
-	float powSin = getSinSign() * pow(m_sinA, 2);
-	float powCos = getCosSign() * pow(m_cosA, 2);
-
+	float powSin = sign(m_sinA) * pow(m_sinA, 2);
+	float powCos = sign(m_cosA) * pow(m_cosA, 2);
 	float extraX = 0;// powSin*((m_spriteData.angle / PI) + 0.5)	*m_spriteData.width;
 	float extraY = powCos*cos(m_spriteData.angle / 2)	*m_spriteData.height;
 	float x = m_spriteData.x - (m_speed * powSin) - extraX;
 	float y = m_spriteData.y + (m_speed * powCos) - extraY;
-	x = m_map->passX(x, m_spriteData.x, y);
+	x = m_pMap->passX(x, m_spriteData.x, y);
 	x += extraX;
 	setX(x);
-	y = m_map->passY(m_spriteData.x, y, m_spriteData.y);
+	y = m_pMap->passY(m_spriteData.x, y, m_spriteData.y);
 	y += extraY;
 	setY(y);
+	if (m_playAudio)
+		m_pAudio->playCue(m_effect[EFFECT_BACK]);
 }
 
 void Tank::executeRight(float frameTime)
@@ -97,12 +105,21 @@ void Tank::executeLeft(float frameTime)
 
 void Tank::executeAttack(float frameTime)
 {
-	//setFrameRect(frame[TANK_FRAMEATTACK], TANK_ATTACKDELAY);
-	m_audio->playCue(m_effect[TANK_EFFECTSHOT]);
+	if (m_fire.active())
+		return;
+
+	m_fire.release(this, RELEASE_NORMAL);
+	if (m_playAudio)
+		m_pAudio->playCue(m_effect[TANK_EFFECTSHOT]);
 }
 
-void Tank::setTexture(TextureManger* _textureManger, TextureManger* _fireTex)
+void Tank::setTexture(TextureManger* textureManger, TextureManger* fire)
 {
-	Unit::setTexture(_textureManger);
-	fireTex = _fireTex;
+	Unit::setTexture(textureManger);
+	m_pFire = fire;
+}
+
+void Tank::endFrame()
+{
+	Object::endFrame();
 }

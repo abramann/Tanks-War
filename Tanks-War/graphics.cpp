@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-UINT64  frameCounter = 0;
+uint64_t  frameCounter = 0;
 
 Graphics::Graphics() : m_lpDirect3d(NULL), m_lpDevice3d(NULL), m_sprite(NULL),
 	m_deviceState(NULL), m_lpVB(NULL), m_vertices(0)
@@ -26,7 +26,7 @@ bool Graphics::initialize(HWND hWnd, bool fullscreen)
 		m_PresentParameter.BackBufferCount = 1;
 		m_PresentParameter.hDeviceWindow = hWnd;
 		m_PresentParameter.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		if (fullscreen & isAdaptereCompatility())
+		if (fullscreen && isAdaptereCompatility())
 		{
 			m_PresentParameter.Windowed = FALSE;
 		}
@@ -133,20 +133,20 @@ HRESULT Graphics::drawPrimitive(UINT startVertex, UINT count)
 	return hr;
 }
 
-bool Graphics::loadTexture(const char* textureFile, int& width, int& height, COLOR transpanceyC, LPDIRECT3DTEXTURE9& texture)
+bool Graphics::loadTexture(const char* file, UINT& width, UINT& height, Color transparency, LPDIRECT3DTEXTURE9& texture)
 {
 	D3DXIMAGE_INFO info;
 	HRESULT hr;
-	hr = D3DXGetImageInfoFromFileA(textureFile, &info);
+	hr = D3DXGetImageInfoFromFileA(file, &info);
 	if (FAILED(hr))
 		return false;
 
 	width = info.Width;
 	height = info.Height;
 	ZeroMemory(&texture, sizeof(texture));
-	hr = D3DXCreateTextureFromFileExA(m_lpDevice3d, textureFile, width,
+	hr = D3DXCreateTextureFromFileExA(m_lpDevice3d, file, width,
 		height, 1, 0, D3DFMT_UNKNOWN,
-		D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, transpanceyC,
+		D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, transparency,
 		&info, NULL, &texture);
 	if (FAILED(hr))
 		return false;
@@ -182,7 +182,7 @@ bool Graphics::isAdaptereCompatility()
 	for (auto i = 0; i <= modes; i++)
 	{
 		m_lpDirect3d->EnumAdapterModes(D3DADAPTER_DEFAULT, m_PresentParameter.BackBufferFormat, i, &dMode);
-		if (dMode.Height == m_PresentParameter.BackBufferHeight & dMode.Width == m_PresentParameter.BackBufferWidth & m_PresentParameter.BackBufferFormat == dMode.Format)
+		if (dMode.Height == m_PresentParameter.BackBufferHeight && dMode.Width == m_PresentParameter.BackBufferWidth & m_PresentParameter.BackBufferFormat == dMode.Format)
 			return true;
 	}
 
@@ -201,7 +201,7 @@ DWORD Graphics::getBehaviorCompatility()
 	DWORD behavior;
 	D3DCAPS9 caps;
 	m_lpDirect3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
-	if ((caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) == 0 |
+	if ((caps.DevCaps && D3DDEVCAPS_HWTRANSFORMANDLIGHT) == 0 ||
 		caps.VertexShaderVersion < D3DVS_VERSION(1, 1))
 	{
 		behavior = D3DCREATE_SOFTWARE_VERTEXPROCESSING;  // use software only processing

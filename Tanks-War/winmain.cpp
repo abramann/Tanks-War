@@ -24,10 +24,12 @@ LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	return game->messageHandler(hWnd, msg, wParam, lParam);
 }
+
 int message(std::string msg, int type)
 {
-	return MessageBoxA(NULL, msg.c_str(), "Tanks Warfare", type);
+	return MessageBoxA(NULL, msg.c_str(), "Tanks War", type);
 }
+
 bool AnotherInstance()
 {
 	HANDLE ourMutex;
@@ -38,6 +40,7 @@ bool AnotherInstance()
 	// Another instance was found
 	return false;
 }
+
 bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 {
 	if (AnotherInstance() == true)
@@ -52,8 +55,8 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	wcx.cbClsExtra = 0;                 // no extra class memory 
 	wcx.cbWndExtra = 0;                 // no extra window memory 
 	wcx.hInstance = hInstance;          // handle to instance 
-	wcx.hIcon = LoadIcon(NULL,"Data//tankswarfare.icon");
-	wcx.hCursor = LoadCursorFromFile("Data//tankswarfare.cursor");   // predefined arrow 
+	wcx.hIcon = LoadIcon(NULL,"Assets//tankswar.icon");
+	wcx.hCursor = LoadCursorFromFile("Assets//tankswar.cursor");   // predefined arrow 
 	wcx.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);    // black background 
 	wcx.hIconSm = NULL;                 // small class icon 
 	wcx.lpszMenuName = NULL;           // name of menu resource 
@@ -64,11 +67,7 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 		return false;
 
 	//set up the screen in windowed or fullscreen mode?
-	DWORD style;
-	if (fullscreen)
-		style = WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP;
-	else
-		style = WS_EX_TOPMOST;
+	DWORD style = (fullscreen) ? WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP : WS_EX_TOPMOST;
 	// Create window
 	hwnd = CreateWindow(
 		"Game Class",
@@ -107,13 +106,12 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	UpdateWindow(hwnd);
 	return true;
 }
+
 bool isFullScreen()
 {
-	if (message("Run full screen ? ", MB_OKCANCEL) == 2)
-		return false;
-	else
-		return true;
+	return (message("Run full screen ? ", MB_OKCANCEL) == 2) ? false : true;
 }
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 #if defined(_DEBUG)
@@ -121,7 +119,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
 
 	HWND hWnd = NULL;
-	fullscreen = false;// = isFullScreen();
+	fullscreen = isFullScreen();
+	
 	if (!CreateMainWindow(hWnd, hInstance, nCmdShow))
 	{
 		message("CreateMainWindow() failed !", MB_OK);
@@ -163,7 +162,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		DestroyWindow(hWnd);
 	}
 
-	safeDelete(game);
+	SAFE_DELETE(game);
 	return 0;
 }
 
