@@ -163,13 +163,14 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="interface.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="menu.h" />
-    <ClInclude Include="object.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="tank.h" />
     <ClInclude Include="tankswar.h" />
     <ClInclude Include="texturemanger.h" />
+    <ClInclude Include="object.h" />
     <ClInclude Include="unit.h" />
   </ItemGroup>
   <ItemGroup>
@@ -180,12 +181,13 @@
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="interface.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="menu.cpp" />
-    <ClCompile Include="object.cpp" />
     <ClCompile Include="tank.cpp" />
     <ClCompile Include="tankswar.cpp" />
     <ClCompile Include="texturemanger.cpp" />
+    <ClCompile Include="object.cpp" />
     <ClCompile Include="unit.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>

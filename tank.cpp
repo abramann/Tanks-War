@@ -11,7 +11,7 @@ Tank::~Tank()
 
 void Tank::initialize(int width, int height, float health, float speed, Map* map,TextureManger* death, TextureManger* textureManger, Graphics* graphics)
 {
-	Unit::initialize(width, height, 1, 1, false, 0, health, speed, map, death, textureManger, graphics);
+	Unit::initialize(width, height, 1, 1, false, 0, health, speed, death, map, textureManger, graphics);
 }
 
 void Tank::inputInitialize(Input* input, Key forward_key, Key back_key, Key right_key, Key left_key, Key attack_key, TextureManger* fire)
@@ -19,34 +19,34 @@ void Tank::inputInitialize(Input* input, Key forward_key, Key back_key, Key righ
 	m_pFire = fire;
 	m_fireData.speed = DEFAULT_FIRE_SPEED;
 	m_fireData.healthDecrease = DEFAULT_FIRE_HEALTHDECREASE;
-	m_fire.initialize(m_fireData, m_pMap, m_pFire, m_pGraphics);
+	m_fire.initialize(m_fireData, &m_pFire[1], m_pMap, m_pFire, m_pGraphics);
 	Unit::inputInitialize(input, forward_key, back_key, right_key, left_key);
 	m_key.push_back(attack_key);
 }
 
 void Tank::audioInitialize(Effect forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff, Effect shot_eff, Effect hit_eff)
 {
-	Unit::audioInitialize(forward_eff, back_eff, right_eff, left_eff, death_eff);
+	Object::audioInitialize(forward_eff, back_eff, right_eff, left_eff, death_eff);
 	m_effect.push_back(shot_eff);
 	m_effect.push_back(hit_eff);
 }
 
 void Tank::inputUpdate(float frameTime)
 {
-	Unit::inputUpdate(frameTime);
+	Object::inputUpdate(frameTime);
 	if (m_pInput->isKeyIn(m_key[TANK_KEYATTACK]))
 		executeAttack(frameTime);
 }
 
 void Tank::update(float frameTime)
 {
-	Unit::update(frameTime);
+	Object::update(frameTime);
 	m_fire.update(frameTime);
 }
 
 void Tank::draw()
 {
-	Unit::draw();
+	Object::draw();
 	m_fire.draw();
 }
 
@@ -105,7 +105,7 @@ void Tank::executeLeft(float frameTime)
 
 void Tank::executeAttack(float frameTime)
 {
-	m_fire.release(*this, RELEASE_NORMAL);
+	m_fire.release(this, RELEASE_NORMAL);
 	if (m_playAudio)
 		m_pAudio->playCue(m_effect[TANK_EFFECTSHOT]);
 }

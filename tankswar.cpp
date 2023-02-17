@@ -5,15 +5,13 @@ TanksWar::TanksWar()
 {
 	image = new Image[IMAGES];
 	texture = new TextureManger[TEXTURES];
-	unit = new Unit[UNITS];
-	tank = new Tank;
+	tank = new Tank[2];
 }
 
 TanksWar::~TanksWar()
 {
 	SAFE_DELETE_ARRAY(texture);
 	SAFE_DELETE_ARRAY(image);
-	SAFE_DELETE_ARRAY(unit);
 }
 
 void TanksWar::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
@@ -29,8 +27,12 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND _hWnd, bool _fullscreen)
 	tank[0].initialize(0, 0, 100, 8, &map,&texture[TEXTURE_EXPLOSION], &texture[TEXTURE_PLAYERTANK],m_pGraphics);
 	tank[0].setX(300).setY(300);
 	tank[0].inputInitialize(m_pInput, W_KEY, S_KEY, D_KEY, A_KEY, Q_KEY, &texture[TEXTURE_FIRE]);
-	//tank[0].setX(GAME_WIDTH / 2).setY(GAME_HEIGHT / 2).setFilterColor(COLOR_XRGB( 255, 100, 100));
 	map.initialize("Assets\\map.txt", &texture[TEXTURE_BM0], m_pGraphics);
+	tank[1].initialize(0, 0, 100, 8, &map, &texture[TEXTURE_EXPLOSION], &texture[TEXTURE_PLAYERTANK], m_pGraphics);
+//	tank[1].inputInitialize(m_pInput, V_KEY, J_KEY, H_KEY, G_KEY, F_KEY, &texture[TEXTURE_FIRE]);
+	tank[1].setX(300).setY(400);
+
+	map.Add_Object(&tank[1]);
 	 
 }
 
@@ -41,10 +43,10 @@ void TanksWar::collision()
 
 void TanksWar::update()
 {
+	int aa = tank[1].getX();
+	aa = tank[1].getY();
+	tank[1].update(m_timeDelta);
 	tank[0].update(m_timeDelta);
-	if (m_pInput->isKeyIn(D_KEY))
-		unit[0].setHealth(0);
-	unit[0].update(m_timeDelta);
 }
 
 void TanksWar::render()
@@ -52,6 +54,7 @@ void TanksWar::render()
 	map.draw();
 	//unit[0].draw();
 	tank[0].draw();
+	tank[1].draw();
 }
 
 void TanksWar::onResetDevice()

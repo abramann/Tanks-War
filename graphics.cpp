@@ -26,7 +26,7 @@ bool Graphics::initialize(HWND hWnd, bool fullscreen)
 		m_PresentParameter.BackBufferCount = 1;
 		m_PresentParameter.hDeviceWindow = hWnd;
 		m_PresentParameter.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		if (fullscreen & isAdaptereCompatility())
+		if (fullscreen && isAdaptereCompatility())
 		{
 			m_PresentParameter.Windowed = FALSE;
 		}
@@ -182,7 +182,7 @@ bool Graphics::isAdaptereCompatility()
 	for (auto i = 0; i <= modes; i++)
 	{
 		m_lpDirect3d->EnumAdapterModes(D3DADAPTER_DEFAULT, m_PresentParameter.BackBufferFormat, i, &dMode);
-		if (dMode.Height == m_PresentParameter.BackBufferHeight & dMode.Width == m_PresentParameter.BackBufferWidth & m_PresentParameter.BackBufferFormat == dMode.Format)
+		if (dMode.Height == m_PresentParameter.BackBufferHeight && dMode.Width == m_PresentParameter.BackBufferWidth & m_PresentParameter.BackBufferFormat == dMode.Format)
 			return true;
 	}
 
@@ -201,7 +201,7 @@ DWORD Graphics::getBehaviorCompatility()
 	DWORD behavior;
 	D3DCAPS9 caps;
 	m_lpDirect3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
-	if ((caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) == 0 |
+	if ((caps.DevCaps && D3DDEVCAPS_HWTRANSFORMANDLIGHT) == 0 ||
 		caps.VertexShaderVersion < D3DVS_VERSION(1, 1))
 	{
 		behavior = D3DCREATE_SOFTWARE_VERTEXPROCESSING;  // use software only processing

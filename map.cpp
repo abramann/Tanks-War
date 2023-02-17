@@ -152,11 +152,19 @@ void Map::draw()
 	}
 }
 
+bool Map::spacesCollided(const Space& space1, const Space& space2) const
+{
+	if ( (space2.x1 < space1.x1 && space1.x1 < space2.x2) || (space2.x1 < space1.x2 && space1.x2 < space2.x2) )
+		if ( (space2.y1 < space1.y1 && space1.y1 < space2.y2) || (space2.y1 < space1.y2 && space1.y2 < space2.y2) )
+			return true;
+	return false;
+}
+
 const float Map::passX(float x, float x0, float y)
 {
 	for (auto space : m_noSpace)
-		if (space.x1 <= x & x <= space.x2)
-			if (space.y1 <= y & y <= space.y2)
+		if (space.x1 <= x && x <= space.x2)
+			if (space.y1 <= y && y <= space.y2)
 				return (abs(space.x2 - x0) < abs(space.x1 - x0)) ? space.x2 : space.x1;
 	return x;
 }
@@ -164,9 +172,32 @@ const float Map::passX(float x, float x0, float y)
 const float Map::passY(float x, float y, float y0)
 {
 	for (auto space : m_noSpace)
-		if (space.x1 <= x & x <= space.x2)
-			if (space.y1 <= y & y <= space.y2)
+		if (space.x1 <= x && x <= space.x2)
+			if (space.y1 <= y && y <= space.y2)
 				return (abs(space.y2 - y0) > abs(space.y1 - y0)) ? space.y1 : space.y2;
 	return y;
+}
+
+Object* Map::collided(const Image& object) // Object has  pure functions so should return a pointer
+{
+	Object* rObject = 0;
+	for (auto& mapObject : m_pObjects)
+		if (spacesCollided(object.getAllocatedSpace(), mapObject->getAllocatedSpace()))
+		{
+			rObject = mapObject;
+			break;
+		}
+
+	return rObject;
+}
+
+bool Map::outOfMapRange(const Image& object) const
+{
+	if ((object.getX() > m_mapData.width*m_bitmapData.width) |
+		(object.getX() < 0) |
+		(object.getY() > m_mapData.width*m_bitmapData.height) |
+		(object.getY() < 0))
+		return true;
+	return false;
 }
 

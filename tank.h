@@ -4,15 +4,12 @@
 #include "fire.h"
 
 #define TANK_KEYS			5
-
 #define TANK_KEYS			5
 #define TANK_KEYATTACK		4
 #define TANK_EFFECTS		7
 #define TANK_EFFECTSHOT		5
 #define TANK_EFFECTHIT		6
 
-
-const float TANK_ATTACKDELAY = 1000.0f;
 const auto DEFAULT_FIRE_SPEED = 30;
 const auto DEFAULT_FIRE_HEALTHDECREASE = 40;
 

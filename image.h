@@ -3,10 +3,17 @@
 #include "always.h"
 #include "texturemanger.h"
 
+struct Space
+{
+	int32_t x1, y1;
+	int32_t x2, y2;
+};
+
 class Image
 {
-public:
 
+public:
+	
 	Image();
 	~Image();
 	virtual void initialize(uint16_t width, uint16_t height, uint8_t  columns, uint8_t rows, bool animate, float updateDelay, TextureManger* textureManger, Graphics* graphics);
@@ -25,15 +32,20 @@ public:
 	virtual void setScalling(float scalling);
 	virtual void setFrameDelay(float newm_frameDelay) { m_frameDelay = newm_frameDelay; }
 	virtual void setUpdateDelay(float newm_updateDelay) { m_updateDelay = newm_updateDelay; }
+	virtual void setAnimate(bool animate) { m_animate = animate; }
 	virtual void setColumn(int newm_column) { m_column = newm_column; }
-	virtual void setRow(int newm_row) { m_row = newm_row; }
-	virtual void setm_animate(bool newm_animate) { m_animate = newm_animate; }
-	virtual void setFrameRect(int _m_column, int _m_row, int frames);
+	virtual void setRow(int row) { m_row = row; }
+	virtual void setFrameRect(uint8_t column, uint8_t row, uint16_t frames);
 	virtual void setRightRect(int rightRect) { m_spriteData.rect.right = rightRect; }
 	virtual void setLeftRect(int leftRect) { m_spriteData.rect.left = leftRect; }
 	virtual void setTopRect(int topRect) { m_spriteData.rect.top = topRect; }
 	virtual void setBottomRect(int bottomRect) { m_spriteData.rect.bottom = bottomRect; }
 	virtual void setTexture(TextureManger* tm);
+	virtual void setDefaultTextureInfo();
+	void setTextureImageWidth() { m_spriteData.width = m_pTextureManger->getImageWidth(); }
+	void setTextureImageHeight() { m_spriteData.height = m_pTextureManger->getImageHeight(); }
+	void setTextureColumns() { m_spriteData.columns = m_pTextureManger->getColumns(); }
+	void setTextureRows() { m_spriteData.rows = m_pTextureManger->getRows(); }
 
 	virtual float getX() const { return m_spriteData.x; }
 	virtual float getY() const { return m_spriteData.y; }
@@ -56,12 +68,13 @@ public:
 	virtual Color getFilterColor() const { return m_spriteData.filterColor; }
 	virtual SpriteData getSpriteData() const { return m_spriteData; }
 	virtual bool isAnimated() const { return m_animate; }
+	virtual Space getAllocatedSpace() const;
 
+	virtual void endFrame();
 	virtual void xAdd(float value) { m_spriteData.x += value; }
 	virtual void yAdd(float value) { m_spriteData.y += value; }
 	virtual void xDec(float value) { m_spriteData.x -= value; }
 	virtual void yDec(float value) { m_spriteData.y -= value; }
-
 	virtual void follow(float x, float y, float speed);
 	void mathUpdate();
 
@@ -81,14 +94,6 @@ private:
 	HANDLE m_threadHandle;
 	int m_threadPara;
 };
-
-inline V2 getObjectFocuusPoint(const Image& object1, const Image& object2)
-{
-	V2 site;
-	site.x = object1.getCenterX() + -object1.getSin()*(object1.getHeight() / 2) - object2.getWidth() / 2;
-	site.y = object1.getCenterY() + (object1.getCos()*object1.getHeight() / 2) - (object2.getHeight() / 2);// +cos(ang)*object1.getHeight();
-	return site;
-}
 
 
 #endif
