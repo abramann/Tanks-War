@@ -12,6 +12,7 @@ enum GTEXTURES {
 	TEXTURE_BM1,
 	TEXTURE_FIRE,
 	TEXTURE_FIRE_EXPLOSION,
+	TEXTURE_FIRE_SIMPLE,
 	TEXTURES
 };
 #define IMAGES 1
@@ -19,7 +20,7 @@ enum GTEXTURES {
 
 static std::string file[] = { "Assets\\Texture\\player-tank.png",
 "Assets\\Texture\\explosion-animation.png" ,
- "Assets\\Texture\\bm0.jpg", "Assets\\Texture\\bm1.jpg","Assets\\Texture\\bullet_6.png", "Assets\\Texture\\explosion-fire-3.png" };
+ "Assets\\Texture\\bm0.jpg", "Assets\\Texture\\bm1.jpg","Assets\\Texture\\bullet_6.png", "Assets\\Texture\\explosion-fire-3.png", "Assets\\Texture\\fire-simple.png" };
 
 class TanksWar : public Game
 {

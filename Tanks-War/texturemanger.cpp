@@ -58,7 +58,7 @@ void TextureManger::read()
 		return;
 
 	std::string line;
-	while (std::getline(fInfo,line))
+	while (std::getline(fInfo, line))
 		if (line.compare(name) == 0)
 		{
 			std::getline(fInfo, line);
@@ -71,6 +71,8 @@ void TextureManger::read()
 			m_textureInfo.height = std::stoi(getTargetEqualStringValue(line));
 			std::getline(fInfo, line);
 			m_textureInfo.transparency = std::stoi(getTargetEqualStringValue(line));
+			std::getline(fInfo, line);
+			m_textureInfo.animateSpeed = ::atof(getTargetEqualStringValue(line).c_str());
 			return;
 		}
 

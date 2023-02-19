@@ -55,14 +55,13 @@ public:
 	virtual float getHealth() { return m_health; }
 	virtual float getSpeed() { return m_speed; }
 	virtual bool getUpdateInput() { return m_updateInput; }
-	bool alive() { return (m_health > 0) ? true : false; }
+	const bool alive() { return (m_health > 0) ? true : false; }
 	virtual void executeForward(float frameTime) = 0;
 	virtual void executeBack(float frameTime) = 0;
 	virtual void executeRight(float frameTime) = 0;
 	virtual void executeLeft(float frameTime) = 0;
 	
 
-	float m_health, m_speed;
 
 
 protected:
@@ -72,7 +71,7 @@ protected:
 	TextureManger* m_pDeath;
 	std::vector<Key> m_key;
 	std::vector<Effect> m_effect;
-
+	float m_health, m_speed;
 	bool m_render;
 	bool m_updateInput;
 	bool m_alive;

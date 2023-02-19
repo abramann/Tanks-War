@@ -56,16 +56,16 @@ void Tank::release()
 
 void Tank::executeForward(float frameTime)
 {
-	float powSin = sign(m_sinA) * pow(m_sinA, 2);
-	float powCos = sign(m_cosA) * pow(m_cosA, 2);
+	const float powSin = sign(m_sinA) * pow(m_sinA, 2);
+	const float powCos = sign(m_cosA) * pow(m_cosA, 2);
 
 	float extraX = 0;// powSin*((m_spriteData.angle / PI) + 0.5)	*m_spriteData.width;
-
-	float extraY = -powCos*sin(m_spriteData.angle / 2)	* m_spriteData.height;
-	float x = m_spriteData.x + (m_speed * powSin) - extraX;
+	extraX = getCenterX() + m_spriteData.height*powSin;
+	float extraY = -powCos*_round(sin(m_spriteData.angle / 2))	* m_spriteData.height;
+	float x = getCenterX() + (m_spriteData.height*powSin / 2) + (m_spriteData.width*powCos / 2) +(m_speed * powSin);
 	float y = m_spriteData.y - (m_speed * powCos) - extraY;
 	x = m_pMap->passX(x, m_spriteData.x, y);
-	x += extraX;
+	
 	setX(x);
 
 	y = m_pMap->passY(x, y, m_spriteData.y);

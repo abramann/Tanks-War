@@ -46,11 +46,13 @@ public:
 	void setTextureImageHeight() { m_spriteData.height = m_pTextureManger->getImageHeight(); }
 	void setTextureColumns() { m_spriteData.columns = m_pTextureManger->getColumns(); }
 	void setTextureRows() { m_spriteData.rows = m_pTextureManger->getRows(); }
+	void setTextureUpdateDelay() { m_updateDelay = m_pTextureManger->getAnimateSpeed(); }
 	void setDefaultColumnRow() { m_column = 1; m_row = 1; }
 	void setNullSpriteData() { ZeroMemory(&m_spriteData, sizeof(SpriteData)); }
-
+	void setRotationCenter(V2 center) { m_spriteData.center = center; }
 	virtual float getX() const { return m_spriteData.x; }
 	virtual float getY() const { return m_spriteData.y; }
+	virtual V2 getXY() const { return V2(getX(), getY()); }
 	virtual int getWidth() const { return m_spriteData.width; }
 	virtual int getHeight() const { return m_spriteData.height; }
 	virtual int getTextureWidth() const { return m_pTextureManger->getWidth(); }
@@ -58,7 +60,8 @@ public:
 	virtual double getAngle() const { return m_spriteData.angle; }
 	virtual float getCenterX() const { return m_spriteData.x + m_spriteData.width / 2; }
 	virtual float getCenterY() const { return m_spriteData.y + m_spriteData.height / 2; }
-	virtual V2 getCenter() { return V2(getCenterX(), getCenterY()); }
+	virtual V2 getCenter() const { return V2(getCenterX(), getCenterY()); }
+	virtual V2 getRotationCenter() const { return m_spriteData.center; }
 	virtual RECT getRect() const { return m_spriteData.rect; }
 	virtual float getScalling() const { return m_spriteData.scalling; }
 	virtual float getFrameDelay() const { return m_frameDelay; }
@@ -67,6 +70,8 @@ public:
 	virtual int getColumn() const { return m_column; }
 	float getSin() const  { return m_sinA; }
 	float getCos() const { return m_cosA; }
+	V2 getFocusSite() const;
+	virtual void setLookTo(const Image& image);
 	virtual Color getFilterColor() const { return m_spriteData.filterColor; }
 	virtual SpriteData getSpriteData() const { return m_spriteData; }
 	virtual bool isAnimated() const { return m_animate; }

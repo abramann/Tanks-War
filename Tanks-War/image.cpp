@@ -131,6 +131,26 @@ void Image::setDefaultTextureInfo()
 	setTextureImageHeight();
 	setTextureColumns();
 	setTextureRows();
+	setTextureUpdateDelay();
+}
+
+V2 Image::getFocusSite() const
+{
+	V2 site;
+	site.x = getCenterX() + (::sign(m_sinA)*pow(m_sinA, 2)*m_spriteData.height / 2);
+	//	(::sign(m_sinA)*pow(m_sinA, 2)*m_spriteData.width / 2);
+	site.y = getCenterY() - (::sign(m_cosA)*pow(m_cosA, 2)*m_spriteData.height / 2);
+	return site;
+}
+
+void Image::setLookTo(const Image & image)
+{
+	V2 site = image.getFocusSite();
+	site.x = image.getCenterX() - getScalling()*getWidth() / 2;
+	site.y = image.getCenterY() - ((image.getHeight() / 2) + (getScalling()*getHeight() / 2));
+	setXY(site);
+	setAngle(image.getAngle());
+	setRotationCenter(V2(getScalling()*getWidth() / 2, (image.getHeight() / 2) + getScalling()*getHeight() / 2));
 }
 
 Space Image::getAllocatedSpace() const

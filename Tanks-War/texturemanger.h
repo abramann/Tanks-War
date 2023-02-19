@@ -8,6 +8,7 @@ struct TextureInfo
 	uint8_t columns, rows;
 	uint16_t width, height;
 	Color transparency;
+	float animateSpeed;
 };
 
 class TextureManger
@@ -27,7 +28,7 @@ public:
 	uint16_t getImageHeight() const	{ return m_textureInfo.height; }
 	uint8_t getColumns() const	{ return m_textureInfo.columns; }
 	uint8_t getRows() const	{ return m_textureInfo.rows; }
-	
+	float getAnimateSpeed() const { return m_textureInfo.animateSpeed; }
 
 protected:
 
