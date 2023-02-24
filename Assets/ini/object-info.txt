@@ -1,0 +1,4 @@
+1-player-tank
+health=100
+speed=10.0
+death-based-texture=2

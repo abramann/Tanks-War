@@ -1,8 +1,8 @@
 #include "Map.h"
-#include "texturemanger.h"
+#include "texture.h"
 #include <fstream>
 
-Map::Map() : m_ppMap(0) , m_pGraphics(0), m_pTextureManger(0)
+Map::Map() : m_ppMap(0) , m_pGraphics(0), m_pTexture(0)
 {
 }
 
@@ -14,10 +14,10 @@ Map::~Map()
 	SAFE_DELETE_ARRAY(m_ppMap);
 }
 
-bool Map::initialize(const char* path, TextureManger* textureManger, Graphics* graphics)
+bool Map::initialize(const char* path, Texture* texture, Graphics* graphics)
 {
 	m_pGraphics = graphics;
-	m_pTextureManger = textureManger;
+	m_pTexture = &texture[0];
 	if (!read(path))
 		return false;
 
@@ -26,8 +26,8 @@ bool Map::initialize(const char* path, TextureManger* textureManger, Graphics* g
 	if (FAILED(hr))
 		return false;
 
-	m_bitmapData.width = textureManger->getWidth();
-	m_bitmapData.height = textureManger->getHeight();
+	m_bitmapData.width = m_pTexture->getWidth();
+	m_bitmapData.height = m_pTexture->getHeight();
 
 	TextureVertices*** vertices = new TextureVertices**[m_mapData.bitmaps];
 	for (auto i = 0; i < m_mapData.bitmaps; i++)
@@ -147,7 +147,7 @@ void Map::draw()
 {
 	for (auto i = 0; i < m_mapData.bitmaps; i++)
 	{
-		m_pGraphics->setTexture(m_pTextureManger[i].getTexture());
+		m_pGraphics->setTexture(m_pTexture[i].getTexture());
 		m_pGraphics->drawPrimitive(m_startVertex[i], m_lenVertex[i] / 3);
 	}
 }

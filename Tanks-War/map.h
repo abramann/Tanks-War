@@ -4,21 +4,6 @@
 #include "always.h"
 #include "object.h"
 
-struct BitmapData
-{
-	uint16_t width, height;
-};
-
-struct MapData
-{
-	std::string name;
-	uint16_t width, height;
-	uint8_t bitmaps;
-	std::vector<uint8_t> preventedBM;
-};
-
-constexpr uint32_t UNDEFINED_POSITION = 0xFFFF;
-
 class Map
 {
 
@@ -26,7 +11,7 @@ public:
 
 	Map();
 	~Map();
-	virtual bool initialize(const char* path, TextureManger* textureManger, Graphics* graphics);
+	virtual bool initialize(const char* path, Texture* texture, Graphics* graphics);
 	virtual bool read(const char* map);
 	virtual void draw();
 	void Add_Object(Object* object) { m_pObjects.push_back(object); }
@@ -40,7 +25,7 @@ public:
 protected:
 
 	Graphics* m_pGraphics;
-	TextureManger* m_pTextureManger;
+	Texture* m_pTexture;
 	std::vector<Space> m_noSpace;
 	MapData m_mapData;
 	BitmapData m_bitmapData;

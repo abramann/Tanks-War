@@ -1,0 +1,4 @@
+start
+FullScreen=0
+Width=800
+Height=600

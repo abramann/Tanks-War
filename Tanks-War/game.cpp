@@ -30,9 +30,9 @@ LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProcA(hWnd, msg, wParam, lParam);
 }
 
-void Game::initialize(HINSTANCE hInstance, HWND hWnd, bool fullscreen)
+void Game::initialize(HINSTANCE hInstance, HWND hWnd)
 {
-	if(!m_pGraphics->initialize(hWnd, fullscreen))
+	if(!m_pGraphics->initialize(hWnd))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pGraphics");
 	if(!m_pInput->initialize(hInstance, hWnd))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pInput");

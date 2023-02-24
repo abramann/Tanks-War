@@ -2,7 +2,7 @@
 #define _PLAYER_H
 #include "always.h"
 
-enum
+enum PLAYER_STATE
 {
 	PLAYER_IDLE,
 	PLAYER_MOVE,

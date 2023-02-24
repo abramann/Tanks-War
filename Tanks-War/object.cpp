@@ -1,6 +1,7 @@
 #include "object.h"
+#include "fileio.h"
 
-Object::Object() : m_health(0), m_speed(0), m_playAudio(false),
+Object::Object() :  m_playAudio(false),
 	m_handleInput(false), m_alive(true), m_render(true)
 {
 	m_pAudio = new Audio;
@@ -11,13 +12,22 @@ Object::~Object()
 	release();
 }
 
-void Object::initialize(int width, int height, int columns, int rows, bool animate, float updateDelay, float health, float speed, TextureManger* death, TextureManger* textureManger, Graphics* graphics)
+void Object::initialize(uint16_t width, uint16_t height, uint8_t columns, uint8_t rows, bool animate, float updateDelay, float health, float speed, Texture* death, Texture* texture, Graphics* graphics)
 {
-	m_health = health;
-	m_speed = speed;
+	m_pObjectInfo = new ObjectInfo;
+	setSpeed(speed);
+	setHealth(health);
 	m_pDeath = death;
 	m_pAudio->initialize();
-	Image::initialize(width, height, columns, rows, false, updateDelay, textureManger, graphics);
+	Image::initialize(width, height, columns, rows, false, updateDelay, texture, graphics);
+}
+
+void Object::initialize(Texture * texture, TextureManger* textureManger, Graphics * graphics)
+{
+	Image::initialize(texture, textureManger, graphics);
+	m_pObjectInfo = m_pTextureManger->getTextureInfo(m_pTexture->getNumber())->objectInfo;
+	m_pDeath = m_pTextureManger->getTexture(m_pObjectInfo->deathTexture);
+
 }
 
 void Object::inputInitialize(Input* input, Key forward_key, Key back_key, Key right_key, Key left_key)
@@ -43,7 +53,7 @@ void Object::audioInitialize(Effect forward_eff, Effect back_eff, Effect right_e
 void Object::update(float frameTime)
 {
 	if(m_alive)
-		if (m_health <= 0)
+		if (m_pObjectInfo->health <= 0)
 			setDeathMode();
 
 	if (m_handleInput)
@@ -82,10 +92,11 @@ void Object::release()
 
 void Object::setDeathMode()
 {
+	m_spriteData;
 	m_alive = false;
 	setInput(false);
 	setTexture(m_pDeath);
-	setDefaultTextureInfo();
+	setDefaultImageInfo();
 	setDefaultColumnRow();
 	setAnimate(true);
 }

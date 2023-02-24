@@ -1,6 +1,7 @@
 #include "graphics.h"
+#include "texture.h"
 
-uint64_t  frameCounter = 0;
+uint64_t  g_frameCounter = 0;
 
 Graphics::Graphics() : m_lpDirect3d(NULL), m_lpDevice3d(NULL), m_sprite(NULL),
 	m_deviceState(NULL), m_lpVB(NULL), m_vertices(0)
@@ -13,7 +14,7 @@ Graphics::~Graphics()
 	release();
 }
 
-bool Graphics::initialize(HWND hWnd, bool fullscreen)
+bool Graphics::initialize(HWND hWnd)
 {
 	m_lpDirect3d = Direct3DCreate9(D3D_SDK_VERSION);
 	if (FAILED(m_lpDirect3d))
@@ -21,14 +22,17 @@ bool Graphics::initialize(HWND hWnd, bool fullscreen)
 
 	try
 	{
-		m_PresentParameter.BackBufferWidth = GAME_WIDTH;
-		m_PresentParameter.BackBufferHeight = GAME_HEIGHT;
+		m_PresentParameter.BackBufferWidth = pGameInfo->width;
+		m_PresentParameter.BackBufferHeight = pGameInfo->height;
 		m_PresentParameter.BackBufferCount = 1;
 		m_PresentParameter.hDeviceWindow = hWnd;
 		m_PresentParameter.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		if (fullscreen && isAdaptereCompatility())
+		if (pGameInfo->fullScreen)
 		{
-			m_PresentParameter.Windowed = FALSE;
+			if (isAdaptereCompatility())
+				m_PresentParameter.Windowed = FALSE;
+			else
+				return false;
 		}
 		else
 		{
@@ -122,7 +126,7 @@ HRESULT Graphics::showBackbuffer()
 	HRESULT hr;
 	hr = m_lpDevice3d->Present(NULL, NULL, NULL, NULL);
 	if(SUCCEEDED(hr))
-		::frameCounter++;
+		::g_frameCounter++;
 	return hr;
 }
 

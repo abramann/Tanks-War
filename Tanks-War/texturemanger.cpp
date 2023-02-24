@@ -1,80 +1,48 @@
 #include "texturemanger.h"
-#include <fstream>
-#include <initializer_list>
+#include "fileio.h"
+#include "graphics.h"
 
-TextureManger::TextureManger() : m_width(0), m_height(0), m_lpTexture(NULL)
+TextureManger::TextureManger()
 {
 }
+
 
 TextureManger::~TextureManger()
 {
-	release();
 }
 
-bool TextureManger::initialize(const char* file, Graphics* graphics)
+bool TextureManger::initialize(Graphics* graphics)
 {
 	m_pGraphics = graphics;
-	m_file = file;
-	read();
-	return m_pGraphics->loadTexture(m_file, m_width, m_height, m_textureInfo.transparency, m_lpTexture);
+	uint8_t textures = FileIO::getDirFiles(TEXTURE_DIR);
+	m_pTexture = new Texture[textures];
+//	m_TextureInfo = new TextureInfo*[textures];
+	return load();
 }
 
-void TextureManger::onLostDevice()
+bool TextureManger::load()
 {
-	release();
-}
+	m_textureList = FileIO::getFilesList(TEXTURE_DIR, "");
+	Texture texture;
 
-void TextureManger::onResetDevice()
-{
-	m_pGraphics->loadTexture(m_file, m_width, m_height, m_textureInfo.transparency, m_lpTexture);
-}
-
-void TextureManger::release()
-{
-	SAFE_RELEASE(m_lpTexture);
-}
-
-template <typename T>
-void ReadLineToNumeric(std::ifstream &file, std::initializer_list<T>)
-{
-	for (auto value : T)
+	uint8_t counter = 0;
+	for (auto item : m_textureList)
 	{
-		std::string line;
-		std::getline(file, line);
-		value = getTargetEqualStringValue(line);
+		ZeroMemory(&texture, sizeof(texture));
+		item.insert(0, TEXTURE_DIR);
+		if (!texture.initialize(item.c_str(), m_pGraphics))
+			throw GameError(gameErrorNS::FATAL_ERROR, item.c_str());
+
+		texture.setNumber(counter);
+		m_pTexture[counter] = texture;
+		if (strComp(texture.getTextureName(), "tiled-0") == 0)
+			m_pTiledTexture = &m_pTexture[counter];
+
+		TextureInfo textureInfo;
+		textureInfo = *FileIO::readTextureInfo(texture.getTextureName());
+		m_TextureInfo.push_back(textureInfo);
+		counter++;
 	}
-}
 
-void TextureManger::read()
-{
-	std::string file = m_file;
-	std::string name = &file[file.find_last_of('\\') + 1];
-	char* ad = &name[0];
-	file.erase(file.find_last_of('\\') + 1, file.length());
-	file.insert(file.length(), "textures-info.txt");
-	char* tt = &file[0];
-	std::ifstream fInfo(file);
-	if (!fInfo.is_open())
-		return;
-
-	std::string line;
-	while (std::getline(fInfo, line))
-		if (line.compare(name) == 0)
-		{
-			std::getline(fInfo, line);
-			m_textureInfo.rows = std::stoi(getTargetEqualStringValue(line));
-			std::getline(fInfo, line);
-			m_textureInfo.columns = std::stoi(getTargetEqualStringValue(line));
-			std::getline(fInfo, line);
-			m_textureInfo.width = std::stoi(getTargetEqualStringValue(line));
-			std::getline(fInfo, line);
-			m_textureInfo.height = std::stoi(getTargetEqualStringValue(line));
-			std::getline(fInfo, line);
-			m_textureInfo.transparency = std::stoi(getTargetEqualStringValue(line));
-			std::getline(fInfo, line);
-			m_textureInfo.animateSpeed = ::atof(getTargetEqualStringValue(line).c_str());
-			return;
-		}
-
-	m_textureInfo.transparency =  D3DCOLOR_ARGB(255, 255, 0, 255);
+	return true;
 }

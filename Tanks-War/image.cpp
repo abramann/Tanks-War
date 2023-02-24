@@ -1,4 +1,5 @@
 #include "image.h"
+#include "fileio.h"
 
 Image::Image() : m_animate(0), m_frameDelay(0), m_updateDelay(0),
 	m_column(1), m_row(1), m_threadHandle(0), m_threadPara(0),
@@ -12,49 +13,55 @@ Image::~Image()
 	release();
 }
 
-void Image::initialize(uint16_t width, uint16_t height, uint8_t  columns, uint8_t rows, bool animate, float updateDelay, TextureManger* textureManger, Graphics* graphics)
+void Image::initialize(uint16_t width, uint16_t height, uint8_t  columns, uint8_t rows, bool animate, float updateDelay, Texture* texture, Graphics* graphics)
 {
 	m_pGraphics = graphics;
-	m_pTextureManger = textureManger;
+	setTexture(texture);
+	/*
 	if (width == 0)
 	{
 		if (animate)
-			width = textureManger->getImageWidth();
+			width = texture->getImageWidth();
 		else
-			width = textureManger->getWidth();	// Use full texture width
+			width = texture->getWidth();	// Use full texture width
 	}
 	if (height == 0)
 	{
 		if (animate)
-			height = textureManger->getImageHeight();
+			height = texture->getImageHeight();
 		else
-			height = textureManger->getHeight();	// Use full texture height;
+			height = texture->getHeight();	// Use full texture height;
 	}
 
 	m_spriteData.width = width;
 	m_spriteData.height = height;
 	if (columns == 1 && rows == 1 && animate)
 	{
-		m_spriteData.rows = textureManger->getRows();
-		m_spriteData.columns = textureManger->getColumns();
+		m_spriteData.rows = texture->getRows();
+		m_spriteData.columns = texture->getColumns();
 	}
 	else 
 	{
 		m_spriteData.columns = columns;
 		m_spriteData.rows = rows;
 	}
-
+	*/
 	m_animate = animate;
 	m_updateDelay = updateDelay;
-	m_spriteData.lpTexture = textureManger->getTexture();
-	m_spriteData.textureWidth = textureManger->getWidth();
-	m_spriteData.textureHeight = textureManger->getHeight();
-
-
 
 	m_spriteData.scalling = 1.0f;
 	m_spriteData.center = V2(width / 2, height / 2);
 	m_spriteData.filterColor = COLOR_WHITE;
+}
+
+void Image::initialize(Texture * texture, TextureManger* textureManger, Graphics * graphics)
+{
+	m_pGraphics = graphics;
+	m_pTextureManger = textureManger;
+	m_pImageInfo = m_pTextureManger->getTextureInfo(texture->getNumber())->imageInfo;
+	setTexture(texture);
+	setDefaultImageInfo();
+	setFilterColor(COLOR_XRGB(255, 255, 255));
 }
 
 void Image::draw()
@@ -116,22 +123,25 @@ void Image::setFrameRect(uint8_t column, uint8_t row, uint16_t frames)
 	}
 }
 
-void Image::setTexture(TextureManger* textureManger)
+void Image::setTexture(Texture* texture)
 {
-	m_pTextureManger = textureManger;
-	m_spriteData.lpTexture = m_pTextureManger->getTexture();
-	m_spriteData.textureWidth = m_pTextureManger->getWidth();
-	m_spriteData.textureHeight = m_pTextureManger->getHeight();
+	m_pTexture = texture;
+	m_spriteData.lpTexture = m_pTexture->getTexture();
+	m_spriteData.textureWidth = m_pTexture->getWidth();
+	m_spriteData.textureHeight = m_pTexture->getHeight();
 }
 
-void Image::setDefaultTextureInfo()
+void Image::setDefaultImageInfo()
 {
 	m_spriteData;
-	setTextureImageWidth();
-	setTextureImageHeight();
-	setTextureColumns();
-	setTextureRows();
-	setTextureUpdateDelay();
+	m_pImageInfo = m_pTextureManger->getTextureInfo(m_pTexture->getNumber())->imageInfo;
+	setDefaultImageWidth();
+	setDefaultImageHeight();
+	setDefaultColumns();
+	setDefaultRows();
+	setDefaultAnimate();
+	setDefaultUpdateDelay();
+	setDefaultScalling();
 }
 
 V2 Image::getFocusSite() const

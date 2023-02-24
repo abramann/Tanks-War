@@ -5,41 +5,6 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
-struct Vertex 
-{
-	float x, y, z, rhw;
-	float u, v;
-};
-
-struct TextureVertices
-{
-	Vertex v1, v2, v3;
-	Vertex v4, v5, v6;
-};
-
-#define ZERO_V2(v2) (v2 == V2(0,0))
-#define COLOR_ARGB D3DCOLOR_ARGB
-#define COLOR_XRGB D3DCOLOR_XRGB
-
-typedef D3DCOLOR Color;
-typedef D3DXVECTOR2 V2;
-
-constexpr auto  VERTEX_FVF = D3DFVF_XYZRHW | D3DFVF_TEX1;
-constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
-
-struct SpriteData
-{
-	LPDIRECT3DTEXTURE9 lpTexture;
-	int width, height;
-	int textureWidth, textureHeight;
-	float x, y;
-	int columns, rows;
-	float angle;
-	float scalling;
-	RECT rect;
-	Color filterColor;
-	V2 center;
-};
 
 class Graphics
 {
@@ -47,7 +12,7 @@ public:
 
 	Graphics();
 	~Graphics();
-	bool initialize(HWND hWnd, bool fullscreen);
+	bool initialize(HWND hWnd);
 	HRESULT createVertexBuffer(UINT length);
 	void spriteBegin();
 	void spriteEnd();

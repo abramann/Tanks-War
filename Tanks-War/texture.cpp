@@ -1,34 +1,47 @@
 #include "texture.h"
+#include <fstream>
+#include "fileio.h"
 
-TextureManger::TextureManger() : width(0), height(0), texture(NULL),
-	transpanceyColor(0)
+Texture::Texture() : m_width(0), m_height(0), m_lpTexture(NULL)
 {
 }
 
-TextureManger::~TextureManger()
+Texture::~Texture()
 {
 	release();
 }
 
-bool TextureManger::initialize(const char* _textureFile, COLOR _transpanceyColor, Graphics* g)
+bool Texture::initialize(const char* file, Graphics* graphics)
 {
-	graphics = g;
-	textureFile = _textureFile;
-	transpanceyColor = _transpanceyColor;
-	return graphics->loadTexture(textureFile, width, height, transpanceyColor, texture);
+	m_pGraphics = graphics;
+	m_file = file;
+	HRESULT hr = m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, COLOR_ALPHA, m_lpTexture);
+	if (FAILED(hr))
+		return false;
+	return true;
 }
 
-void TextureManger::onLostDevice()
+void Texture::onLostDevice()
 {
 	release();
 }
 
-void TextureManger::onResetDevice()
+void Texture::onResetDevice()
 {
-	graphics->loadTexture(textureFile, width, height, transpanceyColor, texture);
+	m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, COLOR_BLACK, m_lpTexture);
 }
 
-void TextureManger::release()
+void Texture::release()
 {
-	SAFE_RELEASE(texture);
+	SAFE_RELEASE(m_lpTexture);
+}
+
+std::string Texture::getTextureName() const
+{
+	const char* qw = m_file.c_str();
+	return getFileNameFromPath(m_file);
+}
+
+void Texture::read()
+{
 }

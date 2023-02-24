@@ -1,5 +1,6 @@
 #include "always.h"
 #include "tankswar.h"
+#include "fileio.h"
 
 #define _CRTDBG_MAP_ALLOC // For detecting memory leaks
 #include <stdlib.h> // For detecting memory leaks
@@ -16,9 +17,10 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow);
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 bool isFullScreen();
 
-bool fullscreen;
+// bool fullscreen;
 
 TanksWar* game;
+const GameInfo* pGameInfo;
 
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -30,20 +32,18 @@ int message(std::string msg, int type)
 	return MessageBoxA(NULL, msg.c_str(), "Tanks War", type);
 }
 
-bool AnotherInstance()
+bool alreadyOpen()
 {
-	HANDLE ourMutex;
-	// Attempt to create a mutex using our unique string
-	ourMutex = CreateMutexA(NULL, true, "Use_a_different_string_here_for_each_program_48161-XYZZY");
+	HANDLE mutex;
+	mutex = CreateMutexA(NULL, true, "tankswarbyabramann");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
 		return true;
-	// Another instance was found
 	return false;
 }
 
 bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 {
-	if (AnotherInstance() == true)
+	if (alreadyOpen())
 		return false;
 
 	WNDCLASSEX wcx;
@@ -67,16 +67,16 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 		return false;
 
 	//set up the screen in windowed or fullscreen mode?
-	DWORD style = (fullscreen) ? WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP : WS_EX_TOPMOST;
+	DWORD style = (pGameInfo->fullScreen) ? WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP : WS_EX_TOPMOST;
 	// Create window
 	hwnd = CreateWindow(
 		"Game Class",
-		"Tanks Warfare",             // title bar text
+		"Tanks War",             // title bar text
 		style,                  // window style
 		CW_USEDEFAULT,          // default horizontal position of window
 		CW_USEDEFAULT,          // default vertical position of window
-		GAME_WIDTH,             // width of window
-		GAME_HEIGHT,            // height of the window
+		pGameInfo->width,           // width of window
+		pGameInfo->height,            // height of the window
 		(HWND)NULL,            // no parent window
 		(HMENU)NULL,           // no menu
 		hInstance,              // handle to application instance
@@ -86,17 +86,17 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	if (!hwnd)
 		return false;
 
-	if (!fullscreen)             // if window
+	if (!pGameInfo->fullScreen)             // if window
 	{
-		// Adjust window size so client area is GAME_WIDTH x GAME_HEIGHT
+		// Adjust window size so client area is GAME_WIDTH x pGameInfo->height
 		RECT clientRect;
 		GetClientRect(hwnd, &clientRect);   // get size of client area of window
 		MoveWindow(hwnd,
 			0,                                           // Left
 			0,                                           // Top
-			GAME_WIDTH + (GAME_WIDTH - clientRect.right),    // Right
-			GAME_HEIGHT + (GAME_HEIGHT - clientRect.bottom), // Bottom
-			TRUE);                                       // Repaint the window
+			pGameInfo->width + (pGameInfo->width - clientRect.right),    // Right
+			pGameInfo->height + (pGameInfo->height - clientRect.bottom), // Bottom
+			TRUE);                                         // Repaint the window
 	}
 
 	// Show the window
@@ -117,10 +117,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #if defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-
-	HWND hWnd = NULL;
-	fullscreen = isFullScreen();
 	
+	HWND hWnd = NULL;
+//	fullscreen = isFullScreen();
+	pGameInfo = FileIO::readGameInfo();
 	if (!CreateMainWindow(hWnd, hInstance, nCmdShow))
 	{
 		message("CreateMainWindow() failed !", MB_OK);
@@ -132,7 +132,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	try
 	{
 		double t = ::timeGetTime();
-		game->initialize(hInstance, hWnd, fullscreen);
+		game->initialize(hInstance, hWnd);
 		t = ::timeGetTime() - t;
 		while (true)
 		{

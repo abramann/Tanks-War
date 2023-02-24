@@ -11,14 +11,21 @@ Unit::~Unit()
 {
 }
 
-void Unit::initialize(int width, int height, int columns, int rows, bool animate, float updateDelay, float health, float speed, TextureManger * death, Map * map, TextureManger * textureManger, Graphics * graphics)
+void Unit::initialize(uint16_t width, uint16_t height, uint8_t columns, uint8_t rows, bool animate, float updateDelay, float health, float speed, Map* map, Texture* death, Texture* texture, Graphics* graphics)
 {
 	m_pMap = map;
-	Object::initialize(width, height, columns, rows, animate, updateDelay, health, speed, death, textureManger, graphics);
+	Object::initialize(width, height, columns, rows, animate, updateDelay, health, speed, death, texture, graphics);
 }
+
+void Unit::initialize(Map * map, TextureManger* textureManger, Texture * texture, Graphics * graphics)
+{
+	m_pMap = map;
+	Object::initialize(texture, textureManger, graphics);
+}
+
 void Unit::executeForward(float frameTime)
 {
-	int y = m_spriteData.y - (m_speed * frameTime);
+	int y = m_spriteData.y - (m_pObjectInfo->speed * frameTime);
 	y = m_pMap->passY(m_spriteData.x + m_spriteData.width / 2, y, m_spriteData.y);
 	setY(y);
 	if (m_playAudio)
@@ -27,7 +34,7 @@ void Unit::executeForward(float frameTime)
 
 void Unit::executeBack(float frameTime)
 {
-	float y = m_spriteData.y + (m_speed * frameTime) + m_spriteData.height;
+	float y = m_spriteData.y + (m_pObjectInfo->speed * frameTime) + m_spriteData.height;
 	y = m_pMap->passY(m_spriteData.x, y, m_spriteData.y) - m_spriteData.height;
 	setY(y);
 	if (m_playAudio)
@@ -36,7 +43,7 @@ void Unit::executeBack(float frameTime)
 
 void Unit::executeRight(float frameTime)
 {
-	float x = m_spriteData.x + (frameTime*m_speed) + m_spriteData.width;
+	float x = m_spriteData.x + (frameTime*m_pObjectInfo->speed) + m_spriteData.width;
 	x = m_pMap->passX(x, m_spriteData.x, m_spriteData.y) - m_spriteData.width;
 	setX(x);
 	if (m_playAudio)
@@ -45,7 +52,7 @@ void Unit::executeRight(float frameTime)
 
 void Unit::executeLeft(float frameTime)
 {
-	float newX = m_spriteData.x - (m_speed * frameTime);
+	float newX = m_spriteData.x - (m_pObjectInfo->speed * frameTime);
 	newX = m_pMap->passX(newX, m_spriteData.x, m_spriteData.y);
 	setX(newX);
 	if (m_playAudio)

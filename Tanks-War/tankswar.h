@@ -15,7 +15,7 @@ enum GTEXTURES {
 	TEXTURE_FIRE_SIMPLE,
 	TEXTURES
 };
-#define IMAGES 1
+#define IMAGES 2
 #define IMAGE_EXPLOSION 0
 
 static std::string file[] = { "Assets\\Texture\\player-tank.png",
@@ -28,7 +28,7 @@ public:
 
 	TanksWar();
 	~TanksWar();
-	void initialize(HINSTANCE hInstance, HWND hWnd, bool fullscreen);
+	void initialize(HINSTANCE hInstance, HWND hWnd);
 	void update();
 	void collision();
 	void render();
@@ -37,7 +37,8 @@ public:
 
 private:
 
-	TextureManger* texture;
+	TextureManger tm;
+	Texture* texture;
 	Image* image;
 	Tank* tank;
 	Map map;

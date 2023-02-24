@@ -11,12 +11,13 @@
 
 #include "gameerror.h"
 #include <windows.h>
-//#include <fstream>
+#include"structs.h"
 
-extern UINT64 frameCounter;
+extern const GameInfo* pGameInfo;
+extern uint64_t g_frameCounter;
 
-const uint16_t GAME_WIDTH = 800;               // width of game in pixels
-const uint16_t GAME_HEIGHT = 600;               // height of game in pixels
+//const uint16_t GAME_WIDTH = 800;               // width of game in pixels
+//const uint16_t GAME_HEIGHT = 600;               // height of game in pixels
 
 // game
 const double PI = 3.14159265;
@@ -36,9 +37,9 @@ inline void waitTime(float time)
 
 inline void waitFrame(int framesWait)
 {
-	framesWait += ::frameCounter;
+	framesWait += ::g_frameCounter;
 	while (true)
-		if (framesWait < ::frameCounter)
+		if (framesWait < ::g_frameCounter)
 			break;
 }
 
@@ -59,6 +60,18 @@ inline float _round(float value)
 	if (abs(rValue) > 1)
 		return sign(rValue) * 1;
 	return rValue;
+}
+
+inline int strComp(std::string s1, std::string s2)
+{
+	return strcmp(s1.c_str(), s2.c_str());
+}
+
+inline std::string getFileNameFromPath(std::string path)
+{
+	std::string sName = path.substr(path.find_last_of('\\') + 1,
+		path.find_last_of('.') - path.find_last_of('\\') - 1);
+	return sName;
 }
 
 //=============================================================================
@@ -101,6 +114,7 @@ inline void safeDeleteArray(T& ptr)
 		ptr = NULL;
 	}
 }
+
 #define SAFE_DELETE_ARRAY safeDeleteArray   // for backward compatiblility
 
 // Safely call onLostDevice

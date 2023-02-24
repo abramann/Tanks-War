@@ -1,5 +1,5 @@
 #include "fire.h"
-
+#include "fileio.h"
 Fire::Fire() : m_active(false)
 {
 	m_release = false;
@@ -8,15 +8,26 @@ Fire::Fire() : m_active(false)
 
 Fire::~Fire()
 {
+	
 }
 
-void Fire::initialize(FireData fireData, TextureManger* explostion, Map* map, TextureManger* textureManger, Graphics* graphics)
+void Fire::initialize(Object* object, Map* map,Texture* explosion, Texture* texture, Graphics* graphics)
 {
-	m_fireData = fireData;
+	m_pObject = object;
 	m_pMap = map;
-	m_pExplostion = explostion;
-	m_pFire = textureManger;
-	Image::initialize(0, 0, 1, 1, false, 20, textureManger, graphics);
+	m_pExplostion = explosion;
+	m_pFire = texture;
+//	Image::initialize(texture,, graphics);
+}
+
+void Fire::initialize(Object* object, Map* map, TextureManger* textureManger, Texture* texture, Graphics* graphics)
+{
+	Image::initialize(texture, textureManger, graphics);
+	m_pObject = object;
+	m_pMap = map;
+	m_pFire = texture;
+	m_pFireInfo = textureManger->getTextureInfo(m_pFire->getNumber())->fireInfo;
+	m_pExplostion = textureManger->getTexture(m_pFireInfo->endTexture);
 }
 
 void Fire::update(float frameTime)
@@ -31,57 +42,59 @@ void Fire::update(float frameTime)
 		}
 
 		Object* object = m_pMap->collided(*this);
-		if (object != nullptr)
+		if (object != nullptr && object != m_pObject)
 		{
-			object->damage(m_fireData.healthDecrease);
 			m_release = false;
 			m_bomb = true;
+			object->damage(m_pFireInfo->damage);
 			setExplosionMode();
 			break;
 		}
+
 		if (m_releaseType == RELEASE_TRACE)
 			releaseTraceUpdate(frameTime);
 		else if (m_releaseType == RELEASE_NORMAL)
 			releaseNormalUpdate(frameTime);
+
 		break;
 	}
 
+	m_spriteData;
 	Image::update(frameTime);
 }
 
 void Fire::draw()
 {
-	if(m_release || m_bomb)
 		Image::draw();
 }
 
-void Fire::release(Object* object, uint8_t releaseType)
+void Fire::release(uint8_t releaseType)
 {
 	m_active = true;
 	m_release = true;
 	m_releaseType = releaseType;
-	m_spriteData;
+	// m_objectData = m_pObject->getObjectData();
 	if (m_releaseType == RELEASE_NORMAL)
 	{
-		m_objectData.x = object->getX();
-		m_objectData.y = object->getY();
-		m_objectData.angle = object->getAngle();
+		m_objectData.x = m_pObject->getX();
+		m_objectData.y = m_pObject->getY();
+		m_objectData.angle = m_pObject->getAngle();
 	}
 	else if (m_releaseType = RELEASE_TRACE)
 	{
-		m_pTarget = object;
+	//	m_pTarget = object;
 	}
 
-	V2 site = getObjectFocuusPoint(*object, *this);
-	setXY(site).setAngle(object->getAngle());
+	V2 site = getObjectFocuusPoint(*m_pObject, *this);
+	setXY(site);
+	setAngle(m_pObject->getAngle());
 }
 
 void Fire::setExplosionMode()
 {
 	setTexture(m_pExplostion);
-	setDefaultTextureInfo();
+	setDefaultImageInfo();
 	setDefaultColumnRow();
-	setAnimate(true);
 }
 
 void Fire::endFrame()
@@ -95,7 +108,7 @@ void Fire::setDefaultMode()
 	m_bomb = false;
 	m_active = false;
 	setTexture(m_pFire);
-	setDefaultTextureInfo();
+	setDefaultImageInfo();
 	setDefaultColumnRow();
 	setAnimate(false);
 	setX(0).setY(0);
@@ -111,6 +124,6 @@ void Fire::releaseNormalUpdate(float frameTime)
 	sinA = _round(sinA);
 	float cosA = cos(m_objectData.angle);
 	cosA = _round(cosA);
-	xAdd(m_fireData.speed*(sinA));
-	yDec(m_fireData.speed*(cosA));
+	xAdd(m_pFireInfo->speed*(sinA));
+	yDec(m_pFireInfo->speed*(cosA));
 }

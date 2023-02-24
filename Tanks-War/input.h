@@ -47,8 +47,6 @@
 #define RSHIFT_KEY DIK_RSHIFT
 #define LSHIFT_KEY DIK_LSHIFT
 
-typedef BYTE Key;
-
 class Input
 {
 

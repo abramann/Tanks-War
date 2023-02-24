@@ -1,0 +1,4 @@
+4-bullet-6
+Speed=10
+Damage=40
+death-based-texture=6
