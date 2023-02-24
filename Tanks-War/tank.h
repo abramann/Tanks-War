@@ -32,8 +32,8 @@ private:
 	Texture* m_pFire;
 	
 	Fire m_fire;
-	TankInfo* m_pTankInfo;
-	FireInfo* m_pFireInfo;
+	TankInfo m_tankInfo;
+	FireInfo* m_fireInfo;
 
 };
 

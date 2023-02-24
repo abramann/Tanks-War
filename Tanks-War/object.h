@@ -26,22 +26,22 @@ public:
 	virtual void draw();
 	virtual void inputUpdate(float frameTime);
 	virtual void release();
-	virtual void healthIncrease(float increase) { m_pObjectInfo->health += increase; }
-	virtual void damage(float value) { m_pObjectInfo->health -= value; }
-	virtual void speedIncrease(float increase) { m_pObjectInfo->speed += increase; }
-	virtual void speedDecrease(float decrease) { m_pObjectInfo->speed -= decrease; }
-	virtual void setHealth(float health) { m_pObjectInfo->health = health; }
-	virtual void setSpeed(float speed) { m_pObjectInfo->speed = speed; }
+	virtual void healthIncrease(float increase) { m_ObjectInfo.health += increase; }
+	virtual void damage(float value) { m_ObjectInfo.health -= value; }
+	virtual void speedIncrease(float increase) { m_ObjectInfo.speed += increase; }
+	virtual void speedDecrease(float decrease) { m_ObjectInfo.speed -= decrease; }
+	virtual void setHealth(float health) { m_ObjectInfo.health = health; }
+	virtual void setSpeed(float speed) { m_ObjectInfo.speed = speed; }
 	virtual void setUpdateInput(bool updateInput) { m_updateInput = updateInput; }
 	void setInput(bool input) { m_handleInput = input; }
 	void setAudio(bool audio) { m_playAudio = audio; }
 	virtual void setDeathMode();
 	virtual void endFrame();
 
-	virtual float getHealth() { return m_pObjectInfo->health; }
-	virtual float getSpeed() { return m_pObjectInfo->speed; }
+	virtual float getHealth() { return m_ObjectInfo.health; }
+	virtual float getSpeed() { return m_ObjectInfo.speed; }
 	virtual bool getUpdateInput() { return m_updateInput; }
-	const bool alive() const { return (m_pObjectInfo->health > 0) ? true : false; }
+	const bool alive() const { return (m_ObjectInfo.health > 0) ? true : false; }
 	virtual void executeForward(float frameTime) = 0;
 	virtual void executeBack(float frameTime) = 0;
 	virtual void executeRight(float frameTime) = 0;
@@ -52,7 +52,7 @@ protected:
 	Audio* m_pAudio;
 	Input* m_pInput;
 	Texture* m_pDeath;
-	ObjectInfo* m_pObjectInfo;
+	ObjectInfo m_ObjectInfo;
 	std::vector<Key> m_key;
 	std::vector<Effect> m_effect;
 	bool m_render;

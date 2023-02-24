@@ -25,7 +25,7 @@ void Unit::initialize(Map * map, TextureManger* textureManger, Texture * texture
 
 void Unit::executeForward(float frameTime)
 {
-	int y = m_spriteData.y - (m_pObjectInfo->speed * frameTime);
+	int y = m_spriteData.y - (m_ObjectInfo.speed * frameTime);
 	y = m_pMap->passY(m_spriteData.x + m_spriteData.width / 2, y, m_spriteData.y);
 	setY(y);
 	if (m_playAudio)
@@ -34,7 +34,7 @@ void Unit::executeForward(float frameTime)
 
 void Unit::executeBack(float frameTime)
 {
-	float y = m_spriteData.y + (m_pObjectInfo->speed * frameTime) + m_spriteData.height;
+	float y = m_spriteData.y + (m_ObjectInfo.speed * frameTime) + m_spriteData.height;
 	y = m_pMap->passY(m_spriteData.x, y, m_spriteData.y) - m_spriteData.height;
 	setY(y);
 	if (m_playAudio)
@@ -43,7 +43,7 @@ void Unit::executeBack(float frameTime)
 
 void Unit::executeRight(float frameTime)
 {
-	float x = m_spriteData.x + (frameTime*m_pObjectInfo->speed) + m_spriteData.width;
+	float x = m_spriteData.x + (frameTime* m_ObjectInfo.speed) + m_spriteData.width;
 	x = m_pMap->passX(x, m_spriteData.x, m_spriteData.y) - m_spriteData.width;
 	setX(x);
 	if (m_playAudio)
@@ -52,7 +52,7 @@ void Unit::executeRight(float frameTime)
 
 void Unit::executeLeft(float frameTime)
 {
-	float newX = m_spriteData.x - (m_pObjectInfo->speed * frameTime);
+	float newX = m_spriteData.x - (m_ObjectInfo.speed * frameTime);
 	newX = m_pMap->passX(newX, m_spriteData.x, m_spriteData.y);
 	setX(newX);
 	if (m_playAudio)

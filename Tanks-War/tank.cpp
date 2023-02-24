@@ -18,7 +18,7 @@ void Tank::initialize(int width, int height, float health, float speed, Map* map
 void Tank::initialize(Map * map, TextureManger * textureManger, Texture * texture, Graphics * graphics)
 {
 	Unit::initialize(map, textureManger, texture, graphics);
-	m_pTankInfo = textureManger->getTextureInfo(texture->getNumber())->tankInfo;
+	m_tankInfo = *textureManger->getTextureInfo(texture->getNumber())->tankInfo;
 }
 
 void Tank::inputInitialize(Input* input, Key forward_key, Key back_key, Key right_key, Key left_key, Key attack_key, Texture* fire)
@@ -31,7 +31,7 @@ void Tank::inputInitialize(Input* input, Key forward_key, Key back_key, Key righ
 
 void Tank::inputInitialize(Input* input, Key forward_key, Key back_key, Key right_key, Key left_key, Key attack_key)
 {
-	m_pFire = m_pTextureManger->getTexture(m_pTankInfo->fireTexture);
+	m_pFire = m_pTextureManger->getTexture(m_tankInfo.fireTexture);
 	m_fire.initialize(this,m_pMap, m_pTextureManger, m_pFire, m_pGraphics);
 	Unit::inputInitialize(input, forward_key, back_key, right_key, left_key);
 	m_key.push_back(attack_key);
@@ -76,8 +76,8 @@ void Tank::executeForward(float frameTime)
 	float extraX = 0;// powSin*((m_spriteData.angle / PI) + 0.5)*m_spriteData.width;
 	extraX = getCenterX() + m_spriteData.height*powSin;
 	float extraY = -powCos*_round(sin(m_spriteData.angle / 2))	* m_spriteData.height;
-	float x = getCenterX() + (m_spriteData.height*powSin / 2) + (m_spriteData.width*powCos / 2) +(m_pObjectInfo->speed * powSin);
-	float y = m_spriteData.y - (m_pObjectInfo->speed * powCos) - extraY;
+	float x = getCenterX() + (m_spriteData.height*powSin / 2) + (m_spriteData.width*powCos / 2) +(m_ObjectInfo.speed * powSin);
+	float y = m_spriteData.y - (m_ObjectInfo.speed * powCos) - extraY;
 	x = m_pMap->passX(x, m_spriteData.x, y);
 	
 	setX(x);
@@ -95,8 +95,8 @@ void Tank::executeBack(float frameTime)
 	float powCos = sign(m_cosA) * pow(m_cosA, 2);
 	float extraX = 0;// powSin*((m_spriteData.angle / PI) + 0.5)	*m_spriteData.width;
 	float extraY = powCos*cos(m_spriteData.angle / 2)	*m_spriteData.height;
-	float x = m_spriteData.x - (m_pObjectInfo->speed * powSin) - extraX;
-	float y = m_spriteData.y + (m_pObjectInfo->speed * powCos) - extraY;
+	float x = m_spriteData.x - (m_ObjectInfo.speed * powSin) - extraX;
+	float y = m_spriteData.y + (m_ObjectInfo.speed * powCos) - extraY;
 	x = m_pMap->passX(x, m_spriteData.x, y);
 	x += extraX;
 	setX(x);

@@ -32,7 +32,7 @@ private:
 	bool m_release;
 	bool m_bomb;
 	uint8_t m_releaseType;
-	FireInfo* m_pFireInfo;
+	FireInfo m_fireInfo;
 	ObjectData m_objectData;
 	bool m_active;
 };

@@ -26,8 +26,8 @@ void Fire::initialize(Object* object, Map* map, TextureManger* textureManger, Te
 	m_pObject = object;
 	m_pMap = map;
 	m_pFire = texture;
-	m_pFireInfo = textureManger->getTextureInfo(m_pFire->getNumber())->fireInfo;
-	m_pExplostion = textureManger->getTexture(m_pFireInfo->endTexture);
+	m_fireInfo = *textureManger->getTextureInfo(m_pFire->getNumber())->fireInfo;
+	m_pExplostion = textureManger->getTexture(m_fireInfo.endTexture);
 }
 
 void Fire::update(float frameTime)
@@ -46,7 +46,7 @@ void Fire::update(float frameTime)
 		{
 			m_release = false;
 			m_bomb = true;
-			object->damage(m_pFireInfo->damage);
+			object->damage(m_fireInfo.damage);
 			setExplosionMode();
 			break;
 		}
@@ -124,6 +124,6 @@ void Fire::releaseNormalUpdate(float frameTime)
 	sinA = _round(sinA);
 	float cosA = cos(m_objectData.angle);
 	cosA = _round(cosA);
-	xAdd(m_pFireInfo->speed*(sinA));
-	yDec(m_pFireInfo->speed*(cosA));
+	xAdd(m_fireInfo.speed*(sinA));
+	yDec(m_fireInfo.speed*(cosA));
 }

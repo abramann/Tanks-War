@@ -14,7 +14,6 @@ Object::~Object()
 
 void Object::initialize(uint16_t width, uint16_t height, uint8_t columns, uint8_t rows, bool animate, float updateDelay, float health, float speed, Texture* death, Texture* texture, Graphics* graphics)
 {
-	m_pObjectInfo = new ObjectInfo;
 	setSpeed(speed);
 	setHealth(health);
 	m_pDeath = death;
@@ -25,8 +24,8 @@ void Object::initialize(uint16_t width, uint16_t height, uint8_t columns, uint8_
 void Object::initialize(Texture * texture, TextureManger* textureManger, Graphics * graphics)
 {
 	Image::initialize(texture, textureManger, graphics);
-	m_pObjectInfo = m_pTextureManger->getTextureInfo(m_pTexture->getNumber())->objectInfo;
-	m_pDeath = m_pTextureManger->getTexture(m_pObjectInfo->deathTexture);
+	m_ObjectInfo = *m_pTextureManger->getTextureInfo(m_pTexture->getNumber())->objectInfo;
+	m_pDeath = m_pTextureManger->getTexture(m_ObjectInfo.deathTexture);
 
 }
 
@@ -53,7 +52,7 @@ void Object::audioInitialize(Effect forward_eff, Effect back_eff, Effect right_e
 void Object::update(float frameTime)
 {
 	if(m_alive)
-		if (m_pObjectInfo->health <= 0)
+		if (m_ObjectInfo.health <= 0)
 			setDeathMode();
 
 	if (m_handleInput)
