@@ -142,6 +142,7 @@ void Image::setDefaultImageInfo()
 	setDefaultAnimate();
 	setDefaultUpdateDelay();
 	setDefaultScalling();
+	setFrameRect(1, 1, 0);
 }
 
 V2 Image::getFocusSite() const

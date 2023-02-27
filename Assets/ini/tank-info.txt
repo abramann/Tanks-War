@@ -1,2 +1,4 @@
 1-player-tank
 Fire-based-texture=4
+7-enemy-tank
+Fire-based-texture=4

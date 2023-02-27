@@ -2,3 +2,8 @@
 health=100
 speed=10.0
 death-based-texture=2
+____________________
+7-enemy-tank
+health=100
+speed=10.0
+death-based-texture=2

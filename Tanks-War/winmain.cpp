@@ -11,8 +11,11 @@
 #pragma comment(lib,"d3dx9.lib")
 #pragma comment(lib,"dinput8.lib")	// Include dinput8 apis
 #pragma comment(lib,"dxguid.lib")
-
-
+#ifdef _DEBUG
+#pragma comment(lib,"net.lib")
+#else
+#pragma comment(lib,"net-release.lib")
+#endif
 bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow);
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 bool isFullScreen();
@@ -34,6 +37,7 @@ int message(std::string msg, int type)
 
 bool alreadyOpen()
 {
+	return false;
 	HANDLE mutex;
 	mutex = CreateMutexA(NULL, true, "tankswarbyabramann");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)

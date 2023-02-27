@@ -156,18 +156,19 @@
   <ItemGroup>
     <ClInclude Include="always.h" />
     <ClInclude Include="audio.h" />
+    <ClInclude Include="client.h" />
     <ClInclude Include="fileio.h" />
     <ClInclude Include="fire.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameerror.h" />
     <ClInclude Include="graphics.h" />
-    <ClInclude Include="Header.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="interface.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="remoteplayer.h" />
     <ClInclude Include="structs.h" />
     <ClInclude Include="tank.h" />
     <ClInclude Include="tankswar.h" />
@@ -178,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="audio.cpp" />
+    <ClCompile Include="client.cpp" />
     <ClCompile Include="fileio.cpp" />
     <ClCompile Include="fire.cpp" />
     <ClCompile Include="game.cpp" />
@@ -187,6 +189,8 @@
     <ClCompile Include="interface.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="menu.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="remoteplayer.cpp" />
     <ClCompile Include="tank.cpp" />
     <ClCompile Include="tankswar.cpp" />
     <ClCompile Include="texture.cpp" />

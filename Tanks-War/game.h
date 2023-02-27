@@ -27,6 +27,7 @@ public:
 	virtual void onResetDevice();
 
 	virtual void collision() = 0;
+	virtual void communicate() = 0;
 	virtual void update() = 0;
 	virtual void render() = 0;
 
@@ -39,9 +40,7 @@ protected:
 	Graphics* m_pGraphics;
 	Input* m_pInput;
 	Audio* m_pAudio;
-
 	DWORD m_timeDelta;
-
 };
 
 

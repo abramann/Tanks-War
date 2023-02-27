@@ -17,6 +17,8 @@ typedef D3DCOLOR Color;
 typedef D3DXVECTOR2 V2;
 typedef BYTE Key;
 
+constexpr auto CONNECT_PORT = 922;
+constexpr auto UDP = 0;
 constexpr uint32_t UNDEFINED_POSITION = 0xFFFF;
 constexpr uint8_t MAX_FILE_NAME = 255;
 constexpr auto INVALID_DATA = 0xFFFF;
@@ -30,6 +32,19 @@ constexpr auto TANK_INFO_PATH = "Assets\\ini\\tank-info.txt";
 constexpr auto IMAGE_INFO_PATH = "Assets\\ini\\image-info.txt";
 constexpr auto FIRE_DATA_PATH = "Assets\\ini\\fire-info.txt";
 constexpr auto TEXTURE_DIR = "Assets\\texture\\";
+
+enum TEXTURES
+{
+	BLACK,
+	PLAYER_TANK,
+	TANK_DESTROY,
+	FIRE_SIMPLE,
+	FIRE_BULLET6,
+	FIRE2,
+	FIRE_HIT,
+	ENEMY_TANK
+
+};
 
 enum READ_TYPE
 {
@@ -154,6 +169,21 @@ struct MapData
 	std::vector<uint8_t> preventedBM;
 };
 
+struct PlayerInfo
+{
+	char id;
+};
 
+struct PlayerState
+{
+	int x, y;
+	float angle, health;
+	char id;
+};
 
+struct PlayerToServer
+{
+	bool forward, back, right, left;
+};
 
+typedef PlayerState ServerToPlayer;

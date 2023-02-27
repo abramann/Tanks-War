@@ -1,55 +1,35 @@
 #ifndef _PLAYER_H
 #define _PLAYER_H
 #include "always.h"
+#include "remoteplayer.h"
+#include <vector>
 
-enum PLAYER_STATE
-{
-	PLAYER_IDLE,
-	PLAYER_MOVE,
-	PLAYER_NITROMOVE,
-	PLAYER_ATTACK,
-	PLAYER_DIE
-};
-
-template <typename T>
-class Player
+class Player : public RemotePlayer
 {
 
 public:
 
 	Player();
 	~Player();
-	void update(float frameTime);
-	void render();
-	/*
-	void update(float frameTime);
-	int8_t m_playerRank;
-	uint8_t m_playerState;
-	bool alive;
-	bool sheild;
-	uint8_t healthLine;
-	uint16_t ammo;
-	std::string name;
-	*/
-	T m_object;
-	Image m_image;
+	virtual void initialize(Map* map, TextureManger* textureManger, Input* input, Graphics* graphics);
+	virtual void update(PlayerState playerState);
+	PlayerToServer getPlayerToServer() const { return m_toServer; }
+	void setPlayerInfo(PlayerInfo playerInfo) { m_playerInfo = playerInfo; }
+
+	bool m_event;
+
+private:
+
+	virtual void executeForward(float frameTime);
+	virtual void executeBack(float frameTime);
+	virtual void executeRight(float frameTime);
+	virtual void executeLeft(float frameTime);
+	virtual void executeAttack(float frameTime);
+
+	PlayerToServer m_toServer;
+	PlayerInfo m_playerInfo;
+	
 };
 
 
 #endif
-
-template<typename T>
-inline Player<T>::Player()
-{
-}
-
-template<typename T>
-inline Player<T>::~Player()
-{
-}
-
-template<typename T>
-inline void Player<T>::update(float frameTime)
-{
-	m_object.update(frameTime);
-}

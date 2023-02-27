@@ -51,3 +51,12 @@ rows=3
 animate=1
 animation_speed=10.0f
 scalling=1.0f
+__________________
+7-enemy-tank
+image_width=60
+image_height=60
+columns=1
+rows=1
+animate=0
+animation_speed=0
+scalling=1.0f

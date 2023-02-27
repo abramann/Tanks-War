@@ -74,6 +74,11 @@ inline std::string getFileNameFromPath(std::string path)
 	return sName;
 }
 
+inline uint32_t _rand(uint32_t max)
+{
+	return rand() % max;
+}
+
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.
 // The functions defined by these templates may be called using a normal

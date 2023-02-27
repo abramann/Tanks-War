@@ -5,18 +5,9 @@
 #include "unit.h"
 #include "tank.h"
 #include "map.h"
-enum GTEXTURES {
-	TEXTURE_PLAYERTANK,
-	TEXTURE_EXPLOSION,
-	TEXTURE_BM0,
-	TEXTURE_BM1,
-	TEXTURE_FIRE,
-	TEXTURE_FIRE_EXPLOSION,
-	TEXTURE_FIRE_SIMPLE,
-	TEXTURES
-};
-#define IMAGES 2
-#define IMAGE_EXPLOSION 0
+#include "player.h"
+#include "remoteplayer.h"
+#include "client.h"
 
 static std::string file[] = { "Assets\\Texture\\player-tank.png",
 "Assets\\Texture\\explosion-animation.png" ,
@@ -29,6 +20,7 @@ public:
 	TanksWar();
 	~TanksWar();
 	void initialize(HINSTANCE hInstance, HWND hWnd);
+	void communicate();
 	void update();
 	void collision();
 	void render();
@@ -38,11 +30,13 @@ public:
 private:
 
 	TextureManger tm;
-	Texture* texture;
-	Image* image;
-	Tank* tank;
 	Map map;
-
+	Player player0;
+	RemotePlayer player1;
+	ServerToPlayer m_toPlayer;
+	PlayerToServer m_toServer;
+	char* m_pServerIP;
+	Client m_client;
 };
 
 

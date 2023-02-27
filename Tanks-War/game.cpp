@@ -44,6 +44,7 @@ void Game::initialize(HINSTANCE hInstance, HWND hWnd)
 void Game::run()
 {
 	updateGame();
+	communicate();
 	collision();
 	renderGame();
 	m_pAudio->run();
