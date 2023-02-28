@@ -1,8 +1,7 @@
 #include "client.h"
 
-Client::Client() : m_protocol(netNS::UDP)
+Client::Client() : m_protocol(netNS::UDP), m_port(netNS::DEFAULT_PORT)
 {
-	m_port = _rand(16000) + 1;
 }
 
 
@@ -29,11 +28,19 @@ int Client::send(char* data)
 
 int Client::recv(void * data, int& size)
 {
-	return m_net.readData(data, size, m_serverIP, m_port);
+	m_net.readData(data, size, m_serverIP, m_port);
+	if (size > 0)
+		return NET_RESPONSE;
+
+	return NET_NORESPONSE;
 }
 
 int Client::recv(void * data)
 {
 	int size = 256;
-	return m_net.readData(data, size, m_serverIP, m_port);
+	m_net.readData(data, size, m_serverIP, m_port);
+	if (size > 0)
+		return NET_RESPONSE;
+
+	return NET_NORESPONSE;
 }

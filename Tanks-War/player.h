@@ -12,10 +12,11 @@ public:
 	Player();
 	~Player();
 	virtual void initialize(Map* map, TextureManger* textureManger, Input* input, Graphics* graphics);
+	virtual void update();
 	virtual void update(PlayerState playerState);
+	virtual void update(ServerToPlayer serverToPlayer);
 	PlayerToServer getPlayerToServer() const { return m_toServer; }
-	void setPlayerInfo(PlayerInfo playerInfo) { m_playerInfo = playerInfo; }
-
+//	void setPlayerInfo(PlayerInfo playerInfo) { m_playerInfo = playerInfo; }
 	bool m_event;
 
 private:
@@ -27,7 +28,6 @@ private:
 	virtual void executeAttack(float frameTime);
 
 	PlayerToServer m_toServer;
-	PlayerInfo m_playerInfo;
 	
 };
 

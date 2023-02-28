@@ -17,8 +17,9 @@ typedef D3DCOLOR Color;
 typedef D3DXVECTOR2 V2;
 typedef BYTE Key;
 
-constexpr auto CONNECT_PORT = 922;
-constexpr auto UDP = 0;
+constexpr auto NET_RESPONSE = 1;
+constexpr auto NET_NORESPONSE = -1;
+
 constexpr uint32_t UNDEFINED_POSITION = 0xFFFF;
 constexpr uint8_t MAX_FILE_NAME = 255;
 constexpr auto INVALID_DATA = 0xFFFF;
@@ -186,4 +187,7 @@ struct PlayerToServer
 	bool forward, back, right, left;
 };
 
-typedef PlayerState ServerToPlayer;
+struct ServerToPlayer
+{
+	PlayerState p0, p1;
+};

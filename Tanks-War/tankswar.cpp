@@ -28,25 +28,36 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 
 	PlayerInfo playerInfo;
 	m_client.recv<PlayerInfo>(&playerInfo, true);
-	player0.setPlayerInfo(playerInfo);
+	player0.setPlayerId(playerInfo.id);
+	uint8_t id;
+	if (playerInfo.id == 1)
+		id = 0;
+	else
+		id = 1;
+	player1.setPlayerId(id);
 
-	PlayerState playerState;
-	m_client.recv<PlayerState>(&playerState, true);
-	player0.update(playerState);
-	m_client.recv<PlayerState>(&playerState, true);
-	player1.update(playerState);
+	ServerToPlayer stp = { 0 };
+	m_client.recv<ServerToPlayer>(&stp, true);
+	player0.update(stp);
+	player1.update(stp);
 }
 
 void TanksWar::communicate()
 {
 	if (player0.m_event)
-		m_client.send<PlayerToServer>(&player0.getPlayerToServer());
-	
-	ServerToPlayer svp = { 0 };
-	m_client.recv<ServerToPlayer>(&svp);
-	player0.update(svp);
-	m_client.recv<ServerToPlayer>(&svp);
-	player1.update(svp);
+	{
+		PlayerToServer pts = player0.getPlayerToServer();
+		m_client.send<PlayerToServer>(&pts);
+	}
+	player0.update();	
+	player1.update();
+
+	ServerToPlayer svp;
+	if (m_client.recv<ServerToPlayer>(&svp) == NET_RESPONSE)
+	{
+		player0.update(svp);
+		player1.update(svp);
+	}
 }
 
 void TanksWar::collision()
