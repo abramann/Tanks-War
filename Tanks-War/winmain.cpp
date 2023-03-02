@@ -1,4 +1,4 @@
-#include "always.h"
+#include "constants.h"
 #include "tankswar.h"
 #include "fileio.h"
 
@@ -23,7 +23,7 @@ bool isFullScreen();
 // bool fullscreen;
 
 TanksWar* game;
-const GameInfo* pGameInfo;
+GameInfo g_gameInfo;
 
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -71,7 +71,7 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 		return false;
 
 	//set up the screen in windowed or fullscreen mode?
-	DWORD style = (pGameInfo->fullScreen) ? WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP : WS_EX_TOPMOST;
+	DWORD style = (g_gameInfo.fullScreen) ? WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP : WS_EX_TOPMOST;
 	// Create window
 	hwnd = CreateWindow(
 		"Game Class",
@@ -79,8 +79,8 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 		style,                  // window style
 		CW_USEDEFAULT,          // default horizontal position of window
 		CW_USEDEFAULT,          // default vertical position of window
-		pGameInfo->width,           // width of window
-		pGameInfo->height,            // height of the window
+		g_gameInfo.width,           // width of window
+		g_gameInfo.height,            // height of the window
 		(HWND)NULL,            // no parent window
 		(HMENU)NULL,           // no menu
 		hInstance,              // handle to application instance
@@ -90,16 +90,16 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	if (!hwnd)
 		return false;
 
-	if (!pGameInfo->fullScreen)             // if window
+	if (!g_gameInfo.fullScreen)             // if window
 	{
-		// Adjust window size so client area is GAME_WIDTH x pGameInfo->height
+		// Adjust window size so client area is GAME_WIDTH x g_gameInfo.height
 		RECT clientRect;
 		GetClientRect(hwnd, &clientRect);   // get size of client area of window
 		MoveWindow(hwnd,
 			0,                                           // Left
 			0,                                           // Top
-			pGameInfo->width + (pGameInfo->width - clientRect.right),    // Right
-			pGameInfo->height + (pGameInfo->height - clientRect.bottom), // Bottom
+			g_gameInfo.width + (g_gameInfo.width - clientRect.right),    // Right
+			g_gameInfo.height + (g_gameInfo.height - clientRect.bottom), // Bottom
 			TRUE);                                         // Repaint the window
 	}
 
@@ -123,8 +123,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
 	
 	HWND hWnd = NULL;
-//	fullscreen = isFullScreen();
-	pGameInfo = FileIO::readGameInfo();
+	g_gameInfo = FileIO::readGameInfo();
 	if (!CreateMainWindow(hWnd, hInstance, nCmdShow))
 	{
 		message("CreateMainWindow() failed !", MB_OK);
@@ -135,9 +134,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG msg;
 	try
 	{
-		double t = ::timeGetTime();
 		game->initialize(hInstance, hWnd);
-		t = ::timeGetTime() - t;
 		while (true)
 		{
 			// PeekMessage,non-blocking method for checking for Windows messages.

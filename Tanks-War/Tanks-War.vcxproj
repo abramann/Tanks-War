@@ -18,11 +18,60 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\audio.h" />
+    <ClInclude Include="..\common\constants.h" />
+    <ClInclude Include="..\common\dirent.h" />
+    <ClInclude Include="..\common\fileio.h" />
+    <ClInclude Include="..\common\fire.h" />
+    <ClInclude Include="..\common\game.h" />
+    <ClInclude Include="..\common\gameerror.h" />
+    <ClInclude Include="..\common\graphics.h" />
+    <ClInclude Include="..\common\image.h" />
+    <ClInclude Include="..\common\input.h" />
+    <ClInclude Include="..\common\interface.h" />
+    <ClInclude Include="..\common\map.h" />
+    <ClInclude Include="..\common\menu.h" />
+    <ClInclude Include="..\common\net.h" />
+    <ClInclude Include="..\common\object.h" />
+    <ClInclude Include="..\common\tank.h" />
+    <ClInclude Include="..\common\texture.h" />
+    <ClInclude Include="..\common\texturemanger.h" />
+    <ClInclude Include="..\common\unit.h" />
+    <ClInclude Include="client.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="remoteplayer.h" />
+    <ClInclude Include="tankswar.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\audio.cpp" />
+    <ClCompile Include="..\common\fileio.cpp" />
+    <ClCompile Include="..\common\fire.cpp" />
+    <ClCompile Include="..\common\game.cpp" />
+    <ClCompile Include="..\common\graphics.cpp" />
+    <ClCompile Include="..\common\image.cpp" />
+    <ClCompile Include="..\common\input.cpp" />
+    <ClCompile Include="..\common\interface.cpp" />
+    <ClCompile Include="..\common\map.cpp" />
+    <ClCompile Include="..\common\menu.cpp" />
+    <ClCompile Include="..\common\net.cpp" />
+    <ClCompile Include="..\common\object.cpp" />
+    <ClCompile Include="..\common\tank.cpp" />
+    <ClCompile Include="..\common\texture.cpp" />
+    <ClCompile Include="..\common\texturemanger.cpp" />
+    <ClCompile Include="..\common\unit.cpp" />
+    <ClCompile Include="client.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="remoteplayer.cpp" />
+    <ClCompile Include="tankswar.cpp" />
+    <ClCompile Include="winmain.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8C8B036E-1332-402C-953D-C7F2418D353C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TanksWar</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Tanks-War</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -97,6 +146,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -111,6 +161,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,6 +178,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,6 +197,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,52 +206,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="always.h" />
-    <ClInclude Include="audio.h" />
-    <ClInclude Include="client.h" />
-    <ClInclude Include="fileio.h" />
-    <ClInclude Include="fire.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="gameerror.h" />
-    <ClInclude Include="graphics.h" />
-    <ClInclude Include="image.h" />
-    <ClInclude Include="input.h" />
-    <ClInclude Include="interface.h" />
-    <ClInclude Include="map.h" />
-    <ClInclude Include="menu.h" />
-    <ClInclude Include="player.h" />
-    <ClInclude Include="remoteplayer.h" />
-    <ClInclude Include="structs.h" />
-    <ClInclude Include="tank.h" />
-    <ClInclude Include="tankswar.h" />
-    <ClInclude Include="texture.h" />
-    <ClInclude Include="object.h" />
-    <ClInclude Include="texturemanger.h" />
-    <ClInclude Include="unit.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="audio.cpp" />
-    <ClCompile Include="client.cpp" />
-    <ClCompile Include="fileio.cpp" />
-    <ClCompile Include="fire.cpp" />
-    <ClCompile Include="game.cpp" />
-    <ClCompile Include="graphics.cpp" />
-    <ClCompile Include="image.cpp" />
-    <ClCompile Include="input.cpp" />
-    <ClCompile Include="interface.cpp" />
-    <ClCompile Include="map.cpp" />
-    <ClCompile Include="menu.cpp" />
-    <ClCompile Include="player.cpp" />
-    <ClCompile Include="remoteplayer.cpp" />
-    <ClCompile Include="tank.cpp" />
-    <ClCompile Include="tankswar.cpp" />
-    <ClCompile Include="texture.cpp" />
-    <ClCompile Include="object.cpp" />
-    <ClCompile Include="texturemanger.cpp" />
-    <ClCompile Include="unit.cpp" />
-    <ClCompile Include="winmain.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

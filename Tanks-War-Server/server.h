@@ -1,0 +1,84 @@
+#pragma once
+#include "constants.h"
+#include "net.h"
+
+class Server
+{
+public:
+	
+	Server();
+	~Server();
+	int initialize(uint8_t players);
+	void getClients();	
+	void send(void* data, int size, PlayerID id);
+	template <typename T>
+	void send(void* data, PlayerID id);
+	template <typename T>
+	void send(void* data);
+	void send(void* data, int size);
+	void recvPlayerResponse();
+	PlayerID recv(void* data, bool wait = false);
+
+private:
+
+	void recv(void * data, char* ip, Port& port, bool wait = false);
+
+	Net m_net;
+	PlayerInfo* m_pPlayerInfo;
+	Port* m_pPlayerPort;
+	Port m_serverPort;
+	Protocol m_protocol;
+	uint8_t m_players;
+	char* m_pPlayerIP;
+};
+
+
+template<typename T>
+inline void Server::send(void * data, PlayerID id)
+{
+	send(data, sizeof(T), id);
+}
+
+template<typename T>
+inline void Server::send(void * data)
+{
+	int size = sizeof(T);
+	send(data, size);
+}
+
+inline void Server::send(void * data, int size)
+{
+	for (int id = 0; id < m_players; id++)
+		send(data, size, id);
+}
+
+inline void Server::recvPlayerResponse()
+{
+	char name[MAX_PLAYER_NAME] = { 0 };
+	char ip[netNS::IP_SIZE] = { 0 };
+	Port port;
+	for (int i = 0; i < m_players; i++)
+	{
+		recv(name, ip, port, true);
+		strcpy(&m_pPlayerIP[i*netNS::IP_SIZE], ip);
+		strcpy(m_pPlayerInfo[i].name, name);
+		m_pPlayerPort[i] = port;
+		m_pPlayerInfo[i].id = i;
+		send<decltype(m_players)>(&m_players, i);
+	}
+	send(m_pPlayerInfo, m_players*sizeof(PlayerInfo));
+}
+
+inline void Server::recv(void * data, char * ip, Port & port, bool wait)
+{
+	do
+	{
+		int size = MAX_PACKET_SIZE;
+	    m_net.readData(data, size, ip, port);
+		if (size > 0)
+		{
+			break;
+		}
+	} while (wait);
+
+}

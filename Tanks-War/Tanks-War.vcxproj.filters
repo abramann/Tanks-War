@@ -1,146 +1,156 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{5fd31ca3-5232-4b3a-80df-483d5396a5c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{0fca867c-5ebd-4678-a3b9-0a8425850e1b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Junk">
-      <UniqueIdentifier>{3ebac050-19f0-4658-842d-aac5b7110684}</UniqueIdentifier>
+    <Filter Include="Common">
+      <UniqueIdentifier>{0cdfd130-34dc-4f04-baf1-ab54d16e2637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Headers">
+      <UniqueIdentifier>{5f3b85db-e172-4885-bac2-babd5aba9822}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Sources">
+      <UniqueIdentifier>{5555a26d-28c2-4792-8d09-df570b9cd414}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="always.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\common\constants.h">
+      <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="tankswar.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\common\dirent.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\fileio.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\fire.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\game.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\gameerror.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\graphics.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\image.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\input.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\interface.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\map.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\menu.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\net.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\object.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\tank.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\texture.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\texturemanger.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\unit.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\audio.h">
+      <Filter>Common\Headers</Filter>
     </ClInclude>
     <ClInclude Include="player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="menu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fileio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="interface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="structs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="audio.h">
-      <Filter>Junk</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>Junk</Filter>
-    </ClInclude>
-    <ClInclude Include="gameerror.h">
-      <Filter>Junk</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics.h">
-      <Filter>Junk</Filter>
-    </ClInclude>
-    <ClInclude Include="input.h">
-      <Filter>Junk</Filter>
-    </ClInclude>
-    <ClInclude Include="fire.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tank.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="unit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="texturemanger.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="remoteplayer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="tankswar.h">
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="client.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="menu.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\input.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="fileio.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\interface.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="interface.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\map.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="audio.cpp">
-      <Filter>Junk</Filter>
+    <ClCompile Include="..\common\menu.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>Junk</Filter>
+    <ClCompile Include="..\common\net.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="graphics.cpp">
-      <Filter>Junk</Filter>
+    <ClCompile Include="..\common\object.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="input.cpp">
-      <Filter>Junk</Filter>
+    <ClCompile Include="..\common\tank.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="winmain.cpp">
-      <Filter>Junk</Filter>
+    <ClCompile Include="..\common\texture.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="fire.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\texturemanger.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="image.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\unit.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="map.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\audio.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="tank.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\fileio.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="object.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\fire.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="tankswar.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\game.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="unit.cpp">
-      <Filter>Junk</Filter>
+    <ClCompile Include="..\common\graphics.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="texturemanger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="remoteplayer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\image.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
     <ClCompile Include="client.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="remoteplayer.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="tankswar.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="winmain.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

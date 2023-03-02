@@ -1,6 +1,6 @@
 #ifndef _PLAYER_H
 #define _PLAYER_H
-#include "always.h"
+#include "constants.h"
 #include "remoteplayer.h"
 #include <vector>
 
@@ -16,7 +16,6 @@ public:
 	virtual void update(PlayerState playerState);
 	virtual void update(ServerToPlayer serverToPlayer);
 	PlayerToServer getPlayerToServer() const { return m_toServer; }
-//	void setPlayerInfo(PlayerInfo playerInfo) { m_playerInfo = playerInfo; }
 	bool m_event;
 
 private:

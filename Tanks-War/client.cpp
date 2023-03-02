@@ -1,6 +1,6 @@
 #include "client.h"
 
-Client::Client() : m_protocol(netNS::UDP), m_port(netNS::DEFAULT_PORT)
+Client::Client() : m_protocol(netNS::UDP), m_serverPort(netNS::DEFAULT_PORT)
 {
 }
 
@@ -9,38 +9,44 @@ Client::~Client()
 {
 }
 
-int Client::initialize(char * serverIP)
+int Client::initialize(char * serverIP, char* playerName, uint8_t& players)
 {
 	strcpy(m_serverIP, serverIP);
-	return m_net.createClient(m_serverIP, m_port, m_protocol);
+	int result = m_net.createClient(m_serverIP, m_serverPort, m_protocol);
+	send(playerName);
+	// recv(&m_players, true);
+	return result;
 }
 
-int Client::send(void * data, int& size)
+void Client::send(void * data, int& size)
 {
-	return m_net.sendData(data, size, m_serverIP, m_port);
+	m_net.sendData(data, size, m_serverIP, m_port);
 }
 
-int Client::send(char* data)
+void Client::send(char* text)
 {
-	int size = strlen(data);
-	return m_net.sendData(data, size, m_serverIP, m_port);
-}
-
-int Client::recv(void * data, int& size)
-{
-	m_net.readData(data, size, m_serverIP, m_port);
-	if (size > 0)
-		return NET_RESPONSE;
-
-	return NET_NORESPONSE;
+	int len = strlen(text);
+	send(text, len);
 }
 
 int Client::recv(void * data)
 {
-	int size = 256;
+	int size = MAX_PACKET_SIZE;
 	m_net.readData(data, size, m_serverIP, m_port);
 	if (size > 0)
 		return NET_RESPONSE;
 
 	return NET_NORESPONSE;
+}
+
+void Client::recv(void * data, bool wait)
+{
+	do
+	{
+		if (recv(data) == NET_RESPONSE)
+			break;
+		if (wait)
+			Sleep(200);
+
+	} while (wait);
 }

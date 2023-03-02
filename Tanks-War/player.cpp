@@ -12,7 +12,7 @@ Player::~Player()
 void Player::initialize(Map* map, TextureManger* textureManger, Input* input, Graphics* graphics)
 {
 	Tank::initialize(map, textureManger, textureManger->getTexture(TEXTURES::PLAYER_TANK), graphics);
-	Tank::inputInitialize(input, W_KEY, S_KEY, D_KEY, A_KEY, Q_KEY);
+	Tank::inputInitialize(input, W_KEY, S_KEY, D_KEY, A_KEY, E_KEY);
 }
 
 void Player::update()
@@ -30,10 +30,7 @@ void Player::update(PlayerState playerState)
 
 void Player::update(ServerToPlayer serverToPlayer)
 {
-	if (m_id == 0)
-		setState(serverToPlayer.p0);
-	else if (m_id == 1)
-		setState(serverToPlayer.p1);
+
 
 	Tank::update(0);
 }
@@ -63,5 +60,6 @@ void Player::executeLeft(float frameTime)
 
 void Player::executeAttack(float frameTime)
 {
-//	m_toServer. = true;
+	m_event = true;
+	m_toServer.attack = true;
 }

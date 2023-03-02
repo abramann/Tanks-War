@@ -11,53 +11,48 @@ TanksWar::TanksWar()
 TanksWar::~TanksWar()
 {
 }
-
+Tank tank;
 void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 {
 	Game::initialize(hInstance, hWnd);
 	
-	tm.initialize(m_pGraphics);
 	m_pAudio->playCue("Theme");
-	map.initialize("Assets\\map.txt", tm.getTiledMapTexture(), m_pGraphics);
-	player0.initialize(&map, &tm, m_pInput, m_pGraphics);
-	player1.initialize(&map, &tm, m_pGraphics);
+	map.initialize("Assets\\map.txt", m_pTextureManger->getTiledMapTexture(), m_pGraphics);
+	tank.initialize(&map, m_pTextureManger, m_pTextureManger->getTexture(1), m_pGraphics);
+	tank.inputInitialize(m_pInput, W_KEY, S_KEY, D_KEY, A_KEY, T_KEY);
+	tank.setX(500).setY(500);
 
-	m_client.initialize(m_pServerIP);
-	m_client.send("in");
-	Sleep(50);
+	return;
+	char playerName[20];
+	sprintf(playerName, "Player %d", _rand(100));
+	m_client.initialize(m_pServerIP, playerName, m_players);
 
-	PlayerInfo playerInfo;
-	m_client.recv<PlayerInfo>(&playerInfo, true);
-	player0.setPlayerId(playerInfo.id);
-	uint8_t id;
-	if (playerInfo.id == 1)
-		id = 0;
-	else
-		id = 1;
-	player1.setPlayerId(id);
+	m_pPlayer = new RemotePlayer[m_players];
+	PlayerInfo* pPlayerInfo = new PlayerInfo[m_players];
+	m_pPlayerState = new PlayerState[m_players];
 
-	ServerToPlayer stp = { 0 };
-	m_client.recv<ServerToPlayer>(&stp, true);
-	player0.update(stp);
-	player1.update(stp);
+	m_client.recv(pPlayerInfo, true);
+	m_client.recv(m_pPlayerState, true);
+
+	for (int i = 0; i < m_players; i++)
+	{
+		if (strcmp(playerName, pPlayerInfo[i].name) == 0)
+		{
+			player0.initialize(&map, m_pTextureManger, m_pInput, m_pGraphics);
+			player0.setPlayerInfo(pPlayerInfo[i]);
+			player0.update(m_pPlayerState[i]);
+			continue;
+		}
+
+		m_pPlayer[i].initialize(pPlayerInfo[i], &map, m_pTextureManger, m_pGraphics);
+		m_pPlayer[i].update(m_pPlayerState[i]);
+	}
+	
 }
 
 void TanksWar::communicate()
 {
-	if (player0.m_event)
-	{
-		PlayerToServer pts = player0.getPlayerToServer();
-		m_client.send<PlayerToServer>(&pts);
-	}
-	player0.update();	
-	player1.update();
-
-	ServerToPlayer svp;
-	if (m_client.recv<ServerToPlayer>(&svp) == NET_RESPONSE)
-	{
-		player0.update(svp);
-		player1.update(svp);
-	}
+	
 }
 
 void TanksWar::collision()
@@ -67,18 +62,55 @@ void TanksWar::collision()
 
 void TanksWar::update()
 {
-	/*PlayerState playerState;
-	m_client.recv<PlayerState>(&playerState);
-	player0.update(0, playerState);
-	m_client.recv<PlayerState>(&playerState);
-	player1.update(0, playerState);*/
+	tank.update(0);
+	return;
+	if (m_client.recv(m_pPlayerState) == NET_RESPONSE)
+	{
+		for (int i = 0; i < m_players; i++)
+		{
+			if (m_pPlayerState[i].id == player0.getPlayerId())
+			{
+				player0.update(m_pPlayerState[i]);
+				continue;
+			}
+
+			m_pPlayer[i].update(m_pPlayerState[i]);
+		}
+
+		return;
+	}
+	
+
+	player0.update();
+	if (player0.m_event)
+	{
+		PlayerToServer pts = player0.getPlayerToServer();
+		m_client.send<PlayerToServer>(&pts);
+	}
+
+	for (int i = 0; i < m_players; i++)
+	{
+		if (i == player0.getPlayerId())
+		{
+			player0.update();
+			continue;
+		}
+		m_pPlayer[i].update();
+	}
 }
 
 void TanksWar::render()
 {
 	map.draw();
-	player0.draw();
-	player1.draw();
+	tank.draw();
+	return;
+//	player0.draw();
+	for (int i = 0; i < m_players; i++)
+		if (i == player0.getPlayerId())
+			player0.draw();
+		else
+			m_pPlayer[i].draw();
+
 } 
 
 void TanksWar::onResetDevice()

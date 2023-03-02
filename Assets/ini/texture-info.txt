@@ -1,4 +1,0 @@
-
-transpanceyR=255
-transpanceyG=255
-transpanceyB=255
