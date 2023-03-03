@@ -66,6 +66,7 @@ inline void Server::recvPlayerResponse()
 		m_pPlayerInfo[i].id = i;
 		send<decltype(m_players)>(&m_players, i);
 	}
+
 	send(m_pPlayerInfo, m_players*sizeof(PlayerInfo));
 }
 

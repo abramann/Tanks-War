@@ -138,5 +138,14 @@
     <ClInclude Include="..\common\fire.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="server.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="tankswarServer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="remoteplayer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

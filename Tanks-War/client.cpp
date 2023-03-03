@@ -14,7 +14,7 @@ int Client::initialize(char * serverIP, char* playerName, uint8_t& players)
 	strcpy(m_serverIP, serverIP);
 	int result = m_net.createClient(m_serverIP, m_serverPort, m_protocol);
 	send(playerName);
-	// recv(&m_players, true);
+	recv(&players, true);
 	return result;
 }
 

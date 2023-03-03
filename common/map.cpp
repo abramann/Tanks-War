@@ -53,14 +53,24 @@ bool Map::initialize(const char* path, Texture* texture, Graphics* graphics)
 				vertices[m_ppMap[h][w]][h][w].v5 = { (w + 1)*m_bitmapData.width*1.0f ,(h + 1)*m_bitmapData.height*1.0f,1.0f,1.0f,0.0f,0.0f };
 				vertices[m_ppMap[h][w]][h][w].v6 = { (w)*m_bitmapData.width*1.0f ,(h + 1)*m_bitmapData.height*1.0f,1.0f,1.0f,-1.0f,0.0f };
 			
+				Space space;
+
+				bool prevented = false;
 			for (auto preventedBM : m_mapData.preventedBM)
 				if (m_ppMap[h][w] == preventedBM)
 				{
-					Space space;
+					prevented = true;
 					space.x1 = w*m_bitmapData.width; space.x2 = space.x1 + m_bitmapData.width;
 					space.y1 = h*m_bitmapData.height; space.y2 = space.y1 + m_bitmapData.height;
 					m_noSpace.push_back(space);
 				}
+			
+			if (prevented)
+				continue;
+
+			space.x1 = w*m_bitmapData.width; space.x2 = space.x1 + m_bitmapData.width;
+			space.y1 = h*m_bitmapData.height; space.y2 = space.y1 + m_bitmapData.height;
+			m_freeSpace.push_back(space);
 		}
 	}
 
@@ -152,13 +162,16 @@ void Map::draw()
 	}
 }
 
-V2 Map::getUnallocatedPos()
+Space Map::getFreeSpace() const
 {
-	V2 pos;
-	pos.x = 400;
-	pos.y = _rand(600);
-	
-	return pos;
+	std::vector<Space> freeSpace;
+	Space space;
+	for (auto space : m_freeSpace)
+		if (emptyFreeSpace(space))
+			freeSpace.push_back(space);
+
+
+	return freeSpace[_rand(freeSpace.size())];
 }
 
 bool Map::spacesCollided(const Space& space1, const Space& space2) const
@@ -217,5 +230,14 @@ bool Map::outOfRange(const Image& object) const
 		(object.getY() < 0))
 		return true;
 	return false;
+}
+
+bool Map::emptyFreeSpace(const Space space) const
+{
+	for (auto object : m_pObjects)
+		if (spacesCollided(space, object->getAllocatedSpace()))
+			return false;
+
+	return true;
 }
 

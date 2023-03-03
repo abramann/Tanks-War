@@ -1,6 +1,6 @@
-#include "..\Tanks-War\constants.h"
+#include "constants.h"
 #include "tankswarserver.h"
-#include "..\Tanks-War\fileio.h"
+#include "fileio.h"
 
 #define _CRTDBG_MAP_ALLOC // For detecting memory leaks
 #include <stdlib.h> // For detecting memory leaks
@@ -11,11 +11,6 @@
 #pragma comment(lib,"d3dx9.lib")
 #pragma comment(lib,"dinput8.lib")	// Include dinput8 apis
 #pragma comment(lib,"dxguid.lib")
-#ifdef _DEBUG
-#pragma comment(lib,"net.lib")
-#else
-#pragma comment(lib,"net-release.lib")
-#endif
 
 bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow);
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

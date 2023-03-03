@@ -1,6 +1,6 @@
 #include "tankswarserver.h"
-#include "..\Tanks-War\fileio.h"
-#include "..\Tanks-War\texturemanger.h"
+#include "fileio.h"
+#include "texturemanger.h"
 
 TanksWarServer::TanksWarServer()
 {
@@ -26,8 +26,8 @@ void TanksWarServer::initialize(HINSTANCE hInstance, HWND _hWnd)
 	for (int i = 0; i < m_players; i++)
 	{
 		m_player[i].initialize(&map, &tm, m_pGraphics);
-		V2 pos = map.getUnallocatedPos();
-		m_player[i].setXY(pos);
+		Space space = map.getFreeSpace();
+		m_player[i].setX(space.x1).setY(space.y1);
 		map.Add_Object(&m_player[i]);
 		m_pState[i] = m_player[i].getPlayerState();
 		m_pState[i].id = i;

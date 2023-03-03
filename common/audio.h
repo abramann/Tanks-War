@@ -5,7 +5,7 @@
 #ifndef _AUDIO_H                // Prevent multiple definitions if this 
 #define _AUDIO_H                // file is included in more than one place
 #define WIN32_LEAN_AND_MEAN
-#include <xact3.h>
+#include "directx\include\xact3.h"
 #include "constants.h"
 
 typedef std::string Effect;

@@ -15,7 +15,7 @@ public:
 	virtual bool read(const char* map);
 	virtual void draw();
 	void Add_Object(Object* object) { m_pObjects.push_back(object); }
-	V2 getUnallocatedPos();
+	Space getFreeSpace() const;
 	bool spacesCollided(const Space& space1, const Space& space2) const;
 	virtual float passX(float x, float x0, float y, uint16_t width) const;
 	virtual float passY(float x, float y, float y0, uint16_t height) const;
@@ -25,8 +25,10 @@ public:
 
 protected:
 
+	bool emptyFreeSpace(const Space space) const;
 	Graphics* m_pGraphics;
 	Texture* m_pTexture;
+	std::vector<Space> m_freeSpace;
 	std::vector<Space> m_noSpace;
 	MapData m_mapData;
 	BitmapData m_bitmapData;

@@ -11,7 +11,8 @@
 #include<iostream>
 #include<vector>
 #include<Windows.h>
-#include <d3dx9.h>
+#include "directx\include\d3dx9.h"
+#include <timeapi.h>
 
 extern uint64_t g_frameCounter;
 
@@ -163,7 +164,7 @@ inline std::string getFileNameFromPath(std::string path)
 
 inline uint32_t _rand(uint32_t max)
 {
-	return rand() % max;
+	return ::GetTickCount() % max;
 }
 
 struct Vertex

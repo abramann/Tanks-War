@@ -3,6 +3,8 @@
 #include "fileio.h"
 #include "texturemanger.h"
 
+ //#define _CLIENT
+
 TanksWar::TanksWar()
 {
 	m_pServerIP = "127.0.0.1";
@@ -18,11 +20,14 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 	
 	m_pAudio->playCue("Theme");
 	map.initialize("Assets\\map.txt", m_pTextureManger->getTiledMapTexture(), m_pGraphics);
+#ifndef _CLIENT
 	tank.initialize(&map, m_pTextureManger, m_pTextureManger->getTexture(1), m_pGraphics);
 	tank.inputInitialize(m_pInput, W_KEY, S_KEY, D_KEY, A_KEY, T_KEY);
-	tank.setX(500).setY(500);
-
-	return;
+//	tank.setX(500).setY(500);
+	Space space = map.getFreeSpace();
+	tank.setX(space.x1).setY(space.y1);
+	
+#else
 	char playerName[20];
 	sprintf(playerName, "Player %d", _rand(100));
 	m_client.initialize(m_pServerIP, playerName, m_players);
@@ -47,7 +52,7 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 		m_pPlayer[i].initialize(pPlayerInfo[i], &map, m_pTextureManger, m_pGraphics);
 		m_pPlayer[i].update(m_pPlayerState[i]);
 	}
-	
+#endif
 }
 
 void TanksWar::communicate()
@@ -62,8 +67,9 @@ void TanksWar::collision()
 
 void TanksWar::update()
 {
+#ifndef _CLIENT
 	tank.update(0);
-	return;
+#else
 	if (m_client.recv(m_pPlayerState) == NET_RESPONSE)
 	{
 		for (int i = 0; i < m_players; i++)
@@ -97,20 +103,22 @@ void TanksWar::update()
 		}
 		m_pPlayer[i].update();
 	}
+#endif
 }
 
 void TanksWar::render()
 {
 	map.draw();
+#ifndef _CLIENT
 	tank.draw();
-	return;
-//	player0.draw();
+#else 
+	player0.draw();
 	for (int i = 0; i < m_players; i++)
 		if (i == player0.getPlayerId())
 			player0.draw();
 		else
 			m_pPlayer[i].draw();
-
+#endif
 } 
 
 void TanksWar::onResetDevice()

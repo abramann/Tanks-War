@@ -120,23 +120,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <IncludePath>..\common\directx\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\common\directx\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <IncludePath>..\common\directx\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\common\directx\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <IncludePath>..\common\directx\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\common\directx\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <IncludePath>..\common\directx\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\common\directx\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
