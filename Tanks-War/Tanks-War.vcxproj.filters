@@ -153,4 +153,9 @@
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="inlined.inl">
+      <Filter>Common\Headers</Filter>
+    </None>
+  </ItemGroup>
 </Project>

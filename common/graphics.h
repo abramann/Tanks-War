@@ -2,8 +2,7 @@
 #define _GRAPHICS_H
 
 #include "constants.h"
-#include "directx\include\d3d9.h"
-
+#include <d3d9.h>
 
 class Graphics
 {

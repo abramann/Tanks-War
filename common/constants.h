@@ -11,7 +11,7 @@
 #include<iostream>
 #include<vector>
 #include<Windows.h>
-#include "directx\include\d3dx9.h"
+#include <d3dx9.h>
 #include <timeapi.h>
 
 extern uint64_t g_frameCounter;
