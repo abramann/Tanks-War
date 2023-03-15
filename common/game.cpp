@@ -1,4 +1,5 @@
 #include "game.h"
+#include "imgui\imgui_impl_win32.h"
 #include <timeapi.h>
 
 Game::Game() : m_timeDelta(0)
@@ -18,27 +19,18 @@ Game::~Game()
 
 LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch (msg)
-	{
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	case WM_KEYDOWN:
-		m_pInput->scan();
-		if (m_pInput->isKeyIn(ESCAPE_KEY))
-			PostQuitMessage(0);
-		break;
-	}
+	if (m_pInput->m_handleInput)
+		m_pInput->handle(msg, wParam, lParam);
+
 	return DefWindowProcA(hWnd, msg, wParam, lParam);
 }
 
 void Game::initialize(HINSTANCE hInstance, HWND hWnd)
 {
+	if (!m_pInput->initialize(hWnd))
+		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pInput");
 	if(!m_pGraphics->initialize(hWnd))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pGraphics");
-	if(!m_pInput->initialize(hInstance, hWnd))
-		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pInput");
-	m_pInput->scan();
 	if (!m_pAudio->initialize())
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pAudio");
 	if (!m_pTextureManger->initialize(m_pGraphics))
@@ -47,11 +39,13 @@ void Game::initialize(HINSTANCE hInstance, HWND hWnd)
 
 void Game::run()
 {
+	if (m_pInput->isKeyIn(ESCAPE_KEY))
+		PostQuitMessage(0);
+
 	updateGame();
 	collision();
 	renderGame();
 	m_pAudio->run();
-	m_pInput->reset();
 }
 
 void Game::renderGame()

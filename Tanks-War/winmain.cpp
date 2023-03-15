@@ -118,6 +118,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 	
+	game = new TanksWar;
+
 	HWND hWnd = NULL;
 	g_gameInfo = FileIO::readGameInfo();
 	if (!CreateMainWindow(hWnd, hInstance, nCmdShow))
@@ -126,7 +128,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 1;
 	}
 
-	game = new TanksWar;
 	MSG msg;
 	try
 	{

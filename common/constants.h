@@ -8,6 +8,7 @@
 #define _CONSTANTS_H            // file is included in more than one place
 #define WIN32_LEAN_AND_MEAN
 #include "gameerror.h"
+#include "imgui\imgui_impl_win32.h"
 #include<iostream>
 #include<vector>
 #include<Windows.h>
@@ -24,6 +25,13 @@ extern uint64_t g_frameCounter;
 #define TANK_EFFECTS		7
 #define TANK_EFFECTSHOT		5
 #define TANK_EFFECTHIT		6
+
+typedef D3DCOLOR Color;
+typedef D3DXVECTOR2 V2;
+typedef uint8_t PlayerID;
+typedef ImGuiKey Key;
+typedef unsigned short Port;
+typedef uint8_t Protocol;
 
 constexpr auto COLOR_BLACK = COLOR_XRGB(0, 0, 0);
 constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
@@ -50,12 +58,40 @@ constexpr auto IMAGE_INFO_PATH = "Assets\\ini\\image-info.txt";
 constexpr auto FIRE_DATA_PATH = "Assets\\ini\\fire-info.txt";
 constexpr auto TEXTURE_DIR = "Assets\\texture\\";
 
-typedef D3DCOLOR Color;
-typedef D3DXVECTOR2 V2;
-typedef BYTE Key;
-typedef uint8_t PlayerID;
-typedef unsigned short Port;
-typedef uint8_t Protocol;
+constexpr Key A_KEY = ImGuiKey_A;
+constexpr Key B_KEY = ImGuiKey_B;
+constexpr Key C_KEY = ImGuiKey_C;
+constexpr Key D_KEY = ImGuiKey_D;
+constexpr Key E_KEY = ImGuiKey_E;
+constexpr Key F_KEY = ImGuiKey_F;
+constexpr Key G_KEY = ImGuiKey_G;
+constexpr Key H_KEY = ImGuiKey_H;
+constexpr Key I_KEY = ImGuiKey_I;
+constexpr Key J_KEY = ImGuiKey_J;
+constexpr Key K_KEY = ImGuiKey_K;
+constexpr Key L_KEY = ImGuiKey_L;
+constexpr Key M_KEY = ImGuiKey_M;
+constexpr Key N_KEY = ImGuiKey_N;
+constexpr Key O_KEY = ImGuiKey_O;
+constexpr Key P_KEY = ImGuiKey_P;
+constexpr Key Q_KEY = ImGuiKey_Q;
+constexpr Key R_KEY = ImGuiKey_R;
+constexpr Key S_KEY = ImGuiKey_S;
+constexpr Key T_KEY = ImGuiKey_T;
+constexpr Key U_KEY = ImGuiKey_U;
+constexpr Key V_KEY = ImGuiKey_V;
+constexpr Key W_KEY = ImGuiKey_W;
+constexpr Key X_KEY = ImGuiKey_X;
+constexpr Key Y_KEY = ImGuiKey_Y;
+constexpr Key Z_KEY = ImGuiKey_Z;
+constexpr Key ENTER_KEY = ImGuiKey_Enter;
+constexpr Key ESCAPE_KEY = ImGuiKey_Escape;
+constexpr Key SPACE_KEY = ImGuiKey_Space;
+constexpr Key BACKSPACE_KEY = ImGuiKey_Backspace;
+constexpr Key RSHIFT_KEY = ImGuiKey_RightShift;
+constexpr Key LSHIFT_KEY = ImGuiKey_LeftShift;
+
+
 
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.

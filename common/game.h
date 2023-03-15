@@ -39,7 +39,7 @@ protected:
 	Input* m_pInput;
 	Audio* m_pAudio;
 	TextureManger* m_pTextureManger;
-
+	bool imguiInitialized;
 	DWORD m_timeDelta;
 
 };

@@ -1,5 +1,6 @@
 #include "graphics.h"
 #include "texture.h"
+#include "imgui\imgui_impl_dx9.h"
 
 uint64_t  g_frameCounter = 0;
 
@@ -54,7 +55,9 @@ bool Graphics::initialize(HWND hWnd)
 	hr = D3DXCreateSprite(m_lpDevice3d, &m_sprite);
 	if (FAILED(hr))
 		return false;
-	return true;
+
+	bool result = ImGui_ImplDX9_Init(m_lpDevice3d);
+	return result;
 }
 
 HRESULT Graphics::createVertexBuffer(UINT length)
@@ -104,10 +107,13 @@ HRESULT Graphics::reset()
 }
 
 HRESULT Graphics::begin()
-{
+{	
+	ImGui_ImplDX9_NewFrame();
+	ImGui_ImplWin32_NewFrame();
 	m_lpDevice3d->Clear(NULL, NULL, D3DCLEAR_TARGET, COLOR_XRGB( 200,100, 80), 1.0f, NULL);
 	HRESULT hr;
 	hr = m_lpDevice3d->BeginScene();
+	ImGui::NewFrame();
 	m_lpDevice3d->SetFVF(VERTEX_FVF);
 	m_lpDevice3d->SetStreamSource(0, m_lpVB, 0, sizeof(Vertex));
 	return hr;
@@ -115,6 +121,9 @@ HRESULT Graphics::begin()
 
 HRESULT Graphics::end()
 {
+	ImGui::EndFrame();
+	ImGui::Render();
+	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 	HRESULT hr;
 	hr = m_lpDevice3d->EndScene();
 	return hr;

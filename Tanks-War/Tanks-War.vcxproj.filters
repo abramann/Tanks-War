@@ -16,6 +16,9 @@
     <Filter Include="Common\Sources">
       <UniqueIdentifier>{5555a26d-28c2-4792-8d09-df570b9cd414}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Sources\imgui">
+      <UniqueIdentifier>{e6320f1a-906c-4d1b-ab97-656eb2e4879f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\constants.h">
@@ -151,6 +154,27 @@
     </ClCompile>
     <ClCompile Include="winmain.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\imgui\imgui_impl_dx9.cpp">
+      <Filter>Common\Sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\imgui\imgui_impl_win32.cpp">
+      <Filter>Common\Sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\imgui\imgui_tables.cpp">
+      <Filter>Common\Sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\imgui\imgui_widgets.cpp">
+      <Filter>Common\Sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\imgui\imgui.cpp">
+      <Filter>Common\Sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\imgui\imgui_demo.cpp">
+      <Filter>Common\Sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\imgui\imgui_draw.cpp">
+      <Filter>Common\Sources\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
