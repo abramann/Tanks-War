@@ -8,6 +8,8 @@ Game::Game() : m_timeDelta(0)
 	m_pInput = new Input;
 	m_pAudio = new Audio;
 	m_pTextureManger = new TextureManger;
+	m_pInterface = new Interface;
+	m_pMap = new Map;
 }
 
 Game::~Game()
@@ -35,6 +37,11 @@ void Game::initialize(HINSTANCE hInstance, HWND hWnd)
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pAudio");
 	if (!m_pTextureManger->initialize(m_pGraphics))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pTextureManger");
+
+	m_pMap->initialize(m_pTextureManger->getTiledMapTexture(), m_pGraphics);
+	m_pInterface->initialize();
+	m_logo.initialize(800, 400, 1, 1, 0, 0, m_pTextureManger->getLogoTexture(), m_pGraphics);
+	m_logo.cover();	
 }
 
 void Game::run()
@@ -51,7 +58,11 @@ void Game::run()
 void Game::renderGame()
 {
 	m_pGraphics->begin();
-	render();
+//	 if (m_logo.drawRapidly())
+		render();
+	
+	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+
 	m_pGraphics->end();
 	handleLostGraphicsDevice();
 	m_pGraphics->showBackbuffer();

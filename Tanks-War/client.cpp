@@ -1,7 +1,10 @@
 #include "client.h"
+#include "fileio.h"
 
-Client::Client() : m_protocol(netNS::UDP), m_serverPort(netNS::DEFAULT_PORT)
+Client::Client() : m_protocol(netNS::UDP), m_serverPlayers(0), m_state(UNCONNECTED)
 {
+	memset(m_map, 0, MAX_NAME_LEN);
+	memset(m_mapHash, 0, MD5_LEN);
 }
 
 
@@ -9,18 +12,51 @@ Client::~Client()
 {
 }
 
-int Client::initialize(char * serverIP, char* playerName, uint8_t& players)
+void Client::initialize(Map* map)
 {
-	strcpy(m_serverIP, serverIP);
-	int result = m_net.createClient(m_serverIP, m_serverPort, m_protocol);
-	send(playerName);
-	recv(&players, true);
-	return result;
+	m_pMap = map;
+	m_clientInfo = FileIO::readClientInfo();
+}
+
+bool Client::connect()
+{
+	FileIO::createClientInfo(m_clientInfo);
+	m_net.createClient(m_clientInfo.serverIP, m_clientInfo.serverPort, m_protocol);
+	
+	send(m_clientInfo.playerName);
+	Sleep(500);
+	recv(m_map);
+	if (strlen(m_map) > 0)
+	{
+		m_state = CONNECTED;
+		if (!m_pMap->isMapExist(m_map, m_mapHash))
+		{
+			m_state = MAP_NOT_FOUND;
+			m_net.closeSocket();
+			return false;
+		}
+		if(!m_pMap->load(m_map))
+		{
+			m_state = MAP_NOT_FOUND;
+			m_net.closeSocket();
+			return false;
+		}
+
+		recv(&m_serverPlayers, true);
+	}
+	else
+	{
+		m_state = UNCONNECTED;
+		m_net.closeSocket();
+		return false;
+	}
+	
+	return true;
 }
 
 void Client::send(void * data, int& size)
 {
-	m_net.sendData(data, size, m_serverIP, m_port);
+	m_net.sendData(data, size, m_clientInfo.serverIP, m_port);
 }
 
 void Client::send(char* text)
@@ -32,7 +68,7 @@ void Client::send(char* text)
 int Client::recv(void * data)
 {
 	int size = MAX_PACKET_SIZE;
-	m_net.readData(data, size, m_serverIP, m_port);
+	m_net.readData(data, size, m_clientInfo.serverIP, m_port);
 	if (size > 0)
 		return NET_RESPONSE;
 

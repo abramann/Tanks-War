@@ -14,7 +14,7 @@
 #include<Windows.h>
 #include <d3dx9.h>
 #include <timeapi.h>
-
+#include "net.h"
 extern uint64_t g_frameCounter;
 
 #define COLOR_ARGB D3DCOLOR_ARGB
@@ -50,13 +50,19 @@ constexpr unsigned short UNSPECIFIED_PORT = 0xCCCC;
 constexpr uint32_t UNDEFINED_POSITION = 0xFFFF;
 constexpr uint8_t MAX_FILE_NAME = 255;
 constexpr auto INVALID_DATA = 0xFFFF;
+constexpr BYTE BYTE_INVALID_DATA = 0xFF;
 constexpr auto  VERTEX_FVF = D3DFVF_XYZRHW | D3DFVF_TEX1;
 constexpr auto GAME_INFO_PATH = "Assets\\ini\\game-info.txt";
 constexpr auto OBJECT_INFO_PATH = "Assets\\ini\\object-info.txt";
 constexpr auto TANK_INFO_PATH = "Assets\\ini\\tank-info.txt";
 constexpr auto IMAGE_INFO_PATH = "Assets\\ini\\image-info.txt";
+constexpr auto CLIENT_INFO_PATH = "Assets\\ini\\client-info.txt";
+constexpr auto SERVER_INFO_PATH = "Assets\\ini\\server-info.txt";
 constexpr auto FIRE_DATA_PATH = "Assets\\ini\\fire-info.txt";
 constexpr auto TEXTURE_DIR = "Assets\\texture\\";
+constexpr auto MAP_DIR = "Assets\\maps\\";
+constexpr auto MAX_NAME_LEN = 20;
+constexpr auto MD5_LEN = 16;
 
 constexpr Key A_KEY = ImGuiKey_A;
 constexpr Key B_KEY = ImGuiKey_B;
@@ -91,7 +97,10 @@ constexpr Key BACKSPACE_KEY = ImGuiKey_Backspace;
 constexpr Key RSHIFT_KEY = ImGuiKey_RightShift;
 constexpr Key LSHIFT_KEY = ImGuiKey_LeftShift;
 
-
+#define Vec2 ImVec2
+#define Vec4 ImVec4
+constexpr const char* strSERVER_STATE[] = { "Not started" , "Waiting for players...", "Running" };
+constexpr Vec4 colSERVER_STATE[] = { Vec4(0.7f,0.7f,0.7f,0.5f), Vec4(0.87f,0.77f,0,1), Vec4(0,1,0,1) };
 
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.
@@ -223,7 +232,7 @@ struct SpriteData
 	float x, y;
 	uint8_t columns, rows;
 	float angle;
-	float scalling;
+	V2 scalling;
 	RECT rect;
 	Color filterColor;
 	V2 center;
@@ -231,7 +240,7 @@ struct SpriteData
 
 struct GameInfo
 {
-	bool fullScreen;
+	uint8_t fullScreen;
 	uint16_t width, height;
 };
 
@@ -319,6 +328,19 @@ struct PlayerToServer
 	bool forward, back, right, left, attack;
 };
 
+struct ClientInfo
+{
+	char playerName[MAX_PLAYER_NAME], serverIP[netNS::IP_SIZE];
+	Port serverPort;
+};
+
+struct ServerInfo
+{
+	Port port;
+	uint8_t players;
+	char map[MAX_NAME_LEN];
+};
+
 enum TEXTURES
 {
 	BLACK,
@@ -366,6 +388,33 @@ enum FIRE_RELEASE_MODE
 enum FIRE_EFFECTS
 {
 	HIT_EFFECT,
+};
+
+enum Menus
+{
+	NO_MENU = -1,
+	MAIN_MENU,
+	MULTIPLAYER_MENU,
+	SETTING_MENU,
+	PLAYING_MENU,
+	QUIT_MENU
+};
+
+enum ClientState
+{
+	UNCONNECTED,
+	CONNECTED,
+	DISCONNECTED,
+	WAITING,
+	MAP_NOT_FOUND,
+	MAP_NOT_LOAD
+};
+
+enum ServerState
+{
+	SERVER_NOT_RUNNING,
+	SERVER_WAITING,
+	SERVER_HANDLING
 };
 
 extern GameInfo g_gameInfo;

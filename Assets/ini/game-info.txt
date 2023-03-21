@@ -1,4 +1,3 @@
-start
-FullScreen=0
-Width=800
-Height=600
+fullscreen=0
+width=800
+height=600

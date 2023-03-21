@@ -117,6 +117,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+	game = new TanksWarServer;
+
 	HWND hWnd = NULL;
 //	fullscreen = isFullScreen();
 	::g_gameInfo = FileIO::readGameInfo();
@@ -126,7 +128,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 1;
 	}
 
-	game = new TanksWarServer;
 	MSG msg;
 	try
 	{

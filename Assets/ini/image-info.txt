@@ -60,3 +60,12 @@ rows=1
 animate=0
 animation_speed=0
 scalling=1.0f
+__________________
+logo.png
+image_width=800
+image_height=400
+columns=1
+rows=1
+animate=0
+animation_speed=0
+scalling=1.0f

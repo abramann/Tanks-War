@@ -1,29 +1,35 @@
 #include "server.h"
+#include "..\common\fileio.h"
 
-Server::Server() : m_serverPort(netNS::DEFAULT_PORT), m_protocol(netNS::UDP), m_players(0)
+Server::Server() : m_serverPort(netNS::DEFAULT_PORT), m_protocol(netNS::UDP), m_players(0), m_state(SERVER_NOT_RUNNING)
 {
+	memset(m_ip, 0, netNS::IP_SIZE);
 }
 
 Server::~Server()
 {
 }
 
-int Server::initialize(uint8_t players)
+void Server::initialize()
 {
-	m_players = players;
+	ServerInfo info = FileIO::readServerInfo();
+	m_serverPort = info.port;
+	m_players = info.players;
+	strcpy(m_map, info.map);
+}
+
+void Server::start()
+{
 	m_pPlayerIP = new char[m_players*netNS::IP_SIZE];
 	memset(m_pPlayerIP, 0, m_players*netNS::IP_SIZE);
 	m_pPlayerPort = new Port[m_players];
 	memset(m_pPlayerPort, 0, m_players*sizeof(Port));
 	m_pPlayerInfo = new PlayerInfo[m_players];
 	memset(m_pPlayerInfo, 0, m_players*sizeof(PlayerInfo));
-
-	int result = m_net.createServer(m_serverPort, m_protocol);
-	if (result != netNS::NET_OK)
-		return result;
-
-	recvPlayerResponse();
-	return 0;
+	if (m_net.createServer(m_serverPort, netNS::UDP) == netNS::NET_OK)
+	{
+		m_state = SERVER_WAITING;
+	}
 }
 
 void Server::getClients()

@@ -3,8 +3,6 @@
 #include "constants.h"
 #include "texturemanger.h"
 
-
-
 class Image
 {
 
@@ -16,7 +14,9 @@ public:
 	virtual void initialize(Texture * texture, TextureManger* textureManger, Graphics * graphics);
 	virtual void update(float frameTime);
 	virtual void draw();
+	virtual bool drawRapidly();
 	virtual void release();
+	virtual void cover();
 	virtual void setXY(V2 xy) { setX(xy.x).setY(xy.y); }
 	virtual Image& setX(float x) { m_spriteData.x = x; return *this; }
 	virtual Image& setY(float y) { m_spriteData.y = y; return *this; }
@@ -27,6 +27,8 @@ public:
 	virtual void setCenter(V2 center) { m_spriteData.center = center; }
 	virtual void setRect(RECT rect) { m_spriteData.rect = rect; }
 	virtual void setScalling(float scalling);
+	virtual void setScallingX(float scallingX);
+	virtual void setScallingY(float scallingY);
 	virtual void setFrameDelay(float newm_frameDelay) { m_frameDelay = newm_frameDelay; }
 	virtual void setUpdateDelay(float newm_updateDelay) { m_updateDelay = newm_updateDelay; }
 	virtual void setAnimate(bool animate) { m_animate = animate; }
@@ -65,7 +67,8 @@ public:
 	virtual V2 getCenter() const { return V2(getCenterX(), getCenterY()); }
 	virtual V2 getRotationCenter() const { return m_spriteData.center; }
 	virtual RECT getRect() const { return m_spriteData.rect; }
-	virtual float getScalling() const { return m_spriteData.scalling; }
+	virtual float getScallingX() const { return m_spriteData.scalling.x; }
+	virtual float getScallingY() const { return m_spriteData.scalling.y; }
 	virtual float getFrameDelay() const { return m_frameDelay; }
 	virtual float geUupdateDelay() const { return m_updateDelay; }
 	virtual uint8_t	getRow() const { return m_row; }
@@ -97,6 +100,8 @@ protected:
 	bool m_animate;
 	float m_sinA, m_cosA;
 	ImageInfo* m_pImageInfo;
+
+	uint8_t r = 0, g = 0, b = 0;
 
 private:
 

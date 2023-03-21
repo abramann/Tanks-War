@@ -3,14 +3,18 @@
 #include <fstream>
 #include <dirent.h>
 
-FileIO::FileIO(std::string sFile, uint8_t readType)
+FileIO::FileIO() 
 {
-	m_name = sFile;
-	m_readType = readType;
 }
 
 FileIO::~FileIO()
 {
+}
+
+bool FileIO::isFileExist(const char* file)
+{
+	std::ifstream f(file);
+	return f.is_open();
 }
 
 uint8_t FileIO::getDirFiles(std::string directory)
@@ -26,7 +30,12 @@ uint8_t FileIO::getDirFiles(std::string directory)
 	return files;
 }
 
-std::vector<std::string> FileIO::getFilesList(const char * directory, const char * startWith)
+size_t find_last_of(std::string str, char c)
+{
+	return str.find_last_of(c);
+}
+
+std::vector<std::string> FileIO::getDirFileList(const char * directory, const char * start, const char* end , bool extension)
 {
 	std::vector<std::string> list;
 	DIR* dir = opendir(directory);
@@ -34,28 +43,36 @@ std::vector<std::string> FileIO::getFilesList(const char * directory, const char
 	while ((ent = readdir(dir)) != NULL)
 		if (ent->d_type == DT_REG)
 		{
-			std::string fileStartWith = ent->d_name;
-			fileStartWith.erase(strlen(startWith), fileStartWith.length());
-			const char *qwe = fileStartWith.c_str();
-			if (fileStartWith.compare(startWith) == 0)
-				list.push_back(ent->d_name);
+			if (start != nullptr)
+			{
+				std::string startWith = ent->d_name;
+				startWith.erase(strlen(start), startWith.length());
+				if (startWith.compare(start) != 0)
+					continue;
+			}
+			if (end != nullptr)
+				if (strcmp(&ent->d_name[find_last_of(ent->d_name, '.')], end) == !0)
+					continue;
+			if (!extension)
+			{
+				char* ext = &ent->d_name[find_last_of(ent->d_name, '.')];
+				memset(ext, 0, strlen(ext));
+			}
+
+			list.push_back(ent->d_name);
+
 		}
+
 	return list;
 }
-
 
 GameInfo FileIO::readGameInfo()
 {
 	GameInfo gameInfo = { INVALID_DATA };
 	std::ifstream file(GAME_INFO_PATH);
 	std::string line;
-	while (std::getline(file, line))
-		if (line.compare("start") == 0)
-		{
-			readValues<bool>(file, { &gameInfo.fullScreen });
-			readValues<uint16_t>(file, { &gameInfo.width, &gameInfo.height });
-			break;
-		}
+	readValues<uint8_t>(file, { &gameInfo.fullScreen });
+	readValues<uint16_t>(file, { &gameInfo.width, &gameInfo.height });
 	
 	return gameInfo;
 }
@@ -142,6 +159,64 @@ TextureInfo * FileIO::readTextureInfo(std::string name)
 	pTextureInfo->tankInfo = FileIO::readTankInfo(name);
 	pTextureInfo->fireInfo = FileIO::readFireInfo(name);
 	return pTextureInfo;
+}
+
+ClientInfo FileIO::readClientInfo()
+{
+	static ClientInfo clientInfo;
+	std::ifstream file(CLIENT_INFO_PATH);
+	std::string line;
+	std::string s1, s2;
+	readValues(file, { &s1, &s2 });
+	strcpy(clientInfo.playerName, s1.c_str());
+	strcpy(clientInfo.serverIP, s2.c_str());
+	readValues<Port>(file, { &clientInfo.serverPort });
+	return clientInfo;
+}
+
+ServerInfo FileIO::readServerInfo()
+{
+	ServerInfo serverInfo;
+	std::ifstream file(SERVER_INFO_PATH);
+	std::string line; 
+	readValues<Port>(file, { &serverInfo.port });
+	readValues<uint8_t>(file, { &serverInfo.players });
+	std::string s1;
+	readValues(file, { &s1 });
+	strcpy(serverInfo.map, s1.c_str());
+
+	return serverInfo;
+}
+
+void FileIO::createClientInfo(const ClientInfo& clientInfo)
+{
+	std::ofstream file(CLIENT_INFO_PATH);
+	file << "PlayerName =" << clientInfo.playerName << std::endl;
+	file << "ServerIP =" << clientInfo.serverIP << std::endl;
+	file << "Port =" << clientInfo.serverPort;
+}
+
+void FileIO::createServerInfo(const ServerInfo& serverInfo)
+{
+	std::ofstream file(SERVER_INFO_PATH);
+	file << "Port =" << serverInfo.port << std::endl;
+	file << "Players =" << serverInfo.players << std::endl;
+	file << "Map =" << serverInfo.map;
+}
+
+void FileIO::createGameInfo(const GameInfo& info)
+{
+	bool fullScreen;
+	uint16_t width, height;
+	GameInfo oInfo = readGameInfo();
+	std::ofstream file(GAME_INFO_PATH);
+	fullScreen = (info.fullScreen == BYTE_INVALID_DATA) ? oInfo.fullScreen : info.fullScreen;
+	width = (info.width == INVALID_DATA) ? oInfo.width : info.width;
+	height = (info.height == INVALID_DATA) ? oInfo.height : info.height;
+
+	file << "fullscreen=" << fullScreen << std::endl;
+	file << "width=" << std::to_string(width) << std::endl;
+	file << "height=" << std::to_string(height) << std::endl;
 }
 
 template<typename T>

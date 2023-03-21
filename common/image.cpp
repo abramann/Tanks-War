@@ -17,41 +17,20 @@ void Image::initialize(uint16_t width, uint16_t height, uint8_t  columns, uint8_
 {
 	m_pGraphics = graphics;
 	setTexture(texture);
-	/*
-	if (width == 0)
-	{
-		if (animate)
-			width = texture->getImageWidth();
-		else
-			width = texture->getWidth();	// Use full texture width
-	}
-	if (height == 0)
-	{
-		if (animate)
-			height = texture->getImageHeight();
-		else
-			height = texture->getHeight();	// Use full texture height;
-	}
-
+	
 	m_spriteData.width = width;
 	m_spriteData.height = height;
-	if (columns == 1 && rows == 1 && animate)
-	{
-		m_spriteData.rows = texture->getRows();
-		m_spriteData.columns = texture->getColumns();
-	}
-	else 
-	{
-		m_spriteData.columns = columns;
-		m_spriteData.rows = rows;
-	}
-	*/
+	m_spriteData.columns = columns;
+	m_spriteData.rows = rows;
+
 	m_animate = animate;
 	m_updateDelay = updateDelay;
 
-	m_spriteData.scalling = 1.0f;
+	m_spriteData.scalling.x = 1.0f;
+	m_spriteData.scalling.y = 1.0f;
 	m_spriteData.center = V2(width / 2, height / 2);
 	m_spriteData.filterColor = COLOR_WHITE;
+	update(0);
 }
 
 void Image::initialize(Texture * texture, TextureManger* textureManger, Graphics * graphics)
@@ -69,6 +48,41 @@ void Image::draw()
 	m_pGraphics->spriteBegin();
 	m_pGraphics->spriteDraw(m_spriteData);
 	m_pGraphics->spriteEnd();
+}
+
+bool Image::drawRapidly()
+{
+	static bool result = false;
+	static bool dec = false;
+	
+	if (result)
+		return result;
+
+	static int r = 0, g = 0, b = 0;
+	Color filterColor;
+	if (!dec)
+		filterColor = COLOR_XRGB(r++, g++, b++);
+	else
+	{
+		filterColor = COLOR_XRGB(r--, g--, b--);
+		if (r == -1)
+			result = true;
+	}
+
+	if (r == 255)
+		dec = true;
+
+	setFilterColor(filterColor);
+	draw();
+	return result;
+}
+
+void Image::cover()
+{ 
+	float scallX = g_gameInfo.width*1.0f/ getWidth();
+	setScallingX(scallX);
+	float scallY = g_gameInfo.height*1.0f/ getHeight();
+	setScallingY(scallY);
 }
 
 void Image::release()
@@ -100,8 +114,21 @@ void Image::update(float frameTime)
 
 void Image::setScalling(float scalling)
 {
-	m_spriteData.scalling = scalling;
+	m_spriteData.scalling.x = scalling;
+	m_spriteData.scalling.y = scalling;
 	m_spriteData.center = V2(m_spriteData.width * scalling / 2, m_spriteData.height * scalling / 2);
+}
+
+void Image::setScallingX(float scallingX)
+{
+	m_spriteData.scalling.x = scallingX;
+	m_spriteData.center = V2(m_spriteData.width * scallingX / 2, m_spriteData.height * getScallingY() / 2);
+}
+
+void Image::setScallingY(float scallingY)
+{
+	m_spriteData.scalling.y = scallingY;
+	m_spriteData.center = V2(m_spriteData.width * getScallingX() / 2, m_spriteData.height * scallingY / 2);
 }
 
 void Image::setFrameRect(uint8_t column, uint8_t row, uint16_t frames)
@@ -157,11 +184,11 @@ V2 Image::getFocusSite() const
 void Image::setLookTo(const Image & image)
 {
 	V2 site = image.getFocusSite();
-	site.x = image.getCenterX() - getScalling()*getWidth() / 2;
-	site.y = image.getCenterY() - ((image.getHeight() / 2) + (getScalling()*getHeight() / 2));
+	site.x = image.getCenterX() - getScallingX()*getWidth() / 2;
+	site.y = image.getCenterY() - ((image.getHeight() / 2) + (getScallingY()*getHeight() / 2));
 	setXY(site);
 	setAngle(image.getAngle());
-	setRotationCenter(V2(getScalling()*getWidth() / 2, (image.getHeight() / 2) + getScalling()*getHeight() / 2));
+	setRotationCenter(V2(getScallingX()*getWidth() / 2, (image.getHeight() / 2) + getScallingY()*getHeight() / 2));
 }
 
 Space Image::getAllocatedSpace() const

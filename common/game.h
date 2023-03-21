@@ -6,6 +6,8 @@
 #include "texture.h"
 #include "image.h"
 #include "audio.h"
+#include "interface.h"
+#include "map.h"
 
 class Game
 {
@@ -32,6 +34,7 @@ public:
 	Graphics* getGraphics()	{ return m_pGraphics; }
 	Input* getInput()	{ return m_pInput; }
 	Audio* getAudio()	{ return m_pAudio; }
+	Interface* m_pInterface;
 
 protected:
 
@@ -39,9 +42,10 @@ protected:
 	Input* m_pInput;
 	Audio* m_pAudio;
 	TextureManger* m_pTextureManger;
+	Map* m_pMap;
 	bool imguiInitialized;
 	DWORD m_timeDelta;
-
+	Image m_logo;
 };
 
 

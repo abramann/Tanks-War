@@ -4,6 +4,11 @@
 #include "constants.h"
 #include <d3d9.h>
 
+struct Resolution
+{
+	uint16_t width, height;
+};
+
 class Graphics
 {
 public:
@@ -28,6 +33,11 @@ public:
 	LPDIRECT3DDEVICE9 getDevice()		{ return m_lpDevice3d; }
 	LPD3DXSPRITE getSprite()		{ return m_sprite; }
 	HRESULT getDeviceState();
+	std::vector<Resolution> getSupportedResolutions();
+	Resolution getResolution();
+	void setResolution(const Resolution& resolution);
+	bool isFullScreen();
+	void setFullScreen(const bool& fullscreen);
 
 private:
 

@@ -9,10 +9,6 @@
 #include "remoteplayer.h"
 #include "client.h"
 
-static std::string file[] = { "Assets\\Texture\\player-tank.png",
-"Assets\\Texture\\explosion-animation.png" ,
- "Assets\\Texture\\bm0.jpg", "Assets\\Texture\\bm1.jpg","Assets\\Texture\\bullet_6.png", "Assets\\Texture\\explosion-fire-3.png", "Assets\\Texture\\fire-simple.png" };
-
 class TanksWar : public Game
 {
 public:
@@ -29,7 +25,7 @@ public:
 
 private:
 
-	Map map;
+	
 	Player player0;
 	uint8_t m_players;
 	PlayerState* m_pPlayerState;

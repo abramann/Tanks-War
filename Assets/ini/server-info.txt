@@ -1,0 +1,3 @@
+port=922
+players=2
+map=Battle Ground

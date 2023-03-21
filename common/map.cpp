@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "texture.h"
+#include "fileio.h"
 #include <fstream>
 
 Map::Map() : m_ppMap(0) , m_pGraphics(0), m_pTexture(0)
@@ -8,17 +9,25 @@ Map::Map() : m_ppMap(0) , m_pGraphics(0), m_pTexture(0)
 
 Map::~Map()
 {
-	for (auto i = 0; i < m_mapData.height; i++)
-		SAFE_DELETE_ARRAY(m_ppMap[i]);
+//	for (auto i = 0; i < m_mapData.height; i++)
+//		SAFE_DELETE_ARRAY(m_ppMap[i]);
 	
-	SAFE_DELETE_ARRAY(m_ppMap);
+//	SAFE_DELETE_ARRAY(m_ppMap);
 }
 
-bool Map::initialize(const char* path, Texture* texture, Graphics* graphics)
+void Map::initialize(Texture* texture, Graphics* graphics)
 {
 	m_pGraphics = graphics;
 	m_pTexture = &texture[0];
-	if (!read(path))
+}
+
+bool Map::load(const char* name)
+{
+	std::string path(MAP_DIR);
+	path.operator+=(name);
+	path.operator+=(".map");
+
+	if (!read(path.c_str()))
 		return false;
 
 	uint16_t totalBitmaps = m_mapData.width*m_mapData.height;
@@ -45,17 +54,17 @@ bool Map::initialize(const char* path, Texture* texture, Graphics* graphics)
 	{
 		for (auto w = 0; w < m_mapData.width; w++)
 		{
-				vertices[m_ppMap[h][w]][h][w].v1 = { (w)*m_bitmapData.width*1.0f ,(h + 1)*m_bitmapData.height*1.0f,1.0f,1.0f,0.0f,1.0f };
-				vertices[m_ppMap[h][w]][h][w].v2 = { (w)*m_bitmapData.width*1.0f ,(h)*m_bitmapData.height*1.0f,1.0f,1.0f,0.0f,0.0f };
-				vertices[m_ppMap[h][w]][h][w].v3 = { (w + 1)*m_bitmapData.width*1.0f ,(h)*m_bitmapData.height*1.0f,1.0f,1.0f,1.0f,0.0f };
+			vertices[m_ppMap[h][w]][h][w].v1 = { (w)*m_bitmapData.width*1.0f ,(h + 1)*m_bitmapData.height*1.0f,1.0f,1.0f,0.0f,1.0f };
+			vertices[m_ppMap[h][w]][h][w].v2 = { (w)*m_bitmapData.width*1.0f ,(h)*m_bitmapData.height*1.0f,1.0f,1.0f,0.0f,0.0f };
+			vertices[m_ppMap[h][w]][h][w].v3 = { (w + 1)*m_bitmapData.width*1.0f ,(h)*m_bitmapData.height*1.0f,1.0f,1.0f,1.0f,0.0f };
 
-				vertices[m_ppMap[h][w]][h][w].v4 = { (w + 1)*m_bitmapData.width*1.0f ,(h)*m_bitmapData.height*1.0f,1.0f,1.0f,0.0f,-1.0f };
-				vertices[m_ppMap[h][w]][h][w].v5 = { (w + 1)*m_bitmapData.width*1.0f ,(h + 1)*m_bitmapData.height*1.0f,1.0f,1.0f,0.0f,0.0f };
-				vertices[m_ppMap[h][w]][h][w].v6 = { (w)*m_bitmapData.width*1.0f ,(h + 1)*m_bitmapData.height*1.0f,1.0f,1.0f,-1.0f,0.0f };
-			
-				Space space;
+			vertices[m_ppMap[h][w]][h][w].v4 = { (w + 1)*m_bitmapData.width*1.0f ,(h)*m_bitmapData.height*1.0f,1.0f,1.0f,0.0f,-1.0f };
+			vertices[m_ppMap[h][w]][h][w].v5 = { (w + 1)*m_bitmapData.width*1.0f ,(h + 1)*m_bitmapData.height*1.0f,1.0f,1.0f,0.0f,0.0f };
+			vertices[m_ppMap[h][w]][h][w].v6 = { (w)*m_bitmapData.width*1.0f ,(h + 1)*m_bitmapData.height*1.0f,1.0f,1.0f,-1.0f,0.0f };
 
-				bool prevented = false;
+			Space space;
+
+			bool prevented = false;
 			for (auto preventedBM : m_mapData.preventedBM)
 				if (m_ppMap[h][w] == preventedBM)
 				{
@@ -64,7 +73,7 @@ bool Map::initialize(const char* path, Texture* texture, Graphics* graphics)
 					space.y1 = h*m_bitmapData.height; space.y2 = space.y1 + m_bitmapData.height;
 					m_noSpace.push_back(space);
 				}
-			
+
 			if (prevented)
 				continue;
 
@@ -108,6 +117,21 @@ bool Map::initialize(const char* path, Texture* texture, Graphics* graphics)
 
 	SAFE_DELETE_ARRAY(vertices);
 	return true;
+}
+
+std::vector<std::string> Map::getMapList()
+{
+	auto list = FileIO::getDirFileList(MAP_DIR, 0, ".map", false);
+	return list;
+}
+
+bool Map::isMapExist(const char* name, const char* crc)
+{
+	std::string map(MAP_DIR);
+	map.operator+= (name);
+	map.operator+=(".map");
+	if (!FileIO::isFileExist(map.c_str()))
+		return false;
 }
 
 bool Map::read(const char* path)

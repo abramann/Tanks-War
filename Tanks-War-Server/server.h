@@ -8,7 +8,8 @@ public:
 	
 	Server();
 	~Server();
-	int initialize(uint8_t players);
+	void initialize();
+	void start();
 	void getClients();	
 	void send(void* data, int size, PlayerID id);
 	template <typename T>
@@ -18,6 +19,12 @@ public:
 	void send(void* data, int size);
 	void recvPlayerResponse();
 	PlayerID recv(void* data, bool wait = false);
+	const char* getIP() { m_net.getLocalIP(m_ip); return m_ip; }
+	Port* getPort() { return &m_serverPort; }
+	uint8_t getPlayers() const { return m_players; }
+	uint8_t getConnectedPlayers() const { return m_clients; }
+	void setPlayers(uint8_t players) { m_players = players; }
+	ServerState getState() const { return m_state; }
 
 private:
 
@@ -27,9 +34,14 @@ private:
 	PlayerInfo* m_pPlayerInfo;
 	Port* m_pPlayerPort;
 	Port m_serverPort;
+	char m_ip[netNS::IP_SIZE];
 	Protocol m_protocol;
 	uint8_t m_players;
 	char* m_pPlayerIP;
+	char m_map[MAX_NAME_LEN];
+	uint8_t m_clients;
+	ServerState m_state;
+
 };
 
 

@@ -24,9 +24,6 @@
     <ClInclude Include="..\common\constants.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\dirent.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\fileio.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
@@ -122,9 +119,6 @@
     <ClCompile Include="..\common\unit.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\audio.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\fileio.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
@@ -175,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="..\common\imgui\imgui_draw.cpp">
       <Filter>Common\Sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\audio.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -15,14 +15,13 @@ TanksWarServer::~TanksWarServer()
 void TanksWarServer::initialize(HINSTANCE hInstance, HWND _hWnd)
 {
 	Game::initialize(hInstance, _hWnd);
-	
-	tm.initialize(m_pGraphics);
+	m_server.initialize();
+	/*
 	m_pAudio->playCue("Theme");
 	m_server.initialize(m_players);
-
-	map.initialize("Assets\\map.txt", tm.getTiledMapTexture(), m_pGraphics);
+	
 	m_pState = new PlayerState[m_players];
-
+	
 	for (int i = 0; i < m_players; i++)
 	{
 		m_player[i].initialize(&map, &tm, m_pGraphics);
@@ -34,6 +33,7 @@ void TanksWarServer::initialize(HINSTANCE hInstance, HWND _hWnd)
 	}
 
 	m_server.send(m_pState, sizeof(PlayerState)*m_players);
+	*/
 }
 
 void TanksWarServer::collision()
@@ -42,6 +42,7 @@ void TanksWarServer::collision()
 
 void TanksWarServer::update()
 {
+	return;
 	PlayerToServer toServer;
 	PlayerID id = m_server.recv(&toServer);
 	if (id != INVALID_ID)
@@ -58,6 +59,23 @@ void TanksWarServer::update()
 
 void TanksWarServer::render()
 {
+	switch (m_pInterface->m_menu)
+	{
+	case MAIN_MENU:
+		m_pInterface->mainMenu();
+		break;
+	case MULTIPLAYER_MENU:
+		m_pInterface->multiplayerMenu(m_server, *m_pMap);
+		break;
+	case SETTING_MENU:
+		m_pInterface->settingMenu(*m_pGraphics, *m_pAudio);
+		break;
+	case QUIT_MENU:
+		PostQuitMessage(0);
+	default:
+		break;
+	}
+	return;
 	map.draw();
 	for (int i = 0; i < m_players; i++)
 		m_player[i].draw();

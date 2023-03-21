@@ -15,7 +15,7 @@ bool Input::initialize(HWND hwnd)
 	m_hwnd = hwnd;
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	bool result = ImGui_ImplWin32_Init(&m_hwnd);
+	bool result = ImGui_ImplWin32_Init(m_hwnd);
 	if(result)
 		m_handleInput = true;
 

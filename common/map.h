@@ -11,8 +11,11 @@ public:
 
 	Map();
 	~Map();
-	virtual bool initialize(const char* path, Texture* texture, Graphics* graphics);
+	virtual void initialize(Texture* texture, Graphics* graphics);
+	virtual bool load(const char* path);
 	virtual bool read(const char* map);
+	std::vector<std::string> getMapList();
+	bool isMapExist(const char* name, const char* crc);
 	virtual void draw();
 	void Add_Object(Object* object) { m_pObjects.push_back(object); }
 	Space getFreeSpace() const;

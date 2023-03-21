@@ -1,5 +1,6 @@
 #include "graphics.h"
 #include "texture.h"
+#include "fileio.h"
 #include "imgui\imgui_impl_dx9.h"
 
 uint64_t  g_frameCounter = 0;
@@ -57,6 +58,7 @@ bool Graphics::initialize(HWND hWnd)
 		return false;
 
 	bool result = ImGui_ImplDX9_Init(m_lpDevice3d);
+
 	return result;
 }
 
@@ -82,10 +84,9 @@ void Graphics::spriteDraw(SpriteData sd)
 {
 	V2 translate = V2(sd.x, sd.y);
 	V2 center = sd.center;
-	V2 scalling = V2(sd.scalling, sd.scalling);
 	float angle = sd.angle;
 	D3DXMATRIX matrix;
-	D3DXMatrixTransformation2D(&matrix, NULL, NULL, &scalling, &center, angle, &translate);
+	D3DXMatrixTransformation2D(&matrix, NULL, NULL, &sd.scalling, &center, angle, &translate);
 	m_sprite->SetTransform(&matrix);
 	m_sprite->Draw(sd.lpTexture, &sd.rect, NULL, NULL, sd.filterColor);
 }
@@ -110,7 +111,7 @@ HRESULT Graphics::begin()
 {	
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
-	m_lpDevice3d->Clear(NULL, NULL, D3DCLEAR_TARGET, COLOR_XRGB( 200,100, 80), 1.0f, NULL);
+	m_lpDevice3d->Clear(NULL, NULL, D3DCLEAR_TARGET, COLOR_XRGB( 255,255, 255), 1.0f, NULL);
 	HRESULT hr;
 	hr = m_lpDevice3d->BeginScene();
 	ImGui::NewFrame();
@@ -207,6 +208,59 @@ HRESULT Graphics::getDeviceState()
 	HRESULT hr;
 	hr = m_lpDevice3d->TestCooperativeLevel();
 	return hr;
+}
+
+std::vector<Resolution> Graphics::getSupportedResolutions()
+{
+	std::vector<Resolution> resolution;
+	int modes = m_lpDirect3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, m_PresentParameter.BackBufferFormat);
+	D3DDISPLAYMODE dMode;
+	for (auto i = 0; i <= modes; i++)
+	{
+		m_lpDirect3d->EnumAdapterModes(D3DADAPTER_DEFAULT, m_PresentParameter.BackBufferFormat, i, &dMode);
+		if (dMode.Width < 800 | dMode.Height < 600 | dMode.Height >= dMode.Width)
+
+			continue;
+
+		Resolution resol;
+		resol.width = dMode.Width, resol.height = dMode.Height;
+		resolution.push_back(resol);
+	}
+
+	return resolution;
+}
+
+Resolution Graphics::getResolution()
+{
+	Resolution resolution;
+	GameInfo info = FileIO::readGameInfo();
+	resolution.width = info.width;
+	resolution.height = info.height;
+	return resolution;
+}
+
+void Graphics::setResolution(const Resolution& resolution)
+{
+	GameInfo info;
+	info.fullScreen = BYTE_INVALID_DATA;
+	info.width = resolution.width;
+	info.height = resolution.height;
+	FileIO::createGameInfo(info);
+}
+
+bool Graphics::isFullScreen()
+{
+	bool fullscreen = FileIO::readGameInfo().fullScreen;
+	return fullscreen;
+}
+
+void Graphics::setFullScreen(const bool& fullScreen)
+{
+	GameInfo info;
+	info.width = INVALID_DATA;
+	info.height = INVALID_DATA;
+	info.fullScreen = fullScreen;
+	FileIO::createGameInfo(info);
 }
 
 DWORD Graphics::getBehaviorCompatility()

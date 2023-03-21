@@ -22,7 +22,7 @@ bool TextureManger::initialize(Graphics* graphics)
 
 bool TextureManger::load()
 {
-	m_textureList = FileIO::getFilesList(TEXTURE_DIR, "");
+	m_textureList = FileIO::getDirFileList(TEXTURE_DIR);
 	Texture texture;
 
 	uint8_t counter = 0;
@@ -36,8 +36,10 @@ bool TextureManger::load()
 		texture.setNumber(counter);
 		m_pTexture[counter] = texture;
 		if (strComp(texture.getTextureName(), "tiled-0") == 0)
-			m_pTiledTexture = &m_pTexture[counter];
-
+			m_pTiled = &m_pTexture[counter];
+		else if (strComp(texture.getTextureName(), "logo") == 0)
+			m_pLogo = &m_pTexture[counter];
+		
 		TextureInfo textureInfo;
 		textureInfo = *FileIO::readTextureInfo(texture.getTextureName());
 		m_TextureInfo.push_back(textureInfo);
