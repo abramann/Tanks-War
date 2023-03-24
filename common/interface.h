@@ -25,13 +25,12 @@ public:
 	void initialize();
 	Menus menu(const char* name, const ImVec2 pos, const ImVec2 size, const ImVec2 buttonSize, ImGuiWindowFlags flag, std::initializer_list<const char*> items);
 	void mainMenu();
+	void settingMenu(Graphics& graphics, Audio& audio);
 #ifdef _CLIENT_BUILD
 	void multiplayerMenu(Client& client);
-#endif
-#ifdef _SERVER_BUILD
+#else ifdef _SERVER_BUILD
 	void multiplayerMenu(Server& server, Map& map);
 #endif
-	void settingMenu(Graphics& graphics, Audio& audio);
 	
 	Menus m_menu;
 

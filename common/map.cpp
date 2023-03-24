@@ -23,11 +23,10 @@ void Map::initialize(Texture* texture, Graphics* graphics)
 
 bool Map::load(const char* name)
 {
-	std::string path(MAP_DIR);
-	path.operator+=(name);
-	path.operator+=(".map");
-
-	if (!read(path.c_str()))
+	strcpy(m_name, name);
+	char path[MAX_PATH] = { 0 };
+	strcpy(path, getFullPath());
+	if (!read(path))
 		return false;
 
 	uint16_t totalBitmaps = m_mapData.width*m_mapData.height;
@@ -119,19 +118,25 @@ bool Map::load(const char* name)
 	return true;
 }
 
-std::vector<std::string> Map::getMapList()
+const char* Map::setRandomMap()
 {
 	auto list = FileIO::getDirFileList(MAP_DIR, 0, ".map", false);
-	return list;
+	strcpy(m_name, list[_rand(list.size() - 1)].c_str());
+	return m_name;
 }
 
-bool Map::isMapExist(const char* name, const char* crc)
+bool Map::isMapExist(const char* name, Crc32 crc32)
 {
 	std::string map(MAP_DIR);
 	map.operator+= (name);
 	map.operator+=(".map");
 	if (!FileIO::isFileExist(map.c_str()))
 		return false;
+
+	if (crc32 != FileIO::getCRC32(map.c_str()))
+		return false;
+
+	return true;
 }
 
 bool Map::read(const char* path)
@@ -265,3 +270,26 @@ bool Map::emptyFreeSpace(const Space space) const
 	return true;
 }
 
+void replaceAll(std::string& str, char replace, const char* replacedBy)
+{
+	for (int i = 0; i < str.length(); i++)
+		if (str[i] == replace)
+		{
+			str.erase(i, 1);
+			str.insert(i++, replacedBy);
+			auto s = str.c_str();
+			auto a = str.length();
+		}
+}
+
+const char* Map::getFullPath() const
+{
+	std::string path(MAP_DIR);
+	path.operator+=(m_name);
+	path.operator+=(".map");
+
+	char cPath[MAX_PATH] = { 0 };
+	replaceAll(path, '\\', "\\\\");
+	strcpy(cPath, path.c_str());
+	return cPath;
+}

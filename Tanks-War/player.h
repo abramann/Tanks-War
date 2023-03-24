@@ -1,5 +1,6 @@
 #ifndef _PLAYER_H
 #define _PLAYER_H
+/*
 #include "constants.h"
 #include "remoteplayer.h"
 #include <vector>
@@ -26,9 +27,8 @@ private:
 	virtual void executeLeft(float frameTime);
 	virtual void executeAttack(float frameTime);
 
-	PlayerToServer m_toServer;
 	
 };
 
-
+*/
 #endif

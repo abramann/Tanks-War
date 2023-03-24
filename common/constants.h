@@ -15,6 +15,8 @@
 #include <d3dx9.h>
 #include <timeapi.h>
 #include "net.h"
+#include "crc32.h"
+
 extern uint64_t g_frameCounter;
 
 #define COLOR_ARGB D3DCOLOR_ARGB
@@ -32,6 +34,7 @@ typedef uint8_t PlayerID;
 typedef ImGuiKey Key;
 typedef unsigned short Port;
 typedef uint8_t Protocol;
+typedef uint32_t Crc32;
 
 constexpr auto COLOR_BLACK = COLOR_XRGB(0, 0, 0);
 constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
@@ -42,10 +45,12 @@ constexpr float MAX_FRAME_TIME = 80.0f;
 constexpr auto MAX_PLAYER_NAME = 20;
 constexpr auto MAX_PACKET_SIZE = 255;
 constexpr DWORD INVALID_ADDRESS = 0xFFFFFFF;
-constexpr uint8_t INVALID_ID = 99;
+constexpr uint8_t INVALID_ID = -1;
 constexpr auto NET_RESPONSE = 1;
 constexpr auto NET_NORESPONSE = -1;
 constexpr auto MAX_PLAYERS = 12;
+constexpr int MAX_PORT = 4861;
+constexpr int MIN_PORT = 10;
 constexpr unsigned short UNSPECIFIED_PORT = 0xCCCC;
 constexpr uint32_t UNDEFINED_POSITION = 0xFFFF;
 constexpr uint8_t MAX_FILE_NAME = 255;
@@ -304,36 +309,6 @@ struct Space
 	int32_t x2, y2;
 };
 
-struct PlayerInfo
-{
-	char name[MAX_PLAYER_NAME];
-	uint8_t id;
-};
-
-struct PlayerState
-{
-	int x, y;
-	float angle, health;
-	char id;
-	bool  attack;
-};
-
-struct ServerToPlayer
-{
-	PlayerState p0, p1;
-};
-
-struct PlayerToServer
-{
-	bool forward, back, right, left, attack;
-};
-
-struct ClientInfo
-{
-	char playerName[MAX_PLAYER_NAME], serverIP[netNS::IP_SIZE];
-	Port serverPort;
-};
-
 struct ServerInfo
 {
 	Port port;
@@ -351,7 +326,75 @@ enum TEXTURES
 	FIRE2,
 	FIRE_HIT,
 	ENEMY_TANK
+};
 
+struct ClientInfo
+{
+	char name[MAX_NAME_LEN], serverIP[netNS::IP_SIZE];
+	Port serverPort;
+};
+
+struct ClientData
+{
+	char ip[netNS::IP_SIZE], name[MAX_NAME_LEN];
+	Port port;
+	PlayerID id;
+};
+
+enum PacketType
+{
+	PACKET_START_SEASSON = 100,
+	PACKET_END_SEASSON,
+	PACKET_INI,
+	PACKET_PLAYERS_EXIST,
+	PACKET_PLAYERS_INI_DATA,
+	PACKET_GAME,
+	PACKET_DISCONNECT,
+};
+
+struct CpsIni
+{
+	PacketType  packetType = PACKET_INI;
+	char name[MAX_NAME_LEN];
+};
+
+struct CpsDisconnect
+{
+	PacketType packetType = PACKET_DISCONNECT;
+};
+
+struct CpsSeasson
+{
+	PacketType packetType;
+};
+
+struct SpsIni
+{
+	PacketType packetType = PACKET_INI;
+	bool accept;
+	PlayerID id;
+	uint8_t playersInServer;
+	uint8_t gamePlayers;
+	char  map[MAX_NAME_LEN];
+	Crc32 checksum;
+};
+
+struct SpsPlayersExist
+{
+	PacketType packetType = PACKET_PLAYERS_EXIST;
+	uint8_t players;
+};
+
+struct SpsPlayersIniData
+{
+	PacketType packetType = PACKET_PLAYERS_INI_DATA;
+	char playerName[MAX_PLAYERS][MAX_NAME_LEN];
+	PlayerID id[MAX_PLAYERS];
+};
+
+struct SpsDisconnect
+{
+	PacketType packetType = PACKET_DISCONNECT;
 };
 
 enum READ_TYPE
@@ -402,12 +445,13 @@ enum Menus
 
 enum ClientState
 {
-	UNCONNECTED,
-	CONNECTED,
-	DISCONNECTED,
-	WAITING,
-	MAP_NOT_FOUND,
-	MAP_NOT_LOAD
+	CLIENT_UNCONNECTED,
+	CLIENT_CONNECTED,
+	CLIENT_DISCONNECTED,
+	CLIENT_WAITING,
+	CLIENT_MAP_NOT_FOUND,
+	CLIENT_MAP_NOT_LOAD,
+	CLIENT_RUNNING
 };
 
 enum ServerState

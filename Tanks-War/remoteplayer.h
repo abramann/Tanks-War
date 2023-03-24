@@ -1,7 +1,7 @@
 #pragma once
 #include "constants.h"
 #include "tank.h"
-
+/*
 class RemotePlayer : public Tank
 {
 public:
@@ -22,4 +22,4 @@ protected:
 	PlayerInfo m_playerInfo;
 
 };
-
+*/

@@ -1,10 +1,16 @@
 #include "client.h"
 #include "fileio.h"
 
-Client::Client() : m_protocol(netNS::UDP), m_serverPlayers(0), m_state(UNCONNECTED)
+Client::Client() : m_serverPlayers(0), m_state(CLIENT_UNCONNECTED)
 {
 	memset(m_map, 0, MAX_NAME_LEN);
-	memset(m_mapHash, 0, MD5_LEN);
+	m_pCpsIni = (CpsIni*)&m_sData;
+	m_pCpsDisconnect = (CpsDisconnect*)&m_sData;
+	m_pCpsSeasson = (CpsSeasson*)&m_sData;
+	m_pSpsIni = (SpsIni*)&m_rData;
+	m_pSpsPlayersExist = (SpsPlayersExist*)&m_rData;
+	m_pSpsPlayerIniData = (SpsPlayersIniData*)&m_rData;
+	m_pPacketType = (PacketType*)&m_rData;
 }
 
 
@@ -21,68 +27,78 @@ void Client::initialize(Map* map)
 bool Client::connect()
 {
 	FileIO::createClientInfo(m_clientInfo);
-	m_net.createClient(m_clientInfo.serverIP, m_clientInfo.serverPort, m_protocol);
-	
-	send(m_clientInfo.playerName);
+	m_net.createClient(m_clientInfo.serverIP, m_clientInfo.serverPort, netNS::UDP);
+	m_pCpsIni->packetType = PACKET_INI;
+	strcpy(m_pCpsIni->name, m_clientInfo.name);
+	send();
 	Sleep(500);
-	recv(m_map);
-	if (strlen(m_map) > 0)
+	if (recv() && *m_pPacketType == PACKET_INI)
 	{
-		m_state = CONNECTED;
-		if (!m_pMap->isMapExist(m_map, m_mapHash))
+		strcpy(m_map, m_pSpsIni->map);
+		if (!m_pMap->isMapExist(m_map, m_pSpsIni->checksum))
 		{
-			m_state = MAP_NOT_FOUND;
+			m_state = CLIENT_MAP_NOT_FOUND;
 			m_net.closeSocket();
 			return false;
 		}
-		if(!m_pMap->load(m_map))
+		
+		m_pCpsSeasson->packetType = PACKET_START_SEASSON;
+		send();
+		m_state = CLIENT_WAITING;
+		m_serverPlayers = m_pSpsIni->playersInServer;
+		m_gamePlayers = m_pSpsIni->gamePlayers;
+		m_id = m_pSpsIni->id;
+		if (!m_pMap->load(m_map))
 		{
-			m_state = MAP_NOT_FOUND;
-			m_net.closeSocket();
+			disconnect();
+			m_state = CLIENT_MAP_NOT_LOAD;
 			return false;
 		}
-
-		recv(&m_serverPlayers, true);
-	}
-	else
-	{
-		m_state = UNCONNECTED;
-		m_net.closeSocket();
-		return false;
 	}
 	
 	return true;
 }
 
-void Client::send(void * data, int& size)
+void Client::disconnect()
 {
-	m_net.sendData(data, size, m_clientInfo.serverIP, m_port);
+	m_pCpsDisconnect->packetType = PACKET_DISCONNECT;
+	send();
+	m_state = CLIENT_DISCONNECTED;
+	m_net.closeSocket();
 }
 
-void Client::send(char* text)
+void Client::wait()
 {
-	int len = strlen(text);
-	send(text, len);
+	recv();
+	if (*m_pPacketType == PACKET_PLAYERS_EXIST)
+	{
+		m_serverPlayers = m_pSpsPlayersExist->players;
+	}
+	else if (*m_pPacketType == PACKET_PLAYERS_INI_DATA)
+	{
+		m_state = CLIENT_RUNNING;
+		
+	}
 }
 
-int Client::recv(void * data)
+void Client::send()
 {
 	int size = MAX_PACKET_SIZE;
-	m_net.readData(data, size, m_clientInfo.serverIP, m_port);
-	if (size > 0)
-		return NET_RESPONSE;
-
-	return NET_NORESPONSE;
+	m_net.sendData(m_sData, size, m_clientInfo.serverIP, m_port);
+	sbClear();
 }
 
-void Client::recv(void * data, bool wait)
+bool Client::recv()
+{
+	rbClear();
+	int size = 256;
+	m_net.readData(m_rData, size, m_clientInfo.serverIP, m_port);
+	return (size > 0) ? true : false;
+}
+
+void Client::recv(bool wait)
 {
 	do
-	{
-		if (recv(data) == NET_RESPONSE)
-			break;
-		if (wait)
-			Sleep(200);
-
-	} while (wait);
+		Sleep(200);
+	while (recv() != false && wait);
 }

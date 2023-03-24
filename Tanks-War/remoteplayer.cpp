@@ -1,5 +1,5 @@
 #include "remoteplayer.h"
-
+/*
 RemotePlayer::RemotePlayer()
 {
 }
@@ -38,3 +38,4 @@ void RemotePlayer::setState(PlayerState playerState)
 	if (playerState.attack)
 		executeAttack(0);
 }
+*/

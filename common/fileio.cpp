@@ -161,6 +161,26 @@ TextureInfo * FileIO::readTextureInfo(std::string name)
 	return pTextureInfo;
 }
 
+Crc32 FileIO::getCRC32(const char* file)
+{
+	Crc32 result = 0;
+	std::ifstream f(file, std::ios::binary | std::ios::ate);
+	if (!f.is_open())
+		return result;
+
+	std::streamsize size = f.tellg();
+	f.seekg(0, std::ios::beg);
+	std::vector<char> buffer(size);
+	if (f.read(buffer.data(), size))
+	{
+		result = crc32_fast(&buffer[0], size);
+	}
+
+	return result;
+}
+
+#ifdef _CLIENT_BUILD
+
 ClientInfo FileIO::readClientInfo()
 {
 	static ClientInfo clientInfo;
@@ -168,33 +188,21 @@ ClientInfo FileIO::readClientInfo()
 	std::string line;
 	std::string s1, s2;
 	readValues(file, { &s1, &s2 });
-	strcpy(clientInfo.playerName, s1.c_str());
+	strcpy(clientInfo.name, s1.c_str());
 	strcpy(clientInfo.serverIP, s2.c_str());
 	readValues<Port>(file, { &clientInfo.serverPort });
 	return clientInfo;
 }
 
-ServerInfo FileIO::readServerInfo()
-{
-	ServerInfo serverInfo;
-	std::ifstream file(SERVER_INFO_PATH);
-	std::string line; 
-	readValues<Port>(file, { &serverInfo.port });
-	readValues<uint8_t>(file, { &serverInfo.players });
-	std::string s1;
-	readValues(file, { &s1 });
-	strcpy(serverInfo.map, s1.c_str());
-
-	return serverInfo;
-}
-
 void FileIO::createClientInfo(const ClientInfo& clientInfo)
 {
 	std::ofstream file(CLIENT_INFO_PATH);
-	file << "PlayerName =" << clientInfo.playerName << std::endl;
+	file << "PlayerName =" << clientInfo.name << std::endl;
 	file << "ServerIP =" << clientInfo.serverIP << std::endl;
 	file << "Port =" << clientInfo.serverPort;
 }
+
+#else #ifdef _SERVER_BUILD
 
 void FileIO::createServerInfo(const ServerInfo& serverInfo)
 {
@@ -203,6 +211,21 @@ void FileIO::createServerInfo(const ServerInfo& serverInfo)
 	file << "Players =" << serverInfo.players << std::endl;
 	file << "Map =" << serverInfo.map;
 }
+
+ServerInfo FileIO::readServerInfo()
+{
+	ServerInfo serverInfo;
+	std::ifstream file(SERVER_INFO_PATH);
+	std::string line;
+	readValues<Port>(file, { &serverInfo.port });
+	readValues<uint8_t>(file, { &serverInfo.players });
+	std::string s1;
+	readValues(file, { &s1 });
+	strcpy(serverInfo.map, s1.c_str());
+
+	return serverInfo;
+}
+#endif
 
 void FileIO::createGameInfo(const GameInfo& info)
 {

@@ -58,7 +58,7 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	wcx.cbWndExtra = 0;                 // no extra window memory 
 	wcx.hInstance = hInstance;          // handle to instance 
 	wcx.hIcon = LoadIcon(NULL,"Assets//tankswar.icon");
-	wcx.hCursor = 0;  //LoadCursorFromFile("Assets//tankswar.cursor");   // predefined arrow 
+	wcx.hCursor = LoadCursorFromFile("Assets//tankswar.cursor");   // predefined arrow 
 	wcx.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);    // black background 
 	wcx.hIconSm = NULL;                 // small class icon 
 	wcx.lpszMenuName = NULL;           // name of menu resource 

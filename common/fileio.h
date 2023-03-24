@@ -17,11 +17,16 @@ public:
 	static TankInfo* readTankInfo(std::string name);
 	static FireInfo* readFireInfo(std::string name);
 	static TextureInfo* readTextureInfo(std::string name);
+	static Crc32 getCRC32(const char* file);
+
+#ifdef _CLIENT_BUILD
 	static ClientInfo readClientInfo();
-	static ServerInfo readServerInfo();
 	static void createClientInfo(const ClientInfo& clientInfo);
-	static void createGameInfo(const GameInfo& info);
+#else ifdef _SERVER_BUILD
+	static ServerInfo readServerInfo();
 	static void createServerInfo(const ServerInfo& serverInfo);
+#endif
+	static void createGameInfo(const GameInfo& info);
 	
 private:
 

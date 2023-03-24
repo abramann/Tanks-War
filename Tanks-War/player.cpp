@@ -1,5 +1,5 @@
 #include "player.h"
-
+/*
 Player::Player() : m_event(false)
 {
 	ZeroMemory(&m_toServer, sizeof(PlayerToServer));
@@ -61,5 +61,5 @@ void Player::executeLeft(float frameTime)
 void Player::executeAttack(float frameTime)
 {
 	m_event = true;
-	m_toServer.attack = true;
 }
+*/

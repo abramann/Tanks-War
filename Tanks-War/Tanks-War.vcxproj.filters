@@ -173,6 +173,9 @@
     <ClCompile Include="..\common\audio.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\crc32.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="inlined.inl">

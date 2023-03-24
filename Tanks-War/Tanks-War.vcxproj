@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\audio.cpp" />
+    <ClCompile Include="..\common\crc32.cpp" />
     <ClCompile Include="..\common\fileio.cpp" />
     <ClCompile Include="..\common\fire.cpp" />
     <ClCompile Include="..\common\game.cpp" />

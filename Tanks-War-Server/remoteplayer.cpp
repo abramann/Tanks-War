@@ -1,5 +1,5 @@
 #include "remoteplayer.h"
-
+/*
 RemotePlayer::RemotePlayer()
 {
 }
@@ -54,3 +54,4 @@ void RemotePlayer::setPlayerState(PlayerState playerState)
 	setHealth(playerState.health);
 	//	setFireX();
 }
+*/

@@ -125,7 +125,7 @@ void Interface::multiplayerMenu(Client& client)
 		TITLE_BUTTON_COLOR, TITLE_BUTTON_COLOR);
 	inputText("Player Name", OPTIONS_COLOR, "##PlayerName", client.getPlayerName(),
 		MAX_PLAYER_NAME, CHOOSE_COLOR, configFlags); 
-	inputText("Server IP", OPTIONS_COLOR, "##ServerIP", client.getServerIP(),
+	inputText("Server IP", OPTIONS_COLOR, "##ServerIP", (char*)client.getServerIP(),
 		netNS::IP_SIZE, CHOOSE_COLOR, configFlags);
 	
 	unsigned short* usPort = client.getServerPort();
@@ -139,35 +139,33 @@ void Interface::multiplayerMenu(Client& client)
 	button("Server State", ImVec2(0, 0), TITLE_BUTTON_TEXT_COLOR, TITLE_BUTTON_COLOR,
 		TITLE_BUTTON_COLOR, TITLE_BUTTON_COLOR); SameLine();
 	text(stringCLIENT_STATE[state].c_str(), colorCLIENT_STATE[state]);
-	inputText("Server Map", OPTIONS_COLOR, "##ServerMap", client.getServerMap(),
+	inputText("Game Map", OPTIONS_COLOR, "##GamerMap", client.getGameMap(),
 		MAX_NAME_LEN, OPTIONS_COLOR, ImGuiInputTextFlags_ReadOnly);
 	text("Players", OPTIONS_COLOR); SameLine();
 	int nPlayer = 0;
-	nPlayer = (int)client.getServerPlayers();
+	nPlayer = (int)client.getGamePlayers();
 	PushStyleColor(ImGuiCol_Text, OPTIONS_COLOR); InputInt("##Server Players", (int*)&nPlayer, 0, 0, ImGuiInputTextFlags_ReadOnly); PopStyleColor();
 	const char* connection;
-	if (state == UNCONNECTED)
+	if (state == CLIENT_UNCONNECTED || state== CLIENT_DISCONNECTED)
 	{
 		if (button("Connect", Vec2(0, 0), Vec4(0, 1, 1, 1)))
 			client.connect();
 	}
-	else if (state == CONNECTED)
+	else if (state == CLIENT_CONNECTED || CLIENT_WAITING || CLIENT_RUNNING)
 	{
-		if (button("Disconnect", Vec2(0, 0), Vec4(0, 1, 1, 1))); SameLine();
-		//		client.disconnect();
+		if (button("Disconnect", Vec2(0, 0), Vec4(0, 1, 1, 1)))
+				client.disconnect();
+
+		SameLine();
+
 		if (button("Join game", Vec2(0, 0), Vec4(0.1f, 1, 0.6f, 1)));
-		m_menu = PLAYING_MENU;
 	}
 	EndChild();
 	popSubMenu();
 }
-#endif
 
-constexpr int MAX_PORT = 4861;
-constexpr int MIN_PORT = 10;
+#else ifdef _SERVER_BUILD
 
-#ifdef _SERVER_BUILD
-int posx = 0, posy = 0;
 void Interface::multiplayerMenu(Server& server, Map& map)
 {
 	pushSubMenu("Server Info"); 
@@ -196,33 +194,37 @@ void Interface::multiplayerMenu(Server& server, Map& map)
 	BeginChild("Maps", ImVec2(g_gameInfo.width/5, g_gameInfo.height/5), true);
 	static std::string selectedMap;
 	PushStyleColor(ImGuiCol_Text, colConfig);
-	for (auto item : FileIO::getDirFileList(MAP_DIR, 0, ".map", false))
+	for (auto m : FileIO::getDirFileList(MAP_DIR, 0, ".map", false))
 	{
-		bool select = (item == selectedMap) ? true : false;
-		if (Selectable(item.c_str(), select) && colConfig.operator==(CHOOSE_COLOR))
-			selectedMap = item;
+		bool select = (m == selectedMap) ? true : false;
+		if (Selectable(m.c_str(), select) && colConfig.operator==(CHOOSE_COLOR))
+			selectedMap = m;
 	}
+
 	PopStyleColor();
 	EndChild();
 	SameLine();
 	int players = 0;
-	players = server.getPlayers();
+	players = server.getGamePlayers();
 	inputInt("Players", OPTIONS_COLOR, "##Players", &players, colConfig, 2, 32, ImGuiInputTextFlags_CharsDecimal | configFlag);
-	server.setPlayers(players);
+	server.setGamePlayers(players);
 	
 	if (state == SERVER_NOT_RUNNING)
 	{
 		if (button("Start"))
 		{
+			if (selectedMap.empty())
+				selectedMap = map.setRandomMap();
+
 			server.start();
-			map.load(selectedMap.c_str());;
+			map.load("Nova");
 			configFlag = ImGuiInputTextFlags_ReadOnly;
 		}
 	}
 	else if (state == SERVER_WAITING || state == SERVER_HANDLING)
 	{
-		if (button("Stop"));
-		//	server.stop();
+		if (button("Stop"))
+			server.stop();
 	}
 	EndChild();
 

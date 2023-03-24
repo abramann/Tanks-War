@@ -11,35 +11,40 @@ public:
 	~Client();
 	void initialize(Map* map);
 	bool connect();
-	template <typename T>
-	void send(void* data);
-	void send(void* data, int& size);
-	void send(char* text);
-	int recv(void* data);
-	void recv(void * data, bool wait);
-	char* getPlayerName() { return m_clientInfo.playerName; }
-	char* getServerIP() { return m_clientInfo.serverIP; }
+	void disconnect();
+	void wait();
+	void send();
+	bool recv();
+	void recv(bool wait);
+	char* getPlayerName() { return m_clientInfo.name; }
+	const char* getServerIP() { return m_clientInfo.serverIP; }
 	Port* getServerPort() { return &m_clientInfo.serverPort; }
 	const uint8_t getState() const { return m_state; }
-	const uint8_t& getServerPlayers() const { return m_serverPlayers; }
-	char* getServerMap() { return (char*)m_map; }
+	const uint8_t& getGamePlayers() const { return m_serverPlayers; }
+	char* getGameMap() { return (char*)m_map; }
+
 private:
 	
+	void sbClear() { memset(m_sData, 0, MAX_PACKET_SIZE); }
+	void rbClear() { memset(m_rData, 0, MAX_PACKET_SIZE); }
+
 	Map* m_pMap;
 	Net m_net;
 	Port m_port;
-	Protocol m_protocol;
 	ClientInfo m_clientInfo;
-	uint8_t m_serverPlayers;
+	uint8_t m_serverPlayers, m_gamePlayers;
 	ClientState m_state;
 	char m_map[MAX_NAME_LEN];
-	char m_mapHash[MD5_LEN];
+	PlayerID m_id;
+
+	CpsIni* m_pCpsIni;
+	CpsDisconnect* m_pCpsDisconnect;
+	SpsIni* m_pSpsIni;
+	SpsPlayersExist* m_pSpsPlayersExist;
+	SpsPlayersIniData* m_pSpsPlayerIniData;
+	CpsSeasson* m_pCpsSeasson;
+	PacketType* m_pPacketType;
+
+	char m_rData[MAX_PACKET_SIZE], m_sData[MAX_PACKET_SIZE];
 };
-#include <encdec.h>
-template<typename T>
-inline void Client::send(void * data)
-{
-	int size = sizeof(T);
-	send(data, size);
-}
 

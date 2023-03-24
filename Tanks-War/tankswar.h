@@ -24,14 +24,8 @@ public:
 	void onResetDevice();
 
 private:
-
 	
-	Player player0;
 	uint8_t m_players;
-	PlayerState* m_pPlayerState;
-	RemotePlayer* m_pPlayer;
-	ServerToPlayer m_toPlayer;
-	PlayerToServer m_toServer;
 	char* m_pServerIP;
 	Client m_client;
 };

@@ -28,12 +28,12 @@ public:
 
 private:
 
-	PlayerState* m_pState;
+//	PlayerState* m_pState;
 	TextureManger tm;
 	Map map;
-	ServerToPlayer m_toPlayer1,m_toPlayer2;
-	PlayerToServer m_toServer;
-	RemotePlayer* m_player;
+//	ServerToPlayer m_toPlayer1,m_toPlayer2;
+//	PlayerToServer m_toServer;
+//	RemotePlayer* m_player;
 	Server m_server;
 	uint8_t m_players;
 
