@@ -198,7 +198,6 @@
   <ItemGroup>
     <ClInclude Include="..\common\audio.h" />
     <ClInclude Include="..\common\constants.h" />
-    <ClInclude Include="..\common\dirent.h" />
     <ClInclude Include="..\common\fileio.h" />
     <ClInclude Include="..\common\fire.h" />
     <ClInclude Include="..\common\game.h" />

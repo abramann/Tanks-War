@@ -8,6 +8,8 @@ Input::Input() : m_handleInput(false)
 
 Input::~Input()
 {
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 }
 
 bool Input::initialize(HWND hwnd)

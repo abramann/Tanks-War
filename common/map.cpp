@@ -13,6 +13,9 @@ Map::~Map()
 //		SAFE_DELETE_ARRAY(m_ppMap[i]);
 	
 //	SAFE_DELETE_ARRAY(m_ppMap);
+	for (auto& e : m_ppMap)
+		e.clear();
+	m_ppMap.clear();
 }
 
 void Map::initialize(Texture* texture, Graphics* graphics)
@@ -37,7 +40,8 @@ bool Map::load(const char* name)
 	m_bitmapData.width = m_pTexture->getWidth();
 	m_bitmapData.height = m_pTexture->getHeight();
 
-	TextureVertices*** vertices = new TextureVertices**[m_mapData.bitmaps];
+/*
+TextureVertices*** vertices = new TextureVertices**[m_mapData.bitmaps];
 	for (auto i = 0; i < m_mapData.bitmaps; i++)
 	{
 		vertices[i] = new TextureVertices*[m_mapData.height];
@@ -48,7 +52,20 @@ bool Map::load(const char* name)
 				vertices[i][j][k].v1.x = UNDEFINED_POSITION;
 		}
 	}
-
+	*/
+	TextureVertices*** a = 0;
+	TextureVertices b;
+	std::vector< std::vector< std::vector<TextureVertices>>> vertices;
+	vertices.resize(m_mapData.bitmaps);
+	for (auto& element : vertices)
+	{
+		element.resize(m_mapData.height);
+		for (auto& element2 : element)
+		{
+			element2.resize(m_mapData.width);
+		}
+	}
+	vertices[0][1][2];
 	for (auto h = 0; h < m_mapData.height; h++)
 	{
 		for (auto w = 0; w < m_mapData.width; w++)
@@ -106,7 +123,9 @@ bool Map::load(const char* name)
 	}
 
 	m_pGraphics->setVertexBuffer(&pData[0], totalBitmaps * 6 * sizeof(Vertex));
-	for (auto i = 0; i < m_mapData.bitmaps; i++)
+
+/*
+for (auto i = 0; i < m_mapData.bitmaps; i++)
 	{
 		for (auto j = 0; j < m_mapData.height; j++)
 			SAFE_DELETE_ARRAY(vertices[i][j]);
@@ -115,6 +134,7 @@ bool Map::load(const char* name)
 	}
 
 	SAFE_DELETE_ARRAY(vertices);
+	*/
 	return true;
 }
 
@@ -162,9 +182,9 @@ bool Map::read(const char* path)
 		m_mapData.preventedBM.push_back(std::stoi(getTargetEqualStringValue(detail)));
 	}
 
-	m_ppMap = new char*[m_mapData.height];
-	for (uint16_t i = 0; i < m_mapData.height; i++)
-		m_ppMap[i] = new char[m_mapData.width];
+	m_ppMap.resize(m_mapData.height);
+	for (auto& element : m_ppMap)
+		element.resize(m_mapData.width);
 
 	std::string line;
 	uint16_t i = 0;

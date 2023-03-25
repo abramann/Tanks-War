@@ -1,6 +1,5 @@
 #include "server.h"
 #include "..\common\fileio.h"
-#include <memory>
 
 Server::Server() : m_serverPort(netNS::DEFAULT_PORT), m_clients(0), m_state(SERVER_NOT_RUNNING), m_id(0)
 {
@@ -58,6 +57,7 @@ void Server::stop()
 	m_pSpsDisconnect->packetType = PACKET_DISCONNECT;
 	post();
 	m_net.closeSocket();
+	clearClients();
 	m_state = SERVER_NOT_RUNNING;
 }
 
@@ -124,6 +124,12 @@ void Server::post()
 		m_net.sendData(m_sData, size, clientData.ip, clientData.port);
 
 	sbClear();
+}
+
+void Server::clearClients()
+{
+	m_clientData.clear();
+	m_clients = 0;
 }
 
 PlayerID Server::recvID(bool wait)

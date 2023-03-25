@@ -10,6 +10,7 @@ public:
 	Client();
 	~Client();
 	void initialize(Map* map);
+	void update();
 	bool connect();
 	void disconnect();
 	void wait();

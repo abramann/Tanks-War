@@ -36,10 +36,9 @@ void Texture::release()
 	SAFE_RELEASE(m_lpTexture);
 }
 
-std::string Texture::getTextureName() const
+void Texture::getTextureName(char* name) const
 {
-	const char* qw = m_file.c_str();
-	return getFileNameFromPath(m_file);
+	getFileNameFromPath(m_file, name);
 }
 
 void Texture::read()

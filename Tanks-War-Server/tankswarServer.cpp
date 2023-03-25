@@ -23,8 +23,6 @@ void TanksWarServer::collision()
 void TanksWarServer::update()
 {
 	m_server.update();
-
-	
 }
 
 void TanksWarServer::render()

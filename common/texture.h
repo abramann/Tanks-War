@@ -18,7 +18,7 @@ public:
 	uint16_t getWidth()	const	{ return m_width; }
 	uint16_t getHeight() const	{ return m_height; }
 	std::string getFilePath() const { return m_file; };
-	std::string getTextureName() const;
+	void getTextureName(char* name) const;
 	uint8_t getNumber() const { return m_number; }
 
 	/*

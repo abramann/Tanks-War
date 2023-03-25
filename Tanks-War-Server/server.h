@@ -20,16 +20,16 @@ public:
 	void send(PlayerID id);
 	void reply();
 	void post();
-	
+	void clearClients();
 	PlayerID recvID(bool wait = false);
 	bool recv(bool wait = false);
 
-	const char* getIP() { m_net.getLocalIP(m_sIP); return m_sIP; }
+	void getIP(char* ip) { m_net.getLocalIP(ip); }
 	Port* getPort() { return &m_serverPort; }
-	uint8_t getGamePlayers() const { return m_gamePlayers; }
-	uint8_t getConnectedPlayers() const { return m_clients; }
-	void setGamePlayers(uint8_t players) { m_gamePlayers = players; }
-	ServerState getState() const { return m_state; }
+	const uint8_t& getGamePlayers() const { return m_gamePlayers; }
+	const uint8_t& getConnectedPlayers() const { return m_clients; }
+	void setGamePlayers(const uint8_t& players) { m_gamePlayers = players; }
+	const ServerState& getState() const { return m_state; }
 
 private:
 

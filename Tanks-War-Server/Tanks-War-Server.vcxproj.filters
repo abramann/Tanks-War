@@ -156,9 +156,6 @@
     <ClInclude Include="..\common\constants.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\dirent.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\fileio.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>

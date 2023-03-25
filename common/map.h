@@ -38,7 +38,7 @@ protected:
 	std::vector<Space> m_noSpace;
 	MapData m_mapData;
 	BitmapData m_bitmapData;
-	char **m_ppMap;
+	std::vector< std::vector<char>> m_ppMap;
 	std::vector<uint32_t> m_startVertex, m_lenVertex;
 	std::vector<Object*> m_pObjects;
 	char m_name[MAX_NAME_LEN];

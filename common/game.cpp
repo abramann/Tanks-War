@@ -17,11 +17,14 @@ Game::~Game()
 	SAFE_DELETE(m_pGraphics);
 	SAFE_DELETE(m_pInput);
 	SAFE_DELETE(m_pAudio);
+	SAFE_DELETE(m_pInterface);
+	SAFE_DELETE(m_pTextureManger);
+	SAFE_DELETE(m_pMap);
 }
 
 LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pInput->m_handleInput)
+	if (m_pInput != nullptr && m_pInput->m_handleInput)
 		m_pInput->handle(msg, wParam, lParam);
 
 	return DefWindowProcA(hWnd, msg, wParam, lParam);

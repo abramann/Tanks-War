@@ -60,9 +60,9 @@ std::vector<std::string> FileIO::getDirFileList(const char * directory, const ch
 			}
 
 			list.push_back(ent->d_name);
-
 		}
 
+	closedir(dir);
 	return list;
 }
 
@@ -79,86 +79,80 @@ GameInfo FileIO::readGameInfo()
 
 ObjectInfo * FileIO::readObjectInfo(std::string name)
 {
-	ObjectInfo* pObjectInfo = new ObjectInfo;;
+	static ObjectInfo objectInfo;
 	std::ifstream file(OBJECT_INFO_PATH);
 	std::string line;
 	while (std::getline(file, line))
 		if (line.compare(name) == 0)
 		{
 
-			readValues<float>(file, { &pObjectInfo->health, &pObjectInfo->speed });
-			readValues<uint8_t>(file, { &pObjectInfo->deathTexture });
-			return pObjectInfo;
+			readValues<float>(file, { &objectInfo.health, &objectInfo.speed });
+			readValues<uint8_t>(file, { &objectInfo.deathTexture });
+			break;
 		}
 
-	pObjectInfo->speed = INVALID_DATA;
-	return pObjectInfo;
+	return &objectInfo;
 }
 
 ImageInfo* FileIO::readImageInfo(std::string name)
 {
-	ImageInfo* pImageInfo = 0;
+	static ImageInfo imageInfo;
 	std::ifstream file(IMAGE_INFO_PATH);
 	std::string line;
 	while (std::getline(file, line))
 		if (line.compare(name) == 0)
 		{
-			pImageInfo = new ImageInfo;
-			readValues<uint16_t>(file, { &pImageInfo->width, &pImageInfo->height });
-			readValues<uint8_t>(file, { &pImageInfo->columns, &pImageInfo->rows });
-			readValues<bool>(file, { &pImageInfo->animate });
-			readValues<float>(file, { &pImageInfo->animateSpeed, &pImageInfo->scalling });
-			return pImageInfo;
+			readValues<uint16_t>(file, { &imageInfo.width, &imageInfo.height });
+			readValues<uint8_t>(file, { &imageInfo.columns, &imageInfo.rows });
+			readValues<bool>(file, { &imageInfo.animate });
+			readValues<float>(file, { &imageInfo.animateSpeed, &imageInfo.scalling });
+			break;
 		}
 
-	const char* wq = name.c_str();
-	return pImageInfo;
+	return &imageInfo;
 }
 
 TankInfo * FileIO::readTankInfo(std::string name)
 {
-	TankInfo* pTankInfo = 0;
+	static TankInfo tankInfo;
 	std::ifstream file(TANK_INFO_PATH);
 	std::string line;
 	while (std::getline(file, line))
 		if (line.compare(name) == 0)
 		{
-			pTankInfo = new TankInfo;
-			readValues<uint8_t>(file, { &pTankInfo->fireTexture });
-			return pTankInfo;
+			readValues<uint8_t>(file, { &tankInfo.fireTexture });
+			break;
 		}
 
-	return pTankInfo;
+	return &tankInfo;
 }
 
 FireInfo* FileIO::readFireInfo(std::string name)
 {
 	std::ifstream file(FIRE_DATA_PATH);
-	FireInfo* pFireInfo = 0;
+	static FireInfo fireInfo;
 	std::string line;
 	while (std::getline(file, line))
 	{
 		if (line.compare(name) == 0)
 		{
-			pFireInfo = new FireInfo;
-			readValues<float>(file,  {&pFireInfo->speed,&pFireInfo->damage });
-			readValues<uint8_t>(file, { &pFireInfo->endTexture });
-			return pFireInfo;
+			readValues<float>(file,  {&fireInfo.speed,&fireInfo.damage });
+			readValues<uint8_t>(file, { &fireInfo.endTexture });
+			break;
 		}
 	}
 
-	return pFireInfo;
+	return &fireInfo;
 }
 
 TextureInfo * FileIO::readTextureInfo(std::string name)
 {
-	TextureInfo* pTextureInfo = new TextureInfo;
-	*pTextureInfo = { 0 };
-	pTextureInfo->imageInfo = FileIO::readImageInfo(name);
-	pTextureInfo->objectInfo = FileIO::readObjectInfo(name);
-	pTextureInfo->tankInfo = FileIO::readTankInfo(name);
-	pTextureInfo->fireInfo = FileIO::readFireInfo(name);
-	return pTextureInfo;
+	static TextureInfo textureInfo = { 0 };
+	textureInfo.imageInfo = FileIO::readImageInfo(name);
+	textureInfo.objectInfo = FileIO::readObjectInfo(name);
+	textureInfo.tankInfo = FileIO::readTankInfo(name);
+	textureInfo.fireInfo = FileIO::readFireInfo(name);
+	return &textureInfo;
 }
 
 Crc32 FileIO::getCRC32(const char* file)

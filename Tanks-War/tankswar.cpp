@@ -39,7 +39,7 @@ void TanksWar::collision()
 
 void TanksWar::update()
 {
-	
+	m_client.update();
 }
 
 void TanksWar::render()

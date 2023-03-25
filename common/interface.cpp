@@ -119,18 +119,22 @@ void Interface::multiplayerMenu(Client& client)
 	if (state)
 		configFlags = ImGuiInputTextFlags_ReadOnly;
 	
+	Vec4 colConfig = CHOOSE_COLOR;
+	if (state == CLIENT_CONNECTED || state == CLIENT_WAITING)
+		colConfig = NOOPTIONS_COLOR;
+
 	BeginChild("Multiplayer", ImVec2(g_gameInfo.width/3,g_gameInfo.height/4), true);
 
 	button("Multiplayer config", ImVec2(0, 0), TITLE_BUTTON_TEXT_COLOR, TITLE_BUTTON_COLOR,
 		TITLE_BUTTON_COLOR, TITLE_BUTTON_COLOR);
-	inputText("Player Name", OPTIONS_COLOR, "##PlayerName", client.getPlayerName(),
-		MAX_PLAYER_NAME, CHOOSE_COLOR, configFlags); 
-	inputText("Server IP", OPTIONS_COLOR, "##ServerIP", (char*)client.getServerIP(),
-		netNS::IP_SIZE, CHOOSE_COLOR, configFlags);
+	inputText("Player Name", colConfig, "##PlayerName", client.getPlayerName(),
+		MAX_PLAYER_NAME, colConfig, configFlags);
+	inputText("Server IP", colConfig, "##ServerIP", (char*)client.getServerIP(),
+		netNS::IP_SIZE, colConfig, configFlags);
 	
 	unsigned short* usPort = client.getServerPort();
 	int iPort = (int)*usPort;
-	text("Port", OPTIONS_COLOR); SameLine(0, 2); PushStyleColor(ImGuiCol_Text, CHOOSE_COLOR); InputInt("##ServerPort", (int*)&iPort, 0, 0, ImGuiInputTextFlags_CharsDecimal | configFlags); PopStyleColor();
+	text("Port", colConfig); SameLine(0, 2); PushStyleColor(ImGuiCol_Text, colConfig); InputInt("##ServerPort", (int*)&iPort, 0, 0, ImGuiInputTextFlags_CharsDecimal | configFlags); PopStyleColor();
 
 	*usPort = iPort;
 	EndChild();
@@ -139,12 +143,12 @@ void Interface::multiplayerMenu(Client& client)
 	button("Server State", ImVec2(0, 0), TITLE_BUTTON_TEXT_COLOR, TITLE_BUTTON_COLOR,
 		TITLE_BUTTON_COLOR, TITLE_BUTTON_COLOR); SameLine();
 	text(stringCLIENT_STATE[state].c_str(), colorCLIENT_STATE[state]);
-	inputText("Game Map", OPTIONS_COLOR, "##GamerMap", client.getGameMap(),
+	inputText("Game Map", NOOPTIONS_COLOR, "##GamerMap", client.getGameMap(),
 		MAX_NAME_LEN, OPTIONS_COLOR, ImGuiInputTextFlags_ReadOnly);
-	text("Players", OPTIONS_COLOR); SameLine();
+	text("Players", NOOPTIONS_COLOR); SameLine();
 	int nPlayer = 0;
 	nPlayer = (int)client.getGamePlayers();
-	PushStyleColor(ImGuiCol_Text, OPTIONS_COLOR); InputInt("##Server Players", (int*)&nPlayer, 0, 0, ImGuiInputTextFlags_ReadOnly); PopStyleColor();
+	PushStyleColor(ImGuiCol_Text, NOOPTIONS_COLOR); InputInt("##Server Players", (int*)&nPlayer, 0, 0, ImGuiInputTextFlags_ReadOnly); PopStyleColor();
 	const char* connection;
 	if (state == CLIENT_UNCONNECTED || state== CLIENT_DISCONNECTED)
 	{
@@ -168,11 +172,16 @@ void Interface::multiplayerMenu(Client& client)
 
 void Interface::multiplayerMenu(Server& server, Map& map)
 {
+
 	pushSubMenu("Server Info"); 
 	
 	BeginChild("Server Config", ImVec2(g_gameInfo.width / 2, g_gameInfo.height*1.0f / 2.4f), true);
 	title("Server Config");
-	inputText("IP", NOOPTIONS_COLOR, "##ServerIP", (char*)server.getIP(),
+	static char ip[netNS::IP_SIZE] = { 0 };
+	if (*ip == '\0')
+		server.getIP(ip);
+
+	inputText("IP", NOOPTIONS_COLOR, "##ServerIP", ip,
 		netNS::IP_SIZE, NOOPTIONS_COLOR, ImGuiInputTextFlags_ReadOnly);
 	Port* port = server.getPort();
 	int iPort = 0;
@@ -184,17 +193,18 @@ void Interface::multiplayerMenu(Server& server, Map& map)
 		colConfig = NOOPTIONS_COLOR;
 	if (state != SERVER_NOT_RUNNING)
 		configFlag = ImGuiInputTextFlags_ReadOnly;
-
+	
 	inputInt("Port", NOOPTIONS_COLOR, "##ServerPort", &iPort,
 		colConfig, MIN_PORT, MAX_PORT, ImGuiInputTextFlags_CharsDecimal | configFlag);
-
+	
 	*port = iPort;
 
 	text("Map", NOOPTIONS_COLOR); SameLine();
 	BeginChild("Maps", ImVec2(g_gameInfo.width/5, g_gameInfo.height/5), true);
 	static std::string selectedMap;
 	PushStyleColor(ImGuiCol_Text, colConfig);
-	for (auto m : FileIO::getDirFileList(MAP_DIR, 0, ".map", false))
+	static auto mapList = FileIO::getDirFileList(MAP_DIR, 0, ".map", false);
+	for (auto m : mapList)
 	{
 		bool select = (m == selectedMap) ? true : false;
 		if (Selectable(m.c_str(), select) && colConfig.operator==(CHOOSE_COLOR))
@@ -206,7 +216,7 @@ void Interface::multiplayerMenu(Server& server, Map& map)
 	SameLine();
 	int players = 0;
 	players = server.getGamePlayers();
-	inputInt("Players", OPTIONS_COLOR, "##Players", &players, colConfig, 2, 32, ImGuiInputTextFlags_CharsDecimal | configFlag);
+	inputInt("Players", colConfig, "##Players", &players, colConfig, 2, 32, ImGuiInputTextFlags_CharsDecimal | configFlag);
 	server.setGamePlayers(players);
 	
 	if (state == SERVER_NOT_RUNNING)
@@ -217,7 +227,7 @@ void Interface::multiplayerMenu(Server& server, Map& map)
 				selectedMap = map.setRandomMap();
 
 			server.start();
-			map.load("Nova");
+			map.load(selectedMap.c_str());
 			configFlag = ImGuiInputTextFlags_ReadOnly;
 		}
 	}

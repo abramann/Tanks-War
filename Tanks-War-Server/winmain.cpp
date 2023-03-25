@@ -5,6 +5,7 @@
 #define _CRTDBG_MAP_ALLOC // For detecting memory leaks
 #include <stdlib.h> // For detecting memory leaks
 #include <crtdbg.h> // For detecting memory leaks
+#include <vld.h>
 
 #pragma comment(lib,"winmm.lib") // Includes timeGetTime
 #pragma comment(lib,"d3d9.lib")	// Include dx9 apis
@@ -33,6 +34,7 @@ int message(std::string msg, int type)
 
 bool alreadyOpen()
 {
+	return false;
 	HANDLE mutex;
 	mutex = CreateMutexA(NULL, true, "tankswarbyabramann");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
@@ -114,7 +116,7 @@ bool isFullScreen()
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 #if defined(_DEBUG)
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
 	game = new TanksWarServer;

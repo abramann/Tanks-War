@@ -205,11 +205,13 @@ inline int strComp(std::string s1, std::string s2)
 	return strcmp(s1.c_str(), s2.c_str());
 }
 
-inline std::string getFileNameFromPath(std::string path)
+inline void getFileNameFromPath(std::string path, char* name)
 {
 	std::string sName = path.substr(path.find_last_of('\\') + 1,
 		path.find_last_of('.') - path.find_last_of('\\') - 1);
-	return sName;
+
+	memset(name, 0, sName.length()+1);
+	strcpy(name, sName.c_str());
 }
 
 inline uint32_t _rand(uint32_t max)

@@ -24,6 +24,27 @@ void Client::initialize(Map* map)
 	m_clientInfo = FileIO::readClientInfo();
 }
 
+void Client::update()
+{
+	if (recv())
+	{
+		if (m_state == CLIENT_WAITING)
+			wait();
+
+		switch (*m_pPacketType)
+		{
+		case PACKET_PLAYERS_EXIST:
+			m_serverPlayers = m_pSpsPlayersExist->players;
+			break;
+		case PACKET_DISCONNECT:
+			disconnect();
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 bool Client::connect()
 {
 	FileIO::createClientInfo(m_clientInfo);
@@ -69,12 +90,8 @@ void Client::disconnect()
 
 void Client::wait()
 {
-	recv();
-	if (*m_pPacketType == PACKET_PLAYERS_EXIST)
-	{
-		m_serverPlayers = m_pSpsPlayersExist->players;
-	}
-	else if (*m_pPacketType == PACKET_PLAYERS_INI_DATA)
+
+	if (*m_pPacketType == PACKET_PLAYERS_INI_DATA)
 	{
 		m_state = CLIENT_RUNNING;
 		

@@ -13,7 +13,7 @@ public:
 	Texture* getTexture(uint8_t texture) { return &m_pTexture[texture]; }
 	Texture* getTiledMapTexture() const { return m_pTiled; }
 	Texture* getLogoTexture() const { return m_pLogo; }
-	TextureInfo* getTextureInfo(uint8_t texture)  { return &m_TextureInfo[texture]; }
+	const TextureInfo* getTextureInfo(uint8_t texture) const { return &m_TextureInfo[texture]; }
 
 private:
 
@@ -23,5 +23,6 @@ private:
 	Texture* m_pLogo;
 	std::vector<std::string> m_textureList;  
 	std::vector<TextureInfo> m_TextureInfo;
+	uint8_t m_textures;
 
 };
