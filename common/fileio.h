@@ -17,6 +17,7 @@ public:
 	static TankInfo* readTankInfo(std::string name);
 	static FireInfo* readFireInfo(std::string name);
 	static TextureInfo* readTextureInfo(std::string name);
+	static MapData* readMapInfo(std::ifstream& ifs);
 	static Crc32 getCRC32(const char* file);
 
 #ifdef _CLIENT_BUILD

@@ -75,6 +75,7 @@
     <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
     <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -82,6 +83,7 @@
     <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
     <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -89,6 +91,7 @@
     <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
     <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -96,6 +99,7 @@
     <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
     <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

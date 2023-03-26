@@ -13,12 +13,11 @@ Texture::~Texture()
 
 bool Texture::initialize(const char* file, Graphics* graphics)
 {
+	bool result = false;
 	m_pGraphics = graphics;
 	m_file = file;
-	HRESULT hr = m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, COLOR_ALPHA, m_lpTexture);
-	if (FAILED(hr))
-		return false;
-	return true;
+	result = m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, COLOR_ALPHA, m_lpTexture);
+	return result;
 }
 
 void Texture::onLostDevice()

@@ -45,7 +45,7 @@ private:
 	void Interface::inputInt(const char* label, int* buf, const ImVec4& textColor,
 		int32_t min = 0, int32_t max = 0, ImGuiInputTextFlags flags = 0);
 	void Interface::inputInt(const char* desc, const Vec4& descColor, const char* label, int* buf,
-		const Vec4& color, const int32_t min = 0, const int32_t max = 0, ImGuiInputTextFlags flags = 0);
+		const Vec4& color, const int32_t elements, const int32_t min = 0, const int32_t max = 0, ImGuiInputTextFlags flags = 0);
 
 	bool button(const char* text, ImVec2 size = Vec2(0, 0), ImVec4 colText = Vec4(0, 0, 0, 0), ImVec4 colButton = Vec4(0, 0, 0, 0),
 		ImVec4 colActive = Vec4(0, 0, 0, 0), ImVec4 colHorvored = Vec4(0, 0, 0, 0), ImGuiButtonFlags flags = 0);

@@ -1,18 +1,19 @@
 #include "server.h"
 #include "..\common\fileio.h"
 
-Server::Server() : m_serverPort(netNS::DEFAULT_PORT), m_clients(0), m_state(SERVER_NOT_RUNNING), m_id(0)
+Server::Server() : m_serverPort(netNS::DEFAULT_PORT), m_state(SERVER_NOT_RUNNING)
 {
 	memset(m_IP, 0, netNS::IP_SIZE);
 	memset(m_sIP, 0, netNS::IP_SIZE);
 	memset(m_sData, 0, MAX_PACKET_SIZE);
 	memset(m_rData, 0, MAX_PACKET_SIZE);
 	m_pCpsIni =  (CpsIni*)&m_rData;
+	m_pCpsPresent = (CpsPresent*)&m_rData;
+	m_pCpsDisconnect = (CpsDisconnect*)&m_rData;
 	m_pSpsIni = (SpsIni*)&m_sData;
 	m_pSpsPlayersExist = (SpsPlayersExist*)&m_sData;
 	m_pSpsPlayerIniData = (SpsPlayersIniData*)&m_sData;
 	m_pSpsDisconnect = (SpsDisconnect*)&m_sData;
-
 	m_pPacketType = (PacketType*)&m_rData;
 }
 
@@ -31,25 +32,27 @@ void Server::initialize(Map* map)
 
 void Server::update()
 {
-	if ( (m_state == SERVER_HANDLING || m_state==SERVER_WAITING ) && recv())
+	if (isStarted())
 	{
-		if (m_state == SERVER_WAITING)
-			getClients();
+		checkClients();
+		if (recv())
+		{
+			present();
+			if (m_state == SERVER_WAITING)
+				getClients();
 
-		if (*m_pPacketType == PACKET_DISCONNECT)
-		{
-			removeClient();
-			m_pSpsPlayersExist->packetType = PACKET_PLAYERS_EXIST;
-			m_pSpsPlayersExist->players = m_clients;
-			post();
+			if (*m_pPacketType == PACKET_DISCONNECT)
+			{
+				removeLastClient();
+			}
+			else if (*m_pPacketType == PACKET_PLAYERS_EXIST)
+			{
+				m_pSpsPlayersExist->packetType = PACKET_PLAYERS_EXIST;
+				m_pSpsPlayersExist->players = m_clientData.size();
+				reply();
+			}
 		}
-		else if (*m_pPacketType == PACKET_PLAYERS_EXIST)
-		{
-			m_pSpsPlayersExist->packetType = PACKET_PLAYERS_EXIST;
-			m_pSpsPlayersExist->players = m_clients;
-			reply();
-		}
-	}	
+	}
 }
 
 void Server::stop()
@@ -71,6 +74,9 @@ void Server::start()
 
 void Server::getClients()
 {
+	if (m_clientData.size() >= m_gamePlayers)
+		return;
+
 	if (*m_pPacketType == PACKET_INI)
 	{
 		if (addClient())
@@ -79,20 +85,24 @@ void Server::getClients()
 			m_pSpsIni->accept = false;
 
 		m_pSpsIni->packetType = PACKET_INI;
-		m_pSpsIni->playersInServer = m_clients;
 		
 		m_pSpsIni->gamePlayers = m_gamePlayers;
 		strcpy(m_pSpsIni->map, m_pMap->getName());
-		m_pSpsIni->id = m_id;
 		char map[MAX_PATH] = { 0 };
-		strcpy(map,(m_pMap->getFullPath()));
+		m_pMap->getFullPath(map);
 		m_pSpsIni->checksum = FileIO::getCRC32(map);
 		memset(map, 0, strlen(map));
 		reply();
 		Sleep(1000);
 		recv();
 		if (*m_pPacketType != PACKET_START_SEASSON)
-			removeClient();
+		{
+			m_pSpsDisconnect->packetType = PACKET_DISCONNECT;
+			reply();
+			removeLastClient();
+		}
+		
+		postPlayersExist();
 	}
 }
 
@@ -109,6 +119,13 @@ void Server::send(PlayerID id)
 	}
 
 	sbClear();
+}
+
+void Server::postPlayersExist()
+{
+	m_pSpsPlayersExist->packetType = PACKET_PLAYERS_EXIST;
+	m_pSpsPlayersExist->players = m_clientData.size();
+	post();
 }
 
 void Server::reply()
@@ -129,7 +146,6 @@ void Server::post()
 void Server::clearClients()
 {
 	m_clientData.clear();
-	m_clients = 0;
 }
 
 PlayerID Server::recvID(bool wait)
@@ -168,36 +184,72 @@ bool Server::recv(bool wait)
 	return result;
 }
 
+void Server::present()
+{
+	if (*m_pPacketType == PACKET_PRESENT)
+	{
+		for (auto& clientData : m_clientData)
+			if (clientData.id == getLastRecieverId())
+				clientData.presentTime = timeGetTime();
+	}
+}
+
+void Server::checkClients()
+{
+	if(m_clientData.size()>0)
+		for (auto clientData : m_clientData)
+		{
+			auto t = timeGetTime();
+			if (timeGetTime() - clientData.presentTime > SERVER_RECIEVE_PRESENT_TIME)
+			{
+				PlayerID id = clientData.id;
+				m_pSpsDisconnect->packetType = PACKET_DISCONNECT;
+				send(id);
+				removeClient(id);
+				break;
+			}
+		}
+}
+
 bool Server::addClient()
 {
 	for (auto clientData : m_clientData)
-		if (strcmp(clientData.ip, m_IP) == 0 && clientData.port == m_port)
+		if (clientData.port == m_port)
+			if(strcmp(clientData.ip, m_IP) == 0)
 			return false;
-
+	
 	ClientData clientData = { 0 };
-	clientData.id = m_id++;
+	clientData.id = generateID();
+	m_pSpsIni->id = clientData.id;
 	clientData.port = m_port;
+	clientData.presentTime = timeGetTime();
 	strcpy(clientData.ip, m_IP);
 	strcpy(clientData.name, m_pCpsIni->name);
 	m_clientData.push_back(clientData);
-	m_clients++;
 	return true;
 }
 
-void Server::removeClient()
+void Server::removeLastClient()
 {
-	int i = 0;
-	for (auto clientData : m_clientData)
+	removeClient(m_pCpsDisconnect->id);
+	return;
+}
+
+void Server::removeClient(PlayerID id)
+{
+	uint8_t i = 0;
+	for (auto& clientData : m_clientData)
 	{
-	//	auto clientData = m_clientData[i];
-		if (strcmp(clientData.ip, m_IP) == 0 && clientData.port == m_port)
+		if (clientData.id == id)
 		{
-			m_clientData.erase(std::next(m_clientData.begin() , i));
-			if (m_clients > 0)	m_clients--;
+			m_clientData.erase(std::next(m_clientData.begin(), i));
 			break;
 		}
+
 		i++;
 	}
+
+	postPlayersExist();
 }
 
 PlayerID Server::getLastRecieverId()
@@ -205,7 +257,7 @@ PlayerID Server::getLastRecieverId()
 	PlayerID id = INVALID_ID;
 	for (auto clientData : m_clientData)
 	{
-		if (clientData.ip == m_IP && clientData.port == m_port)
+		if (strcmp(clientData.ip , m_IP) == 0 && clientData.port == m_port)
 		{
 			id = clientData.id;
 			break;

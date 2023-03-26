@@ -22,14 +22,6 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 
 void TanksWar::communicate()
 {
-	switch (m_client.getState())
-	{
-	case CLIENT_WAITING:
-		m_client.wait();
-		break;
-	default:
-		break;
-	}
 }
 
 void TanksWar::collision()
@@ -60,7 +52,6 @@ void TanksWar::render()
 	default:
 		break;
 	}
-
 } 
 
 void TanksWar::onResetDevice()

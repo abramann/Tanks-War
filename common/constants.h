@@ -67,7 +67,9 @@ constexpr auto FIRE_DATA_PATH = "Assets\\ini\\fire-info.txt";
 constexpr auto TEXTURE_DIR = "Assets\\texture\\";
 constexpr auto MAP_DIR = "Assets\\maps\\";
 constexpr auto MAX_NAME_LEN = 20;
-constexpr auto MD5_LEN = 16;
+constexpr auto CLIENT_PRESENT_TIME = 5000;
+constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
+constexpr DWORD INVALID_PTR = 0xcdcdcdcd;
 
 constexpr Key A_KEY = ImGuiKey_A;
 constexpr Key B_KEY = ImGuiKey_B;
@@ -299,7 +301,6 @@ struct TextureInfo
 
 struct MapData
 {
-	std::string name;
 	uint16_t width, height;
 	uint8_t bitmaps;
 	std::vector<uint8_t> preventedBM;
@@ -341,6 +342,7 @@ struct ClientData
 	char ip[netNS::IP_SIZE], name[MAX_NAME_LEN];
 	Port port;
 	PlayerID id;
+	DWORD presentTime;
 };
 
 enum PacketType
@@ -352,6 +354,7 @@ enum PacketType
 	PACKET_PLAYERS_INI_DATA,
 	PACKET_GAME,
 	PACKET_DISCONNECT,
+	PACKET_PRESENT
 };
 
 struct CpsIni
@@ -363,11 +366,19 @@ struct CpsIni
 struct CpsDisconnect
 {
 	PacketType packetType = PACKET_DISCONNECT;
+	PlayerID id;
+};
+
+struct CpsPresent
+{
+	PacketType packet = PACKET_PRESENT;
+	PlayerID id;
 };
 
 struct CpsSeasson
 {
 	PacketType packetType;
+	PlayerID id;
 };
 
 struct SpsIni
@@ -375,7 +386,6 @@ struct SpsIni
 	PacketType packetType = PACKET_INI;
 	bool accept;
 	PlayerID id;
-	uint8_t playersInServer;
 	uint8_t gamePlayers;
 	char  map[MAX_NAME_LEN];
 	Crc32 checksum;
@@ -448,12 +458,11 @@ enum Menus
 enum ClientState
 {
 	CLIENT_UNCONNECTED,
-	CLIENT_CONNECTED,
-	CLIENT_DISCONNECTED,
-	CLIENT_WAITING,
-	CLIENT_MAP_NOT_FOUND,
-	CLIENT_MAP_NOT_LOAD,
-	CLIENT_RUNNING
+	CLIENT_UNCONNECTED_DISCONNECT,
+	CLIENT_UNCONNECTED_MAP_NOT_FOUND,
+	CLIENT_UNCONNECTED_MAP_NOT_LOAD,
+	CLIENT_CONNECTED_WAITING,
+	CLIENT_CONNECTED_PLAYING
 };
 
 enum ServerState

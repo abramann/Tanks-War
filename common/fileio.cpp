@@ -154,6 +154,21 @@ TextureInfo * FileIO::readTextureInfo(std::string name)
 	textureInfo.fireInfo = FileIO::readFireInfo(name);
 	return &textureInfo;
 }
+MapData* FileIO::readMapInfo(std::ifstream& ifs)
+{
+	static MapData mapData;
+	readValues<uint16_t>(ifs, { &mapData.width,&mapData.height });
+	uint8_t preventedBMs = 0;
+	readValues<uint8_t>(ifs, { &mapData.bitmaps,&preventedBMs });
+	for (auto i = 0; i < preventedBMs; i++)
+	{
+		uint8_t bm = 0;
+		readValues<uint8_t>(ifs, { &bm });
+		mapData.preventedBM.push_back(bm);
+	}
+
+	return &mapData;
+}
 
 Crc32 FileIO::getCRC32(const char* file)
 {

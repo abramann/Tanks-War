@@ -12,6 +12,7 @@ public:
 	void initialize(Map* map);
 	void update();
 	bool connect();
+	void present();
 	void disconnect();
 	void wait();
 	void send();
@@ -21,8 +22,10 @@ public:
 	const char* getServerIP() { return m_clientInfo.serverIP; }
 	Port* getServerPort() { return &m_clientInfo.serverPort; }
 	const uint8_t getState() const { return m_state; }
-	const uint8_t& getGamePlayers() const { return m_serverPlayers; }
+	const uint8_t& getGamePlayers() const { return m_gamePlayers; }
+	const uint8_t& getConnectedPlayers()const { return m_connectedPlayers; }
 	char* getGameMap() { return (char*)m_map; }
+	bool isConnected() const { return (m_state == CLIENT_CONNECTED_WAITING || m_state == CLIENT_CONNECTED_PLAYING) ? true:false; }
 
 private:
 	
@@ -33,7 +36,7 @@ private:
 	Net m_net;
 	Port m_port;
 	ClientInfo m_clientInfo;
-	uint8_t m_serverPlayers, m_gamePlayers;
+	uint8_t m_connectedPlayers, m_gamePlayers;
 	ClientState m_state;
 	char m_map[MAX_NAME_LEN];
 	PlayerID m_id;
@@ -44,8 +47,10 @@ private:
 	SpsPlayersExist* m_pSpsPlayersExist;
 	SpsPlayersIniData* m_pSpsPlayerIniData;
 	CpsSeasson* m_pCpsSeasson;
+	CpsPresent* m_pCpsPresent;
 	PacketType* m_pPacketType;
 
+	DWORD m_presentTime;
 	char m_rData[MAX_PACKET_SIZE], m_sData[MAX_PACKET_SIZE];
 };
 

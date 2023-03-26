@@ -21,14 +21,14 @@ Map::~Map()
 void Map::initialize(Texture* texture, Graphics* graphics)
 {
 	m_pGraphics = graphics;
-	m_pTexture = &texture[0];
+	m_pTexture = texture;
 }
 
 bool Map::load(const char* name)
 {
 	strcpy(m_name, name);
 	char path[MAX_PATH] = { 0 };
-	strcpy(path, getFullPath());
+	getFullPath(path);
 	if (!read(path))
 		return false;
 
@@ -53,8 +53,6 @@ TextureVertices*** vertices = new TextureVertices**[m_mapData.bitmaps];
 		}
 	}
 	*/
-	TextureVertices*** a = 0;
-	TextureVertices b;
 	std::vector< std::vector< std::vector<TextureVertices>>> vertices;
 	vertices.resize(m_mapData.bitmaps);
 	for (auto& element : vertices)
@@ -63,9 +61,11 @@ TextureVertices*** vertices = new TextureVertices**[m_mapData.bitmaps];
 		for (auto& element2 : element)
 		{
 			element2.resize(m_mapData.width);
+			for (auto& element3 : element2)
+				element3.v1.x = UNDEFINED_POSITION;
 		}
 	}
-	vertices[0][1][2];
+
 	for (auto h = 0; h < m_mapData.height; h++)
 	{
 		for (auto w = 0; w < m_mapData.width; w++)
@@ -123,18 +123,6 @@ TextureVertices*** vertices = new TextureVertices**[m_mapData.bitmaps];
 	}
 
 	m_pGraphics->setVertexBuffer(&pData[0], totalBitmaps * 6 * sizeof(Vertex));
-
-/*
-for (auto i = 0; i < m_mapData.bitmaps; i++)
-	{
-		for (auto j = 0; j < m_mapData.height; j++)
-			SAFE_DELETE_ARRAY(vertices[i][j]);
-
-		SAFE_DELETE_ARRAY(vertices[i]);
-	}
-
-	SAFE_DELETE_ARRAY(vertices);
-	*/
 	return true;
 }
 
@@ -165,22 +153,7 @@ bool Map::read(const char* path)
 	if (!fMap.is_open())
 		return false;
 
-	std::string detail;
-	std::getline(fMap, detail);
-	m_mapData.name = detail;
-	std::getline(fMap, detail);
-	m_mapData.width = std::stoi(getTargetEqualStringValue(detail));
-	std::getline(fMap, detail);
-	m_mapData.height = std::stoi(getTargetEqualStringValue(detail));
-	std::getline(fMap, detail);
-	m_mapData.bitmaps = std::stoi(getTargetEqualStringValue(detail));
-	std::getline(fMap, detail);
-	uint8_t preventedBMs = std::stoi(getTargetEqualStringValue(detail));
-	for (auto i = 0; i < preventedBMs; i++)
-	{
-		std::getline(fMap, detail);
-		m_mapData.preventedBM.push_back(std::stoi(getTargetEqualStringValue(detail)));
-	}
+	m_mapData = *FileIO::readMapInfo(fMap);
 
 	m_ppMap.resize(m_mapData.height);
 	for (auto& element : m_ppMap)
@@ -290,26 +263,7 @@ bool Map::emptyFreeSpace(const Space space) const
 	return true;
 }
 
-void replaceAll(std::string& str, char replace, const char* replacedBy)
+void Map::getFullPath(char* path) const
 {
-	for (int i = 0; i < str.length(); i++)
-		if (str[i] == replace)
-		{
-			str.erase(i, 1);
-			str.insert(i++, replacedBy);
-			auto s = str.c_str();
-			auto a = str.length();
-		}
-}
-
-const char* Map::getFullPath() const
-{
-	std::string path(MAP_DIR);
-	path.operator+=(m_name);
-	path.operator+=(".map");
-
-	char cPath[MAX_PATH] = { 0 };
-	replaceAll(path, '\\', "\\\\");
-	strcpy(cPath, path.c_str());
-	return cPath;
+	sprintf(path,"%s%s%s", MAP_DIR, m_name, ".map");
 }

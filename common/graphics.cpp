@@ -107,12 +107,15 @@ HRESULT Graphics::reset()
 	m_sprite->OnResetDevice();
 	return result;
 }
-
+inline int rrand(int max)
+{
+	return GetTickCount() % max;
+}
 HRESULT Graphics::begin()
 {	
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
-	m_lpDevice3d->Clear(NULL, NULL, D3DCLEAR_TARGET, COLOR_XRGB( 0,0, 0), 1.0f, NULL);
+	m_lpDevice3d->Clear(NULL, NULL, D3DCLEAR_TARGET, COLOR_BLACK, 1.0f, NULL);
 	HRESULT hr;
 	hr = m_lpDevice3d->BeginScene();
 	ImGui::NewFrame();

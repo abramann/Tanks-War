@@ -45,7 +45,7 @@ void TanksWarServer::render()
 	}
 
 	return;
-	map.draw();
+	m_pMap->draw();
 	
 } 
 

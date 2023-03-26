@@ -26,7 +26,7 @@ public:
 	Object* collided(const Image& object) const;
 	bool outOfRange(const Image& object) const;
 	const char* getName() const { return m_name; }
-	const char* getFullPath() const;
+	void getFullPath(char* path) const;
 //	bool outOfPlayerRange() const;
 
 protected:

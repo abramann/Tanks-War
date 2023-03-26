@@ -2,23 +2,14 @@
 #include "tankswar.h"
 #include "fileio.h"
 
-#define _CRTDBG_MAP_ALLOC // For detecting memory leaks
-#include <stdlib.h> // For detecting memory leaks
-#include <crtdbg.h> // For detecting memory leaks
+#include <vld.h> // For detecting memory leaks
 
 #pragma comment(lib,"winmm.lib") // Includes timeGetTime
 #pragma comment(lib,"d3d9.lib")	// Include dx9 apis
 #pragma comment(lib,"d3dx9.lib")
-#pragma comment(lib,"dinput8.lib")	// Include dinput8 apis
-#pragma comment(lib,"dxguid.lib")
-
-#define _CLIENT_BUILD
 
 bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow);
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-bool isFullScreen();
-
-// bool fullscreen;
 
 TanksWar* game;
 GameInfo g_gameInfo;
@@ -109,17 +100,8 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	return true;
 }
 
-bool isFullScreen()
-{
-	return (message("Run full screen ? ", MB_OKCANCEL) == 2) ? false : true;
-}
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
-#if defined(_DEBUG)
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif
-	
+{	
 	game = new TanksWar;
 
 	HWND hWnd = NULL;
