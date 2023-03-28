@@ -345,6 +345,12 @@ struct ClientData
 	DWORD presentTime;
 };
 
+struct PlayerIniData
+{
+	char name[MAX_NAME_LEN];
+	PlayerID id;
+};
+
 enum PacketType
 {
 	PACKET_START_SEASSON = 100,
@@ -397,11 +403,10 @@ struct SpsPlayersExist
 	uint8_t players;
 };
 
-struct SpsPlayersIniData
+struct SpsPlayersInitData
 {
 	PacketType packetType = PACKET_PLAYERS_INI_DATA;
-	char playerName[MAX_PLAYERS][MAX_NAME_LEN];
-	PlayerID id[MAX_PLAYERS];
+	PlayerIniData playerIniData[];
 };
 
 struct SpsDisconnect

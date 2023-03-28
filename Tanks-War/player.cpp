@@ -30,8 +30,6 @@ void Player::update(PlayerState playerState)
 
 void Player::update(ServerToPlayer serverToPlayer)
 {
-
-
 	Tank::update(0);
 }
 void Player::executeForward(float frameTime)

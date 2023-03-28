@@ -4,6 +4,8 @@
 #include "map.h"
 #include "crc32.h"
 
+
+
 class Server
 {
 public:
@@ -11,15 +13,15 @@ public:
 	Server();
 	~Server();
 	void initialize(Map* map);
-	//	void waitClient();
 	void update();
 	void stop();
 	void start();
 	void getClients();
 	void send(PlayerID id);
-	void postPlayersExist();
 	void reply();
 	void post();
+	void postPlayersExist();
+	void postPlayersIniData();
 	void clearClients();
 	PlayerID recvID(bool wait = false);
 	bool recv(bool wait = false);
@@ -32,7 +34,8 @@ public:
 	const ServerState& getState() const { return m_state; }
 	bool isStarted() const { return (m_state == SERVER_HANDLING || m_state == SERVER_WAITING) ? true : false; }
 	void checkClients();
-	
+	const std::vector<ClientData> getClientsData() { return m_clientData; }
+
 private:
 
 	bool addClient();
@@ -60,7 +63,7 @@ private:
 	CpsDisconnect* m_pCpsDisconnect;
 	SpsIni* m_pSpsIni;
 	SpsPlayersExist* m_pSpsPlayersExist;
-	SpsPlayersIniData* m_pSpsPlayerIniData;
+	SpsPlayersInitData* m_pSpsPlayerInitData;
 	SpsDisconnect* m_pSpsDisconnect;
 
 	PacketType* m_pPacketType;

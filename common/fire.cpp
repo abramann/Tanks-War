@@ -1,5 +1,6 @@
 #include "fire.h"
 #include "fileio.h"
+
 Fire::Fire() : m_active(false)
 {
 	m_release = false;
@@ -73,7 +74,6 @@ void Fire::release(uint8_t releaseType)
 	m_active = true;
 	m_release = true;
 	m_releaseType = releaseType;
-	// m_objectData = m_pObject->getObjectData();
 	if (m_releaseType == RELEASE_NORMAL)
 	{
 		m_objectData.x = m_pObject->getX();

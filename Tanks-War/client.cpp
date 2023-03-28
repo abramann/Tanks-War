@@ -10,7 +10,7 @@ Client::Client() : m_connectedPlayers(0), m_gamePlayers(0), m_state(CLIENT_UNCON
 	m_pCpsSeasson = (CpsSeasson*)&m_sData;
 	m_pSpsIni = (SpsIni*)&m_rData;
 	m_pSpsPlayersExist = (SpsPlayersExist*)&m_rData;
-	m_pSpsPlayerIniData = (SpsPlayersIniData*)&m_rData;
+	m_pSpsPlayerIniData = (SpsPlayersInitData*)&m_rData;
 	m_pPacketType = (PacketType*)&m_rData;
 	m_port = _rand(3000);
 }
@@ -27,8 +27,8 @@ void Client::initialize(Map* map)
 
 void Client::update()
 {
-	if (isConnected())
-		present();
+	//if (isConnected())
+	//	present();
 
 	if (recv())
 	{
@@ -43,6 +43,9 @@ void Client::update()
 			break;
 		case PACKET_DISCONNECT:
 			disconnect();
+			break;
+		case PACKET_PLAYERS_INI_DATA:
+			initPlayers();
 			break;
 		default:
 			break;
@@ -134,4 +137,11 @@ void Client::recv(bool wait)
 	do
 		Sleep(200);
 	while (recv() != false && wait);
+}
+
+void Client::initPlayers()
+{
+	m_pSpsPlayerIniData->playerIniData->id;
+	for (int i = 0; i < m_connectedPlayers; i++)
+		m_playerData.push_back(m_pSpsPlayerIniData->playerIniData[i]);
 }

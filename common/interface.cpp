@@ -2,7 +2,6 @@
 #include "fileio.h"
 
 using namespace ImGui;
-const auto ZERO_V4 = Vec4(0, 0, 0, 0);
 
 const std::string stringCLIENT_STATE[] = { "Unconnected", "Disconnected", "Server map not found", "Error map could not load",
 "Waiting server...", "Running" };
@@ -12,11 +11,11 @@ const auto CHOOSE_COLOR = Vec4(0.98f, 0.99f, 0.0f, 1.0f);
 #define SUB_MENU_SIZE Vec2(g_gameInfo.width / 4, g_gameInfo.height / 4)
 constexpr Color COLOR_RAMADI = COLOR_XRGB(208, 247, 246);
 
-enum Fonts
+enum FontSize
 {
-	PROGGYCLEAN,
-	SEGA,
-	TAHOMA
+	SMALL,
+	MED,
+	LARGE
 };
 
 constexpr auto SEGA_FONT = "Assets\\Fonts\\NiseSegaSonic.ttf";
@@ -35,15 +34,15 @@ Interface::~Interface()
 void Interface::initialize()
 {
 	ImGuiIO& io = GetIO();
-	m_font[PROGGYCLEAN] = io.Fonts->AddFontFromFileTTF(PROGGYCLEAN_FONT, 12);
-	m_font[SEGA] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 28);
-	m_font[TAHOMA] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 19);
+	m_font[SMALL] = io.Fonts->AddFontFromFileTTF(PROGGYCLEAN_FONT, 12);
+	m_font[MED] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 19);
+	m_font[LARGE] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 28);
 	
 }
 
 void Interface::mainMenu()
 {
-	PushFont(m_font[SEGA]);
+	PushFont(m_font[LARGE]);
 	ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar;
 	Vec2 pos = Vec2(0, 0);
 	Vec2 size = Vec2(g_gameInfo.width, g_gameInfo.height);
@@ -148,7 +147,7 @@ void Interface::multiplayerMenu(Client& client)
 	connectedPlayers = (int)client.getConnectedPlayers(); SetNextItemWidth(30);
 	gamePlayers = client.getGamePlayers();
 	inputInt("Game Players", NOOPTIONS_COLOR, "##GamePlayers", &gamePlayers, NOOPTIONS_COLOR, 3);
-	inputInt("Connected Players", NOOPTIONS_COLOR, "##Players", &connectedPlayers, NOOPTIONS_COLOR, 3);
+	inputInt("Connected", NOOPTIONS_COLOR, "##Players", &connectedPlayers, NOOPTIONS_COLOR, 3);
 
 	if (!client.isConnected())
 	{
@@ -241,9 +240,21 @@ void Interface::multiplayerMenu(Server& server, Map& map)
 	title("Server State"); SameLine(); text(strSERVER_STATE[state], colSERVER_STATE[state]);
 	int connected = 0;
 	connected = server.getConnectedPlayers();
-	inputInt("Connected Players", NOOPTIONS_COLOR, "##ConnectedPlayers", &connected, NOOPTIONS_COLOR,
+	inputInt("Connected", NOOPTIONS_COLOR, "##ConnectedPlayers", &connected, NOOPTIONS_COLOR,
 		0, 0, ImGuiInputTextFlags_ReadOnly);
 
+	EndChild();
+//	SameLine();
+	BeginChild("ServerState", Vec2(g_gameInfo.width / 4, g_gameInfo.height / 2));
+	for (auto playerData : server.getClientsData())
+	{
+		ImGuiInputTextFlags flags = ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_NoHorizontalScroll;
+		inputText("Player", NOOPTIONS_COLOR, " ", (char*)playerData.name, MAX_PLAYER_NAME, NOOPTIONS_COLOR, flags);
+		inputText("IP", NOOPTIONS_COLOR," ",playerData.ip, netNS::IP_SIZE, NOOPTIONS_COLOR, flags);
+		int port = 0;
+		port = playerData.port;
+		inputInt("Port", NOOPTIONS_COLOR, " ", &port, NOOPTIONS_COLOR, 6, 0, 0, flags);
+	}
 	EndChild();
 	popSubMenu();
 }
@@ -265,7 +276,7 @@ void Interface::fillWindow()
 void Interface::pushSubMenu(const char* str_id)
 {
 	PushStyleVar(ImGuiStyleVar_ChildBorderSize, 5);
-	PushFont(m_font[TAHOMA]);
+	PushFont(m_font[MED]);
 	fillWindow();
 	PushStyleVar(ImGuiStyleVar_WindowPadding, Vec2(g_gameInfo.width / 10, g_gameInfo.height / 8));
 	Begin(" ", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
@@ -279,7 +290,7 @@ void Interface::popSubMenu()
 {
 	EndChild();
 	PopFont();
-	PushFont(m_font[SEGA]);
+	PushFont(m_font[LARGE]);
 	PushStyleVar(ImGuiStyleVar_WindowPadding, Vec2(g_gameInfo.width*0.9, 1));
 	if (Button("Back", Vec2(g_gameInfo.width / 10, g_gameInfo.height / 10)))
 		m_menu = MAIN_MENU;

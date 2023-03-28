@@ -12,7 +12,7 @@ Server::Server() : m_serverPort(netNS::DEFAULT_PORT), m_state(SERVER_NOT_RUNNING
 	m_pCpsDisconnect = (CpsDisconnect*)&m_rData;
 	m_pSpsIni = (SpsIni*)&m_sData;
 	m_pSpsPlayersExist = (SpsPlayersExist*)&m_sData;
-	m_pSpsPlayerIniData = (SpsPlayersIniData*)&m_sData;
+	m_pSpsPlayerInitData = (SpsPlayersInitData*)&m_sData;
 	m_pSpsDisconnect = (SpsDisconnect*)&m_sData;
 	m_pPacketType = (PacketType*)&m_rData;
 }
@@ -34,10 +34,10 @@ void Server::update()
 {
 	if (isStarted())
 	{
-		checkClients();
+		//checkClients();
 		if (recv())
 		{
-			present();
+			//present();
 			if (m_state == SERVER_WAITING)
 				getClients();
 
@@ -103,6 +103,7 @@ void Server::getClients()
 		}
 		
 		postPlayersExist();
+		postPlayersIniData();
 	}
 }
 
@@ -125,6 +126,24 @@ void Server::postPlayersExist()
 {
 	m_pSpsPlayersExist->packetType = PACKET_PLAYERS_EXIST;
 	m_pSpsPlayersExist->players = m_clientData.size();
+	post();
+}
+
+void Server::postPlayersIniData()
+{
+	m_pSpsPlayerInitData->packetType = PACKET_PLAYERS_INI_DATA;
+	auto players = m_clientData.size();
+	PlayerIniData* initData = (PlayerIniData*)&m_pSpsPlayerInitData->playerIniData;
+	size_t dataSize = sizeof(ClientData)*players;
+	memset(initData, 0, dataSize);
+	uint8_t i = 0;
+	for (auto clientData : m_clientData)
+	{
+		strcpy(initData[i].name, clientData.name);
+		initData[i].id = clientData.id;
+		i++;
+	}
+
 	post();
 }
 

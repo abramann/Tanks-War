@@ -18,6 +18,7 @@ public:
 	void send();
 	bool recv();
 	void recv(bool wait);
+	void initPlayers();
 	char* getPlayerName() { return m_clientInfo.name; }
 	const char* getServerIP() { return m_clientInfo.serverIP; }
 	Port* getServerPort() { return &m_clientInfo.serverPort; }
@@ -38,6 +39,7 @@ private:
 	ClientInfo m_clientInfo;
 	uint8_t m_connectedPlayers, m_gamePlayers;
 	ClientState m_state;
+	
 	char m_map[MAX_NAME_LEN];
 	PlayerID m_id;
 
@@ -45,12 +47,13 @@ private:
 	CpsDisconnect* m_pCpsDisconnect;
 	SpsIni* m_pSpsIni;
 	SpsPlayersExist* m_pSpsPlayersExist;
-	SpsPlayersIniData* m_pSpsPlayerIniData;
+	SpsPlayersInitData* m_pSpsPlayerIniData;
 	CpsSeasson* m_pCpsSeasson;
 	CpsPresent* m_pCpsPresent;
 	PacketType* m_pPacketType;
 
 	DWORD m_presentTime;
 	char m_rData[MAX_PACKET_SIZE], m_sData[MAX_PACKET_SIZE];
+	std::vector<PlayerIniData> m_playerData;
 };
 
