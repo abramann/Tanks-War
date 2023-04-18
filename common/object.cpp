@@ -4,7 +4,6 @@
 Object::Object() :  m_playAudio(false),
 	m_handleInput(false), m_alive(true), m_render(true)
 {
-	m_pAudio = new Audio;
 }
 
 Object::~Object()
@@ -12,54 +11,53 @@ Object::~Object()
 	release();
 }
 
-void Object::initialize(uint16_t width, uint16_t height, uint8_t columns, uint8_t rows, bool animate, float updateDelay, float health, float speed, Texture* death, Texture* texture, Graphics* graphics)
+void Object::initialize(
+	uint16_t width, uint16_t height, uint8_t columns, uint8_t rows, bool animate,
+	float updateDelay, float health, float speed, Texture* death, Texture* texture,
+	Graphics* graphics)
 {
 	setSpeed(speed);
 	setHealth(health);
 	m_pDeath = death;
-	m_pAudio->initialize();
 	Image::initialize(width, height, columns, rows, false, updateDelay, texture, graphics);
 }
 
-void Object::initialize(Texture * texture, TextureManger* textureManger, Graphics * graphics)
+void Object::initialize(Texture * texture, TextureManger* textureManger, Audio* audio, Graphics * graphics)
 {
 	Image::initialize(texture, textureManger, graphics);
-	m_ObjectInfo = *m_pTextureManger->getTextureInfo(m_pTexture->getNumber())->objectInfo;
-	m_pDeath = m_pTextureManger->getTexture(m_ObjectInfo.deathTexture);
-
+	m_pAudio = audio;
+	m_objectInfo = *m_pTextureManger->getTextureInfo(m_pTexture->getNumber())->objectInfo;
+	m_pDeath = m_pTextureManger->getTexture(m_objectInfo.deathTexture);
 }
 
-void Object::inputInitialize(Input* input, Key forward_key, Key back_key, Key right_key, Key left_key)
+void Object::inputInitialize(Input* input, Key forward, Key back, Key right, Key left)
 {
 	m_pInput = input;
 	setInput(true);
-	m_key.push_back(forward_key);
-	m_key.push_back(back_key);
-	m_key.push_back(right_key);
-	m_key.push_back(left_key);
+	m_key.push_back(forward);
+	m_key.push_back(back);
+	m_key.push_back(right);
+	m_key.push_back(left);
 }
 
-void Object::audioInitialize(Effect forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff)
+void Object::audioInitialize(Sound forward, Sound back, Sound right, Sound left, Sound death)
 {
-	setAudio(true);
-	m_effect.push_back(forward_eff);
-	m_effect.push_back(back_eff);
-	m_effect.push_back(right_eff);
-	m_effect.push_back(left_eff);
-	m_effect.push_back(death_eff);
+	m_playAudio = true;
+	m_sound.push_back(forward);
+	m_sound.push_back(back);
+	m_sound.push_back(right);
+	m_sound.push_back(left);
+	m_sound.push_back(death);
 }
 
 void Object::update(float frameTime)
 {
-	if(m_alive)
-		if (m_ObjectInfo.health <= 0)
-			setDeathMode();
+	//if(m_alive)
+	//	if (m_objectInfo.health <= 0)
+	//		setDeathMode();
 
 	if (m_handleInput)
 		inputUpdate(frameTime);
-
-	if (m_playAudio)
-		m_pAudio->run();
 
 	mathUpdate();
 	Image::update(frameTime);
@@ -73,20 +71,18 @@ void Object::draw()
 
 void Object::inputUpdate(float frameTime)
 {
-	if (m_pInput->isKeyIn(m_key[KEY_FORWARD]))
+	if (m_pInput->isKeyIn(m_key[KEY_OBJECT_FORWARD]))
 		executeForward(frameTime);
-	if (m_pInput->isKeyIn(m_key[KEY_BACK]))
+	if (m_pInput->isKeyIn(m_key[KEY_OBJECT_BACK]))
 		executeBack(frameTime);
-	if (m_pInput->isKeyIn(m_key[KEY_RIGHT]))
+	if (m_pInput->isKeyIn(m_key[KEY_OBJECT_RIGHT]))
 		executeRight(frameTime);
-	if (m_pInput->isKeyIn(m_key[KEY_LEFT]))
+	if (m_pInput->isKeyIn(m_key[KEY_OBJECT_LEFT]))
 		executeLeft(frameTime);
-		
 }
 
 void Object::release()
 {
-	SAFE_DELETE(m_pAudio);
 }
 
 void Object::setDeathMode()

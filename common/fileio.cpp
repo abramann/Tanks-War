@@ -154,20 +154,20 @@ TextureInfo * FileIO::readTextureInfo(std::string name)
 	textureInfo.fireInfo = FileIO::readFireInfo(name);
 	return &textureInfo;
 }
-MapData* FileIO::readMapInfo(std::ifstream& ifs)
+MapData FileIO::readMapInfo(std::ifstream& ifs)
 {
-	static MapData mapData;
-	readValues<uint16_t>(ifs, { &mapData.width,&mapData.height });
-	uint8_t preventedBMs = 0;
-	readValues<uint8_t>(ifs, { &mapData.bitmaps,&preventedBMs });
+	MapData mapData;
+	readValues<int16>(ifs, { &mapData.width,&mapData.height });
+	int8 preventedBMs = 0;
+	readValues<int8>(ifs, { &mapData.bitmaps,&preventedBMs });
 	for (auto i = 0; i < preventedBMs; i++)
 	{
-		uint8_t bm = 0;
-		readValues<uint8_t>(ifs, { &bm });
+		int8 bm = 0;
+		readValues<int8>(ifs, { &bm });
 		mapData.preventedBM.push_back(bm);
 	}
 
-	return &mapData;
+	return mapData;
 }
 
 Crc32 FileIO::getCRC32(const char* file)
@@ -217,8 +217,7 @@ void FileIO::createServerInfo(const ServerInfo& serverInfo)
 {
 	std::ofstream file(SERVER_INFO_PATH);
 	file << "Port =" << serverInfo.port << std::endl;
-	file << "Players =" << serverInfo.players << std::endl;
-	file << "Map =" << serverInfo.map;
+	file << "Players =" << std::to_string(serverInfo.players) << std::endl;
 }
 
 ServerInfo FileIO::readServerInfo()
@@ -228,9 +227,6 @@ ServerInfo FileIO::readServerInfo()
 	std::string line;
 	readValues<Port>(file, { &serverInfo.port });
 	readValues<uint8_t>(file, { &serverInfo.players });
-	std::string s1;
-	readValues(file, { &s1 });
-	strcpy(serverInfo.map, s1.c_str());
 
 	return serverInfo;
 }

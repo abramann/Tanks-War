@@ -13,7 +13,9 @@ Image::~Image()
 	release();
 }
 
-void Image::initialize(uint16_t width, uint16_t height, uint8_t  columns, uint8_t rows, bool animate, float updateDelay, Texture* texture, Graphics* graphics)
+void Image::initialize(
+	uint16_t width, uint16_t height, uint8_t  columns, uint8_t rows, bool animate,
+	float updateDelay, Texture* texture, Graphics* graphics)
 {
 	m_pGraphics = graphics;
 	setTexture(texture);

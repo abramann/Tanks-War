@@ -38,7 +38,7 @@ protected:
 	std::string m_file;
 	Graphics* m_pGraphics;
 	LPDIRECT3DTEXTURE9 m_lpTexture;
-	UINT m_width, m_height;
+	uint32_t m_width, m_height;
 	uint8_t m_number;
 
 };

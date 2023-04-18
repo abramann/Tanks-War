@@ -2,6 +2,7 @@
 #define _INPUT_H
 #include "constants.h"
 
+
 class Input
 {
 

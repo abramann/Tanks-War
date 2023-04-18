@@ -18,30 +18,32 @@ public:
 
 	Object();
 	~Object();
-	virtual void initialize(uint16_t width, uint16_t height, uint8_t columns, uint8_t rows, bool animate, float updateDelay, float health, float speed, Texture* death, Texture* texture, Graphics* graphics);
-	virtual void initialize(Texture* texture, TextureManger* textureManger, Graphics* graphics);
-	virtual void inputInitialize(Input* _input, Key forward_key, Key back_key, Key right_key, Key left_key);
-	virtual void audioInitialize(Effect _forward_eff, Effect back_eff, Effect right_eff, Effect left_eff, Effect death_eff);
+	virtual void initialize(uint16_t width, uint16_t height, uint8_t columns, uint8_t rows, bool animate,
+		float updateDelay, float health, float speed, Texture* death, Texture* texture,
+		Graphics* graphics);
+	virtual void initialize(Texture* texture, TextureManger* textureManger, Audio* audio, Graphics* graphics);
+	virtual void inputInitialize(Input* input, Key forward, Key back, Key right, Key left);
+	virtual void audioInitialize(Sound forward, Sound back, Sound right, Sound left, Sound death);
 	virtual void update(float frameTime);
 	virtual void draw();
 	virtual void inputUpdate(float frameTime);
 	virtual void release();
-	virtual void healthIncrease(float increase) { m_ObjectInfo.health += increase; }
-	virtual void damage(float value) { m_ObjectInfo.health -= value; }
-	virtual void speedIncrease(float increase) { m_ObjectInfo.speed += increase; }
-	virtual void speedDecrease(float decrease) { m_ObjectInfo.speed -= decrease; }
-	virtual void setHealth(float health) { m_ObjectInfo.health = health; }
-	virtual void setSpeed(float speed) { m_ObjectInfo.speed = speed; }
+	virtual void healthIncrease(float increase) { m_objectInfo.health += increase; }
+	virtual void damage(float value) { m_objectInfo.health -= value; }
+	virtual void speedIncrease(float increase) { m_objectInfo.speed += increase; }
+	virtual void speedDecrease(float decrease) { m_objectInfo.speed -= decrease; }
+	virtual void setHealth(float health) { m_objectInfo.health = health; }
+	virtual void setSpeed(float speed) { m_objectInfo.speed = speed; }
 	virtual void setUpdateInput(bool updateInput) { m_updateInput = updateInput; }
 	void setInput(bool input) { m_handleInput = input; }
 	void setAudio(bool audio) { m_playAudio = audio; }
 	virtual void setDeathMode();
 	virtual void endFrame();
 
-	virtual float getHealth() const { return m_ObjectInfo.health; }
-	virtual float getSpeed() { return m_ObjectInfo.speed; }
+	virtual float getHealth() const { return m_objectInfo.health; }
+	virtual float getSpeed() { return m_objectInfo.speed; }
 	virtual bool getUpdateInput() { return m_updateInput; }
-	const bool alive() const { return (m_ObjectInfo.health > 0) ? true : false; }
+	const bool alive() const { return (m_objectInfo.health > 0) ? true : false; }
 	virtual void executeForward(float frameTime) = 0;
 	virtual void executeBack(float frameTime) = 0;
 	virtual void executeRight(float frameTime) = 0;
@@ -52,9 +54,9 @@ protected:
 	Audio* m_pAudio;
 	Input* m_pInput;
 	Texture* m_pDeath;
-	ObjectInfo m_ObjectInfo;
+	ObjectInfo m_objectInfo;
 	std::vector<Key> m_key;
-	std::vector<Effect> m_effect;
+	std::vector<Sound> m_sound;
 	bool m_render;
 	bool m_updateInput;
 	bool m_alive;

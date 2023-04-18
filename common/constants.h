@@ -1,10 +1,10 @@
 // Programming 2D Games
-// Copyright (c) 2011 by: 
+// Copyright (c) 2011 by:
 // Charles Kelly
 // Game Engine constants.h v3.1
 // Last modification: Dec-24-2013
 
-#ifndef _CONSTANTS_H            // Prevent multiple definitions if this 
+#ifndef _CONSTANTS_H            // Prevent multiple definitions if this
 #define _CONSTANTS_H            // file is included in more than one place
 #define WIN32_LEAN_AND_MEAN
 #include "gameerror.h"
@@ -21,29 +21,42 @@ extern uint64_t g_frameCounter;
 
 #define COLOR_ARGB D3DCOLOR_ARGB
 #define COLOR_XRGB D3DCOLOR_XRGB
-#define TANK_KEYS			5
-#define TANK_KEYS			5
-#define TANK_KEYATTACK		4
-#define TANK_EFFECTS		7
-#define TANK_EFFECTSHOT		5
-#define TANK_EFFECTHIT		6
-
+#define MILLSEC
+#define MICROSEC
 typedef D3DCOLOR Color;
 typedef D3DXVECTOR2 V2;
+typedef D3DXVECTOR3 V3;
+typedef LPDIRECT3DVERTEXBUFFER9 LPVertexBuffer;
 typedef uint8_t PlayerID;
 typedef ImGuiKey Key;
 typedef unsigned short Port;
 typedef uint8_t Protocol;
 typedef uint32_t Crc32;
+typedef ImVec2 Vec2;
+typedef ImVec4 Vec4;
+typedef int8_t int8;
+typedef int16_t int16;
+typedef int32_t int32;
+typedef int64_t int64;
+typedef uint8_t uint8;
+typedef uint16_t uint16;
+typedef uint32_t uint32;
+typedef uint64_t uint64;
+typedef D3DXMATRIX Matrix;
+typedef HRESULT Result;
+typedef D3DXQUATERNION Quaternion;
 
 constexpr auto COLOR_BLACK = COLOR_XRGB(0, 0, 0);
 constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
 constexpr auto COLOR_ALPHA = COLOR_ARGB(0, 0, 0, 255);
 constexpr double PI = 3.14159265;
-constexpr float MIN_FRAME_TIME = 10.0f;
-constexpr float MAX_FRAME_TIME = 80.0f;
+constexpr auto FPS_UPDATE_DELAY = 0.5f;
+constexpr auto FRAME_RATE = 240;
+constexpr auto MIN_FRAME_RATE = 10;
+constexpr auto MIN_FRAME_TIME = 20;
+constexpr auto MAX_FRAME_TIME = 80;
 constexpr auto MAX_PLAYER_NAME = 20;
-constexpr auto MAX_PACKET_SIZE = 255;
+constexpr auto MAX_PACKET_SIZE = 128;
 constexpr DWORD INVALID_ADDRESS = 0xFFFFFFF;
 constexpr uint8_t INVALID_ID = -1;
 constexpr auto NET_RESPONSE = 1;
@@ -52,11 +65,14 @@ constexpr auto MAX_PLAYERS = 12;
 constexpr int MAX_PORT = 4861;
 constexpr int MIN_PORT = 10;
 constexpr unsigned short UNSPECIFIED_PORT = 0xCCCC;
-constexpr uint32_t UNDEFINED_POSITION = 0xFFFF;
+constexpr float UNDEFINED_POSITION = 0xFFFF;
 constexpr uint8_t MAX_FILE_NAME = 255;
 constexpr auto INVALID_DATA = 0xFFFF;
+constexpr auto  MIN_RESOLUTION_WIDTH = 800;
+constexpr auto  MIN_RESOLUTION_HEIGHT = 600;
 constexpr BYTE BYTE_INVALID_DATA = 0xFF;
-constexpr auto  VERTEX_FVF = D3DFVF_XYZRHW | D3DFVF_TEX1;
+constexpr auto TANK_ROTATE_AMOUNT = PI / 8;
+constexpr auto  VERTEX_FVF = D3DFVF_XYZ | D3DFVF_TEX1;
 constexpr auto GAME_INFO_PATH = "Assets\\ini\\game-info.txt";
 constexpr auto OBJECT_INFO_PATH = "Assets\\ini\\object-info.txt";
 constexpr auto TANK_INFO_PATH = "Assets\\ini\\tank-info.txt";
@@ -70,6 +86,9 @@ constexpr auto MAX_NAME_LEN = 20;
 constexpr auto CLIENT_PRESENT_TIME = 5000;
 constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
 constexpr DWORD INVALID_PTR = 0xcdcdcdcd;
+constexpr auto PROJECT_FOV = PI / 2;
+constexpr auto PROJECT_NEAR_PLANE = 1.0f;
+constexpr auto PROJECT_FAR_PLANE = 1000.0f;
 
 constexpr Key A_KEY = ImGuiKey_A;
 constexpr Key B_KEY = ImGuiKey_B;
@@ -104,9 +123,8 @@ constexpr Key BACKSPACE_KEY = ImGuiKey_Backspace;
 constexpr Key RSHIFT_KEY = ImGuiKey_RightShift;
 constexpr Key LSHIFT_KEY = ImGuiKey_LeftShift;
 
-#define Vec2 ImVec2
-#define Vec4 ImVec4
-constexpr const char* strSERVER_STATE[] = { "Not started" , "Waiting for players...", "Running" };
+#define UNSPECIFIED_POS V3(0.1f,0.1f,0.1f)
+constexpr const char* strSERVER_STATE[] = { "Not started" , "Waiting for players...", "Preparibg game..." , "Handlubg" };
 constexpr Vec4 colSERVER_STATE[] = { Vec4(0.7f,0.7f,0.7f,0.5f), Vec4(0.87f,0.77f,0,1), Vec4(0,1,0,1) };
 
 //=============================================================================
@@ -125,6 +143,7 @@ inline void safeRelease(T& ptr)
 		ptr = NULL;
 	}
 }
+
 #define SAFE_RELEASE safeRelease            // for backward compatiblility
 
 // Safely delete pointer referenced item
@@ -137,6 +156,7 @@ inline void safeDelete(T& ptr)
 		ptr = NULL;
 	}
 }
+
 #define SAFE_DELETE safeDelete              // for backward compatiblility
 
 // Safely delete pointer referenced array
@@ -159,6 +179,7 @@ inline void safeOnLostDevice(T& ptr)
 	if (ptr)
 		ptr->onLostDevice();
 }
+
 #define SAFE_ON_LOST_DEVICE safeOnLostDevice    // for backward compatiblility
 
 // Safely call onResetDevice
@@ -168,6 +189,7 @@ inline void safeOnResetDevice(T& ptr)
 	if (ptr)
 		ptr->onResetDevice();
 }
+
 #define SAFE_ON_RESET_DEVICE safeOnResetDevice  // for backward compatiblility
 
 inline void waitTime(float time)
@@ -212,7 +234,7 @@ inline void getFileNameFromPath(std::string path, char* name)
 	std::string sName = path.substr(path.find_last_of('\\') + 1,
 		path.find_last_of('.') - path.find_last_of('\\') - 1);
 
-	memset(name, 0, sName.length()+1);
+	memset(name, 0, sName.length() + 1);
 	strcpy(name, sName.c_str());
 }
 
@@ -221,9 +243,68 @@ inline uint32_t _rand(uint32_t max)
 	return ::GetTickCount() % max;
 }
 
+inline int64_t getTime()
+{
+	return timeGetTime();
+	LARGE_INTEGER performanceCounter;
+	QueryPerformanceCounter(&performanceCounter);
+	return performanceCounter.QuadPart;
+}
+
+inline int64_t getFreq()
+{
+	LARGE_INTEGER performanceCounter;
+	QueryPerformanceFrequency(&performanceCounter);
+	return performanceCounter.QuadPart;
+}
+
+template <typename T>
+inline T* getIdItem(const PlayerID id, std::vector<T>* item)
+{
+	T* rItem = 0;;
+	for (auto& it : *item)
+	{
+		if (it.id == id)
+		{
+			rItem = &it;
+			break;
+		}
+	}
+
+	return rItem;
+}
+
+enum PacketType
+{
+	PACKET_START_SEASSON = 100,
+	PACKET_INI,
+	PACKET_PLAYERS_EXIST,
+	PACKET_PLAYERS_INI_DATA,
+	PACKET_DISCONNECT,
+	PACKET_PLAYER_DISCONNECTED,
+	PACKET_PRESENT_CLIENT,
+	PACKET_PLAYERS_INI,
+	PACKET_NEW_PLAYER,
+	PACKET_PLAYERS_UPDATE,
+	PACKET_PLAYER_UPDATE,
+	PACKET_PLAYER_ACT
+};
+
+enum PlayerAct
+{
+	PLAYER_ACT_NONE,
+	PLAYER_ACT_FORWRAD,
+	PLAYER_ACT_BACK,
+	PLAYER_ACT_RIGHT,
+	PLAYER_ACT_LEFT,
+	PLAYER_ACT_ATTACK
+};
+
 struct Vertex
 {
-	float x, y, z, rhw;
+	Vertex() {};
+	Vertex(float _x, float _y, float _z, float _u, float _v) : x(_x), y(_y), z(_z), u(_u), v(_v) {};
+	float x, y, z;
 	float u, v;
 };
 
@@ -301,34 +382,28 @@ struct TextureInfo
 
 struct MapData
 {
-	uint16_t width, height;
-	uint8_t bitmaps;
-	std::vector<uint8_t> preventedBM;
+	int16 width, height;
+	int8 bitmaps;
+	std::vector<int8> preventedBM;
 };
 
 struct Space
 {
-	int32_t x1, y1;
-	int32_t x2, y2;
+	Space() {};
+	Space(int32 _x1, int32 _y1, int32 _x2, int32 _y2,
+		int32 _x3, int32 _y3, int32 _x4, int32 _y4) :
+		x1(_x1), y1(_y1), x2(_x2), y2(_y2),
+		x3(_x3), y3(_y3), x4(_x4), y4(_y4) {}
+	int32 x1, y1;
+	int32 x2, y2;
+	int32 x3, y3;
+	int32 x4, y4;
 };
 
 struct ServerInfo
 {
 	Port port;
 	uint8_t players;
-	char map[MAX_NAME_LEN];
-};
-
-enum TEXTURES
-{
-	BLACK,
-	PLAYER_TANK,
-	TANK_DESTROY,
-	FIRE_SIMPLE,
-	FIRE_BULLET6,
-	FIRE2,
-	FIRE_HIT,
-	ENEMY_TANK
 };
 
 struct ClientInfo
@@ -337,30 +412,31 @@ struct ClientInfo
 	Port serverPort;
 };
 
-struct ClientData
-{
-	char ip[netNS::IP_SIZE], name[MAX_NAME_LEN];
-	Port port;
-	PlayerID id;
-	DWORD presentTime;
-};
-
 struct PlayerIniData
 {
 	char name[MAX_NAME_LEN];
 	PlayerID id;
 };
 
-enum PacketType
+struct PlayerUpdate
 {
-	PACKET_START_SEASSON = 100,
-	PACKET_END_SEASSON,
-	PACKET_INI,
-	PACKET_PLAYERS_EXIST,
-	PACKET_PLAYERS_INI_DATA,
-	PACKET_GAME,
-	PACKET_DISCONNECT,
-	PACKET_PRESENT
+	uint16_t x, y;
+	uint8_t health;
+	float angle;
+	PlayerID id;
+};
+
+struct CpsPlayerAct
+{
+	PacketType packetType = PACKET_PLAYER_UPDATE;
+	PlayerAct act;
+	PlayerID id;
+};
+
+struct SpsPlayerUpdate
+{
+	PacketType packetType = PACKET_PLAYER_UPDATE;
+	PlayerUpdate playerUpdate[];
 };
 
 struct CpsIni
@@ -377,7 +453,7 @@ struct CpsDisconnect
 
 struct CpsPresent
 {
-	PacketType packet = PACKET_PRESENT;
+	PacketType packet = PACKET_PRESENT_CLIENT;
 	PlayerID id;
 };
 
@@ -395,6 +471,7 @@ struct SpsIni
 	uint8_t gamePlayers;
 	char  map[MAX_NAME_LEN];
 	Crc32 checksum;
+	PlayerIniData playerIniData;
 };
 
 struct SpsPlayersExist
@@ -412,48 +489,55 @@ struct SpsPlayersInitData
 struct SpsDisconnect
 {
 	PacketType packetType = PACKET_DISCONNECT;
+	PlayerID id;
 };
 
-enum READ_TYPE
+/*struct SpsNewPlayer
 {
-	GAME_INFO,
-	IMAGE_INFO,
-	OBJECT_INFO,
-	TANK_INFO,
-	FIRE_INFO,
-	MAP_INFO
+	PacketType packet = PACKET_NEW_PLAYER;
+	char name[MAX_NAME_LEN];
+	PlayerID id;
+};*/
+
+enum MatrixType
+{
+	MATRIX_TYPE_TRANSLATE,
+	MATRIX_TYPE_SCALL,
+	MATRIX_TYPE_ROTATE,
+
 };
 
-enum OBJECT_KEYS {
-	KEY_FORWARD,
-	KEY_BACK,
-	KEY_RIGHT,
-	KEY_LEFT
+enum Textures
+{
+	BLACK,
+	PLAYER_TANK,
+	TANK_DESTROY,
+	FIRE_SIMPLE,
+	FIRE_BULLET6,
+	FIRE2,
+	FIRE_HIT,
+	ENEMY_TANK
 };
 
-enum OBJECT_EFFECTS {
-	EFFECT_FORWARD,
-	EFFECT_BACK,
-	EFFECT_RIGHT,
-	EFFECT_LEFT,
-	EFFECT_DEATH
+enum KeyControl
+{
+	KEY_OBJECT_FORWARD,
+	KEY_OBJECT_BACK,
+	KEY_OBJECT_RIGHT,
+	KEY_OBJECT_LEFT,
+	KEY_TANK_ATTACK,
 };
 
-enum FIRE_RELEASE_MODE
+enum FireReleaseMode
 {
 	RELEASE_NORMAL,
 	RELEASE_TRACE
 };
 
-enum FIRE_EFFECTS
-{
-	HIT_EFFECT,
-};
-
-enum Menus
+enum Menu
 {
 	NO_MENU = -1,
-	MAIN_MENU,
+	MAIN_MENU = 100,
 	MULTIPLAYER_MENU,
 	SETTING_MENU,
 	PLAYING_MENU,
@@ -473,10 +557,16 @@ enum ClientState
 enum ServerState
 {
 	SERVER_NOT_RUNNING,
-	SERVER_WAITING,
-	SERVER_HANDLING
+	SERVER_RUNNING_WAITING,
+	SERVER_RUNNING_PREPGAME,
+	SERVER_RUNNING_HANDLING,
 };
 
+enum VB_USAGE
+{
+	VB_USAGE_WRITEONLY = D3DUSAGE_WRITEONLY,
+	VB_USAGE_DYNAMIC = D3DUSAGE_DYNAMIC
+};
 extern GameInfo g_gameInfo;
 
 #endif

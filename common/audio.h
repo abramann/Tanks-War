@@ -1,54 +1,52 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// audio.h v1.0
-#ifndef _AUDIO_H                // Prevent multiple definitions if this 
-#define _AUDIO_H                // file is included in more than one place
-#define WIN32_LEAN_AND_MEAN
-#include <xact3.h>
+#pragma once
 #include "constants.h"
+#include "irrklang\irrKlang.h"
 
-typedef std::string Effect;
+enum Sound
+{
+	SOUND_BUTTON_CLICKED,
+	SOUND_TANK_FORWARD,
+	SOUND_TANK_BACK,
+	SOUND_TANK_RIGHT,
+	SOUND_TANK_LEFT,
+	SOUND_TANK_DEATH,
+	SOUND_TANK_ATTACK,
+	SOUND_TANK_ATTACKED,
+	SOUND_FIRE_RELEASE,
+	SOUND_FIRE_EXPLOSTION,
+	SOUNDS
+};
 
-constexpr auto WAVE_BANK = "Assets//Audio//Win//Wave Bank.xwb";
-constexpr auto SOUND_BANK = "Assets//Audio//Win//Sound Bank.xsb";
-
-
+enum Music
+{
+	MUSIC_MAIN_MENU,
+	MUSIC_GAME,
+	MUSIC_WIN,
+	MUSIC_LOSE,
+	MUSICS
+};
 
 class Audio
 {
-	// properties
-private:
-	IXACT3Engine* xactEngine;   // pointer to XACT sound engine
-	IXACT3WaveBank* waveBank;   // pointer to XACT wave bank
-	IXACT3SoundBank* soundBank; // pointer to XACT sound bank
-	XACTINDEX cueI;             // XACT sound index
-	void* mapWaveBank;          // call UnmapViewOfFile() to release file
-	void* soundBankData;
-	bool coInitialized;         // set true if coInitialize is successful
-
 public:
-	// Constructor
+
 	Audio();
-
-	// Destructor
-	virtual ~Audio();
-
-	// member functions
-
-	// Initialize Audio
+	~Audio();
 	bool initialize();
+	void play(Sound sound);
+	void stop(Sound sound);
+	void playMusic(Music music, bool looped = true);
+	void stopMusic(Music music);
+	void stopAll();
+	void release();
+	void playCue(int i) {};
 
-	// Perform periodic sound engine tasks.
-	void run();
+private:
 
-	// Play sound specified by cue from sound bank.
-	// If cue does not exist no error occurs, there is simply no sound played.
-	void playCue(Effect cue);
+	irrklang::ISoundEngine* m_pSound;
+	irrklang::ISoundSource* m_pSource[SOUNDS];
+	irrklang::ISoundSource* m_pSourceMusic[MUSICS];
 
-	// Stop a playing sound specified by cue from sound bank.
-	// If cue does not exist no error occurs.
-	void stopCue(Effect cue);
+
 };
 
-#endif

@@ -2,14 +2,14 @@
 #include "imgui\imgui_impl_win32.h"
 #include <timeapi.h>
 
-Game::Game() : m_timeDelta(0)
+Game::Game() : m_timeDeltaMs(0)
 {
 	m_pGraphics = new Graphics;
 	m_pInput = new Input;
 	m_pAudio = new Audio;
 	m_pTextureManger = new TextureManger;
 	m_pInterface = new Interface;
-	m_pMap = new Map;
+	m_pMap = new Map2;
 }
 
 Game::~Game()
@@ -29,6 +29,8 @@ LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	return DefWindowProcA(hWnd, msg, wParam, lParam);
 }
+constexpr auto LOGO_WIDTH = 800;
+constexpr auto LOGO_HEIGHT = 600;
 
 void Game::initialize(HINSTANCE hInstance, HWND hWnd)
 {
@@ -41,10 +43,11 @@ void Game::initialize(HINSTANCE hInstance, HWND hWnd)
 	if (!m_pTextureManger->initialize(m_pGraphics))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize m_pTextureManger");
 
-	m_pMap->initialize(m_pTextureManger->getTiledMapTexture(), m_pGraphics);
-	m_pInterface->initialize();
-	m_logo.initialize(800, 400, 1, 1, 0, 0, m_pTextureManger->getLogoTexture(), m_pGraphics);
+	m_pMap->initialize(this);
+	m_logo.initialize(LOGO_WIDTH, LOGO_HEIGHT, 1, 1, 0, 0, m_pTextureManger->getLogoTexture(), m_pGraphics);
 	m_logo.cover();	
+	m_freq = getFreq();
+	m_startTime = getTime();
 }
 
 void Game::run()
@@ -55,7 +58,6 @@ void Game::run()
 	updateGame();
 	collision();
 	renderGame();
-	m_pAudio->run();
 }
 
 void Game::renderGame()
@@ -63,7 +65,7 @@ void Game::renderGame()
 	m_pGraphics->begin();
 //	 if (m_logo.drawRapidly())
 		render();
-	
+
 	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 
 	m_pGraphics->end();
@@ -73,23 +75,31 @@ void Game::renderGame()
 
 void Game::updateGame()
 {
-	m_timeDelta = timeGetTime() - m_timeDelta;
- 	if (m_timeDelta < MIN_FRAME_TIME)
+	m_endTime = getTime();
+	m_timeDeltaMs = (float)(m_endTime - m_startTime);// / (float)m_freq;
+	m_startTime = m_endTime;
+	if (m_timeDeltaMs < MIN_FRAME_TIME)
 	{
-		Sleep(MIN_FRAME_TIME - m_timeDelta);
-		m_timeDelta = MIN_FRAME_TIME;
+		Sleep(MIN_FRAME_TIME - m_timeDeltaMs);
+		m_timeDeltaMs = MIN_FRAME_TIME;
 	}
-	else if (m_timeDelta > MAX_FRAME_TIME)
+	else if (m_timeDeltaMs > MAX_FRAME_TIME)
+		m_timeDeltaMs = MAX_FRAME_TIME;
+
+	static float fpsUpdateDelay = 0;
+	fpsUpdateDelay += m_timeDeltaMs;
+	if (fpsUpdateDelay >= FPS_UPDATE_DELAY)
 	{
-		m_timeDelta = MAX_FRAME_TIME;
+		m_fps = 1 / m_timeDeltaMs;
+		fpsUpdateDelay = 0;
 	}
 
 	update();
-	m_timeDelta = timeGetTime();
 }
 
 void Game::handleLostGraphicsDevice()
 {
+//	return;
 	HRESULT hr = m_pGraphics->getDeviceState();
 	if (FAILED(hr))
 	{

@@ -1,158 +1,79 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// audio.cpp v1.0
-
 #include "audio.h"
+#include "fileio.h"
 
-//=============================================================================
-// default constructor
-//=============================================================================
-Audio::Audio()
+using namespace irrklang;
+
+Audio::Audio() : m_pSound(NULL)
 {
-	xactEngine = NULL;
-	waveBank = NULL;
-	soundBank = NULL;
-	cueI = 0;
-	mapWaveBank = NULL;         // Call UnmapViewOfFile() to release file
-	soundBankData = NULL;
-
-	HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-	if (SUCCEEDED(hr))
-		coInitialized = true;
-	else
-		coInitialized = false;
 }
 
-//=============================================================================
-// destructor
-//=============================================================================
+
 Audio::~Audio()
 {
-	// Shutdown XACT
-	if (xactEngine)
-	{
-		xactEngine->ShutDown(); // shut down XACT engine and free resources
-		xactEngine->Release();
-	}
-
-	if (soundBankData)
-		delete[] soundBankData;
-	soundBankData = NULL;
-
-	// After xactEngine->ShutDown() returns, release memory mapped files
-	if (mapWaveBank)
-		UnmapViewOfFile(mapWaveBank);
-	mapWaveBank = NULL;
-
-	if (coInitialized)        // if CoInitializeEx succeeded
-		CoUninitialize();
+	release();
 }
 
-//=============================================================================
-// initialize
-// This function does the following:
-//      1. Initialize XACT by calling xactEngine->Initialize 
-//      2. Create the XACT wave bank(s) you want to use
-//      3. Create the XACT sound bank(s) you want to use
-//      4. Store indices to the XACT cue(s) your game uses
-//=============================================================================
+const char* MUSIC_PATH[] = {
+	"Assets\\audio\\music-main-menu.wav",
+	"Assets\\audio\\music-game.mp3",
+	"Assets\\audio\\music-win.mp3",
+	"Assets\\audio\\music-lose.mp3",
+};
+
+const char* SOUND_PATH[] = {
+	"Assets\\audio\\sound-button-clicked.wav",
+	"Assets\\audio\\sound-tank-forward.wav",
+	"Assets\\audio\\sound-tank-back.wav",
+	"Assets\\audio\\sound-tank-right.wav",
+	"Assets\\audio\\sound-tank-left.wav",
+	"Assets\\audio\\sound-tank-death.wav"
+	"Assets\\audio\\sound-tank-attack.wav",
+	"Assets\\audio\\sound-tank-attacked.wav",
+	"Assets\\audio\\sound-fire-release.wav"
+	"Assets\\audio\\sound-fire-hited.wav",
+};
+
 bool Audio::initialize()
 {
-	HRESULT result = E_FAIL;
-	HANDLE hFile;
-	DWORD fileSize;
-	DWORD bytesRead;
-	HANDLE hMapFile;
-
-	if (coInitialized == false)
+	m_pSound = createIrrKlangDevice();
+	if (m_pSound == 0)
 		return false;
 
-	result = XACT3CreateEngine(0, &xactEngine);
-	if (FAILED(result) || xactEngine == NULL)
-		return false;
-
-	// Initialize & create the XACT runtime 
-	XACT_RUNTIME_PARAMETERS xactParams = { 0 };
-	xactParams.lookAheadTime = XACT_ENGINE_LOOKAHEAD_DEFAULT;
-	result = xactEngine->Initialize(&xactParams);
-	if (FAILED(result))
-		return false;
-
-	// Create an "in memory" XACT wave bank file using memory mapped file IO
-	hFile = CreateFileA(WAVE_BANK, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-	if (hFile != INVALID_HANDLE_VALUE)
-	{
-		fileSize = GetFileSize(hFile, NULL);
-		if (fileSize != -1)
-		{
-			hMapFile = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, fileSize, NULL);
-			if (hMapFile)
-			{
-				mapWaveBank = MapViewOfFile(hMapFile, FILE_MAP_READ, 0, 0, 0);
-				if (mapWaveBank)
-					result = xactEngine->CreateInMemoryWaveBank(mapWaveBank, fileSize, 0, 0, &waveBank);
-
-				CloseHandle(hMapFile);    // mapWaveBank maintains a handle on the file so close this unneeded handle
-			}
-		}
-		CloseHandle(hFile);    // mapWaveBank maintains a handle on the file so close this unneeded handle
-	}
-	if (FAILED(result))
-		return false;
-
-	// Read and register the sound bank file with XACT.
-	hFile = CreateFileA(SOUND_BANK, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-	if (hFile != INVALID_HANDLE_VALUE)
-	{
-		fileSize = GetFileSize(hFile, NULL);
-		if (fileSize != -1)
-		{
-			soundBankData = new BYTE[fileSize];    // reserve memory for sound bank
-			if (soundBankData)
-			{
-				if (0 != ReadFile(hFile, soundBankData, fileSize, &bytesRead, NULL))
-					result = xactEngine->CreateSoundBank(soundBankData, fileSize, 0, 0, &soundBank);
-			}
-		}
-		CloseHandle(hFile);
-	}
-	if (FAILED(result))
-		return false;
-
+	for (int i = 0; i < MUSICS; i++)
+		m_pSourceMusic[i] = m_pSound->addSoundSourceFromFile(MUSIC_PATH[i]);
+	for (int i = 0; i < SOUNDS; i++)
+		m_pSource[i] = m_pSound->addSoundSourceFromFile(SOUND_PATH[i]);
+	
 	return true;
 }
 
-//=============================================================================
-// perform periodic sound engine tasks
-//=============================================================================
-void Audio::run()
+void Audio::play(Sound sound)
 {
-	if (xactEngine == NULL)
-		return;
-	xactEngine->DoWork();
+	m_pSound->play2D(m_pSource[sound]);
 }
 
-//=============================================================================
-// play sound specified by cue from sound bank
-// if cue does not exist no error occurs, there is simply no sound played
-//=============================================================================
-void Audio::playCue(Effect cue)
+void Audio::stop(Sound sound)
 {
-	if (soundBank == NULL)
-		return;
-	cueI = soundBank->GetCueIndex(cue.c_str());        // get cue index from sound bank
-	soundBank->Play(cueI, 0, 0, NULL);
 }
 
-//=============================================================================
-// stop a playing sound specified by cue from sound bank
-// if cue does not exist no error occurs
-//=============================================================================
-void Audio::stopCue(Effect cue)
+void Audio::playMusic(Music music, bool looped)
 {
-	if (soundBank == NULL)
+	return;
+	if (m_pSound->isCurrentlyPlaying(m_pSourceMusic[music]))
 		return;
-	cueI = soundBank->GetCueIndex(cue.c_str());        // get cue index from sound bank
-	soundBank->Stop(cueI, XACT_FLAG_SOUNDBANK_STOP_IMMEDIATE);
+
+	m_pSound->play2D(m_pSourceMusic[music], looped);
+}
+
+void Audio::stopMusic(Music music)
+{
+}
+
+void Audio::stopAll()
+{
+}
+
+void Audio::release()
+{
+	m_pSound->drop();
 }

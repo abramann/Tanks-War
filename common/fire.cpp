@@ -12,7 +12,7 @@ Fire::~Fire()
 	
 }
 
-void Fire::initialize(Object* object, Map* map,Texture* explosion, Texture* texture, Graphics* graphics)
+void Fire::initialize(Object* object, Map* map, Texture* explosion, Texture* texture, Graphics* graphics)
 {
 	m_pObject = object;
 	m_pMap = map;
@@ -42,7 +42,7 @@ void Fire::update(float frameTime)
 			break;
 		}
 
-		Object* object = m_pMap->collided(*this);
+		Object* object = m_pMap->isCollided(*this);
 		if (object != nullptr && object != m_pObject)
 		{
 			m_release = false;
