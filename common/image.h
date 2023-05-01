@@ -88,7 +88,6 @@ public:
 	virtual void xAdd(float value) { m_spriteData.x += value; }
 	virtual void xDec(float value) { m_spriteData.x -= value; }
 	virtual void yAdd(float value) { m_spriteData.y += value; }
-	virtual void yDec(float value) { m_spriteData.y -= value; }
 	void mathUpdate();
 
 protected:

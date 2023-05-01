@@ -412,7 +412,7 @@ void Interface::inputText(const char* desc, const Vec4& descColor, const char* l
 {
 	text(desc, descColor); SameLine(0, g_gameInfo.width / 200);
 	SetNextItemWidth(len*8);
-	inputText(label, buf, MAX_PLAYER_NAME, color, flags);
+	inputText(label, buf, MAX_NAME_LEN, color, flags);
 }
 
 void Interface::inputInt(const char* label, int* buf, const ImVec4& textColor,

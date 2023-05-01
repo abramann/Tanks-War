@@ -3,8 +3,9 @@
 #include "constants.h"
 #include "graphics.h"
 #include "input.h"
+#include "timer.h"
 #include "texture.h"
-#include "image.h"
+#include "image2.h"
 #include "audio.h"
 #include "interface.h"
 #include "map2.h"
@@ -35,7 +36,8 @@ public:
 	Input* getInput()	const { return m_pInput; }
 	Audio* getAudio()	const { return m_pAudio; }
 	TextureManger* getTextureManger() const { return m_pTextureManger; }
-	Map2* getMap()const { return m_pMap; }
+	Map2* getMap()	const { return m_pMap; }
+	Timer* getTimer()	const { return m_pTimer; }
 
 protected:
 
@@ -45,11 +47,10 @@ protected:
 	TextureManger* m_pTextureManger;
 	Interface* m_pInterface;
 	Map2* m_pMap;
-
-	int64_t m_startTime, m_endTime, m_freq;
-	float m_timeDeltaMs;
+	Timer* m_pTimer;
+	float m_timeDeltaMillsec;
 	float m_fps;
-	Image m_logo;
+	Image2 m_logo;
 };
 
 #endif

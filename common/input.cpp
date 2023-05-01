@@ -18,6 +18,7 @@ bool Input::initialize(HWND hwnd)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	bool result = ImGui_ImplWin32_Init(m_hwnd);
+	ImGui::GetIO().IniFilename = 0;
 	if(result)
 		m_handleInput = true;
 

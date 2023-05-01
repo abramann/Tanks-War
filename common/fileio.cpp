@@ -71,7 +71,7 @@ GameInfo FileIO::readGameInfo()
 	GameInfo gameInfo = { INVALID_DATA };
 	std::ifstream file(GAME_INFO_PATH);
 	std::string line;
-	readValues<uint8_t>(file, { &gameInfo.fullScreen });
+	readValues<int8>(file, { &gameInfo.windowed });
 	readValues<uint16_t>(file, { &gameInfo.width, &gameInfo.height });
 	
 	return gameInfo;
@@ -234,15 +234,15 @@ ServerInfo FileIO::readServerInfo()
 
 void FileIO::createGameInfo(const GameInfo& info)
 {
-	bool fullScreen;
+	bool windowed;
 	uint16_t width, height;
 	GameInfo oInfo = readGameInfo();
 	std::ofstream file(GAME_INFO_PATH);
-	fullScreen = (info.fullScreen == BYTE_INVALID_DATA) ? oInfo.fullScreen : info.fullScreen;
+	windowed = (info.windowed == BYTE_INVALID_DATA) ? oInfo.windowed : info.windowed;
 	width = (info.width == INVALID_DATA) ? oInfo.width : info.width;
 	height = (info.height == INVALID_DATA) ? oInfo.height : info.height;
 
-	file << "fullscreen=" << fullScreen << std::endl;
+	file << "windowed=" << windowed << std::endl;
 	file << "width=" << std::to_string(width) << std::endl;
 	file << "height=" << std::to_string(height) << std::endl;
 }

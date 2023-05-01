@@ -2,6 +2,7 @@
 #include "texture.h"
 #include "fileio.h"
 #include <fstream>
+#include "constants.h"
 
 Map::Map() : m_ppMap(0) , m_pGraphics(0), m_pTexture(0)
 {
@@ -30,7 +31,7 @@ bool Map::load(const char* name)
 		return false;
 
 	uint16_t totalBitmaps = m_mapData.width*m_mapData.height;
-	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(totalBitmaps * 6 * sizeof(Vertex), VB_USAGE_WRITEONLY);
+	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(totalBitmaps * 6 * sizeof(Vertex), VB_USAGE_CONST);
 	
 	m_bitmapData.width = m_pTexture->getWidth();
 	m_bitmapData.height = m_pTexture->getHeight();
@@ -71,16 +72,16 @@ bool Map::load(const char* name)
 				if (m_ppMap[h][w] == preventedBM)
 				{
 					prevented = true;
-					space.x1 = w*m_bitmapData.width; space.x2 = space.x1 + m_bitmapData.width;
-					space.y1 = h*m_bitmapData.height; space.y2 = space.y1 + m_bitmapData.height;
+					space.v1.x = w*m_bitmapData.width; space.v2.x = space.v1.x + m_bitmapData.width;
+					space.v1.y = h*m_bitmapData.height; space.v2.y = space.v1.y + m_bitmapData.height;
 					m_noSpace.push_back(space);
 				}
 
 			if (prevented)
 				continue;
 
-			space.x1 = w*m_bitmapData.width; space.x2 = space.x1 + m_bitmapData.width;
-			space.y1 = h*m_bitmapData.height; space.y2 = space.y1 + m_bitmapData.height;
+			space.v1.x = w*m_bitmapData.width; space.v2.x = space.v1.x + m_bitmapData.width;
+			space.v1.y = h*m_bitmapData.height; space.v2.y = space.v1.y + m_bitmapData.height;
 			m_freeSpace.push_back(space);
 		}
 	}
@@ -175,8 +176,8 @@ Space Map::getEmptySpace() const
 {
 	std::vector<Space> freeSpace;
 	Space space;
-	space.x1 = 500;
-	space.y1 = 500;
+	space.v1.x = 500;
+	space.v1.y = 500;
 	return space;
 	for (auto space : m_freeSpace)
 		if (isSpaceEmpty(space))
@@ -188,25 +189,25 @@ Space Map::getEmptySpace() const
 
 bool Map::isSpacesCollided(const Space& space1, const Space& space2) const
 {
-	if ((space2.x1 <= space1.x1 && space2.x2 >= space1.x1) || (space2.x1 <= space1.x2 && space1.x2 <= space2.x2) ||
+	/*if ((space2.x1 <= space1.x1 && space2.x2 >= space1.x1) || (space2.x1 <= space1.x2 && space1.x2 <= space2.x2) ||
 		(space2.x1 >= space1.x1 && space2.x2 >= space1.x1 && space1.x2 >= space2.x1 && space1.x2 >= space2.x2))
 		
 		if ((space2.y1 <= space1.y1 && space1.y1 <= space2.y2) || (space2.y1 <= space1.y2 && space1.y2 <= space2.y2) ||
 			(space1.y1 <= space2.y1 && space1.y1 <= space2.y2 && space1.y2 >= space2.y1 && space1.y2 >= space2.y2) )
 			return true;
-
+			*/
 	return false;
 }
 
 float Map::passX(float x, float x0, float y, uint16_t width) const
 {
 	return x;
-	Space os;
+	/*Space os;
 	os.x1 = x; os.x2 = os.x1 + 60; os.y1 = y; os.y2 = os.y1 +60;
 	for (auto space : m_noSpace)
 		if (isSpacesCollided(space, os))
 			return x0;
-
+			*/
 	return x;
 }
 
@@ -214,7 +215,7 @@ float Map::passY(float x, float y, float y0, uint16_t height) const
 {
 	return y;
 	Space os;
-	os.x1 = x; os.x2 = os.x1 + 60; os.y1 = y; os.y2 = os.y1 + 60;
+	//os.x1 = x; os.x2 = os.x1 + 60; os.y1 = y; os.y2 = os.y1 + 60;
 	for (auto space : m_noSpace)
 		if (isSpacesCollided(space, os))
 			return y0;
@@ -258,6 +259,7 @@ bool Map::isSpaceEmpty(const Space space) const
 std::vector<Space> Map::getEmptySpaces(uint16_t spaces) const
 {
 	std::vector<Space> space;
+	/*
 	for (int i = 0; i < spaces; i++)
 	{
 		Space ss;
@@ -273,7 +275,7 @@ std::vector<Space> Map::getEmptySpaces(uint16_t spaces) const
 
 		space.push_back(s);
 	}
-
+	*/
 	return space;
 }
 

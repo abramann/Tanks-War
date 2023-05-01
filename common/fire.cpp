@@ -126,5 +126,5 @@ void Fire::releaseNormalUpdate(float frameTime)
 	float cosA = cos(m_objectData.angle);
 	cosA = _round(cosA);
 	xAdd(m_fireInfo.speed*(sinA));
-	yDec(m_fireInfo.speed*(cosA));
+	yAdd(m_fireInfo.speed*(cosA));
 }

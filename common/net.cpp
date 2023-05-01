@@ -6,7 +6,6 @@
 #include "net.h"
 using namespace netNS;
 
-#pragma comment(lib,"Ws2_32.lib")
 
 //=============================================================================
 // Constructor

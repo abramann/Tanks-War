@@ -17,6 +17,7 @@
 #include "net.h"
 #include "crc32.h"
 
+
 extern uint64_t g_frameCounter;
 
 #define COLOR_ARGB D3DCOLOR_ARGB
@@ -26,7 +27,6 @@ extern uint64_t g_frameCounter;
 typedef D3DCOLOR Color;
 typedef D3DXVECTOR2 V2;
 typedef D3DXVECTOR3 V3;
-typedef LPDIRECT3DVERTEXBUFFER9 LPVertexBuffer;
 typedef uint8_t PlayerID;
 typedef ImGuiKey Key;
 typedef unsigned short Port;
@@ -44,51 +44,72 @@ typedef uint32_t uint32;
 typedef uint64_t uint64;
 typedef D3DXMATRIX Matrix;
 typedef HRESULT Result;
-typedef D3DXQUATERNION Quaternion;
 
-constexpr auto COLOR_BLACK = COLOR_XRGB(0, 0, 0);
-constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
-constexpr auto COLOR_ALPHA = COLOR_ARGB(0, 0, 0, 255);
+#ifdef _BUILD_WITH_D3D9
+
+typedef LPDIRECT3DTEXTURE9 LPTextureD3D;
+typedef LPDIRECT3DVERTEXBUFFER9 LPVertexBuffer;
+
+#else ifdef _BUILD_WITH_D3D11
+
+#include <D3D11.h>
+#include <D3DX11.h>
+#include <D3D10.h>
+#include <D3Dcompiler.h>
+
+typedef ID3D11ShaderResourceView* LPTextureD3D;
+typedef ID3D11Buffer* LPVertexBuffer;
+
+#endif
+
+#define IN_RANGE(n, startRange, endRange) (bool)(n >= startRange && n <= endRange)
+
 constexpr double PI = 3.14159265;
-constexpr auto FPS_UPDATE_DELAY = 0.5f;
-constexpr auto FRAME_RATE = 240;
-constexpr auto MIN_FRAME_RATE = 10;
-constexpr auto MIN_FRAME_TIME = 20;
-constexpr auto MAX_FRAME_TIME = 80;
-constexpr auto MAX_PLAYER_NAME = 20;
-constexpr auto MAX_PACKET_SIZE = 128;
-constexpr DWORD INVALID_ADDRESS = 0xFFFFFFF;
-constexpr uint8_t INVALID_ID = -1;
-constexpr auto NET_RESPONSE = 1;
-constexpr auto NET_NORESPONSE = -1;
-constexpr auto MAX_PLAYERS = 12;
-constexpr int MAX_PORT = 4861;
-constexpr int MIN_PORT = 10;
-constexpr unsigned short UNSPECIFIED_PORT = 0xCCCC;
-constexpr float UNDEFINED_POSITION = 0xFFFF;
-constexpr uint8_t MAX_FILE_NAME = 255;
-constexpr auto INVALID_DATA = 0xFFFF;
 constexpr auto  MIN_RESOLUTION_WIDTH = 800;
 constexpr auto  MIN_RESOLUTION_HEIGHT = 600;
-constexpr BYTE BYTE_INVALID_DATA = 0xFF;
-constexpr auto TANK_ROTATE_AMOUNT = PI / 8;
 constexpr auto  VERTEX_FVF = D3DFVF_XYZ | D3DFVF_TEX1;
-constexpr auto GAME_INFO_PATH = "Assets\\ini\\game-info.txt";
-constexpr auto OBJECT_INFO_PATH = "Assets\\ini\\object-info.txt";
-constexpr auto TANK_INFO_PATH = "Assets\\ini\\tank-info.txt";
-constexpr auto IMAGE_INFO_PATH = "Assets\\ini\\image-info.txt";
 constexpr auto CLIENT_INFO_PATH = "Assets\\ini\\client-info.txt";
-constexpr auto SERVER_INFO_PATH = "Assets\\ini\\server-info.txt";
-constexpr auto FIRE_DATA_PATH = "Assets\\ini\\fire-info.txt";
-constexpr auto TEXTURE_DIR = "Assets\\texture\\";
-constexpr auto MAP_DIR = "Assets\\maps\\";
-constexpr auto MAX_NAME_LEN = 20;
 constexpr auto CLIENT_PRESENT_TIME = 5000;
-constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
-constexpr DWORD INVALID_PTR = 0xcdcdcdcd;
+constexpr auto COLOR_ALPHA = COLOR_ARGB(0, 0, 0, 255);
+constexpr auto COLOR_BLACK = COLOR_XRGB(0, 0, 0);
+constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
+constexpr auto FIRE_DATA_PATH = "Assets\\ini\\fire-info.txt";
+constexpr auto FRAME_RATE = 240;
+constexpr auto GAME_INFO_PATH = "Assets\\ini\\game-info.txt";
+constexpr auto IMAGE_INFO_PATH = "Assets\\ini\\image-info.txt";
+constexpr auto INVALID_DATA = 0xFFFF;
+constexpr auto MAP_DIR = "Assets\\maps\\";
+constexpr auto MAX_FRAME_TIME = 80;
+constexpr auto MAX_NAME_LEN = 20;
+constexpr auto MAX_PACKET_SIZE = 128;
+constexpr auto MAX_PLAYERS = 12;
+constexpr auto MIN_FRAME_RATE = 10;
+constexpr auto MIN_FRAME_TIME = 20;
+constexpr auto OBJECT_INFO_PATH = "Assets\\ini\\object-info.txt";
+constexpr auto PROJECT_FAR_PLANE = 1000.0f;
 constexpr auto PROJECT_FOV = PI / 2;
 constexpr auto PROJECT_NEAR_PLANE = 1.0f;
-constexpr auto PROJECT_FAR_PLANE = 1000.0f;
+constexpr auto SERVER_INFO_PATH = "Assets\\ini\\server-info.txt";
+constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
+constexpr auto TANK_INFO_PATH = "Assets\\ini\\tank-info.txt";
+constexpr auto TANK_ROTATE_AMOUNT = PI / 8;
+constexpr auto TEXTURE_DIR = "Assets\\texture\\";
+constexpr auto TEXTURE_TANK_DESTROY_ROWS_COLUMNS = 4;
+constexpr auto UPDATE_DELAY_FPS = 0.5f;
+constexpr auto UPDATE_DELAY_TANK_DESTROY = 100;
+constexpr BYTE BYTE_INVALID_DATA = 0xFF;
+constexpr DWORD INVALID_ADDRESS = 0xFFFFFFF;
+constexpr DWORD INVALID_PTR = 0xcdcdcdcd;
+constexpr float UNDEFINED_POSITION = 0xFFFF;
+constexpr int MAX_PORT = 4861;
+constexpr int MIN_PORT = 10;
+constexpr uint8_t INVALID_ID = -1;
+constexpr uint8_t MAX_FILE_NAME = 255;
+constexpr unsigned short UNSPECIFIED_PORT = 0xCCCC;
+constexpr auto LOGO_WIDTH = 800;
+constexpr auto LOGO_HEIGHT = 600;
+constexpr auto TEXTURE_PLAYER_TANK = 2;
+constexpr auto TEXTURE_ENEMY_TANK = 8;
 
 constexpr Key A_KEY = ImGuiKey_A;
 constexpr Key B_KEY = ImGuiKey_B;
@@ -243,21 +264,6 @@ inline uint32_t _rand(uint32_t max)
 	return ::GetTickCount() % max;
 }
 
-inline int64_t getTime()
-{
-	return timeGetTime();
-	LARGE_INTEGER performanceCounter;
-	QueryPerformanceCounter(&performanceCounter);
-	return performanceCounter.QuadPart;
-}
-
-inline int64_t getFreq()
-{
-	LARGE_INTEGER performanceCounter;
-	QueryPerformanceFrequency(&performanceCounter);
-	return performanceCounter.QuadPart;
-}
-
 template <typename T>
 inline T* getIdItem(const PlayerID id, std::vector<T>* item)
 {
@@ -316,7 +322,7 @@ struct TextureVertices
 
 struct SpriteData
 {
-	LPDIRECT3DTEXTURE9 lpTexture;
+	LPTextureD3D lpTexture;
 	uint16_t width, height;
 	uint16_t textureWidth, textureHeight;
 	float x, y;
@@ -330,7 +336,7 @@ struct SpriteData
 
 struct GameInfo
 {
-	uint8_t fullScreen;
+	int8 windowed;
 	uint16_t width, height;
 };
 
@@ -389,15 +395,7 @@ struct MapData
 
 struct Space
 {
-	Space() {};
-	Space(int32 _x1, int32 _y1, int32 _x2, int32 _y2,
-		int32 _x3, int32 _y3, int32 _x4, int32 _y4) :
-		x1(_x1), y1(_y1), x2(_x2), y2(_y2),
-		x3(_x3), y3(_y3), x4(_x4), y4(_y4) {}
-	int32 x1, y1;
-	int32 x2, y2;
-	int32 x3, y3;
-	int32 x4, y4;
+	V3 v1, v2, v3, v4;
 };
 
 struct ServerInfo
@@ -420,9 +418,9 @@ struct PlayerIniData
 
 struct PlayerUpdate
 {
-	uint16_t x, y;
-	uint8_t health;
-	float angle;
+	V3 position;
+	V3 rotate;
+	float health;
 	PlayerID id;
 };
 
@@ -564,8 +562,13 @@ enum ServerState
 
 enum VB_USAGE
 {
-	VB_USAGE_WRITEONLY = D3DUSAGE_WRITEONLY,
-	VB_USAGE_DYNAMIC = D3DUSAGE_DYNAMIC
+#ifdef _BUILD_WITH_D3D9
+	VB_USAGE_CONST = D3DUSAGE_WRITEONLY,
+	VB_USAGE_WRITE = D3DUSAGE_DYNAMIC
+#else ifdef _BUILD_WITH_D3D11
+	VB_USAGE_CONST = D3D11_USAGE_IMMUTABLE,
+	VB_USAGE_WRITE = D3D11_USAGE_DYNAMIC
+#endif
 };
 extern GameInfo g_gameInfo;
 

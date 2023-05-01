@@ -196,10 +196,10 @@ void Image::setLookTo(const Image & image)
 Space Image::getAllocatedSpace() const
 {
 	Space space;
-	space.x1 = m_spriteData.x;
+	/*space.x1 = m_spriteData.x;
 	space.x2 = space.x1 + m_spriteData.width;
 	space.y1 = m_spriteData.y;
-	space.y2 = space.y1 + m_spriteData.height;
+	space.y2 = space.y1 + m_spriteData.height;*/
 	return space;
 }
 

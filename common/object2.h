@@ -7,11 +7,11 @@ class Map2;
 class Object2 : public Image2
 {
 public:
+
 	Object2();
 	~Object2();
 	virtual void initialize(Texture* texture, const Game* game);
 	virtual void update(const float frmaeTime);
-	
 	virtual void executeBack();
 	virtual void executeDie();
 	virtual void executeForward();
@@ -28,10 +28,10 @@ protected:
 	virtual void playSoundLeft() = 0;
 	virtual void playSoundDie() = 0;
 
+	const Game* m_pGame;
 	Audio* m_pAudio;
 	Map2* m_pMap;
 	float m_health, m_velocity;
 	Sound m_soundForward, m_soundBack, m_soundRight, m_soundLeft;
 	bool m_playSound;
 };
-

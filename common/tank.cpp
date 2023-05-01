@@ -23,7 +23,7 @@ void Tank::initialize(Map * map, TextureManger * textureManger, Texture * textur
 	m_tankInfo = *textureManger->getTextureInfo(texture->getNumber())->tankInfo;
 	m_pFire = m_pTextureManger->getTexture(m_tankInfo.fireTexture);
 	m_fire.initialize(this, m_pMap, m_pTextureManger, m_pFire, m_pGraphics);
-	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(6 * sizeof(Vertex), VB_USAGE_WRITEONLY);
+	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(6 * sizeof(Vertex), VB_USAGE_WRITE);
 	float width = m_spriteData.width*1.0f, height = m_spriteData.height*1.0f;
 	Vertex v[6];
 	v[0] = Vertex(-width, -height, 0.0f, 0.0f, 1.0f);

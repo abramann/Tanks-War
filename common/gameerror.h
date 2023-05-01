@@ -35,7 +35,7 @@ public:
 	// copy constructor
 	GameError(const GameError& e) :std::exception(e), errorCode(e.errorCode), message(e.message) {}
 	// constructor with args
-	GameError(int code, const std::string &s) :errorCode(code), message(s) {}
+	GameError(int code, const std::string s) :errorCode(code), message(s) {}
 	// assignment operator
 	GameError& operator= (const GameError& rhs)
 	{

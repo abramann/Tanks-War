@@ -18,7 +18,6 @@ bool TextureManger::initialize(Graphics* graphics)
 	m_textures = FileIO::getDirFiles(TEXTURE_DIR);
 	m_pTexture = new Texture[m_textures];
 	return load();
-
 }
 constexpr auto MAX_FILE_NAME_LEN = 30;
 

@@ -14,7 +14,7 @@ public:
 	void onResetDevice();
 	void release();
 	void Texture::read();
-	LPDIRECT3DTEXTURE9 getTexture() const { return m_lpTexture; }
+	LPTextureD3D getTexture() const { return m_lpTexture; }
 	uint16_t getWidth()	const	{ return m_width; }
 	uint16_t getHeight() const	{ return m_height; }
 	std::string getFilePath() const { return m_file; };
@@ -37,7 +37,7 @@ protected:
 
 	std::string m_file;
 	Graphics* m_pGraphics;
-	LPDIRECT3DTEXTURE9 m_lpTexture;
+	LPTextureD3D m_lpTexture;
 	uint32_t m_width, m_height;
 	uint8_t m_number;
 
