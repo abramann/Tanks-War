@@ -1,9 +1,9 @@
 #include "constants.h"
 #include "tankswarserver.h"
 #include "fileio.h"
-
+#ifdef _DEBUG
 #include <vld.h>	// For detecting memory leaks
-
+#endif
 #pragma comment(lib,"winmm.lib") // Includes timeGetTime
 #pragma comment(lib,"d3d9.lib")	// Include dx9 apis
 #pragma comment(lib,"d3dx9.lib")

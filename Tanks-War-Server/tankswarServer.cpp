@@ -10,10 +10,11 @@ TanksWarServer::~TanksWarServer()
 {
 }
 
-void TanksWarServer::initialize(HINSTANCE hInstance, HWND _hWnd)
+void TanksWarServer::initialize(HINSTANCE hInstance, HWND hwnd)
 {
-	Game::initialize(hInstance, _hWnd);
-	m_server.initialize(m_pMap);
+	Game::initialize(hInstance, hwnd);
+	m_server.initialize(m_pMap, m_pTextureManger, m_pAudio, m_pGraphics);
+	m_pInterface->initialize(&m_server, m_pMap, m_pAudio, m_pGraphics);
 }
 
 void TanksWarServer::collision()
@@ -27,25 +28,15 @@ void TanksWarServer::update()
 
 void TanksWarServer::render()
 {
-	switch (m_pInterface->m_menu)
+	m_pInterface->show();
+//	m_pInterface->showFPS(m_fps);
+	if (m_server.getState() == SERVER_RUNNING_HANDLING)
 	{
-	case MAIN_MENU:
-		m_pInterface->mainMenu();
-		break;
-	case MULTIPLAYER_MENU:
-		m_pInterface->multiplayerMenu(m_server, *m_pMap);
-		break;
-	case SETTING_MENU:
-		m_pInterface->settingMenu(*m_pGraphics, *m_pAudio);
-		break;
-	case QUIT_MENU:
-		PostQuitMessage(0);
-	default:
-		break;
+		m_pMap->draw();
+		for (auto clientData : m_server.getClientData())
+			clientData.playerTank.draw();
 	}
 
-	return;
-	m_pMap->draw();
 	
 } 
 

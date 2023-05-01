@@ -40,16 +40,10 @@
     <ClCompile Include="..\common\map.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\menu.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\net.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\object.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\tank.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\texture.cpp">
@@ -59,9 +53,6 @@
       <Filter>Common\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\unit.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\audio.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\fileio.cpp">
@@ -106,6 +97,12 @@
     <ClCompile Include="..\common\crc32.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\audio.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\tank.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\game.h">
@@ -129,9 +126,6 @@
     <ClInclude Include="..\common\map.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\menu.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\net.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
@@ -150,12 +144,6 @@
     <ClInclude Include="..\common\unit.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\audio.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\constants.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\fileio.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
@@ -170,6 +158,9 @@
     </ClInclude>
     <ClInclude Include="remoteplayer.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\audio.h">
+      <Filter>Common\Headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

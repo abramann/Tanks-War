@@ -8,11 +8,6 @@
 #include "remoteplayer.h"
 #include "server.h"
 
-
-static std::string file[] = { "Assets\\Texture\\player-tank.png",
-"Assets\\Texture\\explosion-animation.png" ,
- "Assets\\Texture\\bm0.jpg", "Assets\\Texture\\bm1.jpg","Assets\\Texture\\bullet_6.png", "Assets\\Texture\\explosion-fire-3.png", "Assets\\Texture\\fire-simple.png" };
-
 class TanksWarServer : public Game
 {
 public:

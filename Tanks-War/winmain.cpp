@@ -1,12 +1,19 @@
 #include "constants.h"
 #include "tankswar.h"
 #include "fileio.h"
-
 #include <vld.h> // For detecting memory leaks
 
-#pragma comment(lib,"winmm.lib") // Includes timeGetTime
-#pragma comment(lib,"d3d9.lib")	// Include dx9 apis
+#pragma comment(lib,"Ws2_32.lib")
 #pragma comment(lib,"d3dx9.lib")
+#ifdef _BUILD_WITH_D3D9
+#pragma comment(lib,"d3d9.lib")
+#else ifdef _BUILD_WITH_D3D11
+#pragma comment(lib,"d3dcompiler.lib")
+#pragma comment(lib,"d3d11.lib")
+#pragma comment(lib,"d3dx11.lib")
+#pragma comment(lib,"dxgi.lib")
+
+#endif
 
 bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow);
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -28,7 +35,7 @@ bool alreadyOpen()
 {
 	return false;
 	HANDLE mutex;
-	mutex = CreateMutexA(NULL, true, "tankswarbyabramann");
+	mutex = CreateMutexA(NULL, true, "tankswarbyabramann-343DW32Y5423T4");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
 		return true;
 	return false;
@@ -60,7 +67,7 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 		return false;
 
 	//set up the screen in windowed or fullscreen mode?
-	DWORD style = (g_gameInfo.fullScreen) ? WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP : WS_EX_TOPMOST;
+	DWORD style = (g_gameInfo.windowed) ? WS_EX_TOPMOST : WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP;
 	// Create window
 	hwnd = CreateWindow(
 		"Game Class",
@@ -79,7 +86,7 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	if (!hwnd)
 		return false;
 
-	if (!g_gameInfo.fullScreen)             // if window
+	if (g_gameInfo.windowed)             // if window
 	{
 		// Adjust window size so client area is GAME_WIDTH x g_gameInfo.height
 		RECT clientRect;

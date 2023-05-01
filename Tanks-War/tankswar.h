@@ -5,8 +5,6 @@
 #include "unit.h"
 #include "tank.h"
 #include "map.h"
-#include "player.h"
-#include "remoteplayer.h"
 #include "client.h"
 
 class TanksWar : public Game
