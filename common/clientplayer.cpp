@@ -2,6 +2,8 @@
 #include "game.h"
 #include "fileio.h"
 #include "camera.h"
+#include "texturemanger.h"
+#include "texture.h"
 
 ClientPlayer::ClientPlayer() : m_handleInput(true)
 {
@@ -31,7 +33,8 @@ void ClientPlayer::update(float frameTime)
 	m_act = PLAYER_ACT_NONE;
 	if (m_handleInput)
 		handleInput();
-
+	
+	m_pCamera->update(m_position);
 	Player::update(frameTime);
 }
 

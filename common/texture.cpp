@@ -34,12 +34,3 @@ void Texture::release()
 {
 	SAFE_RELEASE(m_lpTexture);
 }
-
-void Texture::getTextureName(char* name) const
-{
-	getFileNameFromPath(m_file, name);
-}
-
-void Texture::read()
-{
-}

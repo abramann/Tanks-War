@@ -106,10 +106,9 @@ constexpr int MIN_PORT = 10;
 constexpr uint8_t INVALID_ID = -1;
 constexpr uint8_t MAX_FILE_NAME = 255;
 constexpr unsigned short UNSPECIFIED_PORT = 0xCCCC;
-constexpr auto LOGO_WIDTH = 800;
-constexpr auto LOGO_HEIGHT = 600;
-constexpr auto TEXTURE_PLAYER_TANK = 2;
-constexpr auto TEXTURE_ENEMY_TANK = 8;
+constexpr auto TEXTURE_BULLET_ROWS_COLUMNS = 3;
+constexpr auto 	TEXTURE_TILEDS = 3;
+constexpr auto UPDATE_DELAY_BULLET = 80;
 
 constexpr Key A_KEY = ImGuiKey_A;
 constexpr Key B_KEY = ImGuiKey_B;
@@ -158,7 +157,7 @@ constexpr Vec4 colSERVER_STATE[] = { Vec4(0.7f,0.7f,0.7f,0.5f), Vec4(0.87f,0.77f
 template <typename T>
 inline void safeRelease(T& ptr)
 {
-	if (ptr)
+	if (::IsBadReadPtr(ptr,1) == false)
 	{
 		ptr->Release();
 		ptr = NULL;
@@ -171,7 +170,7 @@ inline void safeRelease(T& ptr)
 template <typename T>
 inline void safeDelete(T& ptr)
 {
-	if (ptr)
+	if (::IsBadReadPtr(ptr,1) == false)
 	{
 		delete ptr;
 		ptr = NULL;
@@ -294,6 +293,20 @@ enum PacketType
 	PACKET_PLAYERS_UPDATE,
 	PACKET_PLAYER_UPDATE,
 	PACKET_PLAYER_ACT
+};
+
+enum gameTexure
+{
+	TEXTURE_LOGO,
+	TEXTURE_PLAYER_TANK,
+	TEXTURE_ENEMY_TANK,
+	TEXTURE_TANK_DESTROY,
+	TEXTURE_BULLET,
+	TEXTURE_BULLET_DESTROY,
+	TEXTURE_TILED0,
+	TEXTURE_TILED1,
+	TEXTURE_TILED2,
+	TEXTURES
 };
 
 enum PlayerAct

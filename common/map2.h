@@ -1,12 +1,13 @@
 #pragma once
-#include "texturemanger.h"
-#include "graphics.h"
+#include "constants.h"
 #include <vector>
 
 class Game;
+class Graphics;
+class TextureManger;
 class Object2;
-const auto MAP_BITMAPS = 2;
-const auto TEXTURE_BITMAP_0 = 10;
+class Image2;
+class Texture;
 
 class Map2
 {
@@ -30,7 +31,7 @@ private:
 	bool areSpacesCollided(const Space space1, const Space space2) const;
 
 	TextureManger* m_pTextureManger;
-	Texture* m_pTexture[MAP_BITMAPS];
+	Texture* m_pTexture[TEXTURE_TILEDS];
 	Graphics* m_pGraphics;
 	char m_loadedMap[MAX_NAME_LEN];
 	std::vector< std::vector<char>> m_map;

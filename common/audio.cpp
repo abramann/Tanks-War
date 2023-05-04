@@ -13,26 +13,6 @@ Audio::~Audio()
 	release();
 }
 
-const char* MUSIC_PATH[] = {
-	"Assets\\audio\\music-main-menu.wav",
-	"Assets\\audio\\music-game.mp3",
-	"Assets\\audio\\music-win.mp3",
-	"Assets\\audio\\music-lose.mp3",
-};
-
-const char* SOUND_PATH[] = {
-	"Assets\\audio\\sound-button-clicked.wav",
-	"Assets\\audio\\sound-tank-forward.wav",
-	"Assets\\audio\\sound-tank-back.wav",
-	"Assets\\audio\\sound-tank-right.wav",
-	"Assets\\audio\\sound-tank-left.wav",
-	"Assets\\audio\\sound-tank-death.wav"
-	"Assets\\audio\\sound-tank-attack.wav",
-	"Assets\\audio\\sound-tank-attacked.wav",
-	"Assets\\audio\\sound-fire-release.wav"
-	"Assets\\audio\\sound-fire-hited.wav",
-};
-
 bool Audio::initialize()
 {
 	m_pSound = createIrrKlangDevice();
@@ -75,5 +55,6 @@ void Audio::stopAll()
 
 void Audio::release()
 {
-	m_pSound->drop();
+	if (m_pSound)
+		m_pSound->drop();
 }

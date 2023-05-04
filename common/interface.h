@@ -1,9 +1,10 @@
 #ifndef _INTERFACE_H
 #define _INTERFACE_H
 
-#include "graphics.h"
-#include "audio.h"
-#include "map.h"
+class Game;
+class Graphics;
+class Audio;
+class Map2;
 
 #ifdef _CLIENT_BUILD
 #include "..\Tanks-War\client.h"
@@ -24,9 +25,9 @@ public:
 	~Interface();
 
 #ifdef _CLIENT_BUILD
-	void initialize(Client* client, Map* map, Audio* audio, Graphics* graphics);
+	void initialize(Client* client, Game* game);
 #else ifdef _SERVER_BUILD
-	void initialize(Server* server, Map* map, Audio* audio, Graphics* graphics);
+	void initialize(Server* server, Game* game);
 #endif
 
 	void mainMenu();
@@ -58,7 +59,7 @@ private:
 
 	Graphics* m_pGraphics;
 	Audio* m_pAudio;
-	Map* m_pMap;
+	Map2* m_pMap;
 	ImFont* m_font[3];
 
 #ifdef _CLIENT_BUILD

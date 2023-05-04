@@ -1,5 +1,6 @@
 #include "interface.h"
 #include "fileio.h"
+#include "game.h"
 
 using namespace ImGui;
 
@@ -32,12 +33,12 @@ Interface::~Interface()
 }
 
 #ifdef _SERVER_BUILD
-void Interface::initialize(Server* server, Map* map, Audio* audio, Graphics* graphics)
+void Interface::initialize(Server* server, Game* game)
 {
-	m_pGraphics = graphics;
-	m_pAudio = audio;
+	m_pGraphics = game->getGraphics();
+	m_pAudio = game->getAudio();
+	m_pMap = game->getMap();
 	m_pServer = server;
-	m_pMap = map;
 	ImGuiIO& io = GetIO();
 	m_font[SMALL] = io.Fonts->AddFontFromFileTTF(PROGGYCLEAN_FONT, 12);
 	m_font[MED] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 19);
@@ -47,12 +48,12 @@ void Interface::initialize(Server* server, Map* map, Audio* audio, Graphics* gra
 
 #else ifdef _CLIENT_BUILD
 
-void Interface::initialize(Client* client, Map* map, Audio* audio, Graphics* graphics)
+void Interface::initialize(Client* client, Game* game)
 {
-	m_pGraphics = graphics;
-	m_pAudio = audio;
+	m_pGraphics = game->getGraphics();;
+	m_pAudio = game->getAudio();
 	m_pClient = client;
-	m_pMap = map;
+	m_pMap = game->getMap();
 	ImGuiIO& io = GetIO();
 	m_font[SMALL] = io.Fonts->AddFontFromFileTTF(PROGGYCLEAN_FONT, 12);
 	m_font[MED] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 19);

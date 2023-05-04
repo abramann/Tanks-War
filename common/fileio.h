@@ -12,11 +12,6 @@ public:
 	static uint8_t getDirFiles(std::string dir);
 	static std::vector<std::string> getDirFileList(const char* dir, const char* start = 0, const char* end = 0, bool extension = true);
 	static 	GameInfo readGameInfo();
-	static 	ObjectInfo* readObjectInfo(std::string name);
-	static ImageInfo* readImageInfo(std::string name);
-	static TankInfo* readTankInfo(std::string name);
-	static FireInfo* readFireInfo(std::string name);
-	static TextureInfo* readTextureInfo(std::string name);
 	static MapData readMapInfo(std::ifstream& ifs);
 	static Crc32 getCRC32(const char* file);
 

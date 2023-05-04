@@ -32,7 +32,8 @@ uint8_t FileIO::getDirFiles(std::string directory)
 
 size_t find_last_of(std::string str, char c)
 {
-	return str.find_last_of(c);
+	size_t result = str.find_last_of(c);
+	return result;
 }
 
 std::vector<std::string> FileIO::getDirFileList(const char * directory, const char * start, const char* end , bool extension)
@@ -77,83 +78,6 @@ GameInfo FileIO::readGameInfo()
 	return gameInfo;
 }
 
-ObjectInfo * FileIO::readObjectInfo(std::string name)
-{
-	static ObjectInfo objectInfo;
-	std::ifstream file(OBJECT_INFO_PATH);
-	std::string line;
-	while (std::getline(file, line))
-		if (line.compare(name) == 0)
-		{
-
-			readValues<float>(file, { &objectInfo.health, &objectInfo.speed });
-			readValues<uint8_t>(file, { &objectInfo.deathTexture });
-			break;
-		}
-
-	return &objectInfo;
-}
-
-ImageInfo* FileIO::readImageInfo(std::string name)
-{
-	static ImageInfo imageInfo;
-	std::ifstream file(IMAGE_INFO_PATH);
-	std::string line;
-	while (std::getline(file, line))
-		if (line.compare(name) == 0)
-		{
-			readValues<uint16_t>(file, { &imageInfo.width, &imageInfo.height });
-			readValues<uint8_t>(file, { &imageInfo.columns, &imageInfo.rows });
-			readValues<bool>(file, { &imageInfo.animate });
-			readValues<float>(file, { &imageInfo.animateSpeed, &imageInfo.scalling });
-			break;
-		}
-
-	return &imageInfo;
-}
-
-TankInfo * FileIO::readTankInfo(std::string name)
-{
-	static TankInfo tankInfo;
-	std::ifstream file(TANK_INFO_PATH);
-	std::string line;
-	while (std::getline(file, line))
-		if (line.compare(name) == 0)
-		{
-			readValues<uint8_t>(file, { &tankInfo.fireTexture });
-			break;
-		}
-
-	return &tankInfo;
-}
-
-FireInfo* FileIO::readFireInfo(std::string name)
-{
-	std::ifstream file(FIRE_DATA_PATH);
-	static FireInfo fireInfo;
-	std::string line;
-	while (std::getline(file, line))
-	{
-		if (line.compare(name) == 0)
-		{
-			readValues<float>(file,  {&fireInfo.speed,&fireInfo.damage });
-			readValues<uint8_t>(file, { &fireInfo.endTexture });
-			break;
-		}
-	}
-
-	return &fireInfo;
-}
-
-TextureInfo * FileIO::readTextureInfo(std::string name)
-{
-	static TextureInfo textureInfo = { 0 };
-	textureInfo.imageInfo = FileIO::readImageInfo(name);
-	textureInfo.objectInfo = FileIO::readObjectInfo(name);
-	textureInfo.tankInfo = FileIO::readTankInfo(name);
-	textureInfo.fireInfo = FileIO::readFireInfo(name);
-	return &textureInfo;
-}
 MapData FileIO::readMapInfo(std::ifstream& ifs)
 {
 	MapData mapData;
@@ -192,7 +116,7 @@ Crc32 FileIO::getCRC32(const char* file)
 
 ClientInfo FileIO::readClientInfo()
 {
-	static ClientInfo clientInfo;
+	ClientInfo clientInfo;
 	std::ifstream file(CLIENT_INFO_PATH);
 	std::string line;
 	std::string s1, s2;

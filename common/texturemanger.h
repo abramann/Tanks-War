@@ -2,6 +2,21 @@
 #include "constants.h"
 #include "texture.h"
 
+class Graphics;
+
+constexpr char* gameTexturePath[] =
+{
+	"Assets\\texture\\logo.png",
+	"Assets\\texture\\player-tank.png",
+	"Assets\\texture\\enemy-tank.png",
+	"Assets\\texture\\tank-destroy.png",
+	"Assets\\texture\\bullet.png",
+	"Assets\\texture\\bullet-destroy.png",
+	"Assets\\texture\\tiled-0.png",
+	"Assets\\texture\\tiled-1.png",
+	"Assets\\texture\\tiled-2.png",
+};
+
 class TextureManger
 {
 public:
@@ -9,20 +24,12 @@ public:
 	TextureManger();
 	~TextureManger();
 	bool initialize(Graphics* graphics);
-	bool load();
 	Texture* getTexture(uint8_t texture) { return &m_pTexture[texture]; }
-	Texture* getTiledMapTexture() const { return m_pTiled; }
-	Texture* getLogoTexture() const { return m_pLogo; }
-	const TextureInfo* getTextureInfo(uint8_t texture) const { return &m_TextureInfo[texture]; }
 
 private:
 
+	bool load();
+
 	Graphics* m_pGraphics;
 	Texture* m_pTexture;
-	Texture *m_pTiled;
-	Texture* m_pLogo;
-	std::vector<std::string> m_textureList;  
-	std::vector<TextureInfo> m_TextureInfo;
-	uint8_t m_textures;
-
 };

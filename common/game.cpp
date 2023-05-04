@@ -1,6 +1,6 @@
 #include "game.h"
 #include "imgui\imgui_impl_win32.h"
-#include <timeapi.h>
+#include "texturemanger.h"
 
 Game::Game() : m_timeDeltaMillsec(0)
 {

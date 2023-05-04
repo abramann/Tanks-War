@@ -1,8 +1,12 @@
 #pragma once
 #include "constants.h"
-#include "tank2.h"
+#include "image2.h"
 
 class Game;
+class Tank2;
+class Map2;
+class Audio;
+class TextureManger;
 
 class Bullet : public Image2
 {

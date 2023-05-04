@@ -7,6 +7,7 @@ class Camera;
 class ClientPlayer : public Player
 {
 public:
+
 	ClientPlayer();
 	~ClientPlayer();
 	virtual void initialize(PlayerID id, Game* game);

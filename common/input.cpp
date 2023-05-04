@@ -2,14 +2,17 @@
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-Input::Input() : m_handleInput(false)
+Input::Input() : m_handleInput(false), m_hwnd(0)
 {
 }
 
 Input::~Input()
 {
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	if (m_hwnd)
+	{
+		ImGui_ImplWin32_Shutdown();
+		ImGui::DestroyContext();
+	}
 }
 
 bool Input::initialize(HWND hwnd)

@@ -7,7 +7,7 @@ class Camera;
 
 struct Resolution
 {
-	uint16_t width, height;
+	int16 width, height;
 };
 
 class Graphics

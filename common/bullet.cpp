@@ -1,11 +1,8 @@
 #include "bullet.h"
 #include "game.h"
-#include "object2.h"
-
-constexpr auto TEXTURE_BULLET = 5;
-constexpr auto TEXTURE_BULLET_DESTROY = 7;
-constexpr auto TEXTURE_BULLET_ROWS_COLUMNS = 3;
-constexpr auto UPDATE_DELAY_BULLET = 80;
+#include "tank2.h"
+#include "texturemanger.h"
+#include "texture.h"
 
 Bullet::Bullet(const Game * game, const Tank2 * tank) : m_pTank(tank), m_hit(false), m_finish(false)
 {

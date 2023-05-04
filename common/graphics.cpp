@@ -28,11 +28,6 @@ Graphics::Graphics() : m_lpDevice3d(NULL), m_deviceState(NULL)
 Graphics::~Graphics()
 {
 	release();
-#ifdef _BUILD_WITH_D3D9
-	ImGui_ImplDX9_Shutdown();
-#else _BUILD_WITH_D3D11
-	ImGui_ImplDX11_Shutdown();
-#endif
 }
 
 bool Graphics::initialize(HWND hwnd)
@@ -128,6 +123,10 @@ bool Graphics::initialize(HWND hwnd)
 	if (FAILED(hr))
 		return false;
 
+	bool r = ImGui_ImplDX11_Init(m_lpDevice3d, m_lpDeviceContext);
+	if (!r)
+		return false;
+
 	ID3D11Texture2D* lpBackBuffer;
 	hr = m_lpSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&lpBackBuffer);
 
@@ -168,7 +167,7 @@ bool Graphics::initialize(HWND hwnd)
 	ID3D10Blob* lpVSByteCode, *lpPSByteCode;
 
 	D3DX11CompileFromFileA("shader.fx", 0, 0, "VS_Start", "vs_4_0",
-		D3DCOMPILE_DEBUG, 0, 0, &lpVSByteCode, 0,
+		D3DXSHADER_DEBUG, 0, 0, &lpVSByteCode, 0,
 		&hr);
 	if (FAILED(hr))
 		return false;
@@ -232,7 +231,6 @@ bool Graphics::initialize(HWND hwnd)
 	m_lpDeviceContext->PSSetSamplers(0, 1, &m_lpSampleState);
 	m_lpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	bool r = ImGui_ImplDX11_Init(m_lpDevice3d, m_lpDeviceContext);
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory(&blendDesc, sizeof(blendDesc));
 
@@ -254,8 +252,8 @@ bool Graphics::initialize(HWND hwnd)
 
 	m_lpDevice3d->CreateBlendState(&blendDesc, &m_lpBlendState);
 	m_lpDeviceContext->OMSetBlendState(m_lpBlendState, blendFactor, 0xffffffff);
-	getSupportedResolutions();
-	return r;
+//	getSupportedResolutions();
+	return true;
 #endif
 }
 
@@ -315,10 +313,10 @@ void Graphics::spriteDraw(SpriteData sd)
 
 void Graphics::release()
 {
-	//SAFE_RELEASE(m_sprite);
-	SAFE_RELEASE(m_lpDevice3d);
 #ifdef _BUILD_WITH_D3D9
 	SAFE_RELEASE(m_lpDirect3d);
+	if(m_lpDevice3d)
+		ImGui_ImplDX9_Shutdown();
 #else ifdef _BUILD_WITH_D3D11
 	SAFE_RELEASE(m_lpDeviceContext);
 	SAFE_RELEASE(m_lpRenderTargetView);
@@ -331,7 +329,11 @@ void Graphics::release()
 	SAFE_RELEASE(m_lpInputLayout);
 	SAFE_RELEASE(m_lpSampleState);
 	SAFE_RELEASE(m_lpBlendState);
+	if (m_lpDevice3d)
+		ImGui_ImplDX11_Shutdown();
 #endif
+
+	SAFE_RELEASE(m_lpDevice3d);
 }
 
 Result Graphics::reset()
@@ -570,7 +572,7 @@ Result Graphics::end()
 
 Result Graphics::showBackbuffer()
 {
-	//m_deviceState = m_lpDevice3d->TestCooperativeLevel();
+	// m_deviceState = m_lpDevice3d->TestCooperativeLevel();
 	Result r;
 #ifdef _BUILD_WITH_D3D9
 	r = m_lpDevice3d->Present(NULL, NULL, NULL, NULL);

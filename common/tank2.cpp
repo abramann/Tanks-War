@@ -1,6 +1,8 @@
 #include "tank2.h"
 #include "game.h"
 #include "bullet.h"
+#include "texturemanger.h"
+#include "texture.h"
 
 constexpr auto HEALTH_TANK = 100;
 constexpr auto VELOCITY_TANK = 10;

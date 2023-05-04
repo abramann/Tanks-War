@@ -1,49 +1,33 @@
 #include "texturemanger.h"
 #include "fileio.h"
 #include "graphics.h"
+#include "texture.h"
 
 TextureManger::TextureManger()
 {
+	m_pTexture = new Texture[TEXTURES];
 }
 
 TextureManger::~TextureManger()
 {
-	if (m_pTexture != (Texture*)INVALID_PTR)
-		SAFE_DELETE_ARRAY(m_pTexture);
+	SAFE_DELETE_ARRAY(m_pTexture);
 }
 
 bool TextureManger::initialize(Graphics* graphics)
 {
 	m_pGraphics = graphics;
-	m_textures = FileIO::getDirFiles(TEXTURE_DIR);
-	m_pTexture = new Texture[m_textures];
-	return load();
+	bool result = load();
+	return result;
 }
-constexpr auto MAX_FILE_NAME_LEN = 30;
 
 bool TextureManger::load()
 {
-	m_textureList = FileIO::getDirFileList(TEXTURE_DIR);
-	uint8_t counter = 0;
-	char name[MAX_FILE_NAME_LEN] = { 0 };
-	for (auto item : m_textureList)
+	for (int16 i = 0; i < TEXTURES; i++)
 	{
-		item.insert(0, TEXTURE_DIR);
-		if (!m_pTexture[counter].initialize(item.c_str(), m_pGraphics))
-			throw GameError(gameErrorNS::FATAL_ERROR, item.c_str());
-
-		m_pTexture[counter].setNumber(counter);
-		m_pTexture[counter].getTextureName(name);
-		if (strComp(name, "tiled-0") == 0)
-			m_pTiled = &m_pTexture[counter];
-		else if (strComp(name, "logo") == 0)
-			m_pLogo = &m_pTexture[counter];
-		
-		TextureInfo& textureInfo = *FileIO::readTextureInfo(name);
-		m_TextureInfo.push_back(textureInfo);
-		counter++;
+		bool result = m_pTexture[i].initialize(gameTexturePath[i], m_pGraphics);
+		if (!result)
+			return false;
 	}
-	memset(name, 0, MAX_NAME_LEN);
-	
+
 	return true;
 }
