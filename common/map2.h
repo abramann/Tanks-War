@@ -18,9 +18,12 @@ public:
 	bool load(const char* map);
 	void draw() const;
 	void clear();
+	V2 getMapSize() const { 
+		return V2(m_width*m_tiledSize.x , m_height*m_tiledSize.y); }
 	float passX(const Image2* object, float x) const;
 	float passY(const Image2* object, float y) const;
 	bool isCollided(const Image2* image) const;
+	bool isOutOfRange(const Space space) const;
 	Object2* getObject(V3 position) const;
 	static Space getImageSpace(const Image2* image, float x0 = 0, float y0 = 0);
 
@@ -43,4 +46,5 @@ private:
 	std::vector<int8> m_preventedBitmap;
 	std::vector<uint32_t> m_startVertex, m_lenVertex;
 	std::vector<Object2*> m_object;
+	V2 m_tiledSize;
 };

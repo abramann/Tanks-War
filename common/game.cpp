@@ -32,11 +32,12 @@ LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProcA(hWnd, msg, wParam, lParam);
 }
 
-void Game::initialize(HINSTANCE hInstance, HWND hWnd)
+void Game::initialize(HINSTANCE hInstance, HWND hwnd)
 {
-	if (!m_pInput->initialize(hWnd))
+	m_hwnd = hwnd;
+	if (!m_pInput->initialize(m_hwnd))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize Input");
-	if(!m_pGraphics->initialize(hWnd))
+	if(!m_pGraphics->initialize(this))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize Graphics");
 	if (!m_pAudio->initialize())
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize Audio");

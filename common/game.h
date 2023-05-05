@@ -38,6 +38,7 @@ public:
 	TextureManger* getTextureManger() const { return m_pTextureManger; }
 	Map2* getMap()	const { return m_pMap; }
 	Timer* getTimer()	const { return m_pTimer; }
+	HWND getHwnd() const { return m_hwnd; }
 
 protected:
 
@@ -48,6 +49,7 @@ protected:
 	Interface* m_pInterface;
 	Map2* m_pMap;
 	Timer* m_pTimer;
+	HWND m_hwnd;
 	float m_timeDeltaMillsec;
 	float m_fps;
 	Image2 m_logo;

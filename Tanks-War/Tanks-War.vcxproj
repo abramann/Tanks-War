@@ -44,7 +44,6 @@
     <ClInclude Include="..\common\game.h" />
     <ClInclude Include="..\common\gameerror.h" />
     <ClInclude Include="..\common\player.h" />
-    <ClInclude Include="..\common\serverplayer.h" />
     <ClInclude Include="..\common\timer.h" />
     <ClInclude Include="..\common\graphics.h" />
     <ClInclude Include="..\common\image2.h" />
@@ -68,7 +67,6 @@
     <ClCompile Include="..\common\fileio.cpp" />
     <ClCompile Include="..\common\game.cpp" />
     <ClCompile Include="..\common\player.cpp" />
-    <ClCompile Include="..\common\serverplayer.cpp" />
     <ClCompile Include="..\common\timer.cpp" />
     <ClCompile Include="..\common\graphics.cpp" />
     <ClCompile Include="..\common\image2.cpp" />

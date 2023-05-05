@@ -2,6 +2,8 @@
 #include "fileio.h"
 #include "tank2.h"
 #include "map2.h"
+#include "texturemanger.h"
+#include "camera.h"
 
 #define TEST_NO_SERVER
 #ifdef TEST_NO_SERVER
@@ -22,8 +24,9 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 	Game::initialize(hInstance, hWnd);
 #ifdef TEST_NO_SERVER
 	m_pMap->load("Nova");
-	tank2.initialize(m_pTextureManger->getTexture(2), this);
+	tank2.initialize(m_pTextureManger->getTexture(TEXTURE_PLAYER_TANK), this);
 	tank2.setPosition(V3(330, 300, 0));
+
 #else
 	m_client.initialize(m_pMap, m_pInput, m_pTextureManger, m_pAudio, m_pGraphics);
 	m_pInterface->initialize(&m_client, m_pMap, m_pAudio, m_pGraphics);
@@ -54,6 +57,10 @@ void TanksWar::update()
 		tank2.executeLeft(0);
 	if (GetAsyncKeyState('K'))
 		tank2.executeAttack();
+
+
+	m_pGraphics->getCamera()->update(tank2.getPosition());
+
 	return;
 #endif
 	m_client.update();

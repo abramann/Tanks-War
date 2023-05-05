@@ -1,6 +1,8 @@
 #include "map2.h"
 #include "game.h"
 #include "object2.h"
+#include "texturemanger.h"
+#include "texture.h"
 #include "constants.h"
 #include "fileio.h"
 #include <fstream>
@@ -28,11 +30,11 @@ bool Map2::load(const char * map)
 		return false;
 
 	int32 totalBitmaps = m_width*m_height;
-	for (int i = 0; i < MAP_BITMAPS; i++)
-		m_pTexture[i] = m_pTextureManger->getTexture(i + TEXTURE_BITMAP_0);
+	for (int i = 0; i < TEXTURE_TILEDS; i++)
+		m_pTexture[i] = m_pTextureManger->getTexture(i + TEXTURE_TILED0);
 
-	float bitmapWidth = m_pTexture[0]->getWidth();;
-	float bitmapHeight = m_pTexture[0]->getHeight();
+	m_tiledSize.x = m_pTexture[0]->getWidth();;
+	m_tiledSize.y = m_pTexture[0]->getHeight();
 
 	std::vector< std::vector< std::vector<TextureVertices>>> vertices;
 	vertices.resize(m_usedBitmaps);
@@ -54,12 +56,12 @@ bool Map2::load(const char * map)
 	{
 		for (auto w = 0; w < m_width; w++)
 		{
-			vertices[m_map[h][w]][h][w].v1 = { (w + 1)*bitmapWidth ,(h)*bitmapHeight,0.0f,0.0f,1.0f };
-			vertices[m_map[h][w]][h][w].v2 = { (w)*bitmapWidth,(h)*bitmapHeight,0.0f,1.0f,1.0f };
-			vertices[m_map[h][w]][h][w].v3 = { (w)*bitmapWidth ,(h + 1)*bitmapHeight,0.0f,1.0f,0.0f };
-			vertices[m_map[h][w]][h][w].v4 = { (w)*bitmapWidth ,(h + 1)*bitmapHeight,0.0f,-1.0f,0.0f };
-			vertices[m_map[h][w]][h][w].v5 = { (w + 1)*bitmapWidth ,(h + 1)*bitmapHeight,0.0f,0.0f,0.0f };
-			vertices[m_map[h][w]][h][w].v6 = { (w + 1)*bitmapWidth,(h)*bitmapHeight,0.0f,0.0f,1.0f };
+			vertices[m_map[h][w]][h][w].v1 = { (w + 1)*m_tiledSize.x ,(h)*m_tiledSize.y,0.0f,0.0f,1.0f };
+			vertices[m_map[h][w]][h][w].v2 = { (w)*m_tiledSize.x,(h)*m_tiledSize.y,0.0f,1.0f,1.0f };
+			vertices[m_map[h][w]][h][w].v3 = { (w)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,1.0f,0.0f };
+			vertices[m_map[h][w]][h][w].v4 = { (w)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,-1.0f,0.0f };
+			vertices[m_map[h][w]][h][w].v5 = { (w + 1)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,0.0f,0.0f };
+			vertices[m_map[h][w]][h][w].v6 = { (w + 1)*m_tiledSize.x,(h)*m_tiledSize.y,0.0f,0.0f,1.0f };
 
 			Space space;
 			bool prevented = false;
@@ -67,10 +69,10 @@ bool Map2::load(const char * map)
 				if (m_map[h][w] == preventedBM)
 				{
 					prevented = true;
-					space.v1.x = w*bitmapWidth,
-						space.v1.y = h*bitmapHeight;
-					space.v2.x = space.v1.x + bitmapWidth,
-						space.v2.y = space.v1.y + bitmapHeight;
+					space.v1.x = w*m_tiledSize.x,
+						space.v1.y = h*m_tiledSize.y;
+					space.v2.x = space.v1.x + m_tiledSize.x,
+						space.v2.y = space.v1.y + m_tiledSize.y;
 					m_noSpace.push_back(space);
 					break;
 				}
@@ -78,8 +80,8 @@ bool Map2::load(const char * map)
 			if (prevented)
 				continue;
 
-			space.v1.x = w*bitmapWidth; space.v2.x = space.v1.x + bitmapWidth;
-			space.v1.y = h*bitmapHeight; space.v2.y = space.v1.y + bitmapHeight;
+			space.v1.x = w*m_tiledSize.x; space.v2.x = space.v1.x + m_tiledSize.x;
+			space.v1.y = h*m_tiledSize.y; space.v2.y = space.v1.y + m_tiledSize.y;
 			m_freeSpace.push_back(space);
 		}
 	}
@@ -133,12 +135,13 @@ void Map2::clear()
 float Map2::passX(const Image2 * image, float x) const
 {
 	Space is = getImageSpace(image, x, 0);
+	float x0 = image->getPosition().x;
+	if (isOutOfRange(is))
+		return x0;
+
 	for (auto space : m_noSpace)
 		if (areSpacesCollided(space, is))
-		{
-			float x0 = image->getPosition().x;
 			return x0;
-		}
 
 	return x;
 }
@@ -146,12 +149,13 @@ float Map2::passX(const Image2 * image, float x) const
 float Map2::passY(const Image2 * image, float y) const
 {
 	Space is = getImageSpace(image, 0, y);
+	float y0 = image->getPosition().y;
+	if (isOutOfRange(is))
+		return y0;
+
 	for (auto space : m_noSpace)
 		if (areSpacesCollided(space, is))
-		{
-			float y0 = image->getPosition().y;
 			return y0;
-		}
 
 	return y;
 }
@@ -159,10 +163,31 @@ float Map2::passY(const Image2 * image, float y) const
 bool Map2::isCollided(const Image2 * image) const
 {
 	Space is = getImageSpace(image);
+	if (isOutOfRange(is))
+		return true;
+
 	for (auto space : m_noSpace)
 		if (areSpacesCollided(space, is))
 			return true;
 	return false;
+}
+
+bool Map2::isOutOfRange(const Space space) const
+{
+	const int32 x = m_width*m_tiledSize.x,
+		y = m_height*m_tiledSize.y;
+	if (IN_RANGE(space.v1.x, 0, x) &&
+		IN_RANGE(space.v2.x, 0, x) &&
+		IN_RANGE(space.v3.x, 0, x) &&
+		IN_RANGE(space.v4.x, 0, x)
+		)
+		if (IN_RANGE(space.v1.y, 0, y) &&
+			IN_RANGE(space.v2.y, 0, y) &&
+			IN_RANGE(space.v3.y, 0, y) &&
+			IN_RANGE(space.v4.y, 0, y)
+			)
+			return false;
+	return true;
 }
 
 Object2 * Map2::getObject(V3 position) const
@@ -186,7 +211,6 @@ Object2 * Map2::getObject(V3 position) const
 
 bool Map2::read()
 {
-
 	std::string path = MAP_DIR;
 	path.operator+=(m_loadedMap);
 	path.operator+=(".map");
@@ -210,8 +234,8 @@ bool Map2::read()
 		for (int32 j = 0; j < m_width; j++)
 		{
 			m_map[i][j] = line[j * 2];
-			byte b = m_map[i][j];
-			m_map[i][j] = std::stoi((char*)&b);
+			byte n = m_map[i][j];
+			m_map[i][j] = std::stoi((char*)&n);
 		}
 
 		i++;

@@ -83,7 +83,6 @@ void Bullet::executeLaunching(float frameTime)
 {
 	float incX = m_speed*sin(m_rotate.z),
 		incY = m_speed*cos(m_rotate.z);
-	auto p = m_pTank->getPosition();
 	m_position;
 	addX(-incX);
 	addY(incY);

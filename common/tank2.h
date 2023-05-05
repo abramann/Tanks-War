@@ -4,8 +4,9 @@
 class Game;
 class Bullet;
 
-constexpr auto BULLET_SPEED = 10;
+constexpr auto BULLET_SPEED = 20;
 constexpr auto BULLET_DAMAGE = 40;
+
 class Tank2 : public Object2
 {
 public:

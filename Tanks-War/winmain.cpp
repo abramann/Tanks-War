@@ -1,7 +1,7 @@
 #include "constants.h"
 #include "tankswar.h"
 #include "fileio.h"
-#include <vld.h> // For detecting memory leaks
+// #include <vld.h> // For detecting memory leaks
 
 #pragma comment(lib,"Ws2_32.lib")
 #pragma comment(lib,"d3dx9.lib")

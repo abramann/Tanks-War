@@ -1,6 +1,9 @@
 #include "camera.h"
+#include "game.h"
+#include "map2.h"
 
-Camera::Camera()
+Camera::Camera() : m_pGraphics(0), m_z(CAMERA_HEIGHT), m_nearPlane(CAMERA_NEARPLANE), m_farPlane(CAMERA_FARPLANE),
+m_fov(CAMERA_FOV)
 {
 }
 
@@ -9,23 +12,49 @@ Camera::~Camera()
 {
 }
 
+void Camera::initialize(const Game* game)
+{
+	m_aspectRation = g_gameInfo.width*1.0f / g_gameInfo.height*1.0f;
+	m_pGraphics = game->getGraphics();
+	m_pMap = game->getMap();
+	D3DXMatrixPerspectiveFovLH(&m_proj, m_fov, m_aspectRation, m_nearPlane,
+		m_farPlane);
+#ifdef _BUILD_WITH_D3D9
+	LPDevice lpDevice3d = m_pGraphics->getDevice();
+	lpDevice3d->SetTransform(D3DTS_PROJECTION, &m_proj);
+#else ifdef _BUILD_WITH_D3D11
+
+#endif
+}
+
 void Camera::update(V3 lookTo)
 {
-	Matrix proj, cam;
-	D3DXMatrixPerspectiveFovLH(
-		&proj, PI * 0.5f, // 90 - degree
-		(float)1.333F,
-		1.0f,
-		1000.0f);
+	V2 mapSize = m_pMap->getMapSize();
+	if (lookTo.x / m_aspectRation <= abs(m_z))
+		lookTo.x = abs(m_z)*m_aspectRation;
+	else if (lookTo.x > mapSize.x - abs(m_z) )
+		lookTo.x = (mapSize.x - abs(m_z));
 
-	
-	V3 position = lookTo;
-	position.z = m_z;
-	V3 target = lookTo;
-	V3 up = V3(0.0f, 1.0f, 0.0f);
-	D3DXMatrixLookAtLH(&cam, &position, &target, &up);
-	D3DXMATRIX world;
-	D3DXMatrixIdentity(&world);
-	world = world *cam*proj;
-	
+	if (lookTo.y <= abs(m_z))
+		lookTo.y = abs(m_z);
+	else if (lookTo.y > mapSize.y - abs(m_z))
+		lookTo.y = mapSize.y - abs(m_z);
+
+	int32 px = round(lookTo.x * 10) / 10,
+		py = round(lookTo.y * 10) / 10;
+
+	V3 position(px, py, m_z);
+	V3 target(lookTo.x, lookTo.y, lookTo.z);
+	V3 up(0.0f, 1.0f, 0.0f);
+
+	Matrix eye;
+	D3DXMatrixLookAtLH(&eye, &position, &target, &up);
+	Matrix viewMatrix;
+	D3DXMatrixIdentity(&viewMatrix);
+#ifdef _BUILD_WITH_D3D9
+	viewMatrix = eye;
+#else ifdef _BUILD_WITH_D3D11
+	viewMatrix = viewMatrix*eye*m_proj;
+#endif
+	m_pGraphics->setViewMatrix(viewMatrix);
 }

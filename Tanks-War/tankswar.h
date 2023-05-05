@@ -2,9 +2,8 @@
 #define _TANKSWAR_H
 
 #include "game.h"
-#include "unit.h"
-#include "tank.h"
-#include "map.h"
+#include "tank2.h"
+#include "map2.h"
 #include "client.h"
 
 class TanksWar : public Game

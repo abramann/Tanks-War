@@ -3,6 +3,7 @@
 #include "fileio.h"
 #include "image2.h"
 #include "camera.h"
+#include "game.h"
 
 #ifdef _BUILD_WITH_D3D9
 #include "imgui\imgui_impl_dx9.h"
@@ -14,6 +15,7 @@ uint64_t  g_frameCounter = 0;
 
 Graphics::Graphics() : m_lpDevice3d(NULL), m_deviceState(NULL)
 {
+	m_pCamera = new Camera;
 #ifdef _BUILD_WITH_D3D9
 	m_lpDirect3d = NULL;
 //	m_sprite(NULL)
@@ -30,9 +32,10 @@ Graphics::~Graphics()
 	release();
 }
 
-bool Graphics::initialize(HWND hwnd)
+bool Graphics::initialize(const Game* game)
 {
-	m_hwnd = hwnd;
+	HWND hwnd = game->getHwnd();
+	m_pCamera->initialize(game);
 
 #ifdef _BUILD_WITH_D3D9
 	m_lpDirect3d = Direct3DCreate9(D3D_SDK_VERSION);
@@ -44,7 +47,7 @@ bool Graphics::initialize(HWND hwnd)
 		m_PresentParameter.BackBufferWidth = ::g_gameInfo.width;
 		m_PresentParameter.BackBufferHeight = ::g_gameInfo.height;
 		m_PresentParameter.BackBufferCount = 1;
-		m_PresentParameter.hDeviceWindow = m_hwnd;
+		m_PresentParameter.hDeviceWindow = hwnd;
 		m_PresentParameter.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		if (::g_gameInfo.windowed == 0)
 		{
@@ -66,7 +69,7 @@ bool Graphics::initialize(HWND hwnd)
 
 	DWORD behavior = getBehaviorCompatility();
 	Result r;
-	r = m_lpDirect3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hwnd, behavior, &m_PresentParameter,
+	r = m_lpDirect3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, behavior, &m_PresentParameter,
 		&m_lpDevice3d);
 	if (FAILED(r))
 		return false;
@@ -83,6 +86,7 @@ bool Graphics::initialize(HWND hwnd)
 	m_lpDevice3d->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 	m_lpDevice3d->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 	m_lpDevice3d->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
+
 	return true;
 
 #else ifdef _BUILD_WITH_D3D11
@@ -108,7 +112,7 @@ bool Graphics::initialize(HWND hwnd)
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 1;
-	swapChainDesc.OutputWindow = m_hwnd;
+	swapChainDesc.OutputWindow = hwnd;
 	swapChainDesc.Windowed = g_gameInfo.windowed;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
@@ -519,7 +523,7 @@ Result Graphics::begin()
 	Result r = S_OK; 
 
 #ifdef _BUILD_WITH_D3D9
-	handleCamera(m_lpDevice3d);
+//	handleCamera(m_lpDevice3d);
 	ImGui_ImplDX9_NewFrame();
 	m_lpDevice3d->Clear(NULL, NULL, D3DCLEAR_TARGET, COLOR_WHITE, 1.0f, NULL);
 	m_lpDevice3d->SetFVF(VERTEX_FVF);
@@ -528,7 +532,7 @@ Result Graphics::begin()
 	ImGui_ImplDX11_NewFrame();
 	float bgColor[4] = { 1.0f,1.0f,1.0f,1.0f };
 	m_lpDeviceContext->ClearRenderTargetView(m_lpRenderTargetView, bgColor);
-	m_wvp = handleCameraDX11();
+//	m_wvp = handleCameraDX11();
 #endif
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -608,7 +612,6 @@ void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCent
 //	Matrix prop = scal*rotCentN*rot*rotCent*pos;
 
 #ifdef _BUILD_WITH_D3D9
-	
 	setWorldMatrix(prop);
 #else ifdef _BUILD_WITH_D3D11
 	prop *= m_wvp;
@@ -734,7 +737,7 @@ Result Graphics::getDeviceState()
 #endif
 	return r;
 }
-#pragma comment(lib,"dxgi.lib")
+
 std::vector<Resolution> Graphics::getSupportedResolutions()
 {
 	std::vector<Resolution> resolution;
@@ -858,6 +861,15 @@ void Graphics::streamVertexBuffer(LPVertexBuffer vb)
 	m_lpDevice3d->SetStreamSource(0, vb, 0, stride);
 #else #ifdef _BUILD_WITH_D3D11
 	m_lpDeviceContext->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+#endif
+}
+
+void Graphics::setViewMatrix(Matrix viewMatrix)
+{
+#ifdef _BUILD_WITH_D3D9
+	m_lpDevice3d->SetTransform(D3DTS_VIEW, &viewMatrix);
+#else ifdef _BUILD_WITH_D3D11
+	m_wvp = viewMatrix;
 #endif
 }
 

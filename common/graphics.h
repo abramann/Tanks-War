@@ -2,9 +2,15 @@
 #define _GRAPHICS_H
 #include "constants.h"
 
+class Game;
 class Image2;
 class Camera;
 
+#ifdef _BUILD_WITH_D3D9
+typedef LPDIRECT3DDEVICE9 LPDevice;
+#else ifdef _BUILD_WITH_D3D11
+typedef ID3D11Device* LPDevice;
+#endif
 struct Resolution
 {
 	int16 width, height;
@@ -14,12 +20,14 @@ class Graphics
 {
 public:
 
+	friend class Camera;
+	
 	Graphics();
 	~Graphics();
-	bool initialize(HWND hWnd);
+	bool initialize(const Game* game);
 	bool isFullScreen();
 	bool loadTexture(const char* file, UINT& width, UINT& height, Color transparency, LPTextureD3D& texture);
-	Matrix V3ToMatrix(const V3 v3, MatrixType type);
+	static Matrix V3ToMatrix(const V3 v3, MatrixType type);
 	Result begin();
 	void drawImage(const Image2* image);
 	Result drawPrimitive(UINT startVertex, UINT count);
@@ -28,7 +36,7 @@ public:
 	Result reset();
 	Result showBackbuffer();
 //	LPD3DXSPRITE getSprite()		{ return  m_sprite; }
-//	LPDIRECT3DDEVICE9 getDevice()		{ return m_lpDevice3d; }
+	LPDevice getDevice() const { return m_lpDevice3d; }
 	LPVertexBuffer createVertexBuffer(uint32 vertices, VB_USAGE usage, Vertex* data = 0);
 	Resolution getResolution();
 	std::vector<Resolution> getSupportedResolutions();
@@ -51,14 +59,15 @@ private:
 
 	bool isAdaptereCompatility();
 	DWORD getBehaviorCompatility();
+	void setViewMatrix(Matrix wvp);
 
 #ifdef _BUILD_WITH_D3D9
 	LPDIRECT3D9 m_lpDirect3d;
-	LPDIRECT3DDEVICE9 m_lpDevice3d;
+	LPDevice m_lpDevice3d;
 	LPD3DXSPRITE m_sprite;
 	D3DPRESENT_PARAMETERS m_PresentParameter;
 #else ifdef _BUILD_WITH_D3D11
-	ID3D11Device* m_lpDevice3d;
+	LPDevice m_lpDevice3d;
 	ID3D11DeviceContext* m_lpDeviceContext;
 	IDXGISwapChain* m_lpSwapChain;
 	ID3D11RenderTargetView* m_lpRenderTargetView;
@@ -75,7 +84,6 @@ private:
 	void setVSConstBuffer(const void* data);
 #endif
 	DWORD m_deviceState;
-	HWND m_hwnd;
 	Camera* m_pCamera;
 };
 
