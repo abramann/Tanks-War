@@ -18,7 +18,7 @@ public:
 	virtual void executeForward();
 	virtual void executeLeft();
 	virtual void executeRight();
-	void addHealth(float addH) { m_health += addH; }
+	void damage(float dmg);
 	void addVeclocity(float addV) { m_velocity += addV; }
 
 protected:

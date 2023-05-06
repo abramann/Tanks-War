@@ -6,8 +6,6 @@
 
 constexpr auto HEALTH_TANK = 100;
 constexpr auto VELOCITY_TANK = 10;
-constexpr auto TEXTURE_TANK_ENEMY = 2;
-constexpr auto TEXTURE_TANK_DESTORY = 3;
 constexpr auto UPDATE_DELAY_TANK_DESTORY = 100;
 
 const auto TANK_MAX_ANGLE = PI - 0.01f;
@@ -22,6 +20,13 @@ Tank2::~Tank2()
 {
 	for (auto& pBullet : m_pBullet)
 		SAFE_DELETE(pBullet);
+}
+
+void Tank2::initialize(Texture* texture, const Game * game)
+{
+	m_pTextureManger = game->getTextureManger();
+	m_pTimer = game->getTimer();
+	Object2::initialize(texture, game);
 }
 
 void Tank2::update(float frameTime)
@@ -41,8 +46,6 @@ void Tank2::update(float frameTime)
 
 		i++;
 	}
-
-
 }
 
 void Tank2::draw()
@@ -72,7 +75,7 @@ void Tank2::executeBack(float frameTime)
 
 void Tank2::executeDie()
 {
-	m_pTexture = m_pTextureManger->getTexture(TEXTURE_TANK_DESTORY);
+	m_pTexture = m_pTextureManger->getTexture(TEXTURE_TANK_DESTROY);
 	Image2::initialize(m_pTexture, m_pGame, TEXTURE_TANK_DESTROY_ROWS_COLUMNS, TEXTURE_TANK_DESTROY_ROWS_COLUMNS, UPDATE_DELAY_TANK_DESTORY);
 	Object2::executeDie();
 }
@@ -85,11 +88,14 @@ void Tank2::executeForward(float frameTime)
 	m_position.y = m_pMap->passY(this, y);
 	Object2::executeForward();
 }
+const auto TANK_ROTATE_DELAY = 70.0f;
 
 void Tank2::executeLeft(float frameTime)
 {
-	Sleep(300);
-	if (m_rotate.z >= (TANK_MAX_ANGLE - 0.01f))
+	static float time = TANK_ROTATE_DELAY, prevTime;
+	time = m_pTimer->getCurrentTime();
+	if ((1000 * (time - prevTime) < TANK_ROTATE_DELAY))
+		return;	if (m_rotate.z >= (TANK_MAX_ANGLE - 0.01f))
 		m_rotate.z *= -1;
 
 	m_rotate.z += TANK_ROTATE_AMOUNT;
@@ -101,7 +107,11 @@ void Tank2::executeLeft(float frameTime)
 
 void Tank2::executeRight(float frameTime)
 {
-	Sleep(100);
+//	static float time = TANK_ROTATE_DELAY, prevTime;
+//	time = m_pTimer->getCurrentTime();
+//	if ((1000*(time - prevTime) < TANK_ROTATE_DELAY))
+//		return;
+//	prevTime = time;
 	if (m_rotate.z <= -TANK_MAX_ANGLE)
 		m_rotate.z *= -1;
 

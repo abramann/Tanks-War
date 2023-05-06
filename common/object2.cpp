@@ -19,9 +19,6 @@ void Object2::initialize(Texture * texture, const Game* game)
 
 void Object2::update(float frameTime)
 {
-	if (m_health <= 0)
-		executeDie();
-
 	Image2::update(frameTime);
 }
 
@@ -53,6 +50,13 @@ void Object2::executeRight()
 {
 	if (m_playSound)
 		playSoundRight();
+}
+
+void Object2::damage(float dmg)
+{
+	m_health -= dmg;
+	if (m_health <= 0)
+		executeDie();
 }
 
 

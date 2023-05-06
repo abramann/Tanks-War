@@ -3,6 +3,7 @@
 
 class Game;
 class Bullet;
+class Timer;
 
 constexpr auto BULLET_SPEED = 20;
 constexpr auto BULLET_DAMAGE = 40;
@@ -13,6 +14,7 @@ public:
 
 	Tank2();
 	~Tank2();
+	virtual void initialize(Texture* texture, const Game* game);
 	virtual void update(float frameTime);
 	virtual void draw();
 
@@ -38,4 +40,5 @@ protected:
 	float m_bulletSpeed, m_bulletDamage;
 	std::vector<Bullet*> m_pBullet;
 	TextureManger* m_pTextureManger;
+	Timer* m_pTimer;
 };

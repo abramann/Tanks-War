@@ -12,6 +12,7 @@ public:
 	bool initialize(HWND hWnd);
 	void handle(UINT msg, WPARAM wParam, LPARAM lParam);
 	bool isKeyIn(Key k);
+	bool isKeyPressed(Key k);
 	bool anyKeyPressed();
 
 	bool m_handleInput;

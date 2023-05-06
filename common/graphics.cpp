@@ -35,7 +35,6 @@ Graphics::~Graphics()
 bool Graphics::initialize(const Game* game)
 {
 	HWND hwnd = game->getHwnd();
-	m_pCamera->initialize(game);
 
 #ifdef _BUILD_WITH_D3D9
 	m_lpDirect3d = Direct3DCreate9(D3D_SDK_VERSION);
@@ -86,8 +85,6 @@ bool Graphics::initialize(const Game* game)
 	m_lpDevice3d->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 	m_lpDevice3d->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 	m_lpDevice3d->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
-
-	return true;
 
 #else ifdef _BUILD_WITH_D3D11
 
@@ -256,9 +253,10 @@ bool Graphics::initialize(const Game* game)
 
 	m_lpDevice3d->CreateBlendState(&blendDesc, &m_lpBlendState);
 	m_lpDeviceContext->OMSetBlendState(m_lpBlendState, blendFactor, 0xffffffff);
-//	getSupportedResolutions();
-	return true;
+
 #endif
+	m_pCamera->initialize(game);
+	return true;
 }
 
 LPVertexBuffer Graphics::createVertexBuffer(uint32 vertices, VB_USAGE usage, Vertex* data)
@@ -348,182 +346,11 @@ Result Graphics::reset()
 	return result;
 }
 
-void handleCamera(LPDIRECT3DDEVICE9 Device)
-{
-	if (GetAsyncKeyState('P'))
-	{
-		Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-		Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-	}
-	else if (GetAsyncKeyState('O'))
-	{
-		Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
-		Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
-		Device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
-	}
-	if (GetAsyncKeyState('L'))
-	{
-		Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-		Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	}
-	Matrix proj;
-	D3DXMatrixPerspectiveFovLH(
-		&proj,
-		D3DX_PI * 0.5f, // 90 - degree
-		(float)1.333F,
-		1.0f,
-		1000.0f);
-	Device->SetTransform(D3DTS_PROJECTION, &proj);
-
-	Matrix mat;
-	ZeroMemory(mat, sizeof(D3DXMATRIX));
-	static float px = 0, py = 0, pz = -300;
-	if (GetAsyncKeyState(VK_UP))
-		py++;
-	else if (GetAsyncKeyState(VK_DOWN))
-		py--;
-
-	if (GetAsyncKeyState(VK_RIGHT))
-		px++;
-	else if (GetAsyncKeyState(VK_LEFT))
-		px--;
-
-	if (GetAsyncKeyState(VK_F1))
-		pz++;
-	else if (GetAsyncKeyState(VK_F2))
-		pz--;
-
-	if (GetAsyncKeyState(VK_TAB))
-	{
-		px = 0; py = 0; pz = 0;
-	}
-	static float tx = 0, ty = 0, tz = 0;
-	if (GetAsyncKeyState('8'))
-	{
-		tx = 0; ty = 0; tz = 0;
-	}
-	if (GetAsyncKeyState('1'))
-		tx++;
-	else if (GetAsyncKeyState('2'))
-		tx--;
-	if (GetAsyncKeyState('3'))
-		ty++;
-	else if (GetAsyncKeyState('4'))
-		ty--;
-	if (GetAsyncKeyState('5'))
-		tz++;
-	else if (GetAsyncKeyState('6'))
-		tz--;
-	if (GetAsyncKeyState('W'))
-	{
-		py++; py++; ty++; ty++;
-	}
-	else if (GetAsyncKeyState('S'))
-	{
-		py = py - 2; ty = ty - 2;
-	}
-	if (GetAsyncKeyState('D'))
-	{
-		px=px+2; tx=tx+2;
-	}
-	else if (GetAsyncKeyState('A'))
-	{
-		px=px-2; tx=tx-2;
-	}
-
-	D3DXVECTOR3 position(px, py, pz);
-	D3DXVECTOR3 target(tx, ty, tz);
-	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
-	D3DXMatrixLookAtLH(&mat, &position, &target, &up);
-	Device->SetTransform(D3DTS_VIEW, &mat);
-}
-
-D3DXMATRIX handleCameraDX11()
-{
-	D3DXMATRIX proj, cam;
-	D3DXMatrixPerspectiveFovLH(
-		&proj, PI * 0.5f, // 90 - degree
-		(float)1.333F,
-		1.0f,
-		1000.0f);
-
-	static float px = 0, py = 0, pz = -400;
-	if (GetAsyncKeyState(VK_UP))
-		py++;
-	else if (GetAsyncKeyState(VK_DOWN))
-		py--;
-
-	if (GetAsyncKeyState(VK_RIGHT))
-		px++;
-	else if (GetAsyncKeyState(VK_LEFT))
-		px--;
-
-	if (GetAsyncKeyState(VK_F1))
-	{
-		pz+=5;
-		if (pz == 0)
-			pz++;
-	}
-	else if (GetAsyncKeyState(VK_F2))
-	{
-		pz-=5;
-		if (pz == 0)
-			pz--;
-	}
-
-	if (GetAsyncKeyState(VK_TAB))
-	{
-		px = 0; py = 0; pz = -1.0f;
-	}
-	static float tx = 0, ty = 0, tz = 0;
-	if (GetAsyncKeyState('8'))
-	{
-		tx = 0; ty = 0; tz = 0;
-	}
-	if (GetAsyncKeyState('1'))
-		tx++;
-	else if (GetAsyncKeyState('2'))
-		tx--;
-	if (GetAsyncKeyState('3'))
-		ty++;
-	else if (GetAsyncKeyState('4'))
-		ty--;
-	if (GetAsyncKeyState('5'))
-		tz++;
-	else if (GetAsyncKeyState('6'))
-		tz--;
-	if (GetAsyncKeyState('W'))
-	{
-		py+=4; ty+=4;
-	}
-	else if (GetAsyncKeyState('S'))
-	{
-		py-=4; ty-=4;
-	}
-	if (GetAsyncKeyState('D'))
-	{
-		px+=4; tx+=4;
-	}
-	else if (GetAsyncKeyState('A'))
-	{
-		px-=4; tx-=4;
-	}
-	V3 position = V3(px, py, pz);
-	V3 target = V3(tx, ty, tz);
-	V3 up = V3(0.0f, 1.0f, 0.0f);
-	D3DXMatrixLookAtLH(&cam, &position, &target, &up);
-	D3DXMATRIX world;
-	D3DXMatrixIdentity(&world);
-	world = world *cam*proj;
-	return world;
-}
-
 Result Graphics::begin()
 {
 	Result r = S_OK; 
 
 #ifdef _BUILD_WITH_D3D9
-//	handleCamera(m_lpDevice3d);
 	ImGui_ImplDX9_NewFrame();
 	m_lpDevice3d->Clear(NULL, NULL, D3DCLEAR_TARGET, COLOR_WHITE, 1.0f, NULL);
 	m_lpDevice3d->SetFVF(VERTEX_FVF);
@@ -532,7 +359,6 @@ Result Graphics::begin()
 	ImGui_ImplDX11_NewFrame();
 	float bgColor[4] = { 1.0f,1.0f,1.0f,1.0f };
 	m_lpDeviceContext->ClearRenderTargetView(m_lpRenderTargetView, bgColor);
-//	m_wvp = handleCameraDX11();
 #endif
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
