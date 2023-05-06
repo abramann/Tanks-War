@@ -32,5 +32,5 @@ void Texture::onResetDevice()
 
 void Texture::release()
 {
-	SAFE_RELEASE(m_lpTexture);
+	safeRelease(m_lpTexture);
 }

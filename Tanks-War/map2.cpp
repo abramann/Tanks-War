@@ -14,7 +14,7 @@ Map2::Map2()
 
 Map2::~Map2()
 {
-	SAFE_RELEASE(m_lpVertexBuffer);
+	safeRelease(m_lpVertexBuffer);
 }
 
 void Map2::initialize(const Game * game)
@@ -129,7 +129,7 @@ void Map2::clear()
 	m_freeSpace.clear();
 	m_noSpace.clear();
 	m_lenVertex.clear();
-	SAFE_RELEASE(m_lpVertexBuffer);
+	safeRelease(m_lpVertexBuffer);
 }
 
 float Map2::passX(const Image2 * image, float x) const

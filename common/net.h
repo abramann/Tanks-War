@@ -1,8 +1,9 @@
+// Note this code is licensed under CC BY 3.0
+
 // Programming 2D Games
 // Copyright (c) 2011 by: 
 // Charles Kelly
 // net.h v2.0 July-23-2014
-
 #ifndef _NET_H                  // Prevent multiple definitions if this 
 #define _NET_H                  // file is included in more than one place
 #define WIN32_LEAN_AND_MEAN

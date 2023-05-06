@@ -29,6 +29,7 @@ Graphics::Graphics() : m_lpDevice3d(NULL), m_deviceState(NULL)
 
 Graphics::~Graphics()
 {
+	safeDelete(m_pCamera);
 	release();
 }
 
@@ -189,7 +190,7 @@ bool Graphics::initialize(const Game* game)
 		lpVSByteCode->GetBufferSize(), &m_lpInputLayout);
 	m_lpDeviceContext->IASetInputLayout(m_lpInputLayout);
 	m_lpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	SAFE_RELEASE(lpVSByteCode);
+	safeRelease(lpVSByteCode);
 
 	D3DX11CompileFromFileA("shader.fx", 0, 0, "PS_Start", "ps_4_0",
 		D3DCOMPILE_DEBUG, 0, 0, &lpPSByteCode, 0,
@@ -203,7 +204,7 @@ bool Graphics::initialize(const Game* game)
 	if (FAILED(hr))
 		return false;
 
-	SAFE_RELEASE(lpPSByteCode);
+	safeRelease(lpPSByteCode);
 	
 	m_lpDeviceContext->PSSetShader(m_lpPShader, 0, 0);
 
@@ -292,57 +293,34 @@ LPVertexBuffer Graphics::createVertexBuffer(uint32 vertices, VB_USAGE usage, Ver
 	return vb;
 }
 
-void Graphics::spriteBegin()
-{
-//	m_sprite->Begin(D3DXSPRITE_ALPHABLEND);
-}
-
-void Graphics::spriteEnd()
-{
-//	m_sprite->End();
-}
-
-void Graphics::spriteDraw(SpriteData sd)
-{
-	V2 translate = V2(sd.x, sd.y);
-	V2 center = sd.center;
-	float angle = sd.angle;
-	Matrix matrix;
-	D3DXMatrixTransformation2D(&matrix, NULL, NULL, &sd.scalling, &center, angle, &translate);
-//	m_sprite->SetTransform(&matrix);
-//	m_sprite->Draw(sd.lpTexture, &sd.rect, NULL, NULL, sd.filterColor);
-}
-
 void Graphics::release()
 {
 #ifdef _BUILD_WITH_D3D9
-	SAFE_RELEASE(m_lpDirect3d);
+	safeRelease(m_lpDirect3d);
 	if(m_lpDevice3d)
 		ImGui_ImplDX9_Shutdown();
 #else ifdef _BUILD_WITH_D3D11
-	SAFE_RELEASE(m_lpDeviceContext);
-	SAFE_RELEASE(m_lpRenderTargetView);
-	SAFE_RELEASE(m_lpSwapChain);
-	SAFE_RELEASE(m_lpDepthStencilView);
-	SAFE_RELEASE(m_lpDepthBuffer);
-	SAFE_RELEASE(m_lpVSConstBuffer);
-	SAFE_RELEASE(m_lpVShader);
-	SAFE_RELEASE(m_lpPShader);
-	SAFE_RELEASE(m_lpInputLayout);
-	SAFE_RELEASE(m_lpSampleState);
-	SAFE_RELEASE(m_lpBlendState);
+	safeRelease(m_lpDeviceContext);
+	safeRelease(m_lpRenderTargetView);
+	safeRelease(m_lpSwapChain);
+	safeRelease(m_lpDepthStencilView);
+	safeRelease(m_lpDepthBuffer);
+	safeRelease(m_lpVSConstBuffer);
+	safeRelease(m_lpVShader);
+	safeRelease(m_lpPShader);
+	safeRelease(m_lpInputLayout);
+	safeRelease(m_lpSampleState);
+	safeRelease(m_lpBlendState);
 	if (m_lpDevice3d)
 		ImGui_ImplDX11_Shutdown();
 #endif
 
-	SAFE_RELEASE(m_lpDevice3d);
+	safeRelease(m_lpDevice3d);
 }
 
 Result Graphics::reset()
 {
-//	m_sprite->OnLostDevice();
 	Result result = 0;// m_lpDevice3d->Reset(&m_PresentParameter);
-//	m_sprite->OnResetDevice();
 	return result;
 }
 
@@ -619,7 +597,7 @@ std::vector<Resolution> Graphics::getSupportedResolutions()
 			break;
 		}
 	}
-	SAFE_DELETE_ARRAY(displayModeList);*/
+	safeDeleteArray(displayModeList);*/
 #endif
 	return resolution;
 

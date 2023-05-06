@@ -1,8 +1,9 @@
 #include "constants.h"
 #include "tankswar.h"
 #include "fileio.h"
-// #include <vld.h> // For detecting memory leaks
-
+#ifdef _DEBUG
+ #include "vld\vld.h" // For detecting memory leaks
+#endif
 #pragma comment(lib,"Ws2_32.lib")
 #pragma comment(lib,"d3dx9.lib")
 #ifdef _BUILD_WITH_D3D9
@@ -31,78 +32,40 @@ int message(std::string msg, int type)
 	return MessageBoxA(NULL, msg.c_str(), "Tanks War", type);
 }
 
-bool alreadyOpen()
+bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 {
-	return false;
-	HANDLE mutex;
-	mutex = CreateMutexA(NULL, true, "tankswarbyabramann-343DW32Y5423T4");
-	if (GetLastError() == ERROR_ALREADY_EXISTS)
-		return true;
-	return false;
-}
+	const char CLASS_NAME[] = "GameClass";
 
-bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
-{
-	if (alreadyOpen())
+	HWND hWnd;
+	WNDCLASSEX wc;
+
+	ZeroMemory(&wc, sizeof(WNDCLASSEX));
+
+	wc.cbSize = sizeof(WNDCLASSEX);
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = WinProc;
+	wc.hInstance = hInstance;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.lpszClassName = CLASS_NAME;
+
+	RegisterClassEx(&wc);
+	DWORD style = (g_gameInfo.windowed) ? WS_OVERLAPPED : WS_EX_TOPMOST | WS_POPUP;
+	hwnd = CreateWindowEx(NULL,
+		CLASS_NAME,
+		"Tanks War",
+		style,    // fullscreen values
+		0, 0,    // the starting x and y positions should be 0
+		g_gameInfo.width, g_gameInfo.height,    // set the window to 640 x 480
+		NULL,
+		NULL,
+		hInstance,
+		NULL);
+	if (hwnd == 0)
 		return false;
 
-	WNDCLASSEX wcx;
-	// Fill in the window class structure with parameters 
-	// that describe the main window. 
-	wcx.cbSize = sizeof(wcx);           // size of structure 
-	wcx.style = CS_HREDRAW | CS_VREDRAW;    // redraw if size changes 
-	wcx.lpfnWndProc = WinProc;          // points to window procedure 
-	wcx.cbClsExtra = 0;                 // no extra class memory 
-	wcx.cbWndExtra = 0;                 // no extra window memory 
-	wcx.hInstance = hInstance;          // handle to instance 
-	wcx.hIcon = LoadIcon(NULL,"Assets//tankswar.icon");
-	wcx.hCursor = LoadCursorFromFile("Assets//tankswar.cursor");   // predefined arrow 
-	wcx.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);    // black background 
-	wcx.hIconSm = NULL;                 // small class icon 
-	wcx.lpszMenuName = NULL;           // name of menu resource 
-	wcx.lpszClassName = "Game Class";     // name of window class 
-	// Register the window class. 
-	// RegisterClassEx returns 0 on error.
-	if (RegisterClassEx(&wcx) == 0)    // if error
-		return false;
+	RegisterClassEx(&wc);
 
-	//set up the screen in windowed or fullscreen mode?
-	DWORD style = (g_gameInfo.windowed) ? WS_EX_TOPMOST : WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP;
-	// Create window
-	hwnd = CreateWindow(
-		"Game Class",
-		"Tanks War",             // title bar text
-		style,                  // window style
-		CW_USEDEFAULT,          // default horizontal position of window
-		CW_USEDEFAULT,          // default vertical position of window
-		g_gameInfo.width,           // width of window
-		g_gameInfo.height,            // height of the window
-		(HWND)NULL,            // no parent window
-		(HMENU)NULL,           // no menu
-		hInstance,              // handle to application instance
-		(LPVOID)NULL);         // no window parameters
-
-	// if there was an error creating the window
-	if (!hwnd)
-		return false;
-
-	if (g_gameInfo.windowed)             // if window
-	{
-		// Adjust window size so client area is GAME_WIDTH x g_gameInfo.height
-		RECT clientRect;
-		GetClientRect(hwnd, &clientRect);   // get size of client area of window
-		MoveWindow(hwnd,
-			0,                                           // Left
-			0,                                           // Top
-			g_gameInfo.width + (g_gameInfo.width - clientRect.right),    // Right
-			g_gameInfo.height + (g_gameInfo.height - clientRect.bottom), // Bottom
-			TRUE);                                         // Repaint the window
-	}
-
-	// Show the window
 	ShowWindow(hwnd, nCmdShow);
-	
-	// Send a WM_PAINT message to the window procedure
 	UpdateWindow(hwnd);
 	return true;
 }
@@ -111,18 +74,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {	
 	game = new TanksWar;
 
-	HWND hWnd = NULL;
+	HWND hwnd = NULL;
 	g_gameInfo = FileIO::readGameInfo();
-	if (!CreateMainWindow(hWnd, hInstance, nCmdShow))
+	if (!createGameWindow(hwnd, hInstance, nCmdShow))
 	{
-		message("CreateMainWindow() failed !", MB_OK);
+		message("CreateGameWindow() failed !", MB_OK);
 		return 1;
 	}
 
 	MSG msg;
 	try
 	{
-		game->initialize(hInstance, hWnd);
+		game->initialize(hInstance, hwnd);
 		while (true)
 		{
 			// PeekMessage,non-blocking method for checking for Windows messages.
@@ -143,15 +106,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	catch (const GameError &err)
 	{
 		MessageBoxA(NULL, err.getMessage(), "EROR", MB_OK);
-		DestroyWindow(hWnd);
+		DestroyWindow(hwnd);
 	}
 	catch (...)
 	{
 		MessageBoxA(NULL, "Unknown error occurded !", "ERROR", MB_OK);
-		DestroyWindow(hWnd);
+		DestroyWindow(hwnd);
 	}
 
-	SAFE_DELETE(game);
+	safeDelete(game);
 	return 0;
 }
 

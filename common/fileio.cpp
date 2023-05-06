@@ -171,6 +171,12 @@ void FileIO::createGameInfo(const GameInfo& info)
 	file << "height=" << std::to_string(height) << std::endl;
 }
 
+inline std::string getTargetEqualStringValue(std::string str)
+{
+	str.erase(0, str.find('=') + 1);
+	return str;
+}
+
 template<typename T>
 void FileIO::readValues(std::ifstream & file, std::initializer_list<T*> values)
 {
@@ -187,7 +193,6 @@ void FileIO::readValues(std::ifstream & file, std::initializer_list<std::string*
 	va_list arguments;
 	for (auto value : values)
 	{
-
 		std::string line;
 		std::getline(file, line);
 		*value = getTargetEqualStringValue(line);

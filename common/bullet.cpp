@@ -61,7 +61,7 @@ void Bullet::executeLaunch()
 
 	Space s = Map2::getImageSpace(m_pTank);
 	m_position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2) 
-		- ( (m_width/2)*f1) + (m_height/2)*;
+		- ( (m_width/2)*f1) + (m_height/2);
 	m_position.y = (s.v4.y + (s.v3.y - s.v4.y) / 2)+((m_width/2)*f2);
 	m_position.z = 0;
 	

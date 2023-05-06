@@ -1,3 +1,8 @@
+// Note parts of code are licensed under CC BY 3.0
+
+// Programming 2D Games Copyright (c) 2011 by: Charles Kelly 
+// game.h
+
 #ifndef _GAME_H
 #define _GAME_H
 #include "constants.h"
@@ -18,20 +23,14 @@ public:
 	~Game();
 
 	LRESULT messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
 	virtual void initialize(HINSTANCE hInstance, HWND hWnd);
 	virtual void run();
 	virtual void renderGame();
 	virtual void updateGame();
-
-	virtual void handleLostGraphicsDevice();
-	virtual void onLostDevice();
-	virtual void onResetDevice();
-
 	virtual void collision() = 0;
 	virtual void update() = 0;
 	virtual void render() = 0;
-
+	
 	Graphics* getGraphics()	const { return m_pGraphics; }
 	Input* getInput()	const { return m_pInput; }
 	Audio* getAudio()	const { return m_pAudio; }

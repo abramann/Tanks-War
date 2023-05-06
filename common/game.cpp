@@ -1,3 +1,8 @@
+// Note parts of code are licensed under CC BY 3.0
+
+// Programming 2D Games Copyright (c) 2011 by: Charles Kelly 
+// game.cpp
+
 #include "game.h"
 #include "imgui\imgui_impl_win32.h"
 #include "texturemanger.h"
@@ -15,13 +20,13 @@ Game::Game() : m_timeDeltaMillsec(0)
 
 Game::~Game()
 {
-	SAFE_DELETE(m_pGraphics);
-	SAFE_DELETE(m_pInput);
-	SAFE_DELETE(m_pAudio);
-	SAFE_DELETE(m_pInterface);
-	SAFE_DELETE(m_pTextureManger);
-	SAFE_DELETE(m_pMap);
-	SAFE_DELETE(m_pTimer);
+	safeDelete(m_pGraphics);
+	safeDelete(m_pInput);
+	safeDelete(m_pAudio);
+	safeDelete(m_pInterface);
+	safeDelete(m_pTextureManger);
+	safeDelete(m_pMap);
+	safeDelete(m_pTimer);
 }
 
 LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -68,7 +73,6 @@ void Game::renderGame()
 	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 
 	m_pGraphics->end();
-	handleLostGraphicsDevice();
 	m_pGraphics->showBackbuffer();
 }
 
@@ -77,36 +81,4 @@ void Game::updateGame()
 	m_pTimer->update();
 	m_timeDeltaMillsec = m_pTimer->getTimeDelta();
 	update();
-}
-
-void Game::handleLostGraphicsDevice()
-{
-//	return;
-	HRESULT hr = m_pGraphics->getDeviceState();
-	if (FAILED(hr))
-	{
-		if (hr == D3DERR_DEVICELOST)
-		{
-			Sleep(100);
-			return;
-		}
-		else if (hr == D3DERR_DEVICENOTRESET)
-		{
-			onLostDevice();
-			HRESULT hr = m_pGraphics->reset();
-			if (FAILED(hr))
-				return;
-			onResetDevice();
-		}
-		else
-			throw GameError(gameErrorNS::FATAL_ERROR, "Unknown error occurred !");
-	}
-}
-
-void Game::onLostDevice()
-{
-}
-
-void Game::onResetDevice()
-{
 }

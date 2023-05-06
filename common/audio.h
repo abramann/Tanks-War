@@ -59,7 +59,6 @@ public:
 	void stopMusic(Music music);
 	void stopAll();
 	void release();
-	void playCue(int i) {};
 
 private:
 

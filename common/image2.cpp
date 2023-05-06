@@ -11,7 +11,7 @@ m_initialized(false)
 
 Image2::~Image2()
 {
-	SAFE_RELEASE(m_lpVertexBuffer);
+	safeRelease(m_lpVertexBuffer);
 }
 
 void Image2::initialize(Texture * texture, const Game* game, int8 columns, int8 rows,

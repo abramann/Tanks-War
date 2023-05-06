@@ -35,7 +35,6 @@ public:
 	Result getDeviceState();
 	Result reset();
 	Result showBackbuffer();
-//	LPD3DXSPRITE getSprite()		{ return  m_sprite; }
 	LPDevice getDevice() const { return m_lpDevice3d; }
 	LPVertexBuffer createVertexBuffer(uint32 vertices, VB_USAGE usage, Vertex* data = 0);
 	Resolution getResolution();
@@ -49,9 +48,6 @@ public:
 	void setVertexBuffer(LPVertexBuffer, Vertex* vertez, int32_t numberOfVertices);
 	void setVertexBufferUV(LPVertexBuffer vb, Vertex* vertez, int8_t len);
 	void setWorldMatrix(Matrix worldMatrix);
-	void spriteBegin();
-	void spriteDraw(SpriteData sd);
-	void spriteEnd();
 	void streamVertexBuffer(LPVertexBuffer vb);
 	Camera* getCamera() const { return m_pCamera; }
 

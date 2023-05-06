@@ -19,7 +19,7 @@ Tank2::Tank2() : m_bulletSpeed(BULLET_SPEED), m_bulletDamage(BULLET_DAMAGE)
 Tank2::~Tank2()
 {
 	for (auto& pBullet : m_pBullet)
-		SAFE_DELETE(pBullet);
+		safeDelete(pBullet);
 }
 
 void Tank2::initialize(Texture* texture, const Game * game)
@@ -38,7 +38,7 @@ void Tank2::update(float frameTime)
 		Bullet* pBullet = m_pBullet[i];
 		if (pBullet->isFinished())
 		{
-			SAFE_DELETE(pBullet);
+			safeDelete(pBullet);
 			m_pBullet.erase(std::next(m_pBullet.begin(), i));
 		}
 		else
