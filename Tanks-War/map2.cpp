@@ -8,7 +8,7 @@
 #include <fstream>
 #include <string>
 
-Map2::Map2()
+Map2::Map2() : m_lpVertexBuffer(0)
 {
 }
 

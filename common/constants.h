@@ -91,7 +91,7 @@ constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
 constexpr auto TANK_INFO_PATH = "Assets\\ini\\tank-info.txt";
 constexpr auto TANK_ROTATE_AMOUNT = PI / 8;
 constexpr auto TEXTURE_DIR = "Assets\\texture\\";
-constexpr auto TEXTURE_TANK_DESTROY_ROWS_COLUMNS = 4;
+constexpr auto TEXTURE_TANK_DESTROY_ROWS_COLUMNS = 8;
 constexpr auto UPDATE_DELAY_FPS = 0.5f;
 constexpr auto UPDATE_DELAY_TANK_DESTROY = 100;
 constexpr BYTE BYTE_INVALID_DATA = 0xFF;
@@ -146,20 +146,20 @@ constexpr Vec4 colSERVER_STATE[] = { Vec4(0.7f,0.7f,0.7f,0.5f), Vec4(0.87f,0.77f
 template <typename T>
 void safeRelease(T ptr)
 {
-	if (IsBadReadPtr(ptr,1) == false)
+	if (ptr)
 	{
 		ptr->Release();
-		ptr = NULL;
+		ptr = 0;
 	}
 }
 
 template <typename T>
 inline void safeDelete(T ptr)
 {
-	if (::IsBadReadPtr(ptr, 1) == false)
+	if (ptr)
 	{
 		delete ptr;
-		ptr = NULL;
+		ptr = 0;
 	}
 }
 

@@ -14,6 +14,7 @@
 #include "audio.h"
 #include "interface.h"
 #include "map2.h"
+#include <memory>
 
 class Game
 {

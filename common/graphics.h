@@ -75,9 +75,12 @@ private:
 	ID3D11InputLayout* m_lpInputLayout;
 	ID3D11SamplerState* m_lpSampleState;
 	ID3D11BlendState* m_lpBlendState;
+	ID3D11Buffer* m_lpStagingBuffer;
 	D3DXMATRIX m_wvp;
 
 	void setVSConstBuffer(const void* data);
+	Vertex* getVertexBufferData(LPVertexBuffer vb, uint32& size) const;
+
 #endif
 	DWORD m_deviceState;
 	Camera* m_pCamera;

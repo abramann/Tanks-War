@@ -14,7 +14,7 @@ Timer::~Timer()
 float Timer::getCurrentTime()
 {
 	int64 counts = getCurrentCounts();
-	float currentTime = counts* m_secondsPerCount;
+	float currentTime = counts* m_secondsPerCount * 1000;
 	return currentTime;
 }
 
@@ -41,8 +41,6 @@ void Timer::update()
 	}
 	else if (m_timeDeltaMillsec > MAX_FRAME_TIME)
 		m_timeDeltaMillsec = MAX_FRAME_TIME;
-
-
 }
 
 int64 Timer::getCurrentCounts() const

@@ -26,13 +26,12 @@ Bullet::~Bullet()
 
 void Bullet::update(float frameTime)
 {
-	executeLaunch();
 	Image2::update(frameTime);
 	if (m_finish)
 		return;
 	if(!m_hit)
 	{
-	//	executeLaunching(frameTime);
+		executeLaunching(frameTime);
 		if (m_position.x == m_pMap->passX(this, 0) ||
 			m_position.y == m_pMap->passY(this, 0))
 	
@@ -48,23 +47,21 @@ void Bullet::executeLaunch()
 	m_rotate = m_pTank->getRotate();
 	V3 pos = m_pTank->getPosition();
 	float f1 = 1.0f - abs((0.636619772f *m_rotate.z));
-	float f2 = abs(f1) - 1;
+	
+	Space s = Map2::getImageSpace(m_pTank);
+	m_position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2);
+	m_position.y = (s.v4.y + (s.v3.y - s.v4.y) / 2);
+	m_position.z = 0;
 	/*int16 width = m_pTank->getWidth(),
-		height = m_pTank->getHeight();
+	height = m_pTank->getHeight();
 	float f1 = (1 + (0.3183098f)*m_rotate.z);
 	float f2 = -sin(m_rotate.z);
 
 	m_position.x = pos.x + 30 + 30*f2,
-		m_position.y = pos.y + f1*height,
-		m_position.z = pos.z;
+	m_position.y = pos.y + f1*height,
+	m_position.z = pos.z;
 	*/
 
-	Space s = Map2::getImageSpace(m_pTank);
-	m_position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2) 
-		- ( (m_width/2)*f1) + (m_height/2);
-	m_position.y = (s.v4.y + (s.v3.y - s.v4.y) / 2)+((m_width/2)*f2);
-	m_position.z = 0;
-	
 }
 
 void Bullet::executeHit()

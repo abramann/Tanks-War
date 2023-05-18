@@ -24,6 +24,15 @@ Graphics::Graphics() : m_lpDevice3d(NULL), m_deviceState(NULL)
 	m_lpDeviceContext = NULL;
 	m_lpRenderTargetView = NULL;
 	m_lpSwapChain = NULL;
+	LPDevice m_lpDevice3d;
+	m_lpDepthStencilView = 0;
+	m_lpDepthBuffer = 0;
+	m_lpVSConstBuffer = 0;
+	m_lpVShader = 0;
+	m_lpPShader = 0;
+	m_lpInputLayout = 0;
+	m_lpSampleState = 0;
+	m_lpBlendState = 0;
 #endif
 }
 
@@ -90,9 +99,7 @@ bool Graphics::initialize(const Game* game)
 #else ifdef _BUILD_WITH_D3D11
 
 	DXGI_MODE_DESC bufferDesc;
-
 	ZeroMemory(&bufferDesc, sizeof(DXGI_MODE_DESC));
-
 	bufferDesc.Width = g_gameInfo.width;
 	bufferDesc.Height = g_gameInfo.height;
 	bufferDesc.RefreshRate.Numerator = 60;
@@ -320,7 +327,7 @@ void Graphics::release()
 
 Result Graphics::reset()
 {
-	Result result = 0;// m_lpDevice3d->Reset(&m_PresentParameter);
+	Result result = 0;
 	return result;
 }
 
@@ -380,7 +387,6 @@ Result Graphics::end()
 
 Result Graphics::showBackbuffer()
 {
-	// m_deviceState = m_lpDevice3d->TestCooperativeLevel();
 	Result r;
 #ifdef _BUILD_WITH_D3D9
 	r = m_lpDevice3d->Present(NULL, NULL, NULL, NULL);
@@ -445,7 +451,6 @@ bool Graphics::loadTexture(const char* file, UINT& width, UINT& height, Color tr
 	return true;
 #else ifdef _BUILD_WITH_D3D11
 	D3DX11_IMAGE_INFO info;
-
 	D3DX11GetImageInfoFromFileA(file, 0, &info, &r);
 	if (FAILED(r))
 		return false;
@@ -486,13 +491,22 @@ void Graphics::setVertexBufferUV(LPVertexBuffer vb, Vertex * vertex, int8_t len)
 		v[i].u = vertex[i].u;
 		v[i].v = vertex[i].v;
 	}
+
 	vb->Unlock();
 #else ifdef _BUILD_WITH_D3D11
+	
 	D3D11_MAPPED_SUBRESOURCE data;
+	uint32 size;
+	Vertex* oldData = getVertexBufferData(vb, size);
 	m_lpDeviceContext->Map(vb, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
-	Vertex* v =(Vertex*) data.pData;
-	v+= sizeof(float) * 12;
-	memcpy((void*)v, vertex, sizeof(float) * 2);
+	Vertex* v = (Vertex*)data.pData;
+	memcpy(v, oldData, size);
+	for (int i = 0; i < len; i++)
+	{
+		v[i].u = vertex[i].u;
+		v[i].v = vertex[i].v;
+	}
+
 	m_lpDeviceContext->Unmap(vb, 0);
 #endif
 }
@@ -721,6 +735,7 @@ DWORD Graphics::getBehaviorCompatility()
 #endif
 	return behavior;
 }
+
 #ifdef _BUILD_WITH_D3D11
 void Graphics::setVSConstBuffer(const void * data)
 {
@@ -728,4 +743,27 @@ void Graphics::setVSConstBuffer(const void * data)
 		0);
 	m_lpDeviceContext->VSSetConstantBuffers(0, 1, &m_lpVSConstBuffer);
 }
+
+Vertex* Graphics::getVertexBufferData(ID3D11Buffer* vb, uint32& size) const
+{
+	D3D11_BUFFER_DESC stagingBufferDesc;
+	D3D11_BUFFER_DESC desc;
+	vb->GetDesc(&desc);
+	size = desc.ByteWidth;
+	stagingBufferDesc.ByteWidth = size;
+	stagingBufferDesc.Usage = D3D11_USAGE_STAGING;
+	stagingBufferDesc.BindFlags = 0;
+	stagingBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	stagingBufferDesc.MiscFlags = 0;
+	ID3D11Buffer* stagingBuffer;
+	m_lpDevice3d->CreateBuffer(&stagingBufferDesc, 0, &stagingBuffer);
+	m_lpDeviceContext->CopyResource(stagingBuffer, vb);
+	D3D11_MAPPED_SUBRESOURCE data;
+	HRESULT HR = m_lpDeviceContext->Map(stagingBuffer, 0, D3D11_MAP_READ, 0, &data);
+	Vertex* v = (Vertex*)data.pData;
+	m_lpDeviceContext->Unmap(stagingBuffer, 0);
+	stagingBuffer->Release();
+	return v;
+}
+
 #endif

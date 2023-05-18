@@ -45,7 +45,6 @@ void TanksWar::collision()
 void TanksWar::update()
 {
 #ifdef TEST_NO_SERVER_INTERFACE
-	tank2.update(m_timeDeltaMillsec);
 	if (m_pInput->isKeyIn(W_KEY))
 		tank2.executeForward(0);
 	if (m_pInput->isKeyIn(S_KEY))
@@ -58,6 +57,7 @@ void TanksWar::update()
 		tank2.executeAttack();
 	if (GetAsyncKeyState('Q'))
 		tank2.damage(100);
+	tank2.update(m_timeDeltaMillsec);
 
 	m_pGraphics->getCamera()->update(tank2.getPosition());
 
@@ -70,7 +70,6 @@ void TanksWar::update()
 				m_pInterface->m_menu = PLAYING_MENU;
 			else if (m_pInterface->m_menu == PLAYING_MENU)
 				m_pInterface->m_menu = MULTIPLAYER_MENU;
-				
 }
 
 void TanksWar::render()
@@ -83,10 +82,10 @@ void TanksWar::render()
 	if (m_client.getState() == CLIENT_CONNECTED_PLAYING)
 	{
 		m_pMap->draw();
-
 		for (auto clientData : m_client.getClientData())
 			clientData.playerTank.draw();
 	}
+
 	switch (m_pInterface->m_menu)
 	{
 	case MAIN_MENU:
@@ -104,7 +103,6 @@ void TanksWar::render()
 		break;
 	}
 
-	
 } 
 
 void TanksWar::onResetDevice()

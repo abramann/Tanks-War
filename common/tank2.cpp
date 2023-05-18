@@ -7,7 +7,6 @@
 constexpr auto HEALTH_TANK = 100;
 constexpr auto VELOCITY_TANK = 10;
 constexpr auto UPDATE_DELAY_TANK_DESTORY = 100;
-
 const auto TANK_MAX_ANGLE = PI - 0.01f;
 
 Tank2::Tank2() : m_bulletSpeed(BULLET_SPEED), m_bulletDamage(BULLET_DAMAGE)
@@ -88,14 +87,10 @@ void Tank2::executeForward(float frameTime)
 	m_position.y = m_pMap->passY(this, y);
 	Object2::executeForward();
 }
-const auto TANK_ROTATE_DELAY = 70.0f;
 
 void Tank2::executeLeft(float frameTime)
 {
-	static float time = TANK_ROTATE_DELAY, prevTime;
-	time = m_pTimer->getCurrentTime();
-	if ((1000 * (time - prevTime) < TANK_ROTATE_DELAY))
-		return;	if (m_rotate.z >= (TANK_MAX_ANGLE - 0.01f))
+	if (m_rotate.z >= (TANK_MAX_ANGLE - 0.01f))
 		m_rotate.z *= -1;
 
 	m_rotate.z += TANK_ROTATE_AMOUNT;
@@ -107,11 +102,6 @@ void Tank2::executeLeft(float frameTime)
 
 void Tank2::executeRight(float frameTime)
 {
-//	static float time = TANK_ROTATE_DELAY, prevTime;
-//	time = m_pTimer->getCurrentTime();
-//	if ((1000*(time - prevTime) < TANK_ROTATE_DELAY))
-//		return;
-//	prevTime = time;
 	if (m_rotate.z <= -TANK_MAX_ANGLE)
 		m_rotate.z *= -1;
 

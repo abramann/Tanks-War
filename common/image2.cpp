@@ -64,7 +64,7 @@ V3 Image2::getRotateCenter() const
 
 void Image2::createVertexBuffer()
 {
-	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(m_vertices, VB_USAGE_WRITE);
+	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(m_vertices, (VB_USAGE)VB_USAGE_WRITE);
 }
 
 void Image2::setLocalCoordinate()
@@ -75,10 +75,9 @@ void Image2::setLocalCoordinate()
 	vx[0] = Vertex(width, 0, 0.0f, 0.0f, v);
 	vx[1] = Vertex(0, 0, 0.0f, u, v);
 	vx[2] = Vertex(0, height, 0.0f, u, 0.0f);
-	vx[3] = Vertex(0, height, 0.0f, -u, 0.0f);
+	vx[3] = Vertex(0, height, 0.0f, u, 0.0f);
 	vx[4] = Vertex(width, height, 0.0f, 0.0f, 0.0f);
 	vx[5] = Vertex(width, 0, 0.0f, 0.0f, v);
-
 	m_pGraphics->setVertexBuffer(m_lpVertexBuffer, vx, m_vertices);
 }
 
@@ -104,16 +103,14 @@ void Image2::setNextImageTextureCoordinate()
 		}
 	}
 
-	m_row++;
-
 	Vertex vx[6];
 	vx[0].u = (m_row - 1)*u, vx[0].v = m_column*v;
 	vx[1].u = (m_row)*u, vx[1].v = (m_column)*v;
 	vx[2].u = m_row*u, vx[2].v = (m_column - 1)*v;
-	vx[3].u = (-m_row)*u, vx[3].v = (m_column - 1)*v;
+	vx[3].u = (m_row)*u, vx[3].v = (m_column - 1)*v;
 	vx[4].u = (m_row - 1)*u, vx[4].v = (m_column - 1)*v;
 	vx[5].u = (m_row - 1)*u, vx[5].v = m_column*v;
+
 	m_pGraphics->setVertexBufferUV(m_lpVertexBuffer, vx, 6);
-	
-	m_timeUntilLastUpdate = 0;
+	m_row++, m_timeUntilLastUpdate = 0;
 }
