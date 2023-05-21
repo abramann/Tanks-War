@@ -12,6 +12,7 @@ class Texture;
 class Map2
 {
 public:
+
 	Map2();
 	~Map2();
 	void initialize(const Game* game);
@@ -26,8 +27,12 @@ public:
 	bool isOutOfRange(const Space space) const;
 	Object2* getObject(V3 position) const;
 	static Space getImageSpace(const Image2* image, float x0 = 0, float y0 = 0);
-
 	bool isMapExist(const char* name, Crc32 crc32) { return true; }
+	const char* getMap() const { return m_loadedMap; }
+	Crc32 getCrc32() const;
+	const char* loadRandom() { DebugBreak(); return "d"; };
+	Space getRandomEmptySpace() const;
+
 private:
 
 	bool read();
@@ -36,7 +41,6 @@ private:
 	TextureManger* m_pTextureManger;
 	Texture* m_pTexture[TEXTURE_TILEDS];
 	Graphics* m_pGraphics;
-	char m_loadedMap[MAX_NAME_LEN];
 	std::vector< std::vector<char>> m_map;
 	int32 m_width, m_height;
 	int8 m_usedBitmaps;
@@ -47,4 +51,5 @@ private:
 	std::vector<uint32_t> m_startVertex, m_lenVertex;
 	std::vector<Object2*> m_object;
 	V2 m_tiledSize;
+	char m_loadedMap[MAX_NAME_LEN];
 };

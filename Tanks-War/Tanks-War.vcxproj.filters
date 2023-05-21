@@ -87,6 +87,9 @@
     <ClInclude Include="..\common\player.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\serverplayer.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\input.cpp">
@@ -117,9 +120,6 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="tankswar.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="winmain.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\imgui\imgui_impl_dx9.cpp">
@@ -155,9 +155,6 @@
     <ClCompile Include="..\common\tank2.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="map2.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\bullet.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
@@ -174,6 +171,15 @@
       <Filter>Common\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\player.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\serverplayer.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\winmain.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\map2.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
   </ItemGroup>

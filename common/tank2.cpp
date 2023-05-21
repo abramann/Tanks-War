@@ -50,8 +50,8 @@ void Tank2::update(float frameTime)
 void Tank2::draw()
 {
 	Object2::draw();
-	for (auto& bullet : m_pBullet)
-		bullet->draw();
+	for (int i = 0; i < m_pBullet.size();i++)
+		m_pBullet[i]->draw();
 }
 
 void Tank2::executeAttack()

@@ -19,7 +19,7 @@ Graphics::Graphics() : m_lpDevice3d(NULL), m_deviceState(NULL)
 #ifdef _BUILD_WITH_D3D9
 	m_lpDirect3d = NULL;
 //	m_sprite(NULL)
-	ZeroMemory(&m_PresentParameter, sizeof(D3DPRESENT_PARAMETERS));
+	ZeroMemory(&m_presentParameter, sizeof(D3DPRESENT_PARAMETERS));
 #else ifdef _BUILD_WITH_D3D11
 	m_lpDeviceContext = NULL;
 	m_lpRenderTargetView = NULL;
@@ -51,39 +51,26 @@ bool Graphics::initialize(const Game* game)
 	if (FAILED(m_lpDirect3d))
 		return false;
 
-	try
+	m_presentParameter.BackBufferWidth = ::g_gameInfo.width;
+	m_presentParameter.BackBufferHeight = ::g_gameInfo.height;
+	m_presentParameter.BackBufferCount = 1;
+	m_presentParameter.hDeviceWindow = hwnd;
+	m_presentParameter.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	if (::g_gameInfo.windowed == 0)
 	{
-		m_PresentParameter.BackBufferWidth = ::g_gameInfo.width;
-		m_PresentParameter.BackBufferHeight = ::g_gameInfo.height;
-		m_PresentParameter.BackBufferCount = 1;
-		m_PresentParameter.hDeviceWindow = hwnd;
-		m_PresentParameter.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		if (::g_gameInfo.windowed == 0)
-		{
-			if (isAdaptereCompatility())
-				m_PresentParameter.Windowed = FALSE;
-			else
-				return false;
-		}
+		if (checkFullscreenSupport())
+			m_presentParameter.Windowed = FALSE;
 		else
-		{
-			m_PresentParameter.BackBufferFormat = D3DFMT_UNKNOWN;
-			m_PresentParameter.Windowed = TRUE;
-		}
+			return false;
 	}
-	catch (...)
+	else
 	{
-		return false;
+		m_presentParameter.BackBufferFormat = D3DFMT_UNKNOWN;
+		m_presentParameter.Windowed = TRUE;
 	}
 
-	DWORD behavior = getBehaviorCompatility();
-	Result r;
-	r = m_lpDirect3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, behavior, &m_PresentParameter,
+	HRESULT r = m_lpDirect3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &m_presentParameter,
 		&m_lpDevice3d);
-	if (FAILED(r))
-		return false;
-
-	r = D3DXCreateSprite(m_lpDevice3d, &m_sprite);
 	if (FAILED(r))
 		return false;
 
@@ -97,7 +84,6 @@ bool Graphics::initialize(const Game* game)
 	m_lpDevice3d->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
 
 #else ifdef _BUILD_WITH_D3D11
-
 	DXGI_MODE_DESC bufferDesc;
 	ZeroMemory(&bufferDesc, sizeof(DXGI_MODE_DESC));
 	bufferDesc.Width = g_gameInfo.width;
@@ -107,11 +93,8 @@ bool Graphics::initialize(const Game* game)
 	bufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	bufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	bufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
-
 	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
-
 	swapChainDesc.BufferDesc = bufferDesc;
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
@@ -138,16 +121,13 @@ bool Graphics::initialize(const Game* game)
 
 	ID3D11Texture2D* lpBackBuffer;
 	hr = m_lpSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&lpBackBuffer);
-
 	hr = m_lpDevice3d->CreateRenderTargetView(lpBackBuffer, NULL, &m_lpRenderTargetView);
 	lpBackBuffer->Release();
 	if (FAILED(hr))
 		return false;
 
 	m_lpDeviceContext->OMSetRenderTargets(1, &m_lpRenderTargetView, NULL);
-
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
-
 	depthStencilDesc.Width = g_gameInfo.width;
 	depthStencilDesc.Height = g_gameInfo.height;
 	depthStencilDesc.MipLevels = 1;
@@ -159,7 +139,6 @@ bool Graphics::initialize(const Game* game)
 	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	depthStencilDesc.CPUAccessFlags = 0;
 	depthStencilDesc.MiscFlags = 0;
-
 	m_lpDevice3d->CreateTexture2D(&depthStencilDesc, NULL, &m_lpDepthBuffer);
 	hr = m_lpDevice3d->CreateDepthStencilView(m_lpDepthBuffer, NULL, &m_lpDepthStencilView);
 	if (FAILED(hr))
@@ -174,7 +153,6 @@ bool Graphics::initialize(const Game* game)
 	viewport.MaxDepth = 1.0f;
 	m_lpDeviceContext->RSSetViewports(1, &viewport);
 	ID3D10Blob* lpVSByteCode, *lpPSByteCode;
-
 	D3DX11CompileFromFileA("shader.fx", 0, 0, "VS_Start", "vs_4_0",
 		D3DXSHADER_DEBUG, 0, 0, &lpVSByteCode, 0,
 		&hr);
@@ -212,21 +190,16 @@ bool Graphics::initialize(const Game* game)
 		return false;
 
 	safeRelease(lpPSByteCode);
-	
 	m_lpDeviceContext->PSSetShader(m_lpPShader, 0, 0);
-
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.ByteWidth = sizeof(D3DXMATRIX);
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
-
 	hr = m_lpDevice3d->CreateBuffer(&desc, NULL, &m_lpVSConstBuffer);
-
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	
 	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;//D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -234,18 +207,13 @@ bool Graphics::initialize(const Game* game)
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	//Create the Sample State
 	m_lpDevice3d->CreateSamplerState(&sampDesc, &m_lpSampleState);
 	m_lpDeviceContext->PSSetSamplers(0, 1, &m_lpSampleState);
 	m_lpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory(&blendDesc, sizeof(blendDesc));
-
 	D3D11_RENDER_TARGET_BLEND_DESC rtbd;
 	ZeroMemory(&rtbd, sizeof(rtbd));
-
 	rtbd.BlendEnable = true;
 	rtbd.SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	rtbd.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
@@ -254,11 +222,9 @@ bool Graphics::initialize(const Game* game)
 	rtbd.DestBlendAlpha = D3D11_BLEND_ONE;
 	rtbd.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
 	blendDesc.AlphaToCoverageEnable = false;
 	blendDesc.RenderTarget[0] = rtbd;
 	float blendFactor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
 	m_lpDevice3d->CreateBlendState(&blendDesc, &m_lpBlendState);
 	m_lpDeviceContext->OMSetBlendState(m_lpBlendState, blendFactor, 0xffffffff);
 
@@ -494,7 +460,7 @@ void Graphics::setVertexBufferUV(LPVertexBuffer vb, Vertex * vertex, int8_t len)
 
 	vb->Unlock();
 #else ifdef _BUILD_WITH_D3D11
-	
+
 	D3D11_MAPPED_SUBRESOURCE data;
 	uint32 size;
 	Vertex* oldData = getVertexBufferData(vb, size);
@@ -520,32 +486,6 @@ void Graphics::setWorldMatrix(Matrix worldMatrix)
 #endif
 }
 
-bool Graphics::isAdaptereCompatility()
-{
-#ifdef _BUILD_WITH_D3D9
-	D3DDISPLAYMODE dMode;
-	m_lpDirect3d->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &dMode);
-	m_PresentParameter.BackBufferFormat = D3DFMT_X8R8G8B8;
-	int modes = m_lpDirect3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, m_PresentParameter.BackBufferFormat);
-	if (modes == 0)
-	{
-		throw GameError(gameErrorNS::FATAL_ERROR, "Your adapter doesn't support game format! Try to run as windowed.");
-		return false;
-	}
-
-	for (auto i = 0; i <= modes; i++)
-	{
-		m_lpDirect3d->EnumAdapterModes(D3DADAPTER_DEFAULT, m_PresentParameter.BackBufferFormat, i, &dMode);
-		if (dMode.Height == m_PresentParameter.BackBufferHeight && dMode.Width == m_PresentParameter.BackBufferWidth & m_PresentParameter.BackBufferFormat == dMode.Format)
-			return true;
-	}
-
-	return false;
-#else ifdef _BUILD_WITH_D3D11
-	return true;
-#endif
-}
-
 Result Graphics::getDeviceState()
 {
 	Result r=S_OK;
@@ -556,16 +496,19 @@ Result Graphics::getDeviceState()
 	return r;
 }
 
-std::vector<Resolution> Graphics::getSupportedResolutions()
+std::vector<Resolution> Graphics::getSupportedResolutions() const
 {
 	std::vector<Resolution> resolution;
 #ifdef _BUILD_WITH_D3D9
-	int modes = m_lpDirect3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, m_PresentParameter.BackBufferFormat);
+	int modes = m_lpDirect3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, m_presentParameter.BackBufferFormat);
 	D3DDISPLAYMODE dMode;
 	for (auto i = 0; i <= modes; i++)
 	{
-		m_lpDirect3d->EnumAdapterModes(D3DADAPTER_DEFAULT, m_PresentParameter.BackBufferFormat, i, &dMode);
-		if (dMode.Width < MIN_RESOLUTION_WIDTH || dMode.Height < MIN_RESOLUTION_HEIGHT || dMode.Height >= dMode.Width)
+		m_lpDirect3d->EnumAdapterModes(D3DADAPTER_DEFAULT, m_presentParameter.BackBufferFormat, i, &dMode);
+		if (dMode.Width < MIN_RESOLUTION_WIDTH ||
+			dMode.Height < MIN_RESOLUTION_HEIGHT ||
+			dMode.Height >= dMode.Width || 
+			dMode.Format != m_presentParameter.BackBufferFormat)
 			continue;
 
 		Resolution resol;
@@ -575,43 +518,34 @@ std::vector<Resolution> Graphics::getSupportedResolutions()
 
 #else ifdef _BUILD_WITH_D3D11
 	IDXGIFactory* factory;
-/*
 	CreateDXGIFactory(IID_PPV_ARGS(&factory)); 
 	IDXGIOutput* adapterOutput;
-	unsigned numerator = 0;
-	unsigned denominator = 1;
 	IDXGIAdapter* adapter;
 	factory->EnumAdapters(0, &adapter);
 	adapter->EnumOutputs(0, &adapterOutput);
-
-	// Get the number of modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display
-	// format for the adapter output (monitor).
-	unsigned int numModes;
+	uint32 numModes;
 	DXGI_MODE_DESC* displayModeList;
 	adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM,
 		DXGI_ENUM_MODES_INTERLACED,
 		&numModes, NULL);
-
-	// Create a list to hold all the possible display modes for this monitor/video
-	// card combination.
 	displayModeList = new DXGI_MODE_DESC[numModes];
 	adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM,
 		DXGI_ENUM_MODES_INTERLACED,
 		&numModes, displayModeList);
 
-	// Now go through all the display modes and find the one that matches the screen
-	// width and height. When a match is found store the numerator and denominator
-	// of the refresh rate for that monitor.
-	for (size_t i = 0; i < numModes; i++)
-	{
-		if (displayModeList[i].Width = 800 && displayModeList[i].Height == 600)
+	for (size_t i = 0; i < numModes; i+=2)
+		if (displayModeList[i].Width >= MIN_RESOLUTION_WIDTH && displayModeList[i].Height >= MIN_RESOLUTION_HEIGHT)
 		{
-			numerator = displayModeList[i].RefreshRate.Numerator;
-			denominator = displayModeList[i].RefreshRate.Denominator;
-			break;
+			Resolution resol;
+			resol.width = displayModeList[i].Width,
+				resol.height = displayModeList[i].Height;
+			resolution.push_back(resol);
 		}
-	}
-	safeDeleteArray(displayModeList);*/
+
+	safeDeleteArray(displayModeList);
+	safeRelease(factory);
+	safeRelease(adapter);
+	safeRelease(adapterOutput);
 #endif
 	return resolution;
 
@@ -663,11 +597,11 @@ void Graphics::resize(uint16_t width, uint16_t height)
 {
 	/*
 	SetWindowPos(m_hwnd, 0, 0, 0, width, height, 6);
-	m_PresentParameter.BackBufferWidth = width;
-	m_PresentParameter.BackBufferHeight = height;
-	m_lpDevice3d->Reset(&m_PresentParameter);
+	m_presentParameter.BackBufferWidth = width;
+	m_presentParameter.BackBufferHeight = height;
+	m_lpDevice3d->Reset(&m_presentParameter);
 	ImGui_ImplDX9_InvalidateDeviceObjects();
-	m_lpDevice3d->Reset(&m_PresentParameter);
+	m_lpDevice3d->Reset(&m_presentParameter);
 	ImGui_ImplDX9_CreateDeviceObjects();
 	*/
 }
@@ -680,6 +614,16 @@ void Graphics::streamVertexBuffer(LPVertexBuffer vb)
 #else #ifdef _BUILD_WITH_D3D11
 	m_lpDeviceContext->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
 #endif
+}
+
+bool Graphics::checkFullscreenSupport() const
+{
+	std::vector<Resolution> resolution = getSupportedResolutions();
+	for (auto resol : resolution)
+		if (g_gameInfo.width == resol.width && g_gameInfo.height == g_gameInfo.height)
+			return true;
+
+	return false;
 }
 
 void Graphics::setViewMatrix(Matrix viewMatrix)
@@ -715,27 +659,6 @@ Matrix Graphics::V3ToMatrix(const V3 v3, MatrixType type)
 	return mat;
 }
 
-DWORD Graphics::getBehaviorCompatility()
-{
-	DWORD behavior;
-#ifdef _BUILD_WITH_D3D9
-	D3DCAPS9 caps;
-	m_lpDirect3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
-	if ((caps.DevCaps && D3DDEVCAPS_HWTRANSFORMANDLIGHT) == 0 ||
-		caps.VertexShaderVersion < D3DVS_VERSION(1, 1))
-	{
-		behavior = D3DCREATE_SOFTWARE_VERTEXPROCESSING;  // use software only processing
-		return behavior;
-	}
-	else
-	{
-		behavior = D3DCREATE_HARDWARE_VERTEXPROCESSING;  // use hardware only processing
-		return behavior;
-	}
-#endif
-	return behavior;
-}
-
 #ifdef _BUILD_WITH_D3D11
 void Graphics::setVSConstBuffer(const void * data)
 {
@@ -765,5 +688,6 @@ Vertex* Graphics::getVertexBufferData(ID3D11Buffer* vb, uint32& size) const
 	stagingBuffer->Release();
 	return v;
 }
+
 
 #endif

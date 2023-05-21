@@ -302,10 +302,11 @@ void Interface::multiplayerMenu()
 		if (button("Start"))
 		{
 			if (selectedMap.empty())
-				selectedMap = m_pMap->setRandomMap();
+				selectedMap = m_pMap->loadRandom();
+			else
+				m_pMap->load(selectedMap.c_str());
 
 			m_pServer->start();
-			m_pMap->load(selectedMap.c_str());
 			configFlag = ImGuiInputTextFlags_ReadOnly;
 			m_pServer->getIP(ip);
 		}
@@ -325,13 +326,14 @@ void Interface::multiplayerMenu()
 	EndChild();
 //	SameLine();
 	BeginChild("ServerState", Vec2(g_gameInfo.width / 4, g_gameInfo.height / 2));
-	for (auto playerData : m_pServer->getClientsData())
+	const std::vector<ClientData>* clientData = m_pServer->getClientsData();
+	for (int i = 0; i < clientData->size(); i++)
 	{
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_NoHorizontalScroll;
-		inputText("Player", NOOPTIONS_COLOR, " ", (char*)playerData.name, MAX_PLAYER_NAME, NOOPTIONS_COLOR, flags);
-		inputText("IP", NOOPTIONS_COLOR," ",playerData.ip, netNS::IP_SIZE, NOOPTIONS_COLOR, flags);
+		inputText("Player", NOOPTIONS_COLOR, " ", (char*)clientData->at(i).name, MAX_NAME_LEN, NOOPTIONS_COLOR, flags);
+		inputText("IP", NOOPTIONS_COLOR, " ", (char*)(clientData->at(i).ip), netNS::IP_SIZE, NOOPTIONS_COLOR, flags);
 		int port = 0;
-		port = playerData.port;
+		port = clientData->at(i).port;
 		inputInt("Port", NOOPTIONS_COLOR, " ", &port, NOOPTIONS_COLOR, 6, 0, 0, flags);
 	}
 	EndChild();

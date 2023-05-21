@@ -18,7 +18,7 @@ public:
 	virtual void initialize(Texture* texture, const Game* game, int8 columns = 1, int8 rows = 1,
 		float updateDelay = UPDATE_DELAY_IMAGE);
 	virtual void update(const float frameTime);
-	virtual void draw();
+	virtual void draw() const;
 	virtual V3 getRotateCenter() const;
 
 	int16 getHeight() const { return m_height; }

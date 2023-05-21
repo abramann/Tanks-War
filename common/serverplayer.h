@@ -7,7 +7,7 @@ public:
 
 	ServerPlayer();
 	~ServerPlayer();
-	virtual void initialize(PlayerID id, const char* name, Game* game);
-	
+	virtual void initialize(PlayerID id, const char* name, const Game* game);
+
 };
 

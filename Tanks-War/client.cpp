@@ -18,6 +18,7 @@ Client::Client() : m_gamePlayers(0), m_state(CLIENT_UNCONNECTED), m_presentTime(
 	m_pSpsPlayerUpdate = (SpsPlayerUpdate*)&m_rData;
 	m_pPacketType = (PacketType*)&m_rData;
 	m_port = _rand(3000);
+	m_pClientPlayer = std::make_shared<ClientPlayer>();
 }
 Client::~Client()
 {
@@ -34,24 +35,29 @@ void Client::initialize(Game* game)
 	m_pTimer = game->getTimer();
 	m_clientInfo = FileIO::readClientInfo();
 }
+
 void Client::update()
 {
-	/*
 	//if (isConnected())
 	//	present();
 	if (m_state == CLIENT_CONNECTED_PLAYING)
+	{
+		m_pClientPlayer->update(0);
+		PlayerAct act = m_pClientPlayer->getAct();
+		if (act != PLAYER_ACT_NONE)
+		{
+			m_pCpsPlayerAct->packetType = PACKET_PLAYER_ACT;
+			m_pCpsPlayerAct->act = act;
+			m_pCpsPlayerAct->id = m_pClientPlayer->getID();
+			send();
+		}
+
 		for (auto& clientData : m_clientData)
 		{
-			Tank2& tank = clientData.playerTank;
-			tank.update(0);
-			if (clientData.id == m_id && tank.m_playerAct != PLAYER_ACT_NONE)
-			{
-				m_pCpsPlayerAct->packetType = PACKET_PLAYER_ACT;
-				m_pCpsPlayerAct->act = tank.m_playerAct;
-				m_pCpsPlayerAct->id = m_id;
-				send();
-			}
+			ServerPlayer& serverPlayer = clientData.serverPlayer;
+			serverPlayer.update(0);
 		}
+	}
 	if (recv())
 	{
 		switch (*m_pPacketType)
@@ -76,7 +82,7 @@ void Client::update()
 			break;
 		}
 	}
-	*/
+	
 }
 
 bool Client::connect()
@@ -102,16 +108,15 @@ bool Client::connect()
 		//	send();
 		m_state = CLIENT_CONNECTED_PLAYING;
 		m_gamePlayers = m_pSpsIni->gamePlayers;
-		m_id = m_pSpsIni->id;
+		m_pClientPlayer->initialize(m_pSpsIni->id, m_pGame);
 		if (!m_pMap->load(m_map))
 		{
 			disconnect();
 			m_state = CLIENT_UNCONNECTED_MAP_NOT_LOAD;
 			return false;
 		}
-
-		uint8_t players = 0;
-
+		
+		uint8 players = 0;
 		do
 		{
 			recv(true);
@@ -122,18 +127,11 @@ bool Client::connect()
 		for (int i = 0; i < players; i++)
 		{
 			PlayerIniData& iniData = m_pSpsPlayerIniData->playerIniData[i];
+			if (iniData.id == m_pClientPlayer->getID())
+				continue;
+
 			ClientData clientData;
-			clientData.id = iniData.id;
-			strcpy(clientData.name, iniData.name);
-/*			clientData.playerTank.initialize(m_pMap, m_pTextureManger, m_pTextureManger->getTexture(2), m_pAudio, m_pGraphics);
-			if (clientData.id == m_id)
-			{
-				clientData.playerTank.setClientMode();
-				clientData.playerTank.inputInitialize(m_pInput, W_KEY, S_KEY, D_KEY, A_KEY, K_KEY);
-			}
-			else
-				clientData.playerTank.setRemoteClientMode();
-				*/
+			clientData.serverPlayer.initialize(iniData.id, iniData.name, m_pGame);
 			m_clientData.push_back(clientData);
 		}
 	}
@@ -148,7 +146,7 @@ void Client::present()
 		return;
 
 	m_pCpsPresent->packet = PACKET_PRESENT_CLIENT;
-	m_pCpsPresent->id = m_id;
+//	m_pCpsPresent->id = m_id;
 	send();
 	m_presentTime = m_pTimer->getCurrentTime();
 }
@@ -156,7 +154,7 @@ void Client::present()
 void Client::disconnect()
 {
 	m_pCpsDisconnect->packetType = PACKET_DISCONNECT;
-	m_pCpsDisconnect->id = m_id;
+	m_pCpsDisconnect->id = m_pClientPlayer->getID();
 	send();
 	m_state = CLIENT_UNCONNECTED_DISCONNECT;
 	m_net.closeSocket();
@@ -195,11 +193,9 @@ void Client::initPlayers()
 
 void Client::addNewPlayer()
 {
-	ClientData clientData;
-	clientData.id = m_pSpsPlayerIniData->playerIniData->id;
-	strcpy(clientData.name, m_pSpsPlayerIniData->playerIniData->name);
-//	clientData.playerTank.initialize();
-//	clientData.playerTank.setRemoteClientMode();
+	PlayerID& id = m_pSpsPlayerIniData->playerIniData->id;
+	const char* name = m_pSpsPlayerIniData->playerIniData->name;
+	ClientData clientData(id, name, m_pGame);
 	m_clientData.push_back(clientData);
 	recv(true);
 	playerUpdate();
@@ -209,16 +205,31 @@ void Client::removeClient(PlayerID id)
 {
 	for (int i = 0; i < m_clientData.size(); i++)
 	{
-		if (m_clientData[i].id == id);
+		if (m_clientData[i].getID() == id);
 		m_clientData.erase(std::next(m_clientData.begin(), i));
 		break;
 	}
 }
 
+inline ClientData* getIDClient(const PlayerID id, std::vector<ClientData>* clientData)
+{
+	ClientData* idClient = 0;;
+	for (int i = 0; i < clientData->size(); i++)
+	{
+		if (clientData->at(i).getID() == id)
+		{
+			idClient = &clientData->at(i);
+			break;
+		}
+	}
+
+	return idClient;
+}
+
 void Client::playerUpdate()
 {
 	PlayerID& id = m_pSpsPlayerUpdate->playerUpdate->id;
-	ClientData& clientData = *getIdItem(id, &m_clientData);
+	ClientData& clientData = *getIDClient(id, &m_clientData);
 //	clientData.playerTank.applyPlayerUpdate(*m_pSpsPlayerUpdate->playerUpdate);
 }
 
@@ -226,11 +237,15 @@ void Client::playersUpdate()
 {
 	PlayerUpdate* playerUpdate = m_pSpsPlayerUpdate->playerUpdate;
 
-	for (int i = 0; i < m_clientData.size(); i++)
+	for (int i = 0; i < m_clientData.size() + 1; i++)
 	{
 		PlayerID& id = playerUpdate[i].id;
-		Tank2& playerTank = getIdItem(id, &m_clientData)->playerTank;
-//		auto xy = playerTank.getXY();
-//		playerTank.applyPlayerUpdate(playerUpdate[i]);
+		if (m_pClientPlayer->getID() == id)
+			m_pClientPlayer->applyPlayerUpdate(playerUpdate[i]);
+		else
+		{
+			ServerPlayer& serverPlayer = getIDClient(id, &m_clientData)->serverPlayer;
+			serverPlayer.applyPlayerUpdate(playerUpdate[i]);
+		}
 	}
 }

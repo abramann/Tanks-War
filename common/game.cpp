@@ -51,7 +51,6 @@ void Game::initialize(HINSTANCE hInstance, HWND hwnd)
 
 	m_pMap->initialize(this);
 //	m_logo.initialize(m_pTextureManger->getTexture(TEXTURE_LOGO), this);
-//	m_logo.cover();	
 }
 
 void Game::run()
@@ -71,7 +70,6 @@ void Game::renderGame()
  		render();
 
 	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
-
 	m_pGraphics->end();
 	m_pGraphics->showBackbuffer();
 }

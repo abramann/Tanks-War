@@ -1,5 +1,6 @@
 #include "player.h"
 #include "game.h"
+#include "texturemanger.h"
 
 Player::Player() : m_id(0)
 {
@@ -10,10 +11,17 @@ Player::~Player()
 {
 }
 
-void Player::initialize(PlayerID id, const char* name, Texture* texture, const Game * game)
+void Player::initialize(PlayerID id, const char* name, PlayerType playerType, const Game * game)
 {
 	m_id = id;
 	strcpy(m_name, name);
+	Texture* texture;
+	TextureManger* pTextureManger = game->getTextureManger();
+	if (playerType == PLAYER_SELF)
+		texture = pTextureManger->getTexture(TEXTURE_PLAYER_TANK);
+	else if (playerType == PLAYER_ENEMY)
+		texture = pTextureManger->getTexture(TEXTURE_ENEMY_TANK);
+
 	Tank2::initialize(texture, game);
 }
 

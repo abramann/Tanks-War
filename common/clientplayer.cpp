@@ -1,3 +1,6 @@
+#ifdef _CLIENT_BUILD
+#ifndef _CLIENT_H
+#define _CLIENT_H
 #include "clientplayer.h"
 #include "game.h"
 #include "fileio.h"
@@ -21,10 +24,8 @@ void ClientPlayer::initialize(PlayerID id, Game * game)
 		m_right = D_KEY,
 		m_left = A_KEY;
 	m_pInput = game->getInput();
-	TextureManger* pTextureManger = game->getTextureManger();
-	Texture* pTexture = pTextureManger->getTexture(TEXTURE_PLAYER_TANK);
 	std::string name = FileIO::readClientInfo().name;
-	Player::initialize(id, name.c_str(), pTexture, game);
+	Player::initialize(id, name.c_str(), PLAYER_SELF, game);
 	m_pCamera = m_pGraphics->getCamera();
 }
 
@@ -78,3 +79,7 @@ void ClientPlayer::handleInput()
 	else if (m_pInput->isKeyIn(m_left))
 		executeLeft();
 }
+
+
+#endif
+#endif

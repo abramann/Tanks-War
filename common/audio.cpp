@@ -30,6 +30,7 @@ bool Audio::initialize()
 
 void Audio::play(Sound sound)
 {
+	return;
 	m_pSound->play2D(m_pSource[sound]);
 }
 

@@ -1,6 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DBG D1D11|Win32">
+      <Configuration>DBG D1D11</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DBG D1D11|x64">
+      <Configuration>DBG D1D11</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -31,6 +39,12 @@
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -39,6 +53,12 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -59,10 +79,16 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -77,7 +103,23 @@
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
@@ -107,7 +149,23 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD;_BUILD_WITH_D3D9</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4244;4200;4554;</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD;_BUILD_WITH_D3D11</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4244;4200;4554;</DisableSpecificWarnings>
     </ClCompile>
@@ -123,7 +181,23 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD;_BUILD_WITH_D3D9</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4244;4200;</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD;_BUILD_WITH_D3D11</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4244;4200;</DisableSpecificWarnings>
     </ClCompile>
@@ -175,52 +249,59 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\audio.cpp" />
+    <ClCompile Include="..\common\bullet.cpp" />
+    <ClCompile Include="..\common\camera.cpp" />
+    <ClCompile Include="..\common\clientplayer.cpp" />
     <ClCompile Include="..\common\crc32.cpp" />
     <ClCompile Include="..\common\fileio.cpp" />
-    <ClCompile Include="..\common\fire.cpp" />
     <ClCompile Include="..\common\game.cpp" />
     <ClCompile Include="..\common\graphics.cpp" />
-    <ClCompile Include="..\common\image.cpp" />
+    <ClCompile Include="..\common\image2.cpp" />
     <ClCompile Include="..\common\imgui\imgui.cpp" />
     <ClCompile Include="..\common\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\common\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\common\imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\common\imgui\imgui_impl_dx9.cpp" />
     <ClCompile Include="..\common\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="..\common\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\common\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\common\input.cpp" />
     <ClCompile Include="..\common\interface.cpp" />
-    <ClCompile Include="..\common\map.cpp" />
+    <ClCompile Include="..\common\map2.cpp" />
     <ClCompile Include="..\common\net.cpp" />
-    <ClCompile Include="..\common\object.cpp" />
-    <ClCompile Include="..\common\tank.cpp" />
+    <ClCompile Include="..\common\object2.cpp" />
+    <ClCompile Include="..\common\player.cpp" />
+    <ClCompile Include="..\common\serverplayer.cpp" />
+    <ClCompile Include="..\common\tank2.cpp" />
     <ClCompile Include="..\common\texture.cpp" />
     <ClCompile Include="..\common\texturemanger.cpp" />
-    <ClCompile Include="..\common\unit.cpp" />
-    <ClCompile Include="remoteplayer.cpp" />
+    <ClCompile Include="..\common\timer.cpp" />
+    <ClCompile Include="..\common\winmain.cpp" />
     <ClCompile Include="server.cpp" />
     <ClCompile Include="tankswarServer.cpp" />
-    <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\audio.h" />
+    <ClInclude Include="..\common\bullet.h" />
+    <ClInclude Include="..\common\camera.h" />
+    <ClInclude Include="..\common\clientplayer.h" />
     <ClInclude Include="..\common\constants.h" />
+    <ClInclude Include="..\common\crc32.h" />
     <ClInclude Include="..\common\fileio.h" />
-    <ClInclude Include="..\common\fire.h" />
     <ClInclude Include="..\common\game.h" />
     <ClInclude Include="..\common\gameerror.h" />
     <ClInclude Include="..\common\graphics.h" />
-    <ClInclude Include="..\common\image.h" />
+    <ClInclude Include="..\common\image2.h" />
     <ClInclude Include="..\common\input.h" />
     <ClInclude Include="..\common\interface.h" />
-    <ClInclude Include="..\common\map.h" />
+    <ClInclude Include="..\common\map2.h" />
     <ClInclude Include="..\common\net.h" />
-    <ClInclude Include="..\common\object.h" />
-    <ClInclude Include="..\common\tank.h" />
+    <ClInclude Include="..\common\object2.h" />
+    <ClInclude Include="..\common\player.h" />
+    <ClInclude Include="..\common\serverplayer.h" />
+    <ClInclude Include="..\common\tank2.h" />
     <ClInclude Include="..\common\texture.h" />
-    <ClInclude Include="..\common\texturemanger.h" />
-    <ClInclude Include="..\common\unit.h" />
-    <ClInclude Include="remoteplayer.h" />
+    <ClInclude Include="..\common\timer.h" />
     <ClInclude Include="server.h" />
     <ClInclude Include="tankswarServer.h" />
   </ItemGroup>

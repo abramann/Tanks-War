@@ -24,7 +24,7 @@ bool Input::initialize(HWND hwnd)
 		m_handleInput = true;
 
 	auto& io = ImGui::GetIO();
-	//ImGui::GetIO().KeyRepeatDelay = 0.257f;
+	// ImGui::GetIO().KeyRepeatDelay = 0.257f;
 	ImGui::GetIO().KeyRepeatRate = 0.05f;
 	io.IniFilename = 0;
 	return result;
@@ -35,19 +35,14 @@ void Input::handle(UINT msg, WPARAM wParam, LPARAM lParam)
 	ImGui_ImplWin32_WndProcHandler(m_hwnd, msg, wParam, lParam);
 }
 
-
 bool Input::isKeyIn(Key key)
 {
-	if (ImGui::IsKeyDown(key))
-		return true;
-	return false;
+	return (ImGui::IsKeyDown(key)) ? true : false;
 }
 
 bool Input::isKeyPressed(Key key)
 {
-	if (ImGui::IsKeyPressed(key))
-			return true;
-	return false;
+	return (ImGui::IsKeyPressed(key)) ? true : false;
 }
 
 bool Input::anyKeyPressed()

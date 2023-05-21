@@ -23,7 +23,6 @@ void Camera::initialize(const Game* game)
 	LPDevice lpDevice3d = m_pGraphics->getDevice();
 	lpDevice3d->SetTransform(D3DTS_PROJECTION, &m_proj);
 #else ifdef _BUILD_WITH_D3D11
-
 #endif
 }
 

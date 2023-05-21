@@ -113,7 +113,6 @@ Crc32 FileIO::getCRC32(const char* file)
 }
 
 #ifdef _CLIENT_BUILD
-
 ClientInfo FileIO::readClientInfo()
 {
 	ClientInfo clientInfo;

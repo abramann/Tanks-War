@@ -38,7 +38,7 @@ public:
 	LPDevice getDevice() const { return m_lpDevice3d; }
 	LPVertexBuffer createVertexBuffer(uint32 vertices, VB_USAGE usage, Vertex* data = 0);
 	Resolution getResolution();
-	std::vector<Resolution> getSupportedResolutions();
+	std::vector<Resolution> getSupportedResolutions() const;
 	void release();
 	void resize(uint16_t width, uint16_t height);
 	void setDrawProperties(V3 position = V3(0, 0, 0), V3 scall = V3(1, 1, 1), V3 rotate = V3(0, 0, 0), V3 rotateCenter = V3(0, 0, 0));
@@ -49,6 +49,7 @@ public:
 	void setVertexBufferUV(LPVertexBuffer vb, Vertex* vertez, int8_t len);
 	void setWorldMatrix(Matrix worldMatrix);
 	void streamVertexBuffer(LPVertexBuffer vb);
+	bool checkFullscreenSupport() const;
 	Camera* getCamera() const { return m_pCamera; }
 
 private:
@@ -56,14 +57,12 @@ private:
 	bool isAdaptereCompatility();
 	DWORD getBehaviorCompatility();
 	void setViewMatrix(Matrix wvp);
+	LPDevice m_lpDevice3d;
 
 #ifdef _BUILD_WITH_D3D9
 	LPDIRECT3D9 m_lpDirect3d;
-	LPDevice m_lpDevice3d;
-	LPD3DXSPRITE m_sprite;
-	D3DPRESENT_PARAMETERS m_PresentParameter;
+	D3DPRESENT_PARAMETERS m_presentParameter;
 #else ifdef _BUILD_WITH_D3D11
-	LPDevice m_lpDevice3d;
 	ID3D11DeviceContext* m_lpDeviceContext;
 	IDXGISwapChain* m_lpSwapChain;
 	ID3D11RenderTargetView* m_lpRenderTargetView;

@@ -22,7 +22,6 @@ extern uint64_t g_frameCounter;
 #define COLOR_ARGB D3DCOLOR_ARGB
 #define COLOR_XRGB D3DCOLOR_XRGB
 #define MILLSEC
-#define MICROSEC
 typedef D3DCOLOR Color;
 typedef D3DXVECTOR2 V2;
 typedef D3DXVECTOR3 V3;
@@ -78,7 +77,7 @@ constexpr auto IMAGE_INFO_PATH = "Assets\\ini\\image-info.txt";
 constexpr auto INVALID_DATA = 0xFFFF;
 constexpr auto MAP_DIR = "Assets\\maps\\";
 constexpr auto MAX_FRAME_TIME = 80;
-constexpr auto MAX_NAME_LEN = 20;
+constexpr auto MAX_NAME_LEN = 60;
 constexpr auto MAX_PACKET_SIZE = 128;
 constexpr auto MAX_PLAYERS = 12;
 constexpr auto MIN_FRAME_RATE = 10;
@@ -173,22 +172,6 @@ inline void safeDeleteArray(T ptr)
 inline uint32_t _rand(uint32_t max)
 {
 	return ::GetTickCount() % max;
-}
-
-template <typename T>
-inline T* getIdItem(const PlayerID id, std::vector<T>* item)
-{
-	T* rItem = 0;;
-	for (auto& it : *item)
-	{
-		if (it.id == id)
-		{
-			rItem = &it;
-			break;
-		}
-	}
-
-	return rItem;
 }
 
 enum PacketType
@@ -444,6 +427,7 @@ enum VB_USAGE
 	VB_USAGE_WRITE = D3D11_USAGE_DYNAMIC
 #endif
 };
+
 extern GameInfo g_gameInfo;
 
 #endif

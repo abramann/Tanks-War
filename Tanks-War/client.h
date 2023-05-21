@@ -1,6 +1,8 @@
 #pragma once
 #include "constants.h"
-#include "tank2.h"
+#include "clientplayer.h"
+#include "serverplayer.h"
+#include <memory>
 
 class Game;
 class Map2;
@@ -11,9 +13,11 @@ class Net;
 
 struct ClientData
 {
-	char name[MAX_NAME_LEN];
-	PlayerID id;
-	Tank2 playerTank;
+	ClientData() {};
+	ClientData(PlayerID id, const char* name, Game* game) { serverPlayer.initialize(id, name, game); }
+	ServerPlayer serverPlayer;
+	PlayerID getID() const { return serverPlayer.getID(); }
+	void setID(PlayerID id) { serverPlayer.setID(id); }
 };
 
 class Client
@@ -36,6 +40,7 @@ public:
 	void initialize(Game* game);
 	void present();
 	void update();
+	ClientPlayer* getClientPlayer() const { return m_pClientPlayer.get(); }
 
 private:
 
@@ -65,7 +70,6 @@ private:
 	ClientState m_state;
 
 	char m_map[MAX_NAME_LEN];
-	PlayerID m_id;
 
 	CpsIni* m_pCpsIni;
 	CpsDisconnect* m_pCpsDisconnect;
@@ -76,10 +80,11 @@ private:
 	SpsPlayersExist* m_pSpsPlayersExist;
 	SpsPlayersInitData* m_pSpsPlayerIniData;
 	SpsPlayerUpdate* m_pSpsPlayerUpdate;
-
 	PacketType* m_pPacketType;
 
 	float m_presentTime;
 	char m_rData[MAX_PACKET_SIZE], m_sData[MAX_PACKET_SIZE];
 	std::vector<ClientData> m_clientData;
+	std::shared_ptr<ClientPlayer> m_pClientPlayer;
+
 };

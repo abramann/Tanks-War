@@ -1,19 +1,26 @@
 #pragma once
 #include "constants.h"
-#include "net.h"
-#include "map.h"
+
 #include "crc32.h"
-#include "tank.h"
 #include "texturemanger.h"
+#include "serverplayer.h"
 #include <map>
+
+class Game;
+class Net;
+class Map2;
+class TextureManger;
+class Timer;
 
 struct ClientData
 {
 	char ip[netNS::IP_SIZE], name[MAX_NAME_LEN];
 	Port port;
-	PlayerID id;
 	DWORD presentTime;
-	Tank playerTank;
+	ServerPlayer serverPlayer;
+	PlayerID getID() const { return serverPlayer.getID(); }
+	const char* getName() const { return serverPlayer.getName(); }
+	void setID(PlayerID id) { serverPlayer.setID(id); }
 };
 
 class Server
@@ -22,7 +29,7 @@ public:
 
 	Server();
 	~Server();
-	void initialize(Map* map, TextureManger* textureManger, Audio* audio, Graphics* graphics);
+	void initialize(const Game* game);
 	void update();
 	void stop();
 	void start();
@@ -45,12 +52,13 @@ public:
 	Port* getPort() { return &m_serverPort; }
 	const uint8_t& getGamePlayers() const { return m_gameMaxPlayers; }
 	const uint8_t& getConnectedPlayers() const { return m_clientData.size(); }
-	const std::vector<ClientData> getClientsData() { return m_clientData; }
+	const std::vector<ClientData>* getClientsData() const { return &m_clientData; }
 
 	void setGamePlayers(const uint8_t& players) { m_gameMaxPlayers = players; }
 	const ServerState& getState() const { return m_state; }
 	bool isStarted() const { return (m_state == SERVER_RUNNING_HANDLING || m_state == SERVER_RUNNING_WAITING || m_state == SERVER_RUNNING_PREPGAME); }
 	void checkClients();
+	ClientData* getIDClientData(PlayerID requiredID);
 
 private:
 
@@ -64,10 +72,12 @@ private:
 	PlayerID generateID() { return _rand(255); }
 	PlayerID getLastRecieverId();
 
-	Map* m_pMap;
+	const Game* m_pGame;
+	Map2* m_pMap;
 	Graphics* m_pGraphics;
 	TextureManger* m_pTextureManger;
 	Audio* m_pAudio;
+	Timer* m_pTimer;
 
 	Net m_net;
 	Port m_serverPort;

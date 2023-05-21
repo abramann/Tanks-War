@@ -5,7 +5,7 @@
 #include "texturemanger.h"
 #include "camera.h"
 
-#define TEST_NO_SERVER_INTERFACE
+//#define TEST_NO_SERVER_INTERFACE
 #ifdef TEST_NO_SERVER_INTERFACE
 Image2 image2;
 Tank2 tank2;
@@ -28,8 +28,8 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 	tank2.setPosition(V3(330, 300, 0));
 
 #else
-	m_client.initialize(m_pMap, m_pInput, m_pTextureManger, m_pAudio, m_pGraphics);
-	m_pInterface->initialize(&m_client, m_pMap, m_pAudio, m_pGraphics);
+	m_client.initialize(this);
+	m_pInterface->initialize(&m_client, this);
 #endif
 }
 
@@ -82,10 +82,14 @@ void TanksWar::render()
 	if (m_client.getState() == CLIENT_CONNECTED_PLAYING)
 	{
 		m_pMap->draw();
-		for (auto clientData : m_client.getClientData())
-			clientData.playerTank.draw();
+		ClientPlayer* clientPlayer = m_client.getClientPlayer();
+		clientPlayer->draw();
+		for (auto& clientData : m_client.getClientData())
+			clientData.serverPlayer.draw();
 	}
 
+	if (m_client.isConnected())
+		return;
 	switch (m_pInterface->m_menu)
 	{
 	case MAIN_MENU:

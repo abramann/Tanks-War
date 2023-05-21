@@ -37,7 +37,6 @@ void Image2::initialize(Texture * texture, const Game* game, int8 columns, int8 
 	}
 
 	m_updateDelay = updateDelay;
-
 	if (!m_initialized)
 		createVertexBuffer();
 
@@ -51,7 +50,7 @@ void Image2::update(const float frameTime)
 		updateTextureCoordinate(frameTime);
 }
 
-void Image2::draw()
+void Image2::draw() const
 {
 	m_pGraphics->drawImage(this);
 }

@@ -44,6 +44,7 @@
     <ClInclude Include="..\common\game.h" />
     <ClInclude Include="..\common\gameerror.h" />
     <ClInclude Include="..\common\player.h" />
+    <ClInclude Include="..\common\serverplayer.h" />
     <ClInclude Include="..\common\timer.h" />
     <ClInclude Include="..\common\graphics.h" />
     <ClInclude Include="..\common\image2.h" />
@@ -66,7 +67,9 @@
     <ClCompile Include="..\common\crc32.cpp" />
     <ClCompile Include="..\common\fileio.cpp" />
     <ClCompile Include="..\common\game.cpp" />
+    <ClCompile Include="..\common\map2.cpp" />
     <ClCompile Include="..\common\player.cpp" />
+    <ClCompile Include="..\common\serverplayer.cpp" />
     <ClCompile Include="..\common\timer.cpp" />
     <ClCompile Include="..\common\graphics.cpp" />
     <ClCompile Include="..\common\image2.cpp" />
@@ -84,10 +87,9 @@
     <ClCompile Include="..\common\tank2.cpp" />
     <ClCompile Include="..\common\texture.cpp" />
     <ClCompile Include="..\common\texturemanger.cpp" />
+    <ClCompile Include="..\common\winmain.cpp" />
     <ClCompile Include="client.cpp" />
-    <ClCompile Include="map2.cpp" />
     <ClCompile Include="tankswar.cpp" />
-    <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\shader.fx">
