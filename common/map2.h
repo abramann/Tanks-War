@@ -30,7 +30,7 @@ public:
 	bool isMapExist(const char* name, Crc32 crc32) { return true; }
 	const char* getMap() const { return m_loadedMap; }
 	Crc32 getCrc32() const;
-	const char* loadRandom() { DebugBreak(); return "d"; };
+	const char* loadRandom();
 	Space getRandomEmptySpace() const;
 
 private:

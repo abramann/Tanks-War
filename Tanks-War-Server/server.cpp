@@ -36,17 +36,14 @@ void Server::initialize(const Game* game)
 	ServerInfo info = FileIO::readServerInfo();
 	m_serverPort = info.port;
 	m_gameMaxPlayers = info.players;
-//	strcpy(m_map, info.map);
 }
 
 void Server::update()
 {
 	if (!isStarted())
 		return;
-		for (auto& clientData : m_clientData)
-			clientData.serverPlayer.update(0);
-
-	
+		for (auto& pClientData : m_pClientData)
+			pClientData->update(0);
 
 	//checkClients();
 	if (recv())
@@ -66,7 +63,7 @@ void Server::update()
 			applyPlayerAct();
 			break;
 		case PACKET_INI:
-			if (m_clientData.size() < m_gameMaxPlayers)
+			if (m_pClientData.size() < m_gameMaxPlayers)
 				getClients();
 			break;
 		}
@@ -95,40 +92,28 @@ void Server::start()
 
 void Server::getClients()
 {
-	if (addClient())
-		m_pSpsIni->accept = true;
-	else
-		m_pSpsIni->accept = false;
+	if (!addClient())
+		return;
 
 	m_pSpsIni->packetType = PACKET_INI;
-
 	m_pSpsIni->gamePlayers = m_gameMaxPlayers;
 	strcpy(m_pSpsIni->map, m_pMap->getMap());
 	m_pSpsIni->checksum = m_pMap->getCrc32();
 	reply();
-	/*	recv();
- if (*m_pPacketType != PACKET_START_SEASSON)
-	{
-		m_pSpsDisconnect->packetType = PACKET_DISCONNECT;
-		reply();
-		removeLastClient();
-		return;
-	}*/
-
 	postNewPlayer();
 	replyPlayersExist();
-	replayPlayersIniData();
+	replyPlayersIniData();
 	postPlayersUpdate();
 }
 
 void Server::send(PlayerID id)
 {
 	int size = MAX_PACKET_SIZE;
-	for (auto clientData : m_clientData)
+	for (auto pClientData : m_pClientData)
 	{
-		if (clientData.getID() == id)
+		if (pClientData->getID() == id)
 		{
-			m_net.sendData(m_sData, size, clientData.ip, clientData.port);
+			m_net.sendData(m_sData, size, pClientData->getIP(), pClientData->getPort());
 			break;
 		}
 	}
@@ -139,8 +124,8 @@ void Server::send(PlayerID id)
 void Server::post()
 {
 	int size = MAX_PACKET_SIZE;
-	for (int i = 0; i < m_clientData.size(); i++)
-		m_net.sendData(m_sData, size, m_clientData[i].ip, m_clientData[i].port);
+	for (auto pClient : m_pClientData)
+		m_net.sendData(m_sData, size, pClient->getIP(), pClient->getPort());
 
 	sbClear();
 }
@@ -148,16 +133,14 @@ void Server::post()
 void Server::postPlayersIniData()
 {
 	m_pSpsPlayerInitData->packetType = PACKET_PLAYERS_INI_DATA;
-	auto players = m_clientData.size();
+	auto players = m_pClientData.size();
 	PlayerIniData* initData = (PlayerIniData*)&m_pSpsPlayerInitData->playerIniData;
 	size_t dataSize = sizeof(ClientData)*players;
 	memset(initData, 0, dataSize);
-	uint8_t i = 0;
-	for (int i = 0; i < m_clientData.size(); i++)
+	for (int i = 0; i < m_pClientData.size(); i++)
 	{
-		ClientData& clientData = m_clientData[i];
-		strcpy(initData[i].name, clientData.name);
-		initData[i].id = clientData.getID();
+		strcpy(initData[i].name, m_pClientData[i]->getName());
+		initData[i].id = m_pClientData[i]->getID();
 	}
 
 	post();
@@ -170,10 +153,10 @@ void Server::postPlayerUpdate(PlayerID id)
 void Server::postPlayersUpdate()
 {
 	m_pSpsPlayerUpdate->packetType = PACKET_PLAYERS_UPDATE;
-	for (int i = 0; i < m_clientData.size(); i++)
+	for (int i = 0; i < m_pClientData.size(); i++)
 	{
-		m_pSpsPlayerUpdate->playerUpdate[i] = m_clientData[i].serverPlayer.getPlayerUpdate();
-		m_pSpsPlayerUpdate->playerUpdate[i].id = m_clientData[i].getID();
+		m_pSpsPlayerUpdate->playerUpdate[i] = m_pClientData[i]->serverPlayer.getPlayerUpdate();
+		m_pSpsPlayerUpdate->playerUpdate[i].id = m_pClientData[i]->getID();
 	}
 
 	post();
@@ -182,8 +165,8 @@ void Server::postPlayersUpdate()
 void Server::postNewPlayer()
 {
 	m_pSpsPlayerInitData->packetType = PACKET_NEW_PLAYER;
-	m_pSpsPlayerInitData->playerIniData->id = m_clientData.back().getID();
-	strcpy(m_pSpsPlayerInitData->playerIniData->name, m_clientData.back().name);
+	m_pSpsPlayerInitData->playerIniData->id = m_pClientData.back()->getID();
+	strcpy(m_pSpsPlayerInitData->playerIniData->name, m_pClientData.back()->getName());
 	post();
 }
 
@@ -197,17 +180,17 @@ void Server::reply()
 void Server::replyPlayersExist()
 {
 	m_pSpsPlayersExist->packetType = PACKET_PLAYERS_EXIST;
-	m_pSpsPlayersExist->players = m_clientData.size();
+	m_pSpsPlayersExist->players = m_pClientData.size();
 	reply();
 }
 
-void Server::replayPlayersIniData()
+void Server::replyPlayersIniData()
 {
 	m_pSpsPlayerInitData->packetType = PACKET_PLAYERS_INI;
-	for (int i = 0; i < m_clientData.size();i++)
+	for (int i = 0; i < m_pClientData.size();i++)
 	{
-		m_pSpsPlayerInitData->playerIniData[i].id = m_clientData[i].getID();
-		strcpy(m_pSpsPlayerInitData->playerIniData[i].name, m_clientData[i].getName());
+		m_pSpsPlayerInitData->playerIniData[i].id = m_pClientData[i]->getID();
+		strcpy(m_pSpsPlayerInitData->playerIniData[i].name, m_pClientData[i]->getName());
 	}
 
 	reply();
@@ -215,7 +198,7 @@ void Server::replayPlayersIniData()
 
 void Server::clearClients()
 {
-	m_clientData.clear();
+	m_pClientData.clear();
 }
 
 PlayerID Server::recvID(bool wait)
@@ -225,10 +208,10 @@ PlayerID Server::recvID(bool wait)
 	bool recieved = recv(wait);
 
 	if(recieved)
-		for (auto client : m_clientData)
+		for (auto pClientData : m_pClientData)
 		{
-			if (strcmp(m_IP, client.ip) == 0 && m_port == client.port)
-				return client.getID();
+			if (strcmp(m_IP, pClientData->getIP()) == 0 && m_port == pClientData->getPort())
+				return pClientData->getID();
 		}
 
 	return result;
@@ -258,21 +241,21 @@ void Server::present()
 {
 	if (*m_pPacketType == PACKET_PRESENT_CLIENT)
 	{
-		for (auto& clientData : m_clientData)
-			if (clientData.getID() == getLastRecieverId())
-				clientData.presentTime = m_pTimer->getCurrentTime();
+		for (auto& pClientData : m_pClientData)
+			if (pClientData->getID() == getLastRecieverId())
+				pClientData->presentTime = m_pTimer->getCurrentTime();
 	}
 }
 
 void Server::checkClients()
 {
-	if (m_clientData.size() > 0)
-		for (auto clientData : m_clientData)
+	if (m_pClientData.size() > 0)
+		for (auto pClientData : m_pClientData)
 		{
-			auto deltaTime = m_pTimer->getCurrentTime() - clientData.presentTime;
+			auto deltaTime = m_pTimer->getCurrentTime() - pClientData->presentTime;
 			if (deltaTime > SERVER_RECIEVE_PRESENT_TIME)
 			{
-				PlayerID id = clientData.getID();
+				PlayerID id = pClientData->getID();
 				m_pSpsDisconnect->packetType = PACKET_DISCONNECT;
 				send(id);
 				removeClient(id);
@@ -283,9 +266,9 @@ void Server::checkClients()
 
 ClientData* Server::getIDClientData(PlayerID requiredID)
 {
-	for (auto &cd : m_clientData)
-		if (requiredID == cd.getID())
-			return &cd;
+	for (auto &cd : m_pClientData)
+		if (requiredID == cd->getID())
+			return cd.get();
 }
 
 void Server::applyPlayerAct()
@@ -310,6 +293,22 @@ void Server::applyPlayerAct()
 	case PLAYER_ACT_ATTACK:
 		serverPlayer.executeAttack();
 		break;
+	case PLAYER_ACT_FORWARD_LEFT:
+		serverPlayer.executeLeft(1);
+		serverPlayer.executeForward(1);
+		break;
+	case PLAYER_ACT_FORWARD_RIGHT:
+		serverPlayer.executeRight(1);
+		serverPlayer.executeForward(1);
+		break;
+	case PLAYER_ACT_BACK_LEFT:
+		serverPlayer.executeLeft(1);
+		serverPlayer.executeBack(1);
+		break;
+	case PLAYER_ACT_BACK_RIGHT:
+		serverPlayer.executeRight(1);
+		serverPlayer.executeBack(1);
+		break;
 	default:
 		throw GameError(gameErrorNS::WARNING, "Unknown player act has been recieved!\n The other player(s) may have a different game version.");
 	}
@@ -322,22 +321,18 @@ void Server::applyPlayerAct()
 
 bool Server::addClient()
 {
-	for (auto clientData : m_clientData)
-		if (clientData.port == m_port)
-			if(strcmp(clientData.ip, m_IP) == 0)
+	for (auto pClientData : m_pClientData)
+		if (pClientData->getPort() == m_port)
+			if(strcmp(pClientData->getIP(), m_IP) == 0)
 			return false;
 	
-	ClientData clientData = { 0 };
 	PlayerID id = generateID();
-	clientData.port = m_port;
-	clientData.presentTime = m_pTimer->getCurrentTime();
-	clientData.serverPlayer.initialize(id, m_pCpsIni->name, m_pGame);
-	m_pSpsIni->id = clientData.getID();
+	m_pSpsIni->id = id;
+	std::shared_ptr<ClientData> pClientData = std::make_shared<ClientData>(id, m_pCpsIni->name, m_IP, m_port,m_pGame);
 	Space space = m_pMap->getRandomEmptySpace();
-	clientData.serverPlayer.setX(space.v1.x);
-	clientData.serverPlayer.setY(space.v1.y);
-	strcpy(clientData.ip, m_IP);
-	m_clientData.push_back(clientData);
+	V3 position = V3(space.v1.x, space.v1.y, 0);
+	pClientData->serverPlayer.setPosition(position);
+	m_pClientData.push_back(pClientData);
 	return true;
 }
 
@@ -349,11 +344,10 @@ void Server::removeLastClient()
 
 void Server::removeClient(PlayerID id)
 {
-	uint8_t i = 0;
-	for (int i = 0; i < m_clientData.size(); i++)
-		if (m_clientData[i].getID() == id)
+	for (int i = 0; i < m_pClientData.size(); i++)
+		if (m_pClientData[i]->getID() == id)
 		{
-			m_clientData.erase(std::next(m_clientData.begin(), i));
+			m_pClientData.erase(std::next(m_pClientData.begin(), i));
 			m_pSpsDisconnect->packetType = PACKET_PLAYER_DISCONNECTED;
 			m_pSpsDisconnect->id = id;
 			post();
@@ -363,11 +357,11 @@ void Server::removeClient(PlayerID id)
 PlayerID Server::getLastRecieverId()
 {
 	PlayerID id = INVALID_ID;
-	for (auto clientData : m_clientData)
+	for (auto pClientData : m_pClientData)
 	{
-		if (strcmp(clientData.ip , m_IP) == 0 && clientData.port == m_port)
+		if (strcmp(pClientData->getIP() , m_IP) == 0 && pClientData->getPort() == m_port)
 		{
-			id = clientData.getID();
+			id = pClientData->getID();
 			break;
 		}
 	}

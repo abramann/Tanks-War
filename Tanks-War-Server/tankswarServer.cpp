@@ -34,8 +34,8 @@ void TanksWarServer::render()
 	if (m_pServer->getState() == SERVER_RUNNING_HANDLING)
 	{
 		m_pMap->draw();
-		for (auto clientData : m_pServer->getClientData())
-			clientData.serverPlayer.draw();
+		for (auto pClientData : m_pServer->getClientData())
+			pClientData->draw();
 	}
 
 	

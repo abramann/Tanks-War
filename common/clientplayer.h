@@ -18,7 +18,7 @@ public:
 	virtual void executeLeft();
 	virtual void executeAttack();
 	PlayerAct getAct() const { return m_act; }
-
+	
 protected:
 
 	void handleInput();

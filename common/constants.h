@@ -88,7 +88,7 @@ constexpr auto PROJECT_NEAR_PLANE = 1.0f;
 constexpr auto SERVER_INFO_PATH = "Assets\\ini\\server-info.txt";
 constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
 constexpr auto TANK_INFO_PATH = "Assets\\ini\\tank-info.txt";
-constexpr auto TANK_ROTATE_AMOUNT = PI / 8;
+constexpr auto TANK_ROTATE_AMOUNT = PI / 64;
 constexpr auto TEXTURE_DIR = "Assets\\texture\\";
 constexpr auto TEXTURE_TANK_DESTROY_ROWS_COLUMNS = 8;
 constexpr auto UPDATE_DELAY_FPS = 0.5f;
@@ -210,7 +210,11 @@ enum PlayerAct
 	PLAYER_ACT_FORWRAD,
 	PLAYER_ACT_BACK,
 	PLAYER_ACT_RIGHT,
+	PLAYER_ACT_FORWARD_RIGHT,
+	PLAYER_ACT_BACK_RIGHT,
 	PLAYER_ACT_LEFT,
+	PLAYER_ACT_FORWARD_LEFT,
+	PLAYER_ACT_BACK_LEFT,
 	PLAYER_ACT_ATTACK
 };
 
@@ -327,7 +331,6 @@ struct CpsSeasson
 struct SpsIni
 {
 	PacketType packetType = PACKET_INI;
-	bool accept;
 	PlayerID id;
 	uint8_t gamePlayers;
 	char  map[MAX_NAME_LEN];

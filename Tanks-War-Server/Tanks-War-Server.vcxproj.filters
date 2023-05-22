@@ -103,9 +103,6 @@
     <ClCompile Include="..\common\camera.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\clientplayer.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\crc32.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
@@ -178,9 +175,6 @@
       <Filter>Common\Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\common\camera.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\clientplayer.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\common\constants.h">

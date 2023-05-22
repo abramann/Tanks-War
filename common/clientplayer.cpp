@@ -53,14 +53,36 @@ void ClientPlayer::executeBack()
 
 void ClientPlayer::executeRight()
 {
-	m_act = PLAYER_ACT_RIGHT;
 	Object2::executeRight();
+	switch (m_act)
+	{
+	case PLAYER_ACT_FORWRAD:
+		m_act = PLAYER_ACT_FORWARD_RIGHT;
+		break;
+	case PLAYER_ACT_BACK:
+		m_act = PLAYER_ACT_BACK_RIGHT;
+		break;
+	default:
+		m_act = PLAYER_ACT_RIGHT;
+		break;
+	}
 }
 
 void ClientPlayer::executeLeft()
 {
-	m_act = PLAYER_ACT_LEFT;
 	Object2::executeLeft();
+	switch (m_act)
+	{
+	case PLAYER_ACT_FORWRAD:
+		m_act = PLAYER_ACT_FORWARD_LEFT;
+		break;
+	case PLAYER_ACT_BACK:
+		m_act = PLAYER_ACT_BACK_LEFT;
+		break;
+	default:
+		m_act = PLAYER_ACT_LEFT;
+		break;
+	}
 }
 
 void ClientPlayer::executeAttack()
@@ -74,7 +96,7 @@ void ClientPlayer::handleInput()
 		executeForward();
 	else if (m_pInput->isKeyIn(m_back))
 		executeBack();
-	else if (m_pInput->isKeyIn(m_right))
+	if (m_pInput->isKeyIn(m_right))
 		executeRight();
 	else if (m_pInput->isKeyIn(m_left))
 		executeLeft();

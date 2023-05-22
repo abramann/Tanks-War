@@ -18,6 +18,7 @@ struct ClientData
 	ServerPlayer serverPlayer;
 	PlayerID getID() const { return serverPlayer.getID(); }
 	void setID(PlayerID id) { serverPlayer.setID(id); }
+	const char* getName() const { return serverPlayer.getName(); }
 };
 
 class Client
@@ -32,10 +33,10 @@ public:
 	char* getPlayerName() { return m_clientInfo.name; }
 	const char* getServerIP() { return m_clientInfo.serverIP; }
 	const uint8_t getState() const { return m_state; }
-	const uint8_t& getConnectedPlayers()const { return m_clientData.size(); }
+	const uint8_t& getConnectedPlayers()const { return m_pClientData.size(); }
 	const uint8_t& getGamePlayers() const { return m_gamePlayers; }
 	Port* getServerPort() { return &m_clientInfo.serverPort; }
-	std::vector<ClientData> getClientData() { return m_clientData; }
+	std::vector<std::shared_ptr<ClientData> > getClientData() { return m_pClientData; }
 	void disconnect();
 	void initialize(Game* game);
 	void present();
@@ -54,6 +55,7 @@ private:
 	void removeClient(PlayerID id);
 	void sbClear() { memset(m_sData, 0, MAX_PACKET_SIZE); }
 	void send();
+	ClientData* Client::getIDClient(const PlayerID id);
 
 	TextureManger* m_pTextureManger;
 	Audio* m_pAudio;
@@ -84,7 +86,7 @@ private:
 
 	float m_presentTime;
 	char m_rData[MAX_PACKET_SIZE], m_sData[MAX_PACKET_SIZE];
-	std::vector<ClientData> m_clientData;
+	std::vector<std::shared_ptr<ClientData> > m_pClientData;
 	std::shared_ptr<ClientPlayer> m_pClientPlayer;
 
 };

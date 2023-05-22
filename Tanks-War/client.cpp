@@ -52,9 +52,9 @@ void Client::update()
 			send();
 		}
 
-		for (auto& clientData : m_clientData)
+		for (auto& pClientData : m_pClientData)
 		{
-			ServerPlayer& serverPlayer = clientData.serverPlayer;
+			ServerPlayer& serverPlayer = pClientData->serverPlayer;
 			serverPlayer.update(0);
 		}
 	}
@@ -130,9 +130,8 @@ bool Client::connect()
 			if (iniData.id == m_pClientPlayer->getID())
 				continue;
 
-			ClientData clientData;
-			clientData.serverPlayer.initialize(iniData.id, iniData.name, m_pGame);
-			m_clientData.push_back(clientData);
+			std::shared_ptr<ClientData> pClientData = std::make_shared<ClientData>(iniData.id, iniData.name, m_pGame);
+			m_pClientData.push_back(pClientData);
 		}
 	}
 
@@ -158,7 +157,7 @@ void Client::disconnect()
 	send();
 	m_state = CLIENT_UNCONNECTED_DISCONNECT;
 	m_net.closeSocket();
-	m_clientData.clear();
+	m_pClientData.clear();
 }
 
 void Client::send()
@@ -195,30 +194,30 @@ void Client::addNewPlayer()
 {
 	PlayerID& id = m_pSpsPlayerIniData->playerIniData->id;
 	const char* name = m_pSpsPlayerIniData->playerIniData->name;
-	ClientData clientData(id, name, m_pGame);
-	m_clientData.push_back(clientData);
+	std::shared_ptr<ClientData> pClientData = std::make_shared<ClientData>(id, name, m_pGame);
+	m_pClientData.push_back(pClientData);
 	recv(true);
 	playerUpdate();
 }
 
 void Client::removeClient(PlayerID id)
 {
-	for (int i = 0; i < m_clientData.size(); i++)
-	{
-		if (m_clientData[i].getID() == id);
-		m_clientData.erase(std::next(m_clientData.begin(), i));
-		break;
-	}
+	for (int i = 0; i < m_pClientData.size(); i++)
+		if (m_pClientData[i]->getID() == id)
+		{
+			m_pClientData.erase(std::next(m_pClientData.begin(), i));
+			break;
+		}
 }
 
-inline ClientData* getIDClient(const PlayerID id, std::vector<ClientData>* clientData)
+ClientData* Client::getIDClient(const PlayerID id)
 {
 	ClientData* idClient = 0;;
-	for (int i = 0; i < clientData->size(); i++)
+	for (auto pClientData : m_pClientData)
 	{
-		if (clientData->at(i).getID() == id)
+		if (pClientData->getID() == id)
 		{
-			idClient = &clientData->at(i);
+			idClient = pClientData.get();
 			break;
 		}
 	}
@@ -229,22 +228,29 @@ inline ClientData* getIDClient(const PlayerID id, std::vector<ClientData>* clien
 void Client::playerUpdate()
 {
 	PlayerID& id = m_pSpsPlayerUpdate->playerUpdate->id;
-	ClientData& clientData = *getIDClient(id, &m_clientData);
-//	clientData.playerTank.applyPlayerUpdate(*m_pSpsPlayerUpdate->playerUpdate);
+	const PlayerUpdate& playerUpdate = *m_pSpsPlayerUpdate->playerUpdate;
+	if (id == m_pClientPlayer->getID())
+		m_pClientPlayer->applyPlayerUpdate(playerUpdate);
+	else
+	{
+		ClientData& clientData = *getIDClient(id);
+		clientData.serverPlayer.applyPlayerUpdate(playerUpdate);
+	}
+
 }
 
 void Client::playersUpdate()
 {
 	PlayerUpdate* playerUpdate = m_pSpsPlayerUpdate->playerUpdate;
 
-	for (int i = 0; i < m_clientData.size() + 1; i++)
+	for (int i = 0; i < m_pClientData.size() + 1; i++)
 	{
 		PlayerID& id = playerUpdate[i].id;
 		if (m_pClientPlayer->getID() == id)
 			m_pClientPlayer->applyPlayerUpdate(playerUpdate[i]);
 		else
 		{
-			ServerPlayer& serverPlayer = getIDClient(id, &m_clientData)->serverPlayer;
+			ServerPlayer& serverPlayer = getIDClient(id)->serverPlayer;
 			serverPlayer.applyPlayerUpdate(playerUpdate[i]);
 		}
 	}

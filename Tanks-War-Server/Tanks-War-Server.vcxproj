@@ -151,7 +151,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD;_BUILD_WITH_D3D9</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4244;4200;4554;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4200;4005;4554;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -167,7 +167,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD;_BUILD_WITH_D3D11</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4244;4200;4554;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4200;4005;4554;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -183,7 +183,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD;_BUILD_WITH_D3D9</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4244;4200;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4200;4005;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -199,7 +199,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD;_BUILD_WITH_D3D11</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4244;4200;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4200;4005;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -217,7 +217,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4244;4200;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4200;4005;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -237,7 +237,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_SERVER_BUILD</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4244;4200;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4200;4005;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -251,7 +251,6 @@
     <ClCompile Include="..\common\audio.cpp" />
     <ClCompile Include="..\common\bullet.cpp" />
     <ClCompile Include="..\common\camera.cpp" />
-    <ClCompile Include="..\common\clientplayer.cpp" />
     <ClCompile Include="..\common\crc32.cpp" />
     <ClCompile Include="..\common\fileio.cpp" />
     <ClCompile Include="..\common\game.cpp" />
@@ -284,7 +283,6 @@
     <ClInclude Include="..\common\audio.h" />
     <ClInclude Include="..\common\bullet.h" />
     <ClInclude Include="..\common\camera.h" />
-    <ClInclude Include="..\common\clientplayer.h" />
     <ClInclude Include="..\common\constants.h" />
     <ClInclude Include="..\common\crc32.h" />
     <ClInclude Include="..\common\fileio.h" />

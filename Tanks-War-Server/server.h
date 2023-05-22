@@ -4,7 +4,7 @@
 #include "crc32.h"
 #include "texturemanger.h"
 #include "serverplayer.h"
-#include <map>
+#include <memory>
 
 class Game;
 class Net;
@@ -14,13 +14,25 @@ class Timer;
 
 struct ClientData
 {
-	char ip[netNS::IP_SIZE], name[MAX_NAME_LEN];
-	Port port;
-	DWORD presentTime;
-	ServerPlayer serverPlayer;
+	ClientData(PlayerID id, const char* name, const char* ip, Port port, const Game* game)
+	{
+		_port = port;
+		strcpy(_ip, ip);
+		serverPlayer.initialize(id, name, game);
+	}
+
 	PlayerID getID() const { return serverPlayer.getID(); }
 	const char* getName() const { return serverPlayer.getName(); }
-	void setID(PlayerID id) { serverPlayer.setID(id); }
+	const char* getIP() const { return _ip; }
+	Port getPort() const { return _port; }
+	void update(float frameTime) { serverPlayer.update(frameTime); }
+	void draw() { serverPlayer.draw(); }
+	
+	char _ip[netNS::IP_SIZE];
+	Port _port;
+	DWORD presentTime;
+	ServerPlayer serverPlayer;
+
 };
 
 class Server
@@ -33,26 +45,13 @@ public:
 	void update();
 	void stop();
 	void start();
-	void send(PlayerID id);
-	void reply();
-	void replyPlayersExist();
-	void replayPlayersIniData();
-	void post();
-	void postPlayersExist();
-	void postPlayersIniData();
-	void postPlayerUpdate(PlayerID id);
-	void postPlayersUpdate();
-	void postNewPlayer();
-	void clearClients();
-	PlayerID recvID(bool wait = false);
-	bool recv(bool wait = false);
-	void getClients();
-	std::vector<ClientData> getClientData() { return m_clientData; }
+
+	std::vector<std::shared_ptr<ClientData> > getClientData() { return m_pClientData; }
 	void getIP(char* ip) { m_net.getLocalIP(ip); }
 	Port* getPort() { return &m_serverPort; }
 	const uint8_t& getGamePlayers() const { return m_gameMaxPlayers; }
-	const uint8_t& getConnectedPlayers() const { return m_clientData.size(); }
-	const std::vector<ClientData>* getClientsData() const { return &m_clientData; }
+	const uint8_t& getConnectedPlayers() const { return m_pClientData.size(); }
+	const std::vector<std::shared_ptr<ClientData> >* getClientsData()  const { return &m_pClientData; }
 
 	void setGamePlayers(const uint8_t& players) { m_gameMaxPlayers = players; }
 	const ServerState& getState() const { return m_state; }
@@ -69,6 +68,20 @@ private:
 	void present();
 	void sbClear() { memset(m_sData, 0, MAX_PACKET_SIZE); }
 	void rbClear() { memset(m_rData, 0, MAX_PACKET_SIZE); }
+	void send(PlayerID id);
+	void reply();
+	void replyPlayersExist();
+	void replyPlayersIniData();
+	void post();
+	void postPlayersExist();
+	void postPlayersIniData();
+	void postPlayerUpdate(PlayerID id);
+	void postPlayersUpdate();
+	void postNewPlayer();
+	void clearClients();
+	PlayerID recvID(bool wait = false);
+	bool recv(bool wait = false);
+	void getClients();
 	PlayerID generateID() { return _rand(255); }
 	PlayerID getLastRecieverId();
 
@@ -85,7 +98,7 @@ private:
 		m_rData[MAX_PACKET_SIZE], m_sData[MAX_PACKET_SIZE];
 	uint8_t m_gameMaxPlayers;
 	ServerState m_state;
-	std::vector<ClientData> m_clientData;
+	std::vector<std::shared_ptr<ClientData> > m_pClientData;
 	Port m_port;
 	CpsIni* m_pCpsIni;
 	CpsPresent* m_pCpsPresent;

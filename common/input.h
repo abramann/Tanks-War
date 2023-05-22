@@ -9,7 +9,7 @@ public:
 	
 	Input();
 	~Input();
-	bool initialize(HWND hWnd);
+	bool initialize(HWND hwnd);
 	void handle(UINT msg, WPARAM wParam, LPARAM lParam);
 	bool isKeyIn(Key k);
 	bool isKeyPressed(Key k);

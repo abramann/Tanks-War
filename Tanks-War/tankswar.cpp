@@ -84,8 +84,8 @@ void TanksWar::render()
 		m_pMap->draw();
 		ClientPlayer* clientPlayer = m_client.getClientPlayer();
 		clientPlayer->draw();
-		for (auto& clientData : m_client.getClientData())
-			clientData.serverPlayer.draw();
+		for (auto clientData : m_client.getClientData())
+			clientData->serverPlayer.draw();
 	}
 
 	if (m_client.isConnected())

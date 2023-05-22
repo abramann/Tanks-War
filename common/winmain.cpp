@@ -60,8 +60,8 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WinProc;
 	wc.hInstance = hInstance;
-	wc.hCursor = LoadCursorA(NULL, IDC_ARROW);
-//	wc.hCursor = LoadCursorA(0, "Assets\\tankswar.cursor");
+//	wc.hCursor = LoadImage(NULL, IDC_ARROW);
+	wc.hCursor = LoadCursorFromFileA("Assets\\tankswar.cursor");
 	wc.lpszClassName = CLASS_NAME;
 	RegisterClassEx(&wc);
 	DWORD style = (g_gameInfo.windowed) ? WS_OVERLAPPED : WS_EX_TOPMOST | WS_POPUP;
