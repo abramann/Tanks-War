@@ -267,13 +267,9 @@ void Interface::multiplayerMenu()
 		configFlag = ImGuiInputTextFlags_ReadOnly;
 	}
 	
-		
-	
 	inputInt("Port", NOOPTIONS_COLOR, "##ServerPort", &iPort,
 		colConfig, 6, 0, 0, ImGuiInputTextFlags_CharsDecimal | configFlag);
-	
 	*port = iPort;
-
 	text("Map", NOOPTIONS_COLOR); SameLine();
 	BeginChild("Maps", ImVec2(g_gameInfo.width/5, g_gameInfo.height/5), true);
 	static std::string selectedMap;
@@ -324,7 +320,6 @@ void Interface::multiplayerMenu()
 		0, 0, ImGuiInputTextFlags_ReadOnly);
 
 	EndChild();
-//	SameLine();
 	BeginChild("ServerState", Vec2(g_gameInfo.width / 4, g_gameInfo.height / 2));
 	const auto pClientData = m_pServer->getClientsData();
 	for (int i = 0; i < pClientData->size(); i++)

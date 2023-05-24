@@ -45,15 +45,15 @@ void TanksWar::collision()
 void TanksWar::update()
 {
 #ifdef TEST_NO_SERVER_INTERFACE
-	if (m_pInput->isKeyIn(W_KEY))
+	if (m_pInput->isKeyDown(W_KEY))
 		tank2.executeForward(0);
-	if (m_pInput->isKeyIn(S_KEY))
+	if (m_pInput->isKeyDown(S_KEY))
 		tank2.executeBack(0);
 	if (m_pInput->isKeyPressed(D_KEY))
 		tank2.executeRight(0);
 	if (m_pInput->isKeyPressed(A_KEY))
 		tank2.executeLeft(0);
-	if (m_pInput->isKeyIn(E_KEY))
+	if (m_pInput->isKeyDown(E_KEY))
 		tank2.executeAttack();
 	if (GetAsyncKeyState('Q'))
 		tank2.damage(100);
@@ -65,7 +65,7 @@ void TanksWar::update()
 #endif
 	m_client.update();
 	if (m_client.getState() == CLIENT_CONNECTED_PLAYING)
-		if (m_pInput->isKeyIn(I_KEY))
+		if (m_pInput->isKeyDown(I_KEY))
 			if (m_pInterface->m_menu == MULTIPLAYER_MENU)
 				m_pInterface->m_menu = PLAYING_MENU;
 			else if (m_pInterface->m_menu == PLAYING_MENU)

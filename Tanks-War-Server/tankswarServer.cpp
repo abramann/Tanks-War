@@ -29,6 +29,11 @@ void TanksWarServer::update()
 
 void TanksWarServer::render()
 {
+	using namespace ImGui;
+	ImTextureID tex = m_pTextureManger->getTexture(TEXTURE_TILED0)->getTexture();
+	SetNextWindowPos(Vec2(500, 30));
+	Image(tex, Vec2(60, 60));
+	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 	m_pInterface->show();
 //	m_pInterface->showFPS(m_fps);
 	if (m_pServer->getState() == SERVER_RUNNING_HANDLING)
@@ -36,7 +41,5 @@ void TanksWarServer::render()
 		m_pMap->draw();
 		for (auto pClientData : m_pServer->getClientData())
 			pClientData->draw();
-	}
-
-	
+	}	
 } 

@@ -97,51 +97,51 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <IncludePath>..\common\directx\;$(IncludePath)</IncludePath>
     <LibraryPath>..\common\lib\$(Platform)\;$(LibraryPath)</LibraryPath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -299,6 +299,7 @@
     <ClInclude Include="..\common\serverplayer.h" />
     <ClInclude Include="..\common\tank2.h" />
     <ClInclude Include="..\common\texture.h" />
+    <ClInclude Include="..\common\texturemanger.h" />
     <ClInclude Include="..\common\timer.h" />
     <ClInclude Include="server.h" />
     <ClInclude Include="tankswarServer.h" />

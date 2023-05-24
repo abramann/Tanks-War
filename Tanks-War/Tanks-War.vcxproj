@@ -38,13 +38,13 @@
     <ClInclude Include="..\common\audio.h" />
     <ClInclude Include="..\common\bullet.h" />
     <ClInclude Include="..\common\camera.h" />
-    <ClInclude Include="..\common\clientplayer.h" />
     <ClInclude Include="..\common\constants.h" />
     <ClInclude Include="..\common\fileio.h" />
     <ClInclude Include="..\common\game.h" />
     <ClInclude Include="..\common\gameerror.h" />
     <ClInclude Include="..\common\player.h" />
     <ClInclude Include="..\common\serverplayer.h" />
+    <ClInclude Include="..\common\shader.h" />
     <ClInclude Include="..\common\timer.h" />
     <ClInclude Include="..\common\graphics.h" />
     <ClInclude Include="..\common\image2.h" />
@@ -57,13 +57,13 @@
     <ClInclude Include="..\common\texture.h" />
     <ClInclude Include="..\common\texturemanger.h" />
     <ClInclude Include="client.h" />
+    <ClInclude Include="clientplayer.h" />
     <ClInclude Include="tankswar.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\audio.cpp" />
     <ClCompile Include="..\common\bullet.cpp" />
     <ClCompile Include="..\common\camera.cpp" />
-    <ClCompile Include="..\common\clientplayer.cpp" />
     <ClCompile Include="..\common\crc32.cpp" />
     <ClCompile Include="..\common\fileio.cpp" />
     <ClCompile Include="..\common\game.cpp" />
@@ -89,14 +89,20 @@
     <ClCompile Include="..\common\texturemanger.cpp" />
     <ClCompile Include="..\common\winmain.cpp" />
     <ClCompile Include="client.cpp" />
+    <ClCompile Include="clientplayer.cpp" />
     <ClCompile Include="tankswar.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\shader.fx">
+    <FxCompile Include="..\common\shader.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='RLS D3D11|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DBG D3D11|Win32'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </CustomBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='RLS D3D11|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DBG D3D11|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8C8B036E-1332-402C-953D-C7F2418D353C}</ProjectGuid>
@@ -190,67 +196,67 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
     <LibraryPath>..\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\common\directx;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DBG D3D11|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <LibraryPath>..\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\common\directx;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
     <LibraryPath>..\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\common\directx;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DBG D3D11|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <LibraryPath>..\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\common\directx;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <LibraryPath>..\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\common\directx;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RLS D3D11|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <LibraryPath>..\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\common\directx;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <LibraryPath>..\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\common\directx;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RLS D3D11|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\build\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\build\$(Platform)\$(Configuration)\objects\$(ProjectName)\</IntDir>
+    <OutDir>..\bin\</OutDir>
+    <IntDir>..\bin\objects\$(ProjectName)-$(Platform)-$(Configuration)\</IntDir>
     <LibraryPath>..\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\common\directx;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -258,7 +264,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <DisableSpecificWarnings>4244;4305;4996;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D9;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -274,7 +280,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <DisableSpecificWarnings>4244;4305;4996;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -290,7 +296,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <DisableSpecificWarnings>4244;4305;4996;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D9;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -306,7 +312,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <DisableSpecificWarnings>4244;4305;4996;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -324,7 +330,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <DisableSpecificWarnings>4244;4305;4996;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -344,7 +350,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <DisableSpecificWarnings>4244;4305;4996;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -364,7 +370,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <DisableSpecificWarnings>4244;4305;4996;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CLIENT_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -384,7 +390,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <DisableSpecificWarnings>4244;4305;4996;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>

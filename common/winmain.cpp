@@ -25,7 +25,7 @@ typedef TanksWarServer GameBuildType;
 #ifdef _BUILD_WITH_D3D9
 #pragma comment(lib,"d3d9.lib")
 #else ifdef _BUILD_WITH_D3D11
-#pragma comment(lib,"d3dcompiler.lib")
+//#pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"d3dx11.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -52,16 +52,12 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 	const char CLASS_NAME[] = "GameClass";
 
 	HWND hWnd;
-	WNDCLASSEX wc;
-
-	ZeroMemory(&wc, sizeof(WNDCLASSEX));
-
+	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WinProc;
 	wc.hInstance = hInstance;
-//	wc.hCursor = LoadImage(NULL, IDC_ARROW);
-	wc.hCursor = LoadCursorFromFileA("Assets\\tankswar.cursor");
+	wc.hCursor = LoadCursorA(NULL, IDC_ARROW);
 	wc.lpszClassName = CLASS_NAME;
 	RegisterClassEx(&wc);
 	DWORD style = (g_gameInfo.windowed) ? WS_OVERLAPPED : WS_EX_TOPMOST | WS_POPUP;

@@ -11,7 +11,7 @@ public:
 	~Input();
 	bool initialize(HWND hwnd);
 	void handle(UINT msg, WPARAM wParam, LPARAM lParam);
-	bool isKeyIn(Key k);
+	bool isKeyDown(Key k);
 	bool isKeyPressed(Key k);
 	bool anyKeyPressed();
 

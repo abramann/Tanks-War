@@ -68,11 +68,11 @@ private:
 	void present();
 	void sbClear() { memset(m_sData, 0, MAX_PACKET_SIZE); }
 	void rbClear() { memset(m_rData, 0, MAX_PACKET_SIZE); }
-	void send(PlayerID id);
-	void reply();
+	void send(PlayerID id, int size = MAX_PACKET_SIZE);
+	void reply(int size = MAX_PACKET_SIZE);
 	void replyPlayersExist();
 	void replyPlayersIniData();
-	void post();
+	void post(int size = MAX_PACKET_SIZE);
 	void postPlayersExist();
 	void postPlayersIniData();
 	void postPlayerUpdate(PlayerID id);

@@ -78,9 +78,6 @@
     <ClInclude Include="..\common\timer.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\clientplayer.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\camera.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
@@ -88,6 +85,12 @@
       <Filter>Common\Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\common\serverplayer.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="clientplayer.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\shader.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -164,9 +167,6 @@
     <ClCompile Include="..\common\timer.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\clientplayer.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\camera.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
@@ -182,8 +182,13 @@
     <ClCompile Include="..\common\map2.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="clientplayer.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\shader.fx" />
+    <FxCompile Include="..\common\shader.fx">
+      <Filter>Common</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

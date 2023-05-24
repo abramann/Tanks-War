@@ -55,7 +55,7 @@ void Game::initialize(HINSTANCE hInstance, HWND hwnd)
 
 void Game::run()
 {
-	if (m_pInput->isKeyIn(ESCAPE_KEY))
+	if (m_pInput->isKeyDown(ESCAPE_KEY))
 		PostQuitMessage(0);
 
 	updateGame();
@@ -69,7 +69,6 @@ void Game::renderGame()
 //	 if (m_logo.drawRapidly())
  		render();
 
-	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 	m_pGraphics->end();
 	m_pGraphics->showBackbuffer();
 }

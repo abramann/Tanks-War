@@ -9,6 +9,7 @@
 #include "imgui\imgui_impl_dx9.h"
 #else ifdef _BUILD_WITH_D3D11
 #include "imgui\imgui_impl_dx11.h"
+#include "shader.h"
 #endif
 
 uint64_t  g_frameCounter = 0;
@@ -152,44 +153,43 @@ bool Graphics::initialize(const Game* game)
 	viewport.MinDepth = 0;
 	viewport.MaxDepth = 1.0f;
 	m_lpDeviceContext->RSSetViewports(1, &viewport);
-	ID3D10Blob* lpVSByteCode, *lpPSByteCode;
+	/*ID3D10Blob* lpVSByteCode, *lpPSByteCode;
 	D3DX11CompileFromFileA("shader.fx", 0, 0, "VS_Start", "vs_4_0",
 		D3DXSHADER_DEBUG, 0, 0, &lpVSByteCode, 0,
 		&hr);
 	if (FAILED(hr))
 		return false;
-
-	hr = m_lpDevice3d->CreateVertexShader(lpVSByteCode->GetBufferPointer(),
-		lpVSByteCode->GetBufferSize(),
+		*/
+	hr = m_lpDevice3d->CreateVertexShader(g_VS_Start,
+		ARRAYSIZE(g_VS_Start),
 		0, &m_lpVShader);
 	if (FAILED(hr))
 		return false;
-
+		
 	m_lpDeviceContext->VSSetShader(m_lpVShader, 0, 0);
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	m_lpDevice3d->CreateInputLayout(layout, 2, lpVSByteCode->GetBufferPointer(),
-		lpVSByteCode->GetBufferSize(), &m_lpInputLayout);
+	m_lpDevice3d->CreateInputLayout(layout, 2, g_VS_Start,
+		ARRAYSIZE(g_VS_Start), &m_lpInputLayout);
 	m_lpDeviceContext->IASetInputLayout(m_lpInputLayout);
 	m_lpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	safeRelease(lpVSByteCode);
-
-	D3DX11CompileFromFileA("shader.fx", 0, 0, "PS_Start", "ps_4_0",
+	//safeRelease(lpVSByteCode);	
+	/*D3DX11CompileFromFileA("shader.fx", 0, 0, "PS_Start", "ps_4_0",
 		D3DCOMPILE_DEBUG, 0, 0, &lpPSByteCode, 0,
 		&hr);
 	if (FAILED(hr))
 		return false;
-
-	hr = m_lpDevice3d->CreatePixelShader(lpPSByteCode->GetBufferPointer(),
-		lpPSByteCode->GetBufferSize(),
+		*/
+	hr = m_lpDevice3d->CreatePixelShader(g_PS_Start,
+		ARRAYSIZE(g_PS_Start),
 		0, &m_lpPShader);
 	if (FAILED(hr))
 		return false;
 
-	safeRelease(lpPSByteCode);
+	//safeRelease(lpPSByteCode);
 	m_lpDeviceContext->PSSetShader(m_lpPShader, 0, 0);
 	D3D11_BUFFER_DESC desc;
 	desc.Usage = D3D11_USAGE_DEFAULT;
@@ -227,7 +227,7 @@ bool Graphics::initialize(const Game* game)
 	float blendFactor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	m_lpDevice3d->CreateBlendState(&blendDesc, &m_lpBlendState);
 	m_lpDeviceContext->OMSetBlendState(m_lpBlendState, blendFactor, 0xffffffff);
-
+	
 #endif
 	m_pCamera->initialize(game);
 	return true;

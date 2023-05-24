@@ -180,5 +180,8 @@
     <ClInclude Include="..\common\constants.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\texturemanger.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

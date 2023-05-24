@@ -34,7 +34,7 @@ void Input::handle(UINT msg, WPARAM wParam, LPARAM lParam)
 	ImGui_ImplWin32_WndProcHandler(m_hwnd, msg, wParam, lParam);
 }
 
-bool Input::isKeyIn(Key key)
+bool Input::isKeyDown(Key key)
 {
 	return (ImGui::IsKeyDown(key)) ? true : false;
 }

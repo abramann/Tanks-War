@@ -106,14 +106,14 @@ void Server::getClients()
 	postPlayersUpdate();
 }
 
-void Server::send(PlayerID id)
+void Server::send(PlayerID id, int size)
 {
-	int size = MAX_PACKET_SIZE;
+	int s = size;
 	for (auto pClientData : m_pClientData)
 	{
 		if (pClientData->getID() == id)
 		{
-			m_net.sendData(m_sData, size, pClientData->getIP(), pClientData->getPort());
+			m_net.sendData(m_sData, s, pClientData->getIP(), pClientData->getPort());
 			break;
 		}
 	}
@@ -121,11 +121,10 @@ void Server::send(PlayerID id)
 	sbClear();
 }
 
-void Server::post()
+void Server::post(int size)
 {
-	int size = MAX_PACKET_SIZE;
-	for (auto pClient : m_pClientData)
-		m_net.sendData(m_sData, size, pClient->getIP(), pClient->getPort());
+	for (int i = 0; i < m_pClientData.size(); i++)
+		m_net.sendData(m_sData, size, m_pClientData[i]->getIP(), m_pClientData[i]->getPort());
 
 	sbClear();
 }
@@ -136,14 +135,16 @@ void Server::postPlayersIniData()
 	auto players = m_pClientData.size();
 	PlayerIniData* initData = (PlayerIniData*)&m_pSpsPlayerInitData->playerIniData;
 	size_t dataSize = sizeof(ClientData)*players;
+	int connectedClients = m_pClientData.size();
 	memset(initData, 0, dataSize);
-	for (int i = 0; i < m_pClientData.size(); i++)
+	for (int i = 0; i < connectedClients; i++)
 	{
 		strcpy(initData[i].name, m_pClientData[i]->getName());
 		initData[i].id = m_pClientData[i]->getID();
 	}
-
-	post();
+	
+	int size = sizeof(SpsPlayersInitData) * connectedClients;
+	post(size);
 }
 
 void Server::postPlayerUpdate(PlayerID id)
@@ -153,13 +154,15 @@ void Server::postPlayerUpdate(PlayerID id)
 void Server::postPlayersUpdate()
 {
 	m_pSpsPlayerUpdate->packetType = PACKET_PLAYERS_UPDATE;
-	for (int i = 0; i < m_pClientData.size(); i++)
+	int connectedClients = m_pClientData.size();
+	for (int i = 0; i < connectedClients; i++)
 	{
 		m_pSpsPlayerUpdate->playerUpdate[i] = m_pClientData[i]->serverPlayer.getPlayerUpdate();
 		m_pSpsPlayerUpdate->playerUpdate[i].id = m_pClientData[i]->getID();
 	}
 
-	post();
+	int size = sizeof(PacketType) +  sizeof(PlayerUpdate) * connectedClients;
+	post(size);
 }
 
 void Server::postNewPlayer()
@@ -167,13 +170,14 @@ void Server::postNewPlayer()
 	m_pSpsPlayerInitData->packetType = PACKET_NEW_PLAYER;
 	m_pSpsPlayerInitData->playerIniData->id = m_pClientData.back()->getID();
 	strcpy(m_pSpsPlayerInitData->playerIniData->name, m_pClientData.back()->getName());
-	post();
+	int size = sizeof(SpsPlayersInitData);
+	post(size);
 }
 
-void Server::reply()
+void Server::reply(int size)
 {
-	int size = MAX_PACKET_SIZE;
-	m_net.sendData(m_sData, size, m_IP, m_port);
+	int s = size;
+	m_net.sendData(m_sData, s, m_IP, m_port);
 	sbClear();
 }
 
@@ -181,19 +185,22 @@ void Server::replyPlayersExist()
 {
 	m_pSpsPlayersExist->packetType = PACKET_PLAYERS_EXIST;
 	m_pSpsPlayersExist->players = m_pClientData.size();
+	int size = sizeof(SpsPlayersExist);
 	reply();
 }
 
 void Server::replyPlayersIniData()
 {
 	m_pSpsPlayerInitData->packetType = PACKET_PLAYERS_INI;
-	for (int i = 0; i < m_pClientData.size();i++)
+	int8 connectedClients = m_pClientData.size();
+	for (int i = 0; i < connectedClients; i++)
 	{
 		m_pSpsPlayerInitData->playerIniData[i].id = m_pClientData[i]->getID();
 		strcpy(m_pSpsPlayerInitData->playerIniData[i].name, m_pClientData[i]->getName());
 	}
 
-	reply();
+	int size = sizeof(SpsPlayersInitData) * connectedClients;
+	reply(size);
 }
 
 void Server::clearClients()
@@ -257,7 +264,8 @@ void Server::checkClients()
 			{
 				PlayerID id = pClientData->getID();
 				m_pSpsDisconnect->packetType = PACKET_DISCONNECT;
-				send(id);
+				int size = sizeof(SpsDisconnect);
+				send(id, size);
 				removeClient(id);
 				break;
 			}
@@ -316,7 +324,8 @@ void Server::applyPlayerAct()
 	m_pSpsPlayerUpdate->packetType = PACKET_PLAYER_UPDATE;
 	m_pSpsPlayerUpdate->playerUpdate[0] = serverPlayer.getPlayerUpdate();
 	m_pSpsPlayerUpdate->playerUpdate[0].id = id;
-	post();
+	int size = sizeof(PacketType) + sizeof(PlayerUpdate);
+	post(size);
 }
 
 bool Server::addClient()
@@ -350,7 +359,8 @@ void Server::removeClient(PlayerID id)
 			m_pClientData.erase(std::next(m_pClientData.begin(), i));
 			m_pSpsDisconnect->packetType = PACKET_PLAYER_DISCONNECTED;
 			m_pSpsDisconnect->id = id;
-			post();
+			int size = sizeof(SpsDisconnect);
+			post(size);
 		}
 }
 

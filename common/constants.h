@@ -53,7 +53,7 @@ typedef LPDIRECT3DVERTEXBUFFER9 LPVertexBuffer;
 #include <D3D11.h>
 #include <D3DX11.h>
 #include <D3D10.h>
-#include <D3Dcompiler.h>
+//#include <D3Dcompiler.h>
 
 typedef ID3D11ShaderResourceView* LPTextureD3D;
 typedef ID3D11Buffer* LPVertexBuffer;
@@ -77,8 +77,8 @@ constexpr auto IMAGE_INFO_PATH = "Assets\\ini\\image-info.txt";
 constexpr auto INVALID_DATA = 0xFFFF;
 constexpr auto MAP_DIR = "Assets\\maps\\";
 constexpr auto MAX_FRAME_TIME = 80;
-constexpr auto MAX_NAME_LEN = 60;
-constexpr auto MAX_PACKET_SIZE = 128;
+constexpr auto MAX_NAME_LEN = 20;
+constexpr auto MAX_PACKET_SIZE = 256;
 constexpr auto MAX_PLAYERS = 12;
 constexpr auto MIN_FRAME_RATE = 10;
 constexpr auto MIN_FRAME_TIME = 20;

@@ -43,14 +43,7 @@ void Client::update()
 	if (m_state == CLIENT_CONNECTED_PLAYING)
 	{
 		m_pClientPlayer->update(0);
-		PlayerAct act = m_pClientPlayer->getAct();
-		if (act != PLAYER_ACT_NONE)
-		{
-			m_pCpsPlayerAct->packetType = PACKET_PLAYER_ACT;
-			m_pCpsPlayerAct->act = act;
-			m_pCpsPlayerAct->id = m_pClientPlayer->getID();
-			send();
-		}
+		checkClientPlayerAct();
 
 		for (auto& pClientData : m_pClientData)
 		{
@@ -92,7 +85,8 @@ bool Client::connect()
 	m_pCpsIni->packetType = PACKET_INI;
 	strcpy(m_pCpsIni->name, m_clientInfo.name);
 	m_port = _rand(MAX_PORT);
-	send();
+	int size = sizeof(CpsIni);
+	send(size);
 	Sleep(500);
 	if (recv() && *m_pPacketType == PACKET_INI)
 	{
@@ -116,7 +110,7 @@ bool Client::connect()
 			return false;
 		}
 		
-		uint8 players = 0;
+		int8 players = 0;
 		do
 		{
 			recv(true);
@@ -154,17 +148,31 @@ void Client::disconnect()
 {
 	m_pCpsDisconnect->packetType = PACKET_DISCONNECT;
 	m_pCpsDisconnect->id = m_pClientPlayer->getID();
-	send();
+	int size = sizeof(CpsDisconnect);
+	send(size);
 	m_state = CLIENT_UNCONNECTED_DISCONNECT;
 	m_net.closeSocket();
 	m_pClientData.clear();
 }
 
-void Client::send()
+void Client::send(int size)
 {
-	int size = MAX_PACKET_SIZE;
-	m_net.sendData(m_sData, size, m_clientInfo.serverIP, m_port);
+	int s = size;
+	m_net.sendData(m_sData, s, m_clientInfo.serverIP, m_port);
 	sbClear();
+}
+
+void Client::checkClientPlayerAct()
+{
+	PlayerAct act = m_pClientPlayer->getAct();
+	if (act != PLAYER_ACT_NONE)
+	{
+		m_pCpsPlayerAct->packetType = PACKET_PLAYER_ACT;
+		m_pCpsPlayerAct->act = act;
+		m_pCpsPlayerAct->id = m_pClientPlayer->getID();
+		int size = sizeof(CpsPlayerAct);
+		send(size);
+	}
 }
 
 bool Client::recv()

@@ -17,9 +17,9 @@ bool FileIO::isFileExist(const char* file)
 	return f.is_open();
 }
 
-uint8_t FileIO::getDirFiles(std::string directory)
+uint8 FileIO::getDirFiles(std::string directory)
 {
-	uint8_t files = 0;
+	uint8 files = 0;
 	DIR* dir = opendir(directory.c_str());
 	struct dirent *ent;
 	while ((ent = readdir(dir)) != NULL)
@@ -149,7 +149,7 @@ ServerInfo FileIO::readServerInfo()
 	std::ifstream file(SERVER_INFO_PATH);
 	std::string line;
 	readValues<Port>(file, { &serverInfo.port });
-	readValues<uint8_t>(file, { &serverInfo.players });
+	readValues<uint8>(file, { &serverInfo.players });
 
 	return serverInfo;
 }
@@ -158,7 +158,7 @@ ServerInfo FileIO::readServerInfo()
 void FileIO::createGameInfo(const GameInfo& info)
 {
 	bool windowed;
-	uint16_t width, height;
+	uint16 width, height;
 	GameInfo oInfo = readGameInfo();
 	std::ofstream file(GAME_INFO_PATH);
 	windowed = (info.windowed == BYTE_INVALID_DATA) ? oInfo.windowed : info.windowed;

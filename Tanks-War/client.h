@@ -32,9 +32,9 @@ public:
 	char* getGameMap() { return (char*)m_map; }
 	char* getPlayerName() { return m_clientInfo.name; }
 	const char* getServerIP() { return m_clientInfo.serverIP; }
-	const uint8_t getState() const { return m_state; }
-	const uint8_t& getConnectedPlayers()const { return m_pClientData.size(); }
-	const uint8_t& getGamePlayers() const { return m_gamePlayers; }
+	const ClientState getState() const { return m_state; }
+	const size_t getConnectedPlayers()const { return m_pClientData.size(); }
+	const int8 getGamePlayers() const { return m_gamePlayers; }
 	Port* getServerPort() { return &m_clientInfo.serverPort; }
 	std::vector<std::shared_ptr<ClientData> > getClientData() { return m_pClientData; }
 	void disconnect();
@@ -54,7 +54,8 @@ private:
 	void recv(bool wait);
 	void removeClient(PlayerID id);
 	void sbClear() { memset(m_sData, 0, MAX_PACKET_SIZE); }
-	void send();
+	void send(int size = MAX_PACKET_SIZE);
+	void checkClientPlayerAct();
 	ClientData* Client::getIDClient(const PlayerID id);
 
 	TextureManger* m_pTextureManger;
@@ -68,7 +69,7 @@ private:
 	Net m_net;
 	Port m_port;
 	ClientInfo m_clientInfo;
-	uint8_t m_gamePlayers;
+	int8_t m_gamePlayers;
 	ClientState m_state;
 
 	char m_map[MAX_NAME_LEN];
