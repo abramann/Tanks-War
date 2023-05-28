@@ -1,6 +1,6 @@
-// Programming 2D Games
-// Copyright (c) 2011 by:
-// Charles Kelly
+// Note parts of this code are licensed under CC BY 3.0
+
+// Programming 2D Games Copyright (c) 2011 by Charles Kelly 
 // Game Engine constants.h v3.1
 // Last modification: Dec-24-2013
 
@@ -60,7 +60,7 @@ typedef ID3D11Buffer* LPVertexBuffer;
 
 #endif
 
-#define IN_RANGE(n, startRange, endRange) (bool)(n >= startRange && n <= endRange)
+#define IN_RANGE(n, a, b) (bool)( (n > a && n < b) || (n > b && n < a))
 
 constexpr double PI = 3.1415926535897932384626433832795;
 constexpr auto  MIN_RESOLUTION_WIDTH = 800;
@@ -71,17 +71,14 @@ constexpr auto CLIENT_PRESENT_TIME = 5000;
 constexpr auto COLOR_ALPHA = COLOR_ARGB(0, 0, 0, 255);
 constexpr auto COLOR_BLACK = COLOR_XRGB(0, 0, 0);
 constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
-constexpr auto FRAME_RATE = 240;
+constexpr auto FRAME_RATE = 15;
 constexpr auto GAME_INFO_PATH = "Assets\\ini\\game-info.txt";
 constexpr auto IMAGE_INFO_PATH = "Assets\\ini\\image-info.txt";
 constexpr auto INVALID_DATA = 0xFFFF;
 constexpr auto MAP_DIR = "Assets\\maps\\";
-constexpr auto MAX_FRAME_TIME = 80;
 constexpr auto MAX_NAME_LEN = 20;
 constexpr auto MAX_PACKET_SIZE = 256;
 constexpr auto MAX_PLAYERS = 12;
-constexpr auto MIN_FRAME_RATE = 10;
-constexpr auto MIN_FRAME_TIME = 20;
 constexpr auto PROJECT_FAR_PLANE = 1000.0f;
 constexpr auto PROJECT_FOV = PI / 2;
 constexpr auto PROJECT_NEAR_PLANE = 1.0f;
@@ -174,7 +171,9 @@ inline uint32_t _rand(uint32_t max)
 	return ::GetTickCount() % max;
 }
 
-enum PacketType
+typedef int8 PacketType;
+
+enum PacketType_
 {
 	PACKET_START_SEASSON = 100,
 	PACKET_INI,
@@ -204,7 +203,9 @@ enum gameTexure
 	TEXTURES
 };
 
-enum PlayerAct
+typedef int8 PlayerAct;
+
+enum PlayerAct_
 {
 	PLAYER_ACT_NONE,
 	PLAYER_ACT_FORWRAD,
@@ -215,7 +216,7 @@ enum PlayerAct
 	PLAYER_ACT_LEFT,
 	PLAYER_ACT_FORWARD_LEFT,
 	PLAYER_ACT_BACK_LEFT,
-	PLAYER_ACT_ATTACK
+	PLAYER_ACT_ATTACK = 100
 };
 
 struct Vertex
@@ -236,7 +237,7 @@ struct TextureVertices
 struct GameInfo
 {
 	int8 windowed;
-	uint16_t width, height;
+	int16 width, height;
 };
 
 struct ImageInfo
@@ -260,9 +261,46 @@ struct MapData
 	std::vector<int8> preventedBM;
 };
 
+template<typename T>
+inline T getMax(std::vector<T> val)
+{
+	T maxValue = val[0];
+	for (auto v : val)
+		maxValue = max(maxValue, v);
+
+	return maxValue;
+}
+
+template<typename T>
+inline T getMin(std::vector<T> val)
+{
+	T minValue = val[0];
+	for (auto v : val)
+		minValue = min(minValue, v);
+
+	return minValue;
+}
+
 struct Space
 {
 	V3 v1, v2, v3, v4;
+
+	float getMaxX() const
+	{
+		return getMax<float>({ v1.x,v2.x,v3.x,v4.x });
+	}
+	float getMinX() const
+	{
+		return getMin<float>({ v1.x,v2.x,v3.x,v4.x });
+	}
+	float getMaxY() const
+	{
+		return getMax<float>({ v1.y, v2.y, v3.y, v4.y });
+	}
+	float getMinY() const
+	{
+		return getMin<float>({ v1.y, v2.y, v3.y, v4.y });
+	}
 };
 
 struct ServerInfo
@@ -292,6 +330,13 @@ struct PlayerUpdate
 };
 
 struct CpsPlayerAct
+{
+	PacketType packetType = PACKET_PLAYER_UPDATE;
+	PlayerAct act;
+	PlayerID id;
+};
+
+struct SpsPlayerAct
 {
 	PacketType packetType = PACKET_PLAYER_UPDATE;
 	PlayerAct act;

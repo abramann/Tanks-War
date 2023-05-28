@@ -24,16 +24,11 @@ void TanksWarServer::collision()
 
 void TanksWarServer::update()
 {
-	m_pServer->update();
+	m_pServer->update(m_timeDeltaMillsec);
 }
 
 void TanksWarServer::render()
 {
-	using namespace ImGui;
-	ImTextureID tex = m_pTextureManger->getTexture(TEXTURE_TILED0)->getTexture();
-	SetNextWindowPos(Vec2(500, 30));
-	Image(tex, Vec2(60, 60));
-	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 	m_pInterface->show();
 //	m_pInterface->showFPS(m_fps);
 	if (m_pServer->getState() == SERVER_RUNNING_HANDLING)

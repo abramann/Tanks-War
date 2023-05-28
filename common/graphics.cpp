@@ -19,8 +19,7 @@ Graphics::Graphics() : m_lpDevice3d(NULL), m_deviceState(NULL)
 	m_pCamera = new Camera;
 #ifdef _BUILD_WITH_D3D9
 	m_lpDirect3d = NULL;
-//	m_sprite(NULL)
-	ZeroMemory(&m_presentParameter, sizeof(D3DPRESENT_PARAMETERS));
+	m_presentParameter = {};
 #else ifdef _BUILD_WITH_D3D11
 	m_lpDeviceContext = NULL;
 	m_lpRenderTargetView = NULL;
@@ -46,7 +45,6 @@ Graphics::~Graphics()
 bool Graphics::initialize(const Game* game)
 {
 	HWND hwnd = game->getHwnd();
-
 #ifdef _BUILD_WITH_D3D9
 	m_lpDirect3d = Direct3DCreate9(D3D_SDK_VERSION);
 	if (FAILED(m_lpDirect3d))
@@ -57,8 +55,9 @@ bool Graphics::initialize(const Game* game)
 	m_presentParameter.BackBufferCount = 1;
 	m_presentParameter.hDeviceWindow = hwnd;
 	m_presentParameter.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	if (::g_gameInfo.windowed == 0)
+	if (!g_gameInfo.windowed)
 	{
+		m_presentParameter.BackBufferFormat = D3DFMT_X8R8G8B8;
 		if (checkFullscreenSupport())
 			m_presentParameter.Windowed = FALSE;
 		else
@@ -70,12 +69,15 @@ bool Graphics::initialize(const Game* game)
 		m_presentParameter.Windowed = TRUE;
 	}
 
-	HRESULT r = m_lpDirect3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &m_presentParameter,
+	Result r = m_lpDirect3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &m_presentParameter,
 		&m_lpDevice3d);
 	if (FAILED(r))
 		return false;
 
 	bool result = ImGui_ImplDX9_Init(m_lpDevice3d);
+	if (!result)
+		return false;
+
 	Matrix proj;
 	D3DXMatrixPerspectiveFovLH(&proj, PROJECT_FOV, g_gameInfo.width / g_gameInfo.height, PROJECT_NEAR_PLANE, PROJECT_FAR_PLANE);
 	m_lpDevice3d->SetTransform(D3DTS_PROJECTION, &proj);
@@ -85,8 +87,7 @@ bool Graphics::initialize(const Game* game)
 	m_lpDevice3d->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
 
 #else ifdef _BUILD_WITH_D3D11
-	DXGI_MODE_DESC bufferDesc;
-	ZeroMemory(&bufferDesc, sizeof(DXGI_MODE_DESC));
+	DXGI_MODE_DESC bufferDesc = {};
 	bufferDesc.Width = g_gameInfo.width;
 	bufferDesc.Height = g_gameInfo.height;
 	bufferDesc.RefreshRate.Numerator = 60;
@@ -94,8 +95,7 @@ bool Graphics::initialize(const Game* game)
 	bufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	bufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	bufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	DXGI_SWAP_CHAIN_DESC swapChainDesc;
-	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
+	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc = bufferDesc;
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
@@ -105,7 +105,7 @@ bool Graphics::initialize(const Game* game)
 	swapChainDesc.Windowed = g_gameInfo.windowed;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-	HRESULT hr;
+	Result hr;
 	uint32 flags = 0;
 #ifdef _DEBUG
 	flags = D3D11_CREATE_DEVICE_DEBUG;
@@ -128,7 +128,7 @@ bool Graphics::initialize(const Game* game)
 		return false;
 
 	m_lpDeviceContext->OMSetRenderTargets(1, &m_lpRenderTargetView, NULL);
-	D3D11_TEXTURE2D_DESC depthStencilDesc;
+	D3D11_TEXTURE2D_DESC depthStencilDesc = {};
 	depthStencilDesc.Width = g_gameInfo.width;
 	depthStencilDesc.Height = g_gameInfo.height;
 	depthStencilDesc.MipLevels = 1;
@@ -153,13 +153,6 @@ bool Graphics::initialize(const Game* game)
 	viewport.MinDepth = 0;
 	viewport.MaxDepth = 1.0f;
 	m_lpDeviceContext->RSSetViewports(1, &viewport);
-	/*ID3D10Blob* lpVSByteCode, *lpPSByteCode;
-	D3DX11CompileFromFileA("shader.fx", 0, 0, "VS_Start", "vs_4_0",
-		D3DXSHADER_DEBUG, 0, 0, &lpVSByteCode, 0,
-		&hr);
-	if (FAILED(hr))
-		return false;
-		*/
 	hr = m_lpDevice3d->CreateVertexShader(g_VS_Start,
 		ARRAYSIZE(g_VS_Start),
 		0, &m_lpVShader);
@@ -175,31 +168,22 @@ bool Graphics::initialize(const Game* game)
 	m_lpDevice3d->CreateInputLayout(layout, 2, g_VS_Start,
 		ARRAYSIZE(g_VS_Start), &m_lpInputLayout);
 	m_lpDeviceContext->IASetInputLayout(m_lpInputLayout);
-	m_lpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//safeRelease(lpVSByteCode);	
-	/*D3DX11CompileFromFileA("shader.fx", 0, 0, "PS_Start", "ps_4_0",
-		D3DCOMPILE_DEBUG, 0, 0, &lpPSByteCode, 0,
-		&hr);
-	if (FAILED(hr))
-		return false;
-		*/
+	m_lpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	
 	hr = m_lpDevice3d->CreatePixelShader(g_PS_Start,
 		ARRAYSIZE(g_PS_Start),
 		0, &m_lpPShader);
 	if (FAILED(hr))
 		return false;
 
-	//safeRelease(lpPSByteCode);
 	m_lpDeviceContext->PSSetShader(m_lpPShader, 0, 0);
-	D3D11_BUFFER_DESC desc;
+	D3D11_BUFFER_DESC desc = {};
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.ByteWidth = sizeof(D3DXMATRIX);
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
 	hr = m_lpDevice3d->CreateBuffer(&desc, NULL, &m_lpVSConstBuffer);
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	D3D11_SAMPLER_DESC sampDesc = {};
 	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;//D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -210,10 +194,8 @@ bool Graphics::initialize(const Game* game)
 	m_lpDevice3d->CreateSamplerState(&sampDesc, &m_lpSampleState);
 	m_lpDeviceContext->PSSetSamplers(0, 1, &m_lpSampleState);
 	m_lpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory(&blendDesc, sizeof(blendDesc));
-	D3D11_RENDER_TARGET_BLEND_DESC rtbd;
-	ZeroMemory(&rtbd, sizeof(rtbd));
+	D3D11_BLEND_DESC blendDesc = {};
+	D3D11_RENDER_TARGET_BLEND_DESC rtbd = {};
 	rtbd.BlendEnable = true;
 	rtbd.SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	rtbd.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
@@ -227,7 +209,6 @@ bool Graphics::initialize(const Game* game)
 	float blendFactor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	m_lpDevice3d->CreateBlendState(&blendDesc, &m_lpBlendState);
 	m_lpDeviceContext->OMSetBlendState(m_lpBlendState, blendFactor, 0xffffffff);
-	
 #endif
 	m_pCamera->initialize(game);
 	return true;
@@ -243,8 +224,7 @@ LPVertexBuffer Graphics::createVertexBuffer(uint32 vertices, VB_USAGE usage, Ver
 	if (data)
 		setVertexBuffer(vb, data, vertices);
 #else ifdef _BUILD_WITH_D3D11
-	D3D11_BUFFER_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
+	D3D11_BUFFER_DESC desc = {};
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	desc.ByteWidth = vertices*sizeof(Vertex);
 	desc.Usage = (D3D11_USAGE)usage;
@@ -253,7 +233,6 @@ LPVertexBuffer Graphics::createVertexBuffer(uint32 vertices, VB_USAGE usage, Ver
 		cpuAccess = D3D11_CPU_ACCESS_WRITE;
 
 	desc.CPUAccessFlags = cpuAccess;
-
 	if (data == 0)
 		m_lpDevice3d->CreateBuffer(&desc, 0, &vb);
 	else
@@ -291,19 +270,12 @@ void Graphics::release()
 	safeRelease(m_lpDevice3d);
 }
 
-Result Graphics::reset()
-{
-	Result result = 0;
-	return result;
-}
-
 Result Graphics::begin()
 {
 	Result r = S_OK; 
-
 #ifdef _BUILD_WITH_D3D9
 	ImGui_ImplDX9_NewFrame();
-	m_lpDevice3d->Clear(NULL, NULL, D3DCLEAR_TARGET, COLOR_WHITE, 1.0f, NULL);
+	m_lpDevice3d->Clear(NULL, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0,0,255), 1.0f, NULL);
 	m_lpDevice3d->SetFVF(VERTEX_FVF);
 	r = m_lpDevice3d->BeginScene();
 #else ifdef _BUILD_WITH_D3D11
@@ -486,16 +458,6 @@ void Graphics::setWorldMatrix(Matrix worldMatrix)
 #endif
 }
 
-Result Graphics::getDeviceState()
-{
-	Result r=S_OK;
-#ifdef _BUILD_WITH_D3D9
-	r = m_lpDevice3d->TestCooperativeLevel();
-#else ifdef BUILD_WITH_D3D11
-#endif
-	return r;
-}
-
 std::vector<Resolution> Graphics::getSupportedResolutions() const
 {
 	std::vector<Resolution> resolution;
@@ -548,7 +510,6 @@ std::vector<Resolution> Graphics::getSupportedResolutions() const
 	safeRelease(adapterOutput);
 #endif
 	return resolution;
-
 }
 
 Resolution Graphics::getResolution()
@@ -563,7 +524,7 @@ Resolution Graphics::getResolution()
 void Graphics::setResolution(const Resolution& resolution)
 {
 	GameInfo info;
-	info.windowed = BYTE_INVALID_DATA;
+	info.windowed = -1;
 	info.width = resolution.width;
 	info.height = resolution.height;
 	FileIO::createGameInfo(info);
@@ -578,32 +539,23 @@ void Graphics::setTexture(LPTextureD3D texture)
 #endif
 }
 
-bool Graphics::isFullScreen()
+bool Graphics::isWindowed() const
 {
 	bool windowed = FileIO::readGameInfo().windowed;
 	return windowed;
 }
 
-void Graphics::setFullScreen(const bool& windowed)
+void Graphics::setWindowed(const bool& windowed)
 {
 	GameInfo info;
-	info.width = INVALID_DATA;
-	info.height = INVALID_DATA;
+	info.width = -1;
+	info.height = -1;
 	info.windowed = windowed;
 	FileIO::createGameInfo(info);
 }
 
 void Graphics::resize(uint16_t width, uint16_t height)
 {
-	/*
-	SetWindowPos(m_hwnd, 0, 0, 0, width, height, 6);
-	m_presentParameter.BackBufferWidth = width;
-	m_presentParameter.BackBufferHeight = height;
-	m_lpDevice3d->Reset(&m_presentParameter);
-	ImGui_ImplDX9_InvalidateDeviceObjects();
-	m_lpDevice3d->Reset(&m_presentParameter);
-	ImGui_ImplDX9_CreateDeviceObjects();
-	*/
 }
 
 void Graphics::streamVertexBuffer(LPVertexBuffer vb)
@@ -682,7 +634,7 @@ Vertex* Graphics::getVertexBufferData(ID3D11Buffer* vb, uint32& size) const
 	m_lpDevice3d->CreateBuffer(&stagingBufferDesc, 0, &stagingBuffer);
 	m_lpDeviceContext->CopyResource(stagingBuffer, vb);
 	D3D11_MAPPED_SUBRESOURCE data;
-	HRESULT HR = m_lpDeviceContext->Map(stagingBuffer, 0, D3D11_MAP_READ, 0, &data);
+	Result HR = m_lpDeviceContext->Map(stagingBuffer, 0, D3D11_MAP_READ, 0, &data);
 	Vertex* v = (Vertex*)data.pData;
 	m_lpDeviceContext->Unmap(stagingBuffer, 0);
 	stagingBuffer->Release();

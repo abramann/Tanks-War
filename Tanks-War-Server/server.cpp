@@ -18,6 +18,7 @@ m_pTimer(0), m_pTextureManger(0), m_pMap(0)
 	m_pSpsPlayerInitData = (SpsPlayersInitData*)&m_sData;
 	m_pSpsDisconnect = (SpsDisconnect*)&m_sData;
 	m_pSpsPlayerUpdate = (SpsPlayerUpdate*)&m_sData;
+	m_pSpsPlayerAct = (SpsPlayerAct*)&m_sData;
 	m_pPacketType = (PacketType*)&m_rData;
 }
 
@@ -38,7 +39,7 @@ void Server::initialize(const Game* game)
 	m_gameMaxPlayers = info.players;
 }
 
-void Server::update()
+void Server::update(float frameTime)
 {
 	if (!isStarted())
 		return;
@@ -60,11 +61,10 @@ void Server::update()
 			present();
 			break;
 		case PACKET_PLAYER_ACT:
-			applyPlayerAct();
+			applyPlayerAct(frameTime);
 			break;
 		case PACKET_INI:
-			if (m_pClientData.size() < m_gameMaxPlayers)
-				getClients();
+			getClients();
 			break;
 		}
 	}
@@ -92,18 +92,23 @@ void Server::start()
 
 void Server::getClients()
 {
+	if (m_pClientData.size() >= m_gameMaxPlayers)
+		return;
 	if (!addClient())
 		return;
 
+	PlayerID id = m_pSpsIni->id;
 	m_pSpsIni->packetType = PACKET_INI;
 	m_pSpsIni->gamePlayers = m_gameMaxPlayers;
 	strcpy(m_pSpsIni->map, m_pMap->getMap());
 	m_pSpsIni->checksum = m_pMap->getCrc32();
-	reply();
+	int size = sizeof(SpsIni);
+	reply(size);
 	postNewPlayer();
 	replyPlayersExist();
 	replyPlayersIniData();
 	postPlayersUpdate();
+	//postPlayerUpdate(id);
 }
 
 void Server::send(PlayerID id, int size)
@@ -144,11 +149,17 @@ void Server::postPlayersIniData()
 	}
 	
 	int size = sizeof(SpsPlayersInitData) * connectedClients;
+//	size = 255;
 	post(size);
 }
 
 void Server::postPlayerUpdate(PlayerID id)
 {
+	m_pSpsPlayerUpdate->packetType = PACKET_PLAYER_UPDATE;
+	m_pSpsPlayerUpdate->playerUpdate[0] = getIDClientData(id)->serverPlayer.getPlayerUpdate();
+	m_pSpsPlayerUpdate->playerUpdate[0].id = id;
+	int size = sizeof(PacketType) + sizeof(PlayerUpdate);
+	post(size);
 }
 
 void Server::postPlayersUpdate()
@@ -162,6 +173,7 @@ void Server::postPlayersUpdate()
 	}
 
 	int size = sizeof(PacketType) +  sizeof(PlayerUpdate) * connectedClients;
+	//size = 255;
 	post(size);
 }
 
@@ -170,7 +182,7 @@ void Server::postNewPlayer()
 	m_pSpsPlayerInitData->packetType = PACKET_NEW_PLAYER;
 	m_pSpsPlayerInitData->playerIniData->id = m_pClientData.back()->getID();
 	strcpy(m_pSpsPlayerInitData->playerIniData->name, m_pClientData.back()->getName());
-	int size = sizeof(SpsPlayersInitData);
+	int size = sizeof(PacketType) + sizeof(PlayerIniData);
 	post(size);
 }
 
@@ -186,7 +198,7 @@ void Server::replyPlayersExist()
 	m_pSpsPlayersExist->packetType = PACKET_PLAYERS_EXIST;
 	m_pSpsPlayersExist->players = m_pClientData.size();
 	int size = sizeof(SpsPlayersExist);
-	reply();
+	reply(size);
 }
 
 void Server::replyPlayersIniData()
@@ -199,7 +211,7 @@ void Server::replyPlayersIniData()
 		strcpy(m_pSpsPlayerInitData->playerIniData[i].name, m_pClientData[i]->getName());
 	}
 
-	int size = sizeof(SpsPlayersInitData) * connectedClients;
+	int size = sizeof(PacketType) + (sizeof(PlayerIniData) * connectedClients);
 	reply(size);
 }
 
@@ -213,7 +225,6 @@ PlayerID Server::recvID(bool wait)
 	bool result = false;
 	Port port;
 	bool recieved = recv(wait);
-
 	if(recieved)
 		for (auto pClientData : m_pClientData)
 		{
@@ -228,7 +239,6 @@ bool Server::recv(bool wait)
 {
 	rbClear();
 	bool result = false;
-
 	do
 	{
 		int size = MAX_PACKET_SIZE;
@@ -279,53 +289,62 @@ ClientData* Server::getIDClientData(PlayerID requiredID)
 			return cd.get();
 }
 
-void Server::applyPlayerAct()
+void Server::applyPlayerAct(float frameTime)
 {
 	PlayerID& id = m_pCpsPlayerAct->id;
 	ServerPlayer& serverPlayer = getIDClientData(id)->serverPlayer;
-	
-	switch (m_pCpsPlayerAct->act)
+	PlayerAct& act = m_pCpsPlayerAct->act;
+	if (act >= PLAYER_ACT_ATTACK)
+	{
+		serverPlayer.executeAttack();
+		act -= PLAYER_ACT_ATTACK;
+		m_pSpsPlayerAct->packetType = PACKET_PLAYER_ACT;
+		m_pSpsPlayerAct->id = id;
+		m_pSpsPlayerAct->act = PLAYER_ACT_ATTACK;
+		post(sizeof(m_pSpsPlayerAct));
+		if (act == 0) // if no act
+			goto U;
+	}
+
+	switch (act)
 	{
 	case PLAYER_ACT_FORWRAD:
-		serverPlayer.executeForward(1);
+		serverPlayer.executeForward(frameTime);
 		break;
 	case PLAYER_ACT_BACK:
-		serverPlayer.executeBack(1);
+		serverPlayer.executeBack(frameTime);
 		break;
 	case PLAYER_ACT_RIGHT:
-		serverPlayer.executeRight(1);
+		serverPlayer.executeRight(frameTime);
 		break;
 	case PLAYER_ACT_LEFT:
-		serverPlayer.executeLeft(1);
+		serverPlayer.executeLeft(frameTime);
 		break;
 	case PLAYER_ACT_ATTACK:
 		serverPlayer.executeAttack();
 		break;
 	case PLAYER_ACT_FORWARD_LEFT:
-		serverPlayer.executeLeft(1);
-		serverPlayer.executeForward(1);
+		serverPlayer.executeLeft(frameTime);
+		serverPlayer.executeForward(frameTime);
 		break;
 	case PLAYER_ACT_FORWARD_RIGHT:
-		serverPlayer.executeRight(1);
-		serverPlayer.executeForward(1);
+		serverPlayer.executeRight(frameTime);
+		serverPlayer.executeForward(frameTime);
 		break;
 	case PLAYER_ACT_BACK_LEFT:
-		serverPlayer.executeLeft(1);
-		serverPlayer.executeBack(1);
+		serverPlayer.executeLeft(frameTime);
+		serverPlayer.executeBack(frameTime);
 		break;
 	case PLAYER_ACT_BACK_RIGHT:
-		serverPlayer.executeRight(1);
-		serverPlayer.executeBack(1);
+		serverPlayer.executeRight(frameTime);
+		serverPlayer.executeBack(frameTime);
 		break;
 	default:
 		throw GameError(gameErrorNS::WARNING, "Unknown player act has been recieved!\n The other player(s) may have a different game version.");
 	}
-
-	m_pSpsPlayerUpdate->packetType = PACKET_PLAYER_UPDATE;
-	m_pSpsPlayerUpdate->playerUpdate[0] = serverPlayer.getPlayerUpdate();
-	m_pSpsPlayerUpdate->playerUpdate[0].id = id;
-	int size = sizeof(PacketType) + sizeof(PlayerUpdate);
-	post(size);
+	
+U:
+	postPlayerUpdate(id);
 }
 
 bool Server::addClient()
@@ -348,7 +367,6 @@ bool Server::addClient()
 void Server::removeLastClient()
 {
 	removeClient(m_pCpsDisconnect->id);
-	return;
 }
 
 void Server::removeClient(PlayerID id)
@@ -361,6 +379,7 @@ void Server::removeClient(PlayerID id)
 			m_pSpsDisconnect->id = id;
 			int size = sizeof(SpsDisconnect);
 			post(size);
+			break;
 		}
 }
 

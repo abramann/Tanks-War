@@ -16,6 +16,7 @@ Client::Client() : m_gamePlayers(0), m_state(CLIENT_UNCONNECTED), m_presentTime(
 	m_pSpsPlayersExist = (SpsPlayersExist*)&m_rData;
 	m_pSpsPlayerIniData = (SpsPlayersInitData*)&m_rData;
 	m_pSpsPlayerUpdate = (SpsPlayerUpdate*)&m_rData;
+	m_pSpsPlayerAct = (SpsPlayerAct*)&m_rData;
 	m_pPacketType = (PacketType*)&m_rData;
 	m_port = _rand(3000);
 	m_pClientPlayer = std::make_shared<ClientPlayer>();
@@ -36,19 +37,19 @@ void Client::initialize(Game* game)
 	m_clientInfo = FileIO::readClientInfo();
 }
 
-void Client::update()
+void Client::update(float frameTime)
 {
 	//if (isConnected())
 	//	present();
 	if (m_state == CLIENT_CONNECTED_PLAYING)
 	{
-		m_pClientPlayer->update(0);
+		m_pClientPlayer->update(frameTime);
 		checkClientPlayerAct();
 
 		for (auto& pClientData : m_pClientData)
 		{
 			ServerPlayer& serverPlayer = pClientData->serverPlayer;
-			serverPlayer.update(0);
+			serverPlayer.update(frameTime);
 		}
 	}
 	if (recv())
@@ -73,6 +74,11 @@ void Client::update()
 		case PACKET_PLAYER_DISCONNECTED:
 			removeClient(m_pCpsDisconnect->id);
 			break;
+		case PACKET_PLAYER_ACT:
+			implementPlayerAct();
+			break;
+		default:
+			throw GameError(gameErrorNS::WARNING, "Unknown packet has been received from Server.\n The server may have a different version.");
 		}
 	}
 	
@@ -175,6 +181,21 @@ void Client::checkClientPlayerAct()
 	}
 }
 
+void Client::implementPlayerAct()
+{
+	ClientData* pClientData = getIDClient(m_pSpsPlayerAct->id);
+	switch (m_pSpsPlayerAct->act)
+	{
+	case PLAYER_ACT_ATTACK:
+		if (pClientData)
+			pClientData->serverPlayer.executeAttack();
+		else
+			m_pClientPlayer->implementAttack();
+	default:
+		break;
+	}
+}
+
 bool Client::recv()
 {
 	rbClear();
@@ -205,7 +226,8 @@ void Client::addNewPlayer()
 	std::shared_ptr<ClientData> pClientData = std::make_shared<ClientData>(id, name, m_pGame);
 	m_pClientData.push_back(pClientData);
 	recv(true);
-	playerUpdate();
+	if (m_pSpsPlayerUpdate->packetType == PACKET_PLAYERS_UPDATE)
+		playersUpdate();
 }
 
 void Client::removeClient(PlayerID id)

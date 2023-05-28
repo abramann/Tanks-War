@@ -6,7 +6,6 @@
 // winmain.cpp
 
 #include "constants.h"
-#define GameTyoe 
 #ifdef _CLIENT_BUILD
 #include "..\Tanks-War\tankswar.h"
 typedef TanksWar GameBuildType;
@@ -57,7 +56,8 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WinProc;
 	wc.hInstance = hInstance;
-	wc.hCursor = LoadCursorA(NULL, IDC_ARROW);
+	//wc.hCursor = LoadCursorA(NULL, IDC_ARROW);
+	wc.hCursor = LoadCursorFromFileA("Assets\\cursor.cur");
 	wc.lpszClassName = CLASS_NAME;
 	RegisterClassEx(&wc);
 	DWORD style = (g_gameInfo.windowed) ? WS_OVERLAPPED : WS_EX_TOPMOST | WS_POPUP;
@@ -75,6 +75,17 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 		return false;
 
 	RegisterClassEx(&wc);
+	if (g_gameInfo.windowed)
+	{
+		RECT clientRect;
+		GetClientRect(hwnd, &clientRect);   // get size of client area of window
+		MoveWindow(hwnd,
+			0,                                           // Left
+			0,                                           // Top
+			g_gameInfo.width + (g_gameInfo.width - clientRect.right),    // Right
+			g_gameInfo.height + (g_gameInfo.height - clientRect.bottom), // Bottom
+			TRUE);
+	}
 
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);

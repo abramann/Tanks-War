@@ -34,6 +34,7 @@ protected:
 	virtual void playSoundRight();
 	virtual void playSoundLeft();
 	virtual void playSoundDie();
+	virtual void playSoundAttack();
 
 	Sound m_soundAttack;
 	float m_bulletSpeed, m_bulletDamage;

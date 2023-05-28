@@ -69,10 +69,18 @@ bool Map2::load(const char * map)
 				if (m_map[h][w] == preventedBM)
 				{
 					prevented = true;
+					/*space.v1.x = w*m_tiledSize.x,
+						space.v1.y = h*m_tiledSize.y;
+					space.v2.x = space.v1.x + m_tiledSize.x,
+						space.v2.y = space.v1.y +m_tiledSize.y,
+						space.v3 = {},
+						space.v4 = {};*/
 					space.v1.x = w*m_tiledSize.x,
 						space.v1.y = h*m_tiledSize.y;
 					space.v2.x = space.v1.x + m_tiledSize.x,
-						space.v2.y = space.v1.y + m_tiledSize.y;
+						space.v2.y = space.v1.y,
+						space.v3.x = space.v1.x + m_tiledSize.x, space.v3.y = space.v1.y + m_tiledSize.y,
+						space.v4.x = space.v1.x, space.v4.y = space.v1.y + m_tiledSize.y;
 					m_noSpace.push_back(space);
 					break;
 				}
@@ -165,10 +173,19 @@ bool Map2::isCollided(const Image2 * image) const
 	Space is = getImageSpace(image);
 	if (isOutOfRange(is))
 		return true;
-
 	for (auto space : m_noSpace)
 		if (areSpacesCollided(space, is))
 			return true;
+	for (auto object : m_pObject)
+	{
+		if (object != image)
+		{
+			Space space = getImageSpace(object);
+			if (areSpacesCollided(space, is))
+				return true;
+		}
+	}
+
 	return false;
 }
 
@@ -196,7 +213,7 @@ Object2 * Map2::getObject(V3 position) const
 	float x = position.x, y = position.y;
 	Space s;
 	s.v1 = position;
-	for (auto obj : m_object)
+	for (auto obj : m_pObject)
 	{
 		Space os = Map2::getImageSpace(obj);
 		if (areSpacesCollided(os, s))
@@ -245,15 +262,31 @@ bool Map2::read()
 
 bool Map2::areSpacesCollided(const Space s1, const Space s2) const
 {
-	if (IN_RANGE(s2.v1.x, s1.v1.x, s1.v2.x) ||
+	float maxX1 = s1.getMaxX(),
+		minX1 = s1.getMinX(),
+		maxY1 = s1.getMaxY(),
+		minY1 = s1.getMinY();
+	if (IN_RANGE(s2.v1.x, minX1, maxX1) ||
+		IN_RANGE(s2.v2.x, minX1, maxX1) ||
+		IN_RANGE(s2.v3.x, minX1, maxX1) ||
+		IN_RANGE(s2.v4.x, minX1, maxX1)
+		)
+		
+		/*	if (IN_RANGE(s2.v1.x, s1.v1.x, s1.v2.x) ||
 		IN_RANGE(s2.v2.x, s1.v1.x, s1.v2.x) ||
 		IN_RANGE(s2.v3.x, s1.v1.x, s1.v2.x) ||
-		IN_RANGE(s2.v4.x, s1.v1.x, s1.v2.x)
+		IN_RANGE(s2.v4.x, s1.v1.x, s1.v2.x) 
 		)
 		if (IN_RANGE(s2.v1.y, s1.v1.y, s1.v2.y) ||
 			IN_RANGE(s2.v2.y, s1.v1.y, s1.v2.y) ||
 			IN_RANGE(s2.v3.y, s1.v1.y, s1.v2.y) ||
-			IN_RANGE(s2.v4.y, s1.v1.y, s1.v2.y)
+			IN_RANGE(s2.v4.y, s1.v1.y, s1.v2.y) 
+			)
+			*/
+		if (IN_RANGE(s2.v1.y, minY1, maxY1) ||
+			IN_RANGE(s2.v2.y, minY1, maxY1) ||
+			IN_RANGE(s2.v3.y, minY1, maxY1) ||
+			IN_RANGE(s2.v4.y, minY1, maxY1)
 			)
 			return true;
 
@@ -270,7 +303,6 @@ Space Map2::getImageSpace(const Image2* image, float x0, float y0)
 		y0 = image->getPosition().y;
 
 	float angle = image->getRotate().z;
-
 	int8 s = 1;
 	if (angle > 0.0001)
 		s = +1;
@@ -313,4 +345,9 @@ Space Map2::getRandomEmptySpace() const
 {
 	Space freeSpace = m_freeSpace[_rand(m_freeSpace.size())];
 	return freeSpace;
+}
+
+void Map2::addObject(Object2* object)
+{
+	m_pObject.push_back(object);
 }

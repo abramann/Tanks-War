@@ -4,6 +4,8 @@ Timer::Timer()
 {
 	QueryPerformanceFrequency((LARGE_INTEGER*)&m_countsPerSecond);
 	m_secondsPerCount = 1.0f / m_countsPerSecond;
+	m_minFrameTime = 1000 / FRAME_RATE;
+	m_maxFrameTime = m_minFrameTime * 10;
 }
 
 
@@ -33,14 +35,14 @@ void Timer::update()
 		fpsUpdateDelay = 0;
 	}
 
-	if (m_timeDeltaMillsec < MIN_FRAME_TIME)
+	if (m_timeDeltaMillsec < m_minFrameTime)
 	{
-		int32 sleepTime = MIN_FRAME_TIME - round(m_timeDeltaMillsec);
+		int32 sleepTime = m_minFrameTime - round(m_timeDeltaMillsec);
 		Sleep(sleepTime);
-		m_timeDeltaMillsec = MIN_FRAME_TIME;
+		m_timeDeltaMillsec = m_minFrameTime;
 	}
-	else if (m_timeDeltaMillsec > MAX_FRAME_TIME)
-		m_timeDeltaMillsec = MAX_FRAME_TIME;
+//	else if (m_timeDeltaMillsec > m_maxFrameTime)
+//		m_timeDeltaMillsec = m_maxFrameTime;
 }
 
 int64 Timer::getCurrentCounts() const

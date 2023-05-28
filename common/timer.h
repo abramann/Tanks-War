@@ -19,6 +19,7 @@ private:
 	int64 m_countsPerSecond;
 	float m_secondsPerCount;
 	int64 m_prevCounts;
+	float m_maxFrameTime, m_minFrameTime;
 	int16 m_fps;
 };
 

@@ -42,7 +42,7 @@ public:
 	Server();
 	~Server();
 	void initialize(const Game* game);
-	void update();
+	void update(float frameTime);
 	void stop();
 	void start();
 
@@ -61,7 +61,7 @@ public:
 
 private:
 
-	void applyPlayerAct();
+	void applyPlayerAct(float frameTime);
 	bool addClient();
 	void removeLastClient();
 	void removeClient(PlayerID id);
@@ -109,5 +109,6 @@ private:
 	SpsPlayersInitData* m_pSpsPlayerInitData;
 	SpsDisconnect* m_pSpsDisconnect;
 	SpsPlayerUpdate* m_pSpsPlayerUpdate;
+	SpsPlayerAct* m_pSpsPlayerAct;
 	PacketType* m_pPacketType;
 };

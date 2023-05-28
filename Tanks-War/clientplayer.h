@@ -17,6 +17,7 @@ public:
 	virtual void executeRight();
 	virtual void executeLeft();
 	virtual void executeAttack();
+	virtual void implementAttack();
 	PlayerAct getAct() const { return m_act; }
 	
 protected:
@@ -26,7 +27,7 @@ protected:
 	Camera* m_pCamera;
 	Input* m_pInput;
 	PlayerAct m_act;
-	Key m_forward, m_back, m_right, m_left;
+	Key m_forward, m_back, m_right, m_left, m_attack;
 	bool m_handleInput;
 	
 };

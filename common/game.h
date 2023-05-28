@@ -28,7 +28,6 @@ public:
 	virtual void run();
 	virtual void renderGame();
 	virtual void updateGame();
-	virtual void collision() = 0;
 	virtual void update() = 0;
 	virtual void render() = 0;
 	

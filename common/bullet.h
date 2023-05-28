@@ -23,6 +23,8 @@ public:
 protected:
 
 	virtual void executeAnimateRepeat();
+	V3 Bullet::getBulletLaunchPosition();
+	bool isCollided();
 
 private:
 

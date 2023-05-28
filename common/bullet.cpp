@@ -26,42 +26,48 @@ Bullet::~Bullet()
 
 void Bullet::update(float frameTime)
 {
+	//m_position = getBulletLaunchPosition();
+	//m_rotate = m_pTank->getRotate();
 	Image2::update(frameTime);
 	if (m_finish)
 		return;
-	if(!m_hit)
+	if (!m_hit)
 	{
 		executeLaunching(frameTime);
-		if (m_position.x == m_pMap->passX(this, 0) ||
-			m_position.y == m_pMap->passY(this, 0))
-	
-	executeHit();
+		if (isCollided())
+			executeHit();
 	}
 
 }
 
+V3 Bullet::getBulletLaunchPosition()
+{
+	Space s = Map2::getImageSpace(m_pTank);
+	V3 position;
+	position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2);
+	position.y = (s.v4.y + (s.v3.y - s.v4.y) / 2);
+	return position;
+}
+
+bool Bullet::isCollided()
+{
+	return m_pMap->isCollided(this);
+	if (m_position.x == m_pMap->passX(this, 0) ||
+		m_position.y == m_pMap->passY(this, 0))
+		return true;
+}
+
 void Bullet::executeLaunch()
 {
-	m_speed = m_pTank->getBulletSpeed();
+	m_speed = 5;// m_pTank->getBulletSpeed();
 	m_damage = m_pTank->getBulletDamage();
 	m_rotate = m_pTank->getRotate();
 	V3 pos = m_pTank->getPosition();
 	float f1 = 1.0f - abs((0.636619772f *m_rotate.z));
-	
-	Space s = Map2::getImageSpace(m_pTank);
-	m_position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2);
-	m_position.y = (s.v4.y + (s.v3.y - s.v4.y) / 2);
-	m_position.z = 0;
-	/*int16 width = m_pTank->getWidth(),
-	height = m_pTank->getHeight();
-	float f1 = (1 + (0.3183098f)*m_rotate.z);
-	float f2 = -sin(m_rotate.z);
-
-	m_position.x = pos.x + 30 + 30*f2,
-	m_position.y = pos.y + f1*height,
-	m_position.z = pos.z;
-	*/
-
+	m_position = getBulletLaunchPosition();
+	executeLaunching(22);
+	executeLaunching(22);
+	executeLaunching(22);
 }
 
 void Bullet::executeHit()
@@ -69,10 +75,11 @@ void Bullet::executeHit()
 	m_hit = true;
 	Texture* pTexture = m_pTextureManger->getTexture(TEXTURE_BULLET_DESTROY);
 	Image2::initialize(pTexture, m_pGame, TEXTURE_BULLET_ROWS_COLUMNS, TEXTURE_BULLET_ROWS_COLUMNS, UPDATE_DELAY_BULLET);
+#ifdef _SERVER_BUILD
 	Object2* pObject = m_pMap->getObject(m_position);
 	if (pObject)
 		pObject->damage(m_damage);
-
+#endif
 }
 
 void Bullet::executeAnimateRepeat()

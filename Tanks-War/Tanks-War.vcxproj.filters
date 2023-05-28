@@ -87,11 +87,11 @@
     <ClInclude Include="..\common\serverplayer.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="clientplayer.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\shader.h">
       <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="clientplayer.h">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -69,11 +69,11 @@ std::vector<std::string> FileIO::getDirFileList(const char * directory, const ch
 
 GameInfo FileIO::readGameInfo()
 {
-	GameInfo gameInfo = { INVALID_DATA };
+	GameInfo gameInfo = { 0 };
 	std::ifstream file(GAME_INFO_PATH);
 	std::string line;
 	readValues<int8>(file, { &gameInfo.windowed });
-	readValues<uint16_t>(file, { &gameInfo.width, &gameInfo.height });
+	readValues<int16>(file, { &gameInfo.width, &gameInfo.height });
 	
 	return gameInfo;
 }
@@ -157,14 +157,12 @@ ServerInfo FileIO::readServerInfo()
 
 void FileIO::createGameInfo(const GameInfo& info)
 {
-	bool windowed;
-	uint16 width, height;
+	int16 width, height;
 	GameInfo oInfo = readGameInfo();
 	std::ofstream file(GAME_INFO_PATH);
-	windowed = (info.windowed == BYTE_INVALID_DATA) ? oInfo.windowed : info.windowed;
-	width = (info.width == INVALID_DATA) ? oInfo.width : info.width;
-	height = (info.height == INVALID_DATA) ? oInfo.height : info.height;
-
+	bool windowed = (info.windowed == -1) ? oInfo.windowed : info.windowed; // check if windowed equire to change in case change width and height only
+	width =  (info.width == -1) ? oInfo.width : info.width; // check if width and height require to change in case change windowed only
+	height = (info.height == -1) ? oInfo.height : info.height;
 	file << "windowed=" << windowed << std::endl;
 	file << "width=" << std::to_string(width) << std::endl;
 	file << "height=" << std::to_string(height) << std::endl;

@@ -32,6 +32,7 @@ public:
 	Crc32 getCrc32() const;
 	const char* loadRandom();
 	Space getRandomEmptySpace() const;
+	void addObject(Object2* object);
 
 private:
 
@@ -49,7 +50,7 @@ private:
 	std::vector<Space> m_noSpace;
 	std::vector<int8> m_preventedBitmap;
 	std::vector<uint32_t> m_startVertex, m_lenVertex;
-	std::vector<Object2*> m_object;
+	std::vector<Object2*> m_pObject;
 	V2 m_tiledSize;
 	char m_loadedMap[MAX_NAME_LEN];
 };

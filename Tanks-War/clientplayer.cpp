@@ -10,6 +10,11 @@
 
 ClientPlayer::ClientPlayer() : m_handleInput(true)
 {
+	m_forward = W_KEY,
+		m_back = S_KEY,
+		m_right = D_KEY,
+		m_left = A_KEY,
+		m_attack = F_KEY;
 }
 
 
@@ -19,10 +24,6 @@ ClientPlayer::~ClientPlayer()
 
 void ClientPlayer::initialize(PlayerID id, Game * game)
 {
-	m_forward = W_KEY,
-		m_back = S_KEY,
-		m_right = D_KEY,
-		m_left = A_KEY;
 	m_pInput = game->getInput();
 	std::string name = FileIO::readClientInfo().name;
 	Player::initialize(id, name.c_str(), PLAYER_SELF, game);
@@ -83,11 +84,18 @@ void ClientPlayer::executeLeft()
 		m_act = PLAYER_ACT_LEFT;
 		break;
 	}
+	
 }
 
 void ClientPlayer::executeAttack()
 {
-	m_act = PLAYER_ACT_ATTACK;
+	m_act += PLAYER_ACT_ATTACK;
+}
+
+void ClientPlayer::implementAttack()
+{
+	Player::playSoundAttack();
+	Player::executeAttack();
 }
 
 void ClientPlayer::handleInput()
@@ -100,6 +108,8 @@ void ClientPlayer::handleInput()
 		executeRight();
 	else if (m_pInput->isKeyDown(m_left))
 		executeLeft();
+	if (m_pInput->isKeyDown(m_attack))
+		executeAttack();
 }
 
 

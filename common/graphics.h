@@ -25,15 +25,13 @@ public:
 	Graphics();
 	~Graphics();
 	bool initialize(const Game* game);
-	bool isFullScreen();
+	bool isWindowed() const;
 	bool loadTexture(const char* file, UINT& width, UINT& height, Color transparency, LPTextureD3D& texture);
 	static Matrix V3ToMatrix(const V3 v3, MatrixType type);
 	Result begin();
 	void drawImage(const Image2* image);
 	Result drawPrimitive(UINT startVertex, UINT count);
 	Result end();
-	Result getDeviceState();
-	Result reset();
 	Result showBackbuffer();
 	LPDevice getDevice() const { return m_lpDevice3d; }
 	LPVertexBuffer createVertexBuffer(uint32 vertices, VB_USAGE usage, Vertex* data = 0);
@@ -42,7 +40,7 @@ public:
 	void release();
 	void resize(uint16_t width, uint16_t height);
 	void setDrawProperties(V3 position = V3(0, 0, 0), V3 scall = V3(1, 1, 1), V3 rotate = V3(0, 0, 0), V3 rotateCenter = V3(0, 0, 0));
-	void setFullScreen(const bool& fullscreen);
+	void setWindowed(const bool& windowed);
 	void setResolution(const Resolution& resolution);
 	void setTexture(LPTextureD3D texture);
 	void setVertexBuffer(LPVertexBuffer, Vertex* vertez, int32_t numberOfVertices);
@@ -54,8 +52,6 @@ public:
 
 private:
 
-	bool isAdaptereCompatility();
-	DWORD getBehaviorCompatility();
 	void setViewMatrix(Matrix wvp);
 	LPDevice m_lpDevice3d;
 

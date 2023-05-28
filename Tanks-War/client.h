@@ -40,7 +40,7 @@ public:
 	void disconnect();
 	void initialize(Game* game);
 	void present();
-	void update();
+	void update(float frameTime);
 	ClientPlayer* getClientPlayer() const { return m_pClientPlayer.get(); }
 
 private:
@@ -56,6 +56,7 @@ private:
 	void sbClear() { memset(m_sData, 0, MAX_PACKET_SIZE); }
 	void send(int size = MAX_PACKET_SIZE);
 	void checkClientPlayerAct();
+	void implementPlayerAct();
 	ClientData* Client::getIDClient(const PlayerID id);
 
 	TextureManger* m_pTextureManger;
@@ -83,6 +84,7 @@ private:
 	SpsPlayersExist* m_pSpsPlayersExist;
 	SpsPlayersInitData* m_pSpsPlayerIniData;
 	SpsPlayerUpdate* m_pSpsPlayerUpdate;
+	SpsPlayerAct* m_pSpsPlayerAct;
 	PacketType* m_pPacketType;
 
 	float m_presentTime;

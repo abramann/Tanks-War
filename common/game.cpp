@@ -59,7 +59,6 @@ void Game::run()
 		PostQuitMessage(0);
 
 	updateGame();
-	collision();
 	renderGame();
 }
 
@@ -69,6 +68,7 @@ void Game::renderGame()
 //	 if (m_logo.drawRapidly())
  		render();
 
+	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 	m_pGraphics->end();
 	m_pGraphics->showBackbuffer();
 }

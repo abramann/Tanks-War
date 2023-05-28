@@ -162,7 +162,7 @@ public:
 typedef struct D3DXVECTOR3 : public D3DVECTOR
 {
 public:
-    D3DXVECTOR3() {};
+	D3DXVECTOR3() { x = 0, y = 0, z = 0; };
     D3DXVECTOR3( CONST FLOAT * );
     D3DXVECTOR3( CONST D3DVECTOR& );
     D3DXVECTOR3( CONST D3DXFLOAT16 * );

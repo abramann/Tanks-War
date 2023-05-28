@@ -130,3 +130,7 @@ void Tank2::playSoundLeft()
 void Tank2::playSoundDie()
 {
 }
+
+void Tank2::playSoundAttack()
+{
+}

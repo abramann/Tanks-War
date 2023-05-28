@@ -1,0 +1,137 @@
+#include "bullet.h"
+#include "game.h"
+#include "tank2.h"
+#include "texturemanger.h"
+#include "texture.h"
+
+Bullet::Bullet(const Game * game, const Tank2 * tank) : m_pTank(tank), m_hit(false), m_finish(false)
+{
+	m_pGame = game;
+	m_pMap = game->getMap();
+	m_pAudio = game->getAudio();
+	m_pTextureManger = game->getTextureManger();
+	Texture* pTexture = m_pTextureManger->getTexture(TEXTURE_BULLET);
+	Image2::initialize(pTexture, game);
+	executeLaunch();
+}
+
+Bullet::Bullet()
+{
+}
+
+
+Bullet::~Bullet()
+{
+}
+
+void Bullet::update(float frameTime)
+{
+//	m_position = getBulletLaunchPosition();
+//	m_rotate = m_pTank->getRotate();
+	Image2::update(frameTime);
+	if (m_finish)
+		return;
+	if(!m_hit)
+	{
+		executeLaunching(frameTime);
+		if (m_position.x == m_pMap->passX(this, 0) ||
+			m_position.y == m_pMap->passY(this, 0))
+	
+	executeHit();
+	}
+
+}
+
+struct Point {
+	float x;
+	float y;
+};
+
+Point getBulletLaunchPosition(float tankX, float tankY, float tankRotation) {
+	// Calculate the direction of the bullet.
+	float direction = atan2(tankY, tankX);
+
+	// Calculate the distance of the bullet from the tank.
+	float distance = 35.0f;
+
+	// Calculate the launch position of the bullet.
+	Point launchPosition = {
+		tankX + distance * cos(direction + tankRotation),
+		tankY + distance * sin(direction + tankRotation)
+	};
+	int tankWidth = 60;
+	// Calculate the offset from the tank's center to the top mid-width.
+	float offset = 0.5f * tankWidth;
+
+	// Calculate the launch position of the bullet relative to the tank's center.
+//	launchPosition.x += offset * cos(tankRotation);
+//	launchPosition.y += offset * sin(tankRotation);
+
+	return launchPosition;
+}
+V3 Bullet::getBulletLaunchPosition()
+{
+	Space s = Map2::getImageSpace(m_pTank);
+	m_position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2);
+	m_position.y = (s.v4.y + 2 * (s.v3.y - s.v4.y) / 2);
+	m_position.z = 0;
+	return m_position;
+	// Calculate the direction of the bullet.
+	V3 tankPosition = m_pTank->getPosition();
+	static float direction = atan2(tankPosition.x, tankPosition.y);
+	if(0)
+		direction = atan2(tankPosition.x, tankPosition.y);
+	// Calculate the distance of the bullet from the tank.
+	float distanceX = (m_pTank->getWidth()/2 + m_width);
+	float distanceY = (m_pTank->getHeight());
+	float tankRotation = m_pTank->getRotate().z;
+	V3 launchPosition;
+	launchPosition.x = tankPosition.x + distanceX * cos(direction + tankRotation);
+	launchPosition.y = tankPosition.y + distanceY * sin(direction + tankRotation);
+	
+	
+	launchPosition.x = tankPosition.x + 60 * 0.5 * cos(tankRotation);
+	launchPosition.y = tankPosition.y + 60 * 0.5 * sin(tankRotation);
+	float offset = 0.5f * m_pTank->getWidth();
+	// Calculate the launch position of the bullet relative to the tank's center.
+	//	launchPosition.x += offset * cos(tankRotation);
+	//	launchPosition.y += offset * sin(tankRotation);
+	return launchPosition;
+}
+void Bullet::executeLaunch()
+{
+	m_speed = m_pTank->getBulletSpeed();
+	m_damage = m_pTank->getBulletDamage();
+	m_rotate = m_pTank->getRotate();
+	V3 pos = m_pTank->getPosition();
+	float f1 = 1.0f - abs((0.636619772f *m_rotate.z));
+	Space s = Map2::getImageSpace(m_pTank);
+	m_position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2);
+	m_position.y = (s.v4.y + 2 * (s.v3.y - s.v4.y) / 2);
+	m_position.z = 0;
+}
+
+void Bullet::executeHit()
+{
+	m_hit = true;
+	Texture* pTexture = m_pTextureManger->getTexture(TEXTURE_BULLET_DESTROY);
+	Image2::initialize(pTexture, m_pGame, TEXTURE_BULLET_ROWS_COLUMNS, TEXTURE_BULLET_ROWS_COLUMNS, UPDATE_DELAY_BULLET);
+	Object2* pObject = m_pMap->getObject(m_position);
+	if (pObject)
+		pObject->damage(m_damage);
+
+}
+
+void Bullet::executeAnimateRepeat()
+{
+	m_finish = true;
+}
+
+void Bullet::executeLaunching(float frameTime)
+{
+	float incX = m_speed*sin(m_rotate.z),
+		incY = m_speed*cos(m_rotate.z);
+	m_position;
+	addX(-incX);
+	addY(incY);
+}

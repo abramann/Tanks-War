@@ -65,7 +65,7 @@ void Interface::mainMenu()
 {
 	m_pAudio->playMusic(MUSIC_MAIN_MENU);
 	PushFont(m_font[LARGE]);
-	ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar;
+	ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize;
 	Vec2 pos = Vec2(0, 0);
 	Vec2 size = Vec2(g_gameInfo.width, g_gameInfo.height);
 	Vec2 buttonSize = Vec2(size.x / 3, size.y / 5);
@@ -137,11 +137,11 @@ void Interface::settingMenu()
 	}
 
 	EndChild();
-	bool fullScreen = m_pGraphics->isFullScreen();
-	text("Fullscreen", OPTIONS_COLOR); SameLine(0, 5.0f);
-	if (Checkbox("##Fullscreen", &fullScreen))
+	bool windowed = m_pGraphics->isWindowed();
+	text("Windowed", OPTIONS_COLOR); SameLine(0, 5.0f);
+	if (Checkbox("##Windowed", &windowed))
 	{
-		m_pGraphics->setFullScreen(fullScreen);
+		m_pGraphics->setWindowed(windowed);
 		m_pAudio->play(SOUND_BUTTON_CLICKED);
 	}
 
@@ -246,7 +246,6 @@ void Interface::multiplayerMenu()
 }
 
 #else ifdef _SERVER_BUILD
-
 void Interface::multiplayerMenu()
 {
 	pushSubMenu("Server Info"); 
