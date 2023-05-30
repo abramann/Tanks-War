@@ -24,7 +24,7 @@ Graphics::Graphics() : m_lpDevice3d(NULL), m_deviceState(NULL)
 	m_lpDeviceContext = NULL;
 	m_lpRenderTargetView = NULL;
 	m_lpSwapChain = NULL;
-	LPDevice m_lpDevice3d;
+	m_lpDevice3d = 0;
 	m_lpDepthStencilView = 0;
 	m_lpDepthBuffer = 0;
 	m_lpVSConstBuffer = 0;
@@ -217,10 +217,9 @@ bool Graphics::initialize(const Game* game)
 LPVertexBuffer Graphics::createVertexBuffer(uint32 vertices, VB_USAGE usage, Vertex* data)
 {
 	LPVertexBuffer vb = 0;
-	Result r;
 	size_t size = vertices*sizeof(Vertex);
 #ifdef  _BUILD_WITH_D3D9
-	r = m_lpDevice3d->CreateVertexBuffer(size, usage, VERTEX_FVF, D3DPOOL_DEFAULT, &vb, 0);
+	m_lpDevice3d->CreateVertexBuffer(size, usage, VERTEX_FVF, D3DPOOL_DEFAULT, &vb, 0);
 	if (data)
 		setVertexBuffer(vb, data, vertices);
 #else ifdef _BUILD_WITH_D3D11
@@ -481,9 +480,9 @@ std::vector<Resolution> Graphics::getSupportedResolutions() const
 #else ifdef _BUILD_WITH_D3D11
 	IDXGIFactory* factory;
 	CreateDXGIFactory(IID_PPV_ARGS(&factory)); 
-	IDXGIOutput* adapterOutput;
 	IDXGIAdapter* adapter;
 	factory->EnumAdapters(0, &adapter);
+	IDXGIOutput* adapterOutput;
 	adapter->EnumOutputs(0, &adapterOutput);
 	uint32 numModes;
 	DXGI_MODE_DESC* displayModeList;
@@ -495,7 +494,7 @@ std::vector<Resolution> Graphics::getSupportedResolutions() const
 		DXGI_ENUM_MODES_INTERLACED,
 		&numModes, displayModeList);
 
-	for (size_t i = 0; i < numModes; i+=2)
+	for (uint32 i = 0; i < numModes; i+=2)
 		if (displayModeList[i].Width >= MIN_RESOLUTION_WIDTH && displayModeList[i].Height >= MIN_RESOLUTION_HEIGHT)
 		{
 			Resolution resol;
@@ -541,7 +540,7 @@ void Graphics::setTexture(LPTextureD3D texture)
 
 bool Graphics::isWindowed() const
 {
-	bool windowed = FileIO::readGameInfo().windowed;
+	bool windowed = (FileIO::readGameInfo().windowed > 0);
 	return windowed;
 }
 

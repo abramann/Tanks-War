@@ -14,7 +14,7 @@ Player::~Player()
 void Player::initialize(PlayerID id, const char* name, PlayerType playerType, const Game * game)
 {
 	m_id = id;
-	strcpy(m_name, name);
+	strcpy_s(m_name, name);
 	Texture* texture;
 	TextureManger* pTextureManger = game->getTextureManger();
 	if (playerType == PLAYER_SELF)

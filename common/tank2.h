@@ -16,7 +16,7 @@ public:
 	Tank2();
 	~Tank2();
 	virtual void initialize(Texture* texture, const Game* game);
-	virtual void update(float frameTime);
+	virtual void update(const float frameTime);
 	virtual void draw();
 	virtual void executeAttack();
 	virtual void executeBack(float frameTime);

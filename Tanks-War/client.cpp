@@ -233,7 +233,7 @@ void Client::addNewPlayer()
 
 void Client::removeClient(PlayerID id)
 {
-	for (int i = 0; i < m_pClientData.size(); i++)
+	for (size_t i = 0; i < m_pClientData.size(); i++)
 		if (m_pClientData[i]->getID() == id)
 		{
 			m_pClientData.erase(std::next(m_pClientData.begin(), i));
@@ -274,7 +274,7 @@ void Client::playersUpdate()
 {
 	PlayerUpdate* playerUpdate = m_pSpsPlayerUpdate->playerUpdate;
 
-	for (int i = 0; i < m_pClientData.size() + 1; i++)
+	for (size_t i = 0; i < m_pClientData.size() + 1; i++)
 	{
 		PlayerID& id = playerUpdate[i].id;
 		if (m_pClientPlayer->getID() == id)

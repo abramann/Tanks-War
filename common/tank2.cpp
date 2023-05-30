@@ -33,7 +33,7 @@ void Tank2::update(float frameTime)
 {
 	Object2::update(frameTime);
 	int8 i = 0;
-	for (int i = 0; i < m_pBullet.size();i++)
+	for (size_t i = 0; i < m_pBullet.size();i++)
 	{
 		Bullet* pBullet = m_pBullet[i].get();
 		if (pBullet->isFinished())
@@ -51,7 +51,7 @@ void Tank2::update(float frameTime)
 void Tank2::draw()
 {
 	Object2::draw();
-	for (int i = 0; i < m_pBullet.size();i++)
+	for (size_t i = 0; i < m_pBullet.size();i++)
 		m_pBullet[i]->draw();
 }
 

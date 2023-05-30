@@ -50,7 +50,7 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 {
 	const char CLASS_NAME[] = "GameClass";
 
-	HWND hWnd;
+	//HWND hwnd;
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;

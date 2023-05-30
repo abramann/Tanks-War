@@ -19,8 +19,7 @@ public:
 	bool load(const char* map);
 	void draw() const;
 	void clear();
-	V2 getMapSize() const { 
-		return V2(m_width*m_tiledSize.x , m_height*m_tiledSize.y); }
+	V2 getMapSize() const { return V2(m_width*m_tiledSize.x , m_height*m_tiledSize.y); }
 	float passX(const Image2* object, float x) const;
 	float passY(const Image2* object, float y) const;
 	bool isCollided(const Image2* image) const;
@@ -39,12 +38,12 @@ private:
 	bool read();
 	bool areSpacesCollided(const Space space1, const Space space2) const;
 	void clearUnnecessaryNospace();
-	Space getRightSpace(Space s);
-	Space getLeftSpace(Space s);
-	Space getUpSpace(Space s);
-	Space getDownSpace(Space s);
-	bool isNospaceUseless(Space s);
-	bool isFreeSpace(Space s);
+	Space getRightSpace(Space s) const;
+	Space getLeftSpace(Space s) const;
+	Space getUpSpace(Space s) const;
+	Space getDownSpace(Space s) const;
+	bool isNospaceUseless(Space s) const;
+	bool isFreeSpace(Space s) const;
 
 	TextureManger* m_pTextureManger;
 	Texture* m_pTexture[TEXTURE_TILEDS];

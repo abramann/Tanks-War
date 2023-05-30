@@ -25,7 +25,7 @@ void Map2::initialize(const Game * game)
 
 bool Map2::load(const char * map)
 {
-	strcpy(m_loadedMap, map);
+	strcpy_s(m_loadedMap, map);
 	if (!read())
 		return false;
 
@@ -35,7 +35,6 @@ bool Map2::load(const char * map)
 
 	m_tiledSize.x = m_pTexture[0]->getWidth();;
 	m_tiledSize.y = m_pTexture[0]->getHeight();
-
 	std::vector< std::vector< std::vector<TextureVertices>>> vertices;
 	vertices.resize(m_usedBitmaps);
 	for (auto& element : vertices)
@@ -69,12 +68,6 @@ bool Map2::load(const char * map)
 				if (m_map[h][w] == preventedBM)
 				{
 					prevented = true;
-					/*space.v1.x = w*m_tiledSize.x,
-						space.v1.y = h*m_tiledSize.y;
-					space.v2.x = space.v1.x + m_tiledSize.x,
-						space.v2.y = space.v1.y +m_tiledSize.y,
-						space.v3 = {},
-						space.v4 = {};*/
 					space.v1.x = w*m_tiledSize.x,
 						space.v1.y = h*m_tiledSize.y;
 					space.v2.x = space.v1.x + m_tiledSize.x,
@@ -88,12 +81,10 @@ bool Map2::load(const char * map)
 			if (prevented)
 				continue;
 
-		//	space.v1.x = w*m_tiledSize.x; space.v2.x = space.v1.x + m_tiledSize.x;
-		//	space.v1.y = h*m_tiledSize.y; space.v2.y = space.v1.y + m_tiledSize.y;
-
-			space.v1.x = w*m_tiledSize.x; 
+			
+			space.v1.x = w*m_tiledSize.x;
 			space.v1.y = h*m_tiledSize.y;
-			space.v2.x = space.v1.x + m_tiledSize.x; 
+			space.v2.x = space.v1.x + m_tiledSize.x;
 			space.v2.y = space.v1.y;
 			space.v3.x = space.v2.x;
 			space.v3.y = space.v1.y + m_tiledSize.y;
@@ -128,7 +119,6 @@ bool Map2::load(const char * map)
 	}
 
 	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(totalBitmaps * 6, VB_USAGE_CONST, &pData[0]);
-
 	return true;
 }
 
@@ -238,14 +228,14 @@ Object2 * Map2::getObject(const Space space) const
 	s.v1 = position;
 	for (auto obj : m_pObject)
 	{
-		Space os = Map2::getImageSpace(obj);
-		if (areSpacesCollided(os, s))
-		{
-			object = obj;
-			break;
-		}
+	Space os = Map2::getImageSpace(obj);
+	if (areSpacesCollided(os, s))
+	{
+	object = obj;
+	break;
 	}
-	
+	}
+
 	return object;
 	*/
 }
@@ -307,12 +297,15 @@ bool Map2::areSpacesCollided(const Space s1, const Space s2) const
 
 void Map2::clearUnnecessaryNospace()
 {
-	for (int i = 0; i < m_noSpace.size(); i++)
+	for (size_t i = 0; i < m_noSpace.size(); i++)
 		if (isNospaceUseless(m_noSpace[i]))
+		{
 			m_noSpace.erase(std::next(m_noSpace.begin(), i));
+			i--;
+		}
 }
 
-Space Map2::getRightSpace(Space s)
+Space Map2::getRightSpace(Space s) const
 {
 	s.addX(m_tiledSize.x);
 	if (isOutOfRange(s))
@@ -321,7 +314,7 @@ Space Map2::getRightSpace(Space s)
 	return s;
 }
 
-Space Map2::getLeftSpace(Space s)
+Space Map2::getLeftSpace(Space s) const
 {
 	s.addX(-m_tiledSize.x);
 	if (isOutOfRange(s))
@@ -330,7 +323,7 @@ Space Map2::getLeftSpace(Space s)
 	return s;
 }
 
-Space Map2::getUpSpace(Space s)
+Space Map2::getUpSpace(Space s) const
 {
 	s.addY(m_tiledSize.y);
 	if (isOutOfRange(s))
@@ -339,7 +332,7 @@ Space Map2::getUpSpace(Space s)
 	return s;
 }
 
-Space Map2::getDownSpace(Space s)
+Space Map2::getDownSpace(Space s) const
 {
 	s.addY(-m_tiledSize.y);
 	if (isOutOfRange(s))
@@ -348,27 +341,29 @@ Space Map2::getDownSpace(Space s)
 	return s;
 }
 
-bool Map2::isNospaceUseless(Space s)
+bool Map2::isNospaceUseless(Space s) const
 {
 	Space space[] = { getUpSpace(s),getDownSpace(s),getRightSpace(s),getLeftSpace(s) };
 	for (int i = 0; i < SPACE_VERTICES; i++)
+	{
 		if (space[i].isValid())
 			if (isFreeSpace(space[i]))
 				return false;
-
+	}
 	return true;
 }
 
-bool Map2::isFreeSpace(Space s)
+bool Map2::isFreeSpace(Space s) const
 {
 	for (Space freeSpace : m_freeSpace)
 		if (s.isSame(freeSpace))
+		{
 			return true;
-
+		}
 	return false;
 }
 
-Space Map2::getImageSpace(const Image2* image, float x0, float y0) 
+Space Map2::getImageSpace(const Image2* image, float x0, float y0)
 {
 	int16 width = image->getWidth(),
 		height = image->getHeight();

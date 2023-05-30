@@ -15,7 +15,7 @@ public:
 	Bullet(const Game* game, const Tank2 * tank);
 	Bullet();
 	~Bullet();
-	virtual void update(float frameTime);
+	virtual void update(const float frameTime);
 	void executeLaunch();
 	void executeHit();
 	bool isFinished() const { return m_finish; }

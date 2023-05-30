@@ -17,7 +17,7 @@ struct ClientData
 	ClientData(PlayerID id, const char* name, const char* ip, Port port, const Game* game)
 	{
 		_port = port;
-		strcpy(_ip, ip);
+		strcpy_s(_ip, ip);
 		serverPlayer.initialize(id, name, game);
 	}
 
@@ -52,7 +52,7 @@ public:
 	void getIP(char* ip) { m_net.getLocalIP(ip); }
 	Port* getPort() { return &m_serverPort; }
 	const uint8_t& getGamePlayers() const { return m_gameMaxPlayers; }
-	const uint8_t& getConnectedPlayers() const { return m_pClientData.size(); }
+	const size_t getConnectedPlayers() const { return m_pClientData.size(); }
 	const std::vector<std::shared_ptr<ClientData> >* getClientsData()  const { return &m_pClientData; }
 
 	void setGamePlayers(const uint8_t& players) { m_gameMaxPlayers = players; }

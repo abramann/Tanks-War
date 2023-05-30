@@ -239,7 +239,7 @@ void Interface::multiplayerMenu()
 
 		SameLine();
 
-		if (button("Join game", Vec2(0, 0), Vec4(0.1f, 1, 0.6f, 1)));
+		//if (button("Join game", Vec2(0, 0), Vec4(0.1f, 1, 0.6f, 1)));
 	}
 	EndChild();
 	popSubMenu();
@@ -321,7 +321,7 @@ void Interface::multiplayerMenu()
 	EndChild();
 	BeginChild("ServerState", Vec2(g_gameInfo.width / 4, g_gameInfo.height / 2));
 	const auto pClientData = m_pServer->getClientsData();
-	for (int i = 0; i < pClientData->size(); i++)
+	for (size_t i = 0; i < pClientData->size(); i++)
 	{
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_NoHorizontalScroll;
 		inputText("Player", NOOPTIONS_COLOR, " ", (char*)pClientData->at(i)->getName(), MAX_NAME_LEN, NOOPTIONS_COLOR, flags);

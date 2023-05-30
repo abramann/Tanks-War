@@ -349,6 +349,8 @@ struct SpsPlayerAct
 	PlayerID id;
 };
 
+#pragma warning(disable : 4200)
+
 struct SpsPlayerUpdate
 {
 	PacketType packetType = PACKET_PLAYER_UPDATE;

@@ -11,7 +11,7 @@ public:
 	ClientPlayer();
 	~ClientPlayer();
 	virtual void initialize(PlayerID id, Game* game);
-	virtual void update(float frameTime);
+	virtual void update(const float frameTime);
 	virtual void executeForward();
 	virtual void executeBack();
 	virtual void executeRight();

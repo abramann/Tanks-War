@@ -5,6 +5,8 @@
 // Charles Kelly
 // net.cpp v2.0 July-23-2014
 
+#pragma warning(disable : 4996)
+
 #include "net.h"
 using namespace netNS;
 

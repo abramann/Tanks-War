@@ -25,7 +25,7 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 {
 	Game::initialize(hInstance, hWnd);
 #ifdef TEST_NO_SERVER_INTERFACE
-	m_pMap->load("Nova");
+	m_pMap->load("Old Empire");
 	tank2.initialize(m_pTextureManger->getTexture(TEXTURE_PLAYER_TANK), this);
 	tank2.setPosition(V3(330, 300, 0));
 #else
