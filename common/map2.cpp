@@ -88,12 +88,22 @@ bool Map2::load(const char * map)
 			if (prevented)
 				continue;
 
-			space.v1.x = w*m_tiledSize.x; space.v2.x = space.v1.x + m_tiledSize.x;
-			space.v1.y = h*m_tiledSize.y; space.v2.y = space.v1.y + m_tiledSize.y;
+		//	space.v1.x = w*m_tiledSize.x; space.v2.x = space.v1.x + m_tiledSize.x;
+		//	space.v1.y = h*m_tiledSize.y; space.v2.y = space.v1.y + m_tiledSize.y;
+
+			space.v1.x = w*m_tiledSize.x; 
+			space.v1.y = h*m_tiledSize.y;
+			space.v2.x = space.v1.x + m_tiledSize.x; 
+			space.v2.y = space.v1.y;
+			space.v3.x = space.v2.x;
+			space.v3.y = space.v1.y + m_tiledSize.y;
+			space.v4.x = space.v1.x;
+			space.v4.y = space.v3.y;
 			m_freeSpace.push_back(space);
 		}
 	}
 
+	clearUnnecessaryNospace();
 	std::vector<Vertex> pData;
 	for (auto i = 0; i < m_usedBitmaps; i++)
 	{
@@ -118,6 +128,7 @@ bool Map2::load(const char * map)
 	}
 
 	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(totalBitmaps * 6, VB_USAGE_CONST, &pData[0]);
+
 	return true;
 }
 
@@ -188,27 +199,39 @@ bool Map2::isCollided(const Image2 * image) const
 
 	return false;
 }
-
 bool Map2::isOutOfRange(const Space space) const
 {
 	const int32 x = m_width*m_tiledSize.x,
 		y = m_height*m_tiledSize.y;
-	if (IN_RANGE(space.v1.x, 0, x) &&
-		IN_RANGE(space.v2.x, 0, x) &&
-		IN_RANGE(space.v3.x, 0, x) &&
-		IN_RANGE(space.v4.x, 0, x)
+	if (IN_RANGE_OR_EQUAL(space.v1.x, 0, x) &&
+		IN_RANGE_OR_EQUAL(space.v2.x, 0, x) &&
+		IN_RANGE_OR_EQUAL(space.v3.x, 0, x) &&
+		IN_RANGE_OR_EQUAL(space.v4.x, 0, x)
 		)
-		if (IN_RANGE(space.v1.y, 0, y) &&
-			IN_RANGE(space.v2.y, 0, y) &&
-			IN_RANGE(space.v3.y, 0, y) &&
-			IN_RANGE(space.v4.y, 0, y)
+		if (IN_RANGE_OR_EQUAL(space.v1.y, 0, y) &&
+			IN_RANGE_OR_EQUAL(space.v2.y, 0, y) &&
+			IN_RANGE_OR_EQUAL(space.v3.y, 0, y) &&
+			IN_RANGE_OR_EQUAL(space.v4.y, 0, y)
 			)
 			return false;
 	return true;
 }
 
-Object2 * Map2::getObject(V3 position) const
+Object2 * Map2::getObject(const Space space) const
 {
+	Object2* pObject = 0;
+	for (auto _pObject : m_pObject)
+	{
+		Space is = getImageSpace(_pObject);
+		if (areSpacesCollided(space, is))
+		{
+			pObject = _pObject;
+			break;
+		}
+	}
+
+	return pObject;
+	/*
 	Object2* object = nullptr;
 	float x = position.x, y = position.y;
 	Space s;
@@ -222,8 +245,9 @@ Object2 * Map2::getObject(V3 position) const
 			break;
 		}
 	}
-
+	
 	return object;
+	*/
 }
 
 bool Map2::read()
@@ -271,23 +295,74 @@ bool Map2::areSpacesCollided(const Space s1, const Space s2) const
 		IN_RANGE(s2.v3.x, minX1, maxX1) ||
 		IN_RANGE(s2.v4.x, minX1, maxX1)
 		)
-		
-		/*	if (IN_RANGE(s2.v1.x, s1.v1.x, s1.v2.x) ||
-		IN_RANGE(s2.v2.x, s1.v1.x, s1.v2.x) ||
-		IN_RANGE(s2.v3.x, s1.v1.x, s1.v2.x) ||
-		IN_RANGE(s2.v4.x, s1.v1.x, s1.v2.x) 
-		)
-		if (IN_RANGE(s2.v1.y, s1.v1.y, s1.v2.y) ||
-			IN_RANGE(s2.v2.y, s1.v1.y, s1.v2.y) ||
-			IN_RANGE(s2.v3.y, s1.v1.y, s1.v2.y) ||
-			IN_RANGE(s2.v4.y, s1.v1.y, s1.v2.y) 
-			)
-			*/
 		if (IN_RANGE(s2.v1.y, minY1, maxY1) ||
 			IN_RANGE(s2.v2.y, minY1, maxY1) ||
 			IN_RANGE(s2.v3.y, minY1, maxY1) ||
 			IN_RANGE(s2.v4.y, minY1, maxY1)
 			)
+			return true;
+
+	return false;
+}
+
+void Map2::clearUnnecessaryNospace()
+{
+	for (int i = 0; i < m_noSpace.size(); i++)
+		if (isNospaceUseless(m_noSpace[i]))
+			m_noSpace.erase(std::next(m_noSpace.begin(), i));
+}
+
+Space Map2::getRightSpace(Space s)
+{
+	s.addX(m_tiledSize.x);
+	if (isOutOfRange(s))
+		s.v1.x = UNDEFINED_POSITION;
+
+	return s;
+}
+
+Space Map2::getLeftSpace(Space s)
+{
+	s.addX(-m_tiledSize.x);
+	if (isOutOfRange(s))
+		s.v1.x = UNDEFINED_POSITION;
+
+	return s;
+}
+
+Space Map2::getUpSpace(Space s)
+{
+	s.addY(m_tiledSize.y);
+	if (isOutOfRange(s))
+		s.v1.x = UNDEFINED_POSITION;
+
+	return s;
+}
+
+Space Map2::getDownSpace(Space s)
+{
+	s.addY(-m_tiledSize.y);
+	if (isOutOfRange(s))
+		s.v1.x = UNDEFINED_POSITION;
+
+	return s;
+}
+
+bool Map2::isNospaceUseless(Space s)
+{
+	Space space[] = { getUpSpace(s),getDownSpace(s),getRightSpace(s),getLeftSpace(s) };
+	for (int i = 0; i < SPACE_VERTICES; i++)
+		if (space[i].isValid())
+			if (isFreeSpace(space[i]))
+				return false;
+
+	return true;
+}
+
+bool Map2::isFreeSpace(Space s)
+{
+	for (Space freeSpace : m_freeSpace)
+		if (s.isSame(freeSpace))
 			return true;
 
 	return false;

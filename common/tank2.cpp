@@ -17,8 +17,9 @@ Tank2::Tank2() : m_bulletSpeed(BULLET_SPEED), m_bulletDamage(BULLET_DAMAGE)
 
 Tank2::~Tank2()
 {
-	for (auto& pBullet : m_pBullet)
-		safeDelete(pBullet);
+	m_pBullet.clear();
+	//for (auto& pBullet : m_pBullet)
+		//safeDelete(pBullet);
 }
 
 void Tank2::initialize(Texture* texture, const Game * game)
@@ -34,10 +35,10 @@ void Tank2::update(float frameTime)
 	int8 i = 0;
 	for (int i = 0; i < m_pBullet.size();i++)
 	{
-		Bullet* pBullet = m_pBullet[i];
+		Bullet* pBullet = m_pBullet[i].get();
 		if (pBullet->isFinished())
 		{
-			safeDelete(pBullet);
+			//safeDelete(pBullet);
 			m_pBullet.erase(std::next(m_pBullet.begin(), i));
 		}
 		else
@@ -58,8 +59,8 @@ void Tank2::executeAttack()
 {
 	if (m_pBullet.size() == 0)
 	{
-		Bullet* bullet = new Bullet(m_pGame, this);
-		m_pBullet.push_back(bullet);
+		std::shared_ptr<Bullet> pBullet = std::make_shared<Bullet>(m_pGame, this);
+		m_pBullet.push_back(pBullet);
 	}
 }
 

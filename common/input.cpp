@@ -23,8 +23,11 @@ bool Input::initialize(HWND hwnd)
 	if(result)
 		m_handleInput = true;
 
-	// ImGui::GetIO().KeyRepeatDelay = 0.257f;
-	ImGui::GetIO().KeyRepeatRate = 0.05f;
+/*	// ImGui::GetIO().KeyRepeatDelay = 0.257f;
+	ImGui::GetIO().KeyRepeatRate = 0.05f;*/
+	
+	ImGui::GetIO().KeyRepeatDelay = 0.0f;
+	ImGui::GetIO().KeyRepeatRate = 0.05f; 
 	ImGui::GetIO().IniFilename = 0;
 	return result;
 }

@@ -12,12 +12,10 @@ public:
 	~TanksWarServer();
 	void initialize(HINSTANCE hInstance, HWND hWnd);
 	void update();
-	void collision();
 	void render();
 
 private:
 
-	std::unique_ptr<Server> m_pServer;
 };
 
 

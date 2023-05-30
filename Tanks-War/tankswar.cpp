@@ -13,10 +13,12 @@ Tank2 tank2;
 
 TanksWar::TanksWar()
 {
+	m_pClient = new Client;
 }
 
 TanksWar::~TanksWar()
 {
+	safeDelete(m_pClient);
 }
 
 void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
@@ -26,15 +28,10 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 	m_pMap->load("Nova");
 	tank2.initialize(m_pTextureManger->getTexture(TEXTURE_PLAYER_TANK), this);
 	tank2.setPosition(V3(330, 300, 0));
-
 #else
-	m_client.initialize(this);
-	m_pInterface->initialize(&m_client, this);
+	m_pClient->initialize(this);
+	m_pInterface->initialize(m_pClient, this);
 #endif
-}
-
-void TanksWar::communicate()
-{
 }
 
 void TanksWar::update()
@@ -52,14 +49,14 @@ void TanksWar::update()
 		tank2.executeAttack();
 	if (GetAsyncKeyState('Q'))
 		tank2.damage(100);
-	tank2.update(m_timeDeltaMillsec);
 
+	tank2.update(m_timeDeltaMillsec);
 	m_pGraphics->getCamera()->update(tank2.getPosition());
 
 	return;
 #endif
-	m_client.update(m_timeDeltaMillsec);
-	if (m_client.getState() == CLIENT_CONNECTED_PLAYING)
+	m_pClient->update(m_timeDeltaMillsec);
+	if (m_pClient->getState() == CLIENT_CONNECTED_PLAYING)
 		if (m_pInput->isKeyDown(I_KEY))
 			if (m_pInterface->m_menu == MULTIPLAYER_MENU)
 				m_pInterface->m_menu = PLAYING_MENU;
@@ -74,17 +71,17 @@ void TanksWar::render()
 	tank2.draw();
 	return;
 #endif
-	if (m_client.getState() == CLIENT_CONNECTED_PLAYING)
+	if (m_pClient->getState() == CLIENT_CONNECTED_PLAYING)
 	{
 		m_pMap->draw();
-		ClientPlayer* clientPlayer = m_client.getClientPlayer();
+		ClientPlayer* clientPlayer = m_pClient->getClientPlayer();
 		clientPlayer->draw();
-		auto pClientData = m_client.getClientData();
+		auto pClientData = m_pClient->getClientData();
 		for (auto element : pClientData )
 			element->serverPlayer.draw();
 	}
 
-	if (m_client.isConnected())
+	if (m_pClient->isConnected())
 		return;
 	switch (m_pInterface->m_menu)
 	{

@@ -21,6 +21,7 @@ Client::Client() : m_gamePlayers(0), m_state(CLIENT_UNCONNECTED), m_presentTime(
 	m_port = _rand(3000);
 	m_pClientPlayer = std::make_shared<ClientPlayer>();
 }
+
 Client::~Client()
 {
 }

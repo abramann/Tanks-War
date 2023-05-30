@@ -9,12 +9,14 @@
 #define WIN32_LEAN_AND_MEAN
 #include "gameerror.h"
 #include "imgui\imgui_impl_win32.h"
-#include<iostream>
-#include<vector>
-#include<Windows.h>
-#include <d3dx9.h>
 #include "net.h"
 #include "crc32.h"
+#include<iostream>
+#include<vector>
+#include <stdarg.h>
+#include<Windows.h>
+#include <d3dx9.h>
+
 
 
 extern uint64_t g_frameCounter;
@@ -61,6 +63,7 @@ typedef ID3D11Buffer* LPVertexBuffer;
 #endif
 
 #define IN_RANGE(n, a, b) (bool)( (n > a && n < b) || (n > b && n < a))
+#define IN_RANGE_OR_EQUAL(n, a, b) (bool)( (n >= a && n <= b) || (n >= b && n <= a))
 
 constexpr double PI = 3.1415926535897932384626433832795;
 constexpr auto  MIN_RESOLUTION_WIDTH = 800;
@@ -71,7 +74,7 @@ constexpr auto CLIENT_PRESENT_TIME = 5000;
 constexpr auto COLOR_ALPHA = COLOR_ARGB(0, 0, 0, 255);
 constexpr auto COLOR_BLACK = COLOR_XRGB(0, 0, 0);
 constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
-constexpr auto FRAME_RATE = 15;
+constexpr auto FRAME_RATE = 60;
 constexpr auto GAME_INFO_PATH = "Assets\\ini\\game-info.txt";
 constexpr auto IMAGE_INFO_PATH = "Assets\\ini\\image-info.txt";
 constexpr auto INVALID_DATA = 0xFFFF;
@@ -102,6 +105,7 @@ constexpr auto TEXTURE_BULLET_ROWS_COLUMNS = 3;
 constexpr auto 	TEXTURE_TILEDS = 3;
 constexpr auto UPDATE_DELAY_BULLET = 80;
 const auto UNSPECIFIED_POS = V3(0.1f, 0.1f, 0.1f);
+const auto SPACE_VERTICES = 4;
 
 constexpr Key A_KEY = ImGuiKey_A;
 constexpr Key B_KEY = ImGuiKey_B;
@@ -281,26 +285,28 @@ inline T getMin(std::vector<T> val)
 	return minValue;
 }
 
+template <typename T>
+inline void add4(const T amount, T& v1, T& v2, T& v3, T& v4)
+{
+	v1 += amount,
+		v2 += amount,
+		v3 += amount,
+		v4 += amount;
+}
+
 struct Space
 {
 	V3 v1, v2, v3, v4;
-
-	float getMaxX() const
-	{
-		return getMax<float>({ v1.x,v2.x,v3.x,v4.x });
-	}
-	float getMinX() const
-	{
-		return getMin<float>({ v1.x,v2.x,v3.x,v4.x });
-	}
-	float getMaxY() const
-	{
-		return getMax<float>({ v1.y, v2.y, v3.y, v4.y });
-	}
-	float getMinY() const
-	{
-		return getMin<float>({ v1.y, v2.y, v3.y, v4.y });
-	}
+	//Space(V3 _v1, V3 _v2, V3 _v3, V3 _v4) : v1(_v1), v2(_v2), v3(_v3), v4(_v4) {};
+	//bool isEqual(Space s) const { return (s.v1 == v1 &&s.v2 == v2 &&s.v3 == v3 &&s.v4 == v4) ? true : false; }
+	bool isSame(Space s) const { return ( ( (s.v1 == v1 && s.v2 == v2) || (s.v1 == v2 && s.v2 == v1) ) && ( ( s.v3 == v3 && s.v4 == v4) || (s.v3 == v4 && s.v4 == v3) ) ) ? true : false; }
+	bool isValid() const { return (v1.x == UNDEFINED_POSITION) ? false : true; }
+	float getMaxX() const { return getMax<float>({ v1.x,v2.x,v3.x,v4.x }); }
+	float getMinX() const { return getMin<float>({ v1.x,v2.x,v3.x,v4.x }); }
+	float getMaxY() const { return getMax<float>({ v1.y, v2.y, v3.y, v4.y }); }
+	float getMinY() const { return getMin<float>({ v1.y, v2.y, v3.y, v4.y }); }
+	void addX(float val) { add4(val, v1.x, v2.x, v3.x, v4.x); }
+	void addY(float val) { add4(val, v1.y, v2.y, v3.y, v4.y); }
 };
 
 struct ServerInfo

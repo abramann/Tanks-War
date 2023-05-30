@@ -6,6 +6,7 @@ Timer::Timer()
 	m_secondsPerCount = 1.0f / m_countsPerSecond;
 	m_minFrameTime = 1000 / FRAME_RATE;
 	m_maxFrameTime = m_minFrameTime * 10;
+	m_prevCounts = getCurrentCounts();
 }
 
 

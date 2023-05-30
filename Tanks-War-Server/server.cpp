@@ -24,6 +24,8 @@ m_pTimer(0), m_pTextureManger(0), m_pMap(0)
 
 Server::~Server()
 {
+	if(isStarted())
+	stop();
 }
 
 void Server::initialize(const Game* game)
@@ -47,6 +49,7 @@ void Server::update(float frameTime)
 			pClientData->update(0);
 
 	//checkClients();
+
 	if (recv())
 	{
 		switch (*m_pPacketType)
@@ -294,20 +297,23 @@ void Server::applyPlayerAct(float frameTime)
 	PlayerID& id = m_pCpsPlayerAct->id;
 	ServerPlayer& serverPlayer = getIDClientData(id)->serverPlayer;
 	PlayerAct& act = m_pCpsPlayerAct->act;
-	if (act >= PLAYER_ACT_ATTACK)
+	/*if (act >= PLAYER_ACT_ATTACK)
 	{
-		serverPlayer.executeAttack();
 		act -= PLAYER_ACT_ATTACK;
-		m_pSpsPlayerAct->packetType = PACKET_PLAYER_ACT;
-		m_pSpsPlayerAct->id = id;
-		m_pSpsPlayerAct->act = PLAYER_ACT_ATTACK;
-		post(sizeof(m_pSpsPlayerAct));
-		if (act == 0) // if no act
-			goto U;
+		if (!serverPlayer.isBulletLaunching())
+		{
+			serverPlayer.executeAttack();
+			m_pSpsPlayerAct->packetType = PACKET_PLAYER_ACT;
+			m_pSpsPlayerAct->id = id;
+			m_pSpsPlayerAct->act = PLAYER_ACT_ATTACK;
+			post(sizeof(m_pSpsPlayerAct));
+		}
 	}
-
+	*/
 	switch (act)
 	{
+	case PLAYER_ACT_NONE:
+	break; 
 	case PLAYER_ACT_FORWRAD:
 		serverPlayer.executeForward(frameTime);
 		break;
@@ -342,8 +348,7 @@ void Server::applyPlayerAct(float frameTime)
 	default:
 		throw GameError(gameErrorNS::WARNING, "Unknown player act has been recieved!\n The other player(s) may have a different game version.");
 	}
-	
-U:
+
 	postPlayerUpdate(id);
 }
 

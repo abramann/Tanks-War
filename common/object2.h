@@ -18,7 +18,7 @@ public:
 	virtual void executeForward();
 	virtual void executeLeft();
 	virtual void executeRight();
-	void damage(float dmg);
+	virtual void damage(float dmg);
 	void addVeclocity(float addV) { m_velocity += addV; }
 
 protected:

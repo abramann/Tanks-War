@@ -28,6 +28,5 @@ private:
 		m_nearPlane, m_farPlane,
 		m_z;
 
-
 };
 

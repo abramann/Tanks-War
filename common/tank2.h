@@ -1,5 +1,6 @@
 #pragma once
 #include "object2.h"
+#include <memory>
 
 class Game;
 class Bullet;
@@ -26,6 +27,7 @@ public:
 
 	float getBulletSpeed() const { return m_bulletSpeed; }
 	float getBulletDamage() const { return m_bulletDamage; }
+	bool isBulletLaunching() const { return (m_pBullet.size() > 0); }
 
 protected:
 
@@ -38,7 +40,7 @@ protected:
 
 	Sound m_soundAttack;
 	float m_bulletSpeed, m_bulletDamage;
-	std::vector<Bullet*> m_pBullet;
+	std::vector<std::shared_ptr<Bullet>> m_pBullet;
 	TextureManger* m_pTextureManger;
 	Timer* m_pTimer;
 };

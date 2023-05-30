@@ -39,6 +39,8 @@ class Server
 {
 public:
 
+	friend class ServerPlayer;
+
 	Server();
 	~Server();
 	void initialize(const Game* game);

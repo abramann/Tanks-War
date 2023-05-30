@@ -25,7 +25,7 @@ public:
 	float passY(const Image2* object, float y) const;
 	bool isCollided(const Image2* image) const;
 	bool isOutOfRange(const Space space) const;
-	Object2* getObject(V3 position) const;
+	Object2* getObject(const Space space) const;
 	static Space getImageSpace(const Image2* image, float x0 = 0, float y0 = 0);
 	bool isMapExist(const char* name, Crc32 crc32) { return true; }
 	const char* getMap() const { return m_loadedMap; }
@@ -33,11 +33,18 @@ public:
 	const char* loadRandom();
 	Space getRandomEmptySpace() const;
 	void addObject(Object2* object);
-
+	 
 private:
 
 	bool read();
 	bool areSpacesCollided(const Space space1, const Space space2) const;
+	void clearUnnecessaryNospace();
+	Space getRightSpace(Space s);
+	Space getLeftSpace(Space s);
+	Space getUpSpace(Space s);
+	Space getDownSpace(Space s);
+	bool isNospaceUseless(Space s);
+	bool isFreeSpace(Space s);
 
 	TextureManger* m_pTextureManger;
 	Texture* m_pTexture[TEXTURE_TILEDS];

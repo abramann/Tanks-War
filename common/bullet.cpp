@@ -75,8 +75,8 @@ void Bullet::executeHit()
 	m_hit = true;
 	Texture* pTexture = m_pTextureManger->getTexture(TEXTURE_BULLET_DESTROY);
 	Image2::initialize(pTexture, m_pGame, TEXTURE_BULLET_ROWS_COLUMNS, TEXTURE_BULLET_ROWS_COLUMNS, UPDATE_DELAY_BULLET);
+	Object2* pObject = m_pMap->getObject(m_pMap->getImageSpace(this));
 #ifdef _SERVER_BUILD
-	Object2* pObject = m_pMap->getObject(m_position);
 	if (pObject)
 		pObject->damage(m_damage);
 #endif

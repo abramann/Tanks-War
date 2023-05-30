@@ -14,6 +14,11 @@
 #include "audio.h"
 #include "interface.h"
 #include "map2.h"
+#ifdef _CLIENT_BUILD
+#include "..\Tanks-War\client.h"
+#else ifdef _SERVER_BUILD
+#include "..\Tanks-War-Server\server.h"
+#endif
 #include <memory>
 
 class Game
@@ -37,6 +42,11 @@ public:
 	TextureManger* getTextureManger() const { return m_pTextureManger; }
 	Map2* getMap()	const { return m_pMap; }
 	Timer* getTimer()	const { return m_pTimer; }
+#ifdef _CLIENT_BUILD
+	Client* getClient() const { return m_pClient; }
+#else ifdef _SERVER_BUILD
+	Server* getServer() const { return m_pServer; }
+#endif
 	HWND getHwnd() const { return m_hwnd; }
 
 protected:
@@ -48,6 +58,11 @@ protected:
 	Interface* m_pInterface;
 	Map2* m_pMap;
 	Timer* m_pTimer;
+#ifdef _CLIENT_BUILD
+	Client* m_pClient;
+#else ifdef _SERVER_BUILD
+	Server* m_pServer;
+#endif
 	HWND m_hwnd;
 	float m_timeDeltaMillsec;
 	float m_fps;
