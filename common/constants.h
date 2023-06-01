@@ -1,8 +1,7 @@
+// constant.h
+// Author: abramann
+// Note this file is influnced by constant.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
 // Note parts of this code are licensed under CC BY 3.0
-
-// Programming 2D Games Copyright (c) 2011 by Charles Kelly 
-// Game Engine constants.h v3.1
-// Last modification: Dec-24-2013
 
 #ifndef _CONSTANTS_H            // Prevent multiple definitions if this
 #define _CONSTANTS_H            // file is included in more than one place
@@ -65,7 +64,7 @@ typedef ID3D11Buffer* LPVertexBuffer;
 #define IN_RANGE(n, a, b) (bool)( (n > a && n < b) || (n > b && n < a))
 #define IN_RANGE_OR_EQUAL(n, a, b) (bool)( (n >= a && n <= b) || (n >= b && n <= a))
 
-constexpr double PI = 3.1415926535897932384626433832795;
+constexpr float PI = 3.1415926535897f;
 constexpr auto  MIN_RESOLUTION_WIDTH = 800;
 constexpr auto  MIN_RESOLUTION_HEIGHT = 600;
 constexpr auto  VERTEX_FVF = D3DFVF_XYZ | D3DFVF_TEX1;
@@ -88,7 +87,7 @@ constexpr auto PROJECT_NEAR_PLANE = 1.0f;
 constexpr auto SERVER_INFO_PATH = "Assets\\ini\\server-info.txt";
 constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
 constexpr auto TANK_INFO_PATH = "Assets\\ini\\tank-info.txt";
-constexpr auto TANK_ROTATE_AMOUNT = PI / 64;
+constexpr auto TANK_ROTATE_AMOUNT = PI / 64.0f;
 constexpr auto TEXTURE_DIR = "Assets\\texture\\";
 constexpr auto TEXTURE_TANK_DESTROY_ROWS_COLUMNS = 8;
 constexpr auto UPDATE_DELAY_FPS = 0.5f;
@@ -225,7 +224,7 @@ enum PlayerAct_
 
 struct Vertex
 {
-	Vertex() {};
+	Vertex() : x(0), y(0), z(0), u(0), v(0) {};
 	Vertex(float _x, float _y, float _z, float _u, float _v) : x(_x), y(_y), z(_z), u(_u), v(_v) {};
 	float x, y, z;
 	float u, v;
@@ -297,8 +296,6 @@ inline void add4(const T amount, T& v1, T& v2, T& v3, T& v4)
 struct Space
 {
 	V3 v1, v2, v3, v4;
-	//Space(V3 _v1, V3 _v2, V3 _v3, V3 _v4) : v1(_v1), v2(_v2), v3(_v3), v4(_v4) {};
-	//bool isEqual(Space s) const { return (s.v1 == v1 &&s.v2 == v2 &&s.v3 == v3 &&s.v4 == v4) ? true : false; }
 	bool isSame(Space s) const { return ( ( (s.v1 == v1 && s.v2 == v2) || (s.v1 == v2 && s.v2 == v1) ) && ( ( s.v3 == v3 && s.v4 == v4) || (s.v3 == v4 && s.v4 == v3) ) ) ? true : false; }
 	bool isValid() const { return (v1.x == UNDEFINED_POSITION) ? false : true; }
 	float getMaxX() const { return getMax<float>({ v1.x,v2.x,v3.x,v4.x }); }

@@ -1,4 +1,8 @@
-#pragma once
+// player.h
+// Author: abramann
+
+#ifndef _PLAYER_H
+#define _PLAYER_H
 #include "tank2.h"
 
 enum PlayerType
@@ -26,3 +30,5 @@ protected:
 	char m_name[MAX_NAME_LEN];
 };
 
+
+#endif

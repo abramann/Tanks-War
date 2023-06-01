@@ -1,3 +1,7 @@
+// graphics.cpp
+// Author: abramann
+// Note this file is influnced by graphics.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+
 #include "graphics.h"
 #include "texture.h"
 #include "fileio.h"

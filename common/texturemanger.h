@@ -1,4 +1,8 @@
-#pragma once
+// texturemanger.h
+// Author: abramann
+
+#ifndef _TEXTURE_MANGER_H
+#define _TEXTURE_MANGER_H
 #include "constants.h"
 #include "texture.h"
 
@@ -33,3 +37,6 @@ private:
 	Graphics* m_pGraphics;
 	Texture* m_pTexture;
 };
+
+
+#endif

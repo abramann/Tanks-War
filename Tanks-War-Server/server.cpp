@@ -1,3 +1,6 @@
+// server.cpp
+// Author: abramann
+
 #include "server.h"
 #include "..\common\fileio.h"
 #include "game.h"

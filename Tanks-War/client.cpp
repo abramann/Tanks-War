@@ -1,3 +1,6 @@
+// client.h
+// Author: abramann
+
 #include "client.h"
 #include "fileio.h"
 #include "game.h"

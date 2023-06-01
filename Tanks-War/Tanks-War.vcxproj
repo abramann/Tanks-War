@@ -117,7 +117,7 @@
     <ClCompile Include="tankswar.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\common\shader.fx">
+    <FxCompile Include="..\common\shader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug D3D11 C|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='RLS D3D11|Win32'">true</ExcludedFromBuild>

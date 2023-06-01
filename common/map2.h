@@ -1,4 +1,8 @@
-#pragma once
+// map.h
+// Author: abramann
+
+#ifndef _MAP_H
+#define _MAP_H
 #include "constants.h"
 #include <vector>
 
@@ -8,6 +12,7 @@ class TextureManger;
 class Object2;
 class Image2;
 class Texture;
+class Bullet;
 
 class Map2
 {
@@ -19,20 +24,22 @@ public:
 	bool load(const char* map);
 	void draw() const;
 	void clear();
-	V2 getMapSize() const { return V2(m_width*m_tiledSize.x , m_height*m_tiledSize.y); }
-	float passX(const Image2* object, float x) const;
-	float passY(const Image2* object, float y) const;
-	bool isCollided(const Image2* image) const;
+	V2 getMapSize() const { return V2(m_width*m_tiledSize.x, m_height*m_tiledSize.y); }
+	float passX(const Object2* object, float x);
+	float passY(const Object2* object, float y);
+	bool isCollided(const Image2* image);
+	bool isCollided(const Object2* object);
+	bool isCollided(const Space space, const Object2* object = 0);
 	bool isOutOfRange(const Space space) const;
-	Object2* getObject(const Space space) const;
-	static Space getImageSpace(const Image2* image, float x0 = 0, float y0 = 0);
+	Object2* getObject(const Space space);
+	//static Space getImageSpace(const Image2* image, float x0 = 0, float y0 = 0);
 	bool isMapExist(const char* name, Crc32 crc32) { return true; }
 	const char* getMap() const { return m_loadedMap; }
 	Crc32 getCrc32() const;
 	const char* loadRandom();
 	Space getRandomEmptySpace() const;
 	void addObject(Object2* object);
-	 
+
 private:
 
 	bool read();
@@ -60,3 +67,6 @@ private:
 	V2 m_tiledSize;
 	char m_loadedMap[MAX_NAME_LEN];
 };
+
+
+#endif

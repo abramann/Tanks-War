@@ -1,4 +1,9 @@
-#pragma once
+// audio.h
+// Author: abramann.h
+// Note this file is influnced by audio.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+
+#ifndef _AUDIO_H
+#define _AUDIO_H
 #include "constants.h"
 #include "irrklang\irrKlang.h"
 
@@ -69,3 +74,5 @@ private:
 
 };
 
+
+#endif

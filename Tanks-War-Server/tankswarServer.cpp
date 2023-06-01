@@ -1,3 +1,6 @@
+// tankswarserver.cpp
+// Author: abramann
+
 #include "tankswarserver.h"
 #include "fileio.h"
 #include "texturemanger.h"

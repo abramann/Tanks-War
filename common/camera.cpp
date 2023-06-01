@@ -1,3 +1,6 @@
+// camera.cpp
+// Author: abramann
+
 #include "camera.h"
 #include "game.h"
 #include "map2.h"

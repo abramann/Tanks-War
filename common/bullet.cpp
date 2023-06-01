@@ -1,3 +1,6 @@
+//bullet.cpp
+// Author: abamann
+
 #include "bullet.h"
 #include "game.h"
 #include "tank2.h"
@@ -42,7 +45,7 @@ void Bullet::update(float frameTime)
 
 V3 Bullet::getBulletLaunchPosition()
 {
-	Space s = Map2::getImageSpace(m_pTank);
+	Space s = getSpace();
 	V3 position;
 	position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2);
 	position.y = (s.v4.y + (s.v3.y - s.v4.y) / 2);
@@ -51,23 +54,19 @@ V3 Bullet::getBulletLaunchPosition()
 
 bool Bullet::isCollided()
 {
-	return m_pMap->isCollided(this);
-	if (m_position.x == m_pMap->passX(this, 0) ||
-		m_position.y == m_pMap->passY(this, 0))
-		return true;
+	bool collided = m_pMap->isCollided(this);
+	return collided;
 }
 
 void Bullet::executeLaunch()
 {
-	m_speed = 5;// m_pTank->getBulletSpeed();
+	m_speed = m_pTank->getBulletSpeed();
 	m_damage = m_pTank->getBulletDamage();
 	m_rotate = m_pTank->getRotate();
 	V3 pos = m_pTank->getPosition();
 	float f1 = 1.0f - abs((0.636619772f *m_rotate.z));
 	m_position = getBulletLaunchPosition();
-	executeLaunching(22);
-	executeLaunching(22);
-	executeLaunching(22);
+	executeLaunching(0);
 }
 
 void Bullet::executeHit()
@@ -75,7 +74,8 @@ void Bullet::executeHit()
 	m_hit = true;
 	Texture* pTexture = m_pTextureManger->getTexture(TEXTURE_BULLET_DESTROY);
 	Image2::initialize(pTexture, m_pGame, TEXTURE_BULLET_ROWS_COLUMNS, TEXTURE_BULLET_ROWS_COLUMNS, UPDATE_DELAY_BULLET);
-	Object2* pObject = m_pMap->getObject(m_pMap->getImageSpace(this));
+	Space s = getSpace();
+	Object2* pObject = m_pMap->getObject(s);
 #ifdef _SERVER_BUILD
 	if (pObject)
 		pObject->damage(m_damage);

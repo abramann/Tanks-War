@@ -1,3 +1,6 @@
+// tankswarserver.h
+// Author: abramann
+
 #ifndef _TANKSWARSERVER_H
 #define _TANKSWARSERVER_H
 

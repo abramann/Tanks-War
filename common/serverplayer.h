@@ -1,4 +1,8 @@
-#pragma once
+// serverplayer.h
+// Author: abramann
+
+#ifndef _SERVERPLAYER_H
+#define _SERVERPLAYER_H
 #include "player.h"
 
 #ifdef _SERVER_BUILD
@@ -22,3 +26,5 @@ private:
 
 };
 
+
+#endif

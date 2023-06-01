@@ -1,3 +1,6 @@
+// fileio.h
+// Author: abramann
+
 #ifndef _FILEIO_H
 #define _FILE_IO_H
 #include "constants.h"

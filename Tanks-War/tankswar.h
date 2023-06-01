@@ -1,3 +1,6 @@
+// tankswar.h
+// Author: abramann
+
 #ifndef _TANKSWAR_H
 #define _TANKSWAR_H
 

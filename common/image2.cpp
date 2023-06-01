@@ -1,9 +1,12 @@
+// image.cpp
+// Author: abramann
+
 #include "image2.h"
 #include "game.h"
 
 Image2::Image2() : m_animate(false), m_column(1), m_row(1), m_columns(0), m_rows(0),
 m_timeUntilLastUpdate(0), m_updateDelay(0), m_width(0), m_height(0), m_textureWidth(0),
-m_textureHeight(0), m_lpVertexBuffer(0), m_position(0, 0, 0), m_rotate(0,0,0), m_scalling(1, 1, 1),
+m_textureHeight(0), m_lpVertexBuffer(0), m_position(0, 0, 0), m_rotate(0, 0, 0), m_scalling(1, 1, 1),
 m_initialized(false)
 {
 	m_vertices = VERTICES_IMAGE;
@@ -60,6 +63,34 @@ V3 Image2::getRotateCenter() const
 	V3 center = V3(m_width / 2, m_height / 2, 0);
 	return center;
 }
+
+Space Image2::getSpace(float x0, float y0) const
+{
+	if (x0 == 0)
+		x0 = m_position.x;
+	if (y0 == 0)
+		y0 = m_position.y;
+
+	float angle = m_rotate.z;
+	int8 s = 1;
+	if (angle > 0.0001)
+		s = +1;
+	else if (angle < -0.0001)
+		s = -1;
+
+	float f1 = 1 + (-0.636619772*abs(angle));
+	float f2 = -1 * s*(abs(f1) - 1);
+	Space is;
+	is.v1.x = x0, is.v1.y = y0;
+	is.v2.x = is.v1.x + m_width*(f1),
+		is.v2.y = is.v1.y + (m_height *f2);
+	is.v3.x = is.v2.x + m_width*(-1 * f2);
+	is.v3.y = is.v2.y + m_height*f1;
+	is.v4.x = is.v1.x + m_width*(-1 * f2);
+	is.v4.y = is.v1.y + m_height*f1;
+	return is;
+}
+
 
 void Image2::createVertexBuffer()
 {

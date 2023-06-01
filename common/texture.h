@@ -1,3 +1,7 @@
+// texture.h
+// Author: abramann
+// Note this file is influnced by texture.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+
 #ifndef _TEXTURE_H
 #define _TEXTURE_H
 #include "constants.h"

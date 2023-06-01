@@ -1,3 +1,6 @@
+// object.cpp
+// Author: abramann
+
 #include "object2.h"
 #include "game.h"
 

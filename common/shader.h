@@ -1,4 +1,7 @@
 #include <Windows.h>
+// shader.h
+// This file includes the generated binary for each shader function in shader.hlsl
+// For source code see shader.hlsl
 
 #if 0
 //

@@ -1,4 +1,8 @@
-#pragma once
+// image.h
+// Author: abramann
+
+#ifndef _IMAGE_H
+#define _IMAGE_H
 #include "constants.h"
 #include "texture.h"
 
@@ -43,13 +47,14 @@ public:
 	void setX(float x) { m_position.x = x; }
 	void setY(float y) { m_position.y = y; }
 	void setZ(float z) { m_position.z = z; }
+	Space getSpace(float x0 = 0, float y0 = 0) const;
 
 protected:
 
 	virtual void createVertexBuffer();
 	virtual void setLocalCoordinate();
 	virtual void executeAnimateRepeat() { m_row = 1, m_column = 1; }
-	
+
 
 	Graphics* m_pGraphics;
 	Texture* m_pTexture;
@@ -68,3 +73,6 @@ private:
 
 	bool m_animate;
 };
+
+
+#endif

@@ -1,4 +1,7 @@
-// Note parts of code are licensed under CC BY 3.0
+// game.cpp
+// Author: abramann
+// Note this file is influnced by game.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note parts of this code are licensed under CC BY 3.0
 
 // Programming 2D Games Copyright (c) 2011 by: Charles Kelly 
 // game.cpp

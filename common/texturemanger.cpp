@@ -1,3 +1,6 @@
+// texturemanger.cpp
+// Author: abramann
+
 #include "texturemanger.h"
 #include "fileio.h"
 #include "graphics.h"

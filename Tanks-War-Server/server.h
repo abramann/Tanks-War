@@ -1,4 +1,8 @@
-#pragma once
+// server.h
+// Author: abramann
+
+#ifndef _SERVER_H
+#define _SERVER_H
 #include "constants.h"
 
 #include "crc32.h"
@@ -114,3 +118,6 @@ private:
 	SpsPlayerAct* m_pSpsPlayerAct;
 	PacketType* m_pPacketType;
 };
+
+
+#endif

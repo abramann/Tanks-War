@@ -1,3 +1,7 @@
+// audio.cpp
+// Author: abramann
+// Note this file is influnced by audio.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+
 #include "audio.h"
 #include "fileio.h"
 

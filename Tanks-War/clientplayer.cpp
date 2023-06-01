@@ -1,3 +1,6 @@
+// clientplayer.h
+// Author: abramann
+
 #ifdef _CLIENT_BUILD
 #ifndef _CLIENT_H
 #define _CLIENT_H

@@ -1,3 +1,6 @@
+// input.h
+// Author: abramann
+
 #ifndef _INPUT_H
 #define _INPUT_H
 #include "constants.h"

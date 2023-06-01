@@ -1,3 +1,7 @@
+// graphics.h
+// Author: abramann
+// Note this file is influnced by graphics.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+
 #ifndef _GRAPHICS_H
 #define _GRAPHICS_H
 #include "constants.h"

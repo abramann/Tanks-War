@@ -1,4 +1,7 @@
-#pragma once
+// timer.h
+// Author: abramann
+// Note this file is influnced by GameTimer.h from F.Luna's Introduction To Game Programming in D3D11 
+
 #include "constants.h"
 
 class Timer
@@ -14,7 +17,6 @@ public:
 private:
 
 	int64 getCurrentCounts() const;
-
 	float m_timeDeltaMillsec;
 	int64 m_countsPerSecond;
 	float m_secondsPerCount;

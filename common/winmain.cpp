@@ -1,9 +1,6 @@
-// Note parts of this code is licensed under CC BY 3.0
-
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
 // winmain.cpp
+// Note this file is influnced by winmain.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note parts of this code are licensed under CC BY 3.0
 
 #include "constants.h"
 #ifdef _CLIENT_BUILD

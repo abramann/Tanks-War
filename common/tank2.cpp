@@ -1,3 +1,6 @@
+// tank.cpp
+// Author: abramann
+
 #include "tank2.h"
 #include "game.h"
 #include "bullet.h"

@@ -1,3 +1,6 @@
+// map.cpp
+// Author: abramann
+
 #include "map2.h"
 #include "game.h"
 #include "object2.h"
@@ -81,7 +84,7 @@ bool Map2::load(const char * map)
 			if (prevented)
 				continue;
 
-			
+
 			space.v1.x = w*m_tiledSize.x;
 			space.v1.y = h*m_tiledSize.y;
 			space.v2.x = space.v1.x + m_tiledSize.x;
@@ -119,6 +122,7 @@ bool Map2::load(const char * map)
 	}
 
 	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(totalBitmaps * 6, VB_USAGE_CONST, &pData[0]);
+	LPDevice device = m_pGraphics->getDevice();
 	return true;
 }
 
@@ -141,54 +145,60 @@ void Map2::clear()
 	safeRelease(m_lpVertexBuffer);
 }
 
-float Map2::passX(const Image2 * image, float x) const
+float Map2::passX(const Object2 * object, float x)
 {
-	Space is = getImageSpace(image, x, 0);
-	float x0 = image->getPosition().x;
-	if (isOutOfRange(is))
+	Space is = object->getSpace(x, 0);
+	float x0 = object->getPosition().x;
+	if (isCollided(is, object))
 		return x0;
-
-	for (auto space : m_noSpace)
-		if (areSpacesCollided(space, is))
-			return x0;
 
 	return x;
 }
 
-float Map2::passY(const Image2 * image, float y) const
+float Map2::passY(const Object2 * object, float y)
 {
-	Space is = getImageSpace(image, 0, y);
-	float y0 = image->getPosition().y;
-	if (isOutOfRange(is))
+	Space is = object->getSpace(0, y);
+	float y0 = object->getPosition().y;
+	if (isCollided(is, object))
 		return y0;
-
-	for (auto space : m_noSpace)
-		if (areSpacesCollided(space, is))
-			return y0;
 
 	return y;
 }
 
-bool Map2::isCollided(const Image2 * image) const
+bool Map2::isCollided(const Image2* image)
 {
-	Space is = getImageSpace(image);
+	Space s = image->getSpace();
+	bool r = isCollided(s);
+	return r;
+}
+
+bool Map2::isCollided(const Object2 * object)
+{
+	Space is = object->getSpace();
+	bool r = isCollided(is, object);
+	return r;
+}
+
+bool Map2::isCollided(const Space is, const Object2* object)
+{
 	if (isOutOfRange(is))
 		return true;
 	for (auto space : m_noSpace)
 		if (areSpacesCollided(space, is))
 			return true;
-	for (auto object : m_pObject)
+	for (auto pObj : m_pObject)
 	{
-		if (object != image)
-		{
-			Space space = getImageSpace(object);
-			if (areSpacesCollided(space, is))
-				return true;
-		}
+		if (object == pObj)
+			continue;
+
+		Space space = pObj->getSpace();
+		if (areSpacesCollided(space, is))
+			return true;
 	}
 
 	return false;
 }
+
 bool Map2::isOutOfRange(const Space space) const
 {
 	const int32 x = m_width*m_tiledSize.x,
@@ -207,12 +217,12 @@ bool Map2::isOutOfRange(const Space space) const
 	return true;
 }
 
-Object2 * Map2::getObject(const Space space) const
+Object2 * Map2::getObject(const Space space)
 {
 	Object2* pObject = 0;
 	for (auto _pObject : m_pObject)
 	{
-		Space is = getImageSpace(_pObject);
+		Space is = _pObject->getSpace();
 		if (areSpacesCollided(space, is))
 		{
 			pObject = _pObject;
@@ -221,23 +231,6 @@ Object2 * Map2::getObject(const Space space) const
 	}
 
 	return pObject;
-	/*
-	Object2* object = nullptr;
-	float x = position.x, y = position.y;
-	Space s;
-	s.v1 = position;
-	for (auto obj : m_pObject)
-	{
-	Space os = Map2::getImageSpace(obj);
-	if (areSpacesCollided(os, s))
-	{
-	object = obj;
-	break;
-	}
-	}
-
-	return object;
-	*/
 }
 
 bool Map2::read()
@@ -271,6 +264,7 @@ bool Map2::read()
 
 		i++;
 	}
+
 	return true;
 }
 
@@ -361,35 +355,6 @@ bool Map2::isFreeSpace(Space s) const
 			return true;
 		}
 	return false;
-}
-
-Space Map2::getImageSpace(const Image2* image, float x0, float y0)
-{
-	int16 width = image->getWidth(),
-		height = image->getHeight();
-	if (x0 == 0)
-		x0 = image->getPosition().x;
-	if (y0 == 0)
-		y0 = image->getPosition().y;
-
-	float angle = image->getRotate().z;
-	int8 s = 1;
-	if (angle > 0.0001)
-		s = +1;
-	else if (angle < -0.0001)
-		s = -1;
-
-	float f1 = 1 + (-0.636619772*abs(angle));
-	float f2 = -1 * s*(abs(f1) - 1);
-	Space is;
-	is.v1.x = x0, is.v1.y = y0;
-	is.v2.x = is.v1.x + width*(f1),
-		is.v2.y = is.v1.y + (height *f2);
-	is.v3.x = is.v2.x + width*(-1 * f2);
-	is.v3.y = is.v2.y + height*f1;
-	is.v4.x = is.v1.x + width*(-1 * f2);
-	is.v4.y = is.v1.y + height*f1;
-	return is;
 }
 
 Crc32 Map2::getCrc32() const

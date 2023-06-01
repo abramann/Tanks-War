@@ -1,5 +1,8 @@
-#pragma once
+// object.h
+// Author: abramann
 
+#ifndef _OBJECT_H
+#define _OBJECT_H
 #include "image2.h"
 #include "audio.h"
 
@@ -36,3 +39,6 @@ protected:
 	Sound m_soundForward, m_soundBack, m_soundRight, m_soundLeft;
 	bool m_playSound;
 };
+
+
+#endif

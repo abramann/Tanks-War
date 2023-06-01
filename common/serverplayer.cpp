@@ -1,3 +1,6 @@
+// serverplayer.cpp
+// Author: abramann
+
 #include "serverplayer.h"
 #include "game.h"
 

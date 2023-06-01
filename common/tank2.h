@@ -1,4 +1,8 @@
-#pragma once
+// tank.h
+// Author: abramann
+
+#ifndef _TANK_H
+#define _TANK_H
 #include "object2.h"
 #include <memory>
 
@@ -44,3 +48,6 @@ protected:
 	TextureManger* m_pTextureManger;
 	Timer* m_pTimer;
 };
+
+
+#endif

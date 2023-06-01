@@ -1,3 +1,6 @@
+// tankswar.cpp
+// Author: abramann
+
 #include "TanksWar.h"
 #include "fileio.h"
 #include "tank2.h"

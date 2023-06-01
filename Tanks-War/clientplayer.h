@@ -1,4 +1,8 @@
-#pragma once
+// clientplayer.h
+// Author: abramann
+
+#ifndef _CLIENTPLAYER_H
+#define _CLIENTPLAYER_H
 #include "player.h"
 
 class Input;
@@ -32,3 +36,5 @@ protected:
 	
 };
 
+
+#endif

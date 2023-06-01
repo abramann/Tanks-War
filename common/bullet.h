@@ -1,4 +1,8 @@
-#pragma once
+//bullet.h
+// Author: abamann
+
+#ifndef _BULLET_H
+#define _BULLET_H
 #include "constants.h"
 #include "image2.h"
 
@@ -11,7 +15,7 @@ class TextureManger;
 class Bullet : public Image2
 {
 public:
-	
+
 	Bullet(const Game* game, const Tank2 * tank);
 	Bullet();
 	~Bullet();
@@ -39,3 +43,5 @@ private:
 	bool m_hit, m_finish;
 };
 
+
+#endif

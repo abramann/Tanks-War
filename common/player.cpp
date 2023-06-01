@@ -1,3 +1,6 @@
+// player.cpp
+// Author: abramann
+
 #include "player.h"
 #include "game.h"
 #include "texturemanger.h"
