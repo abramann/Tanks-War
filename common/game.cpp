@@ -1,6 +1,6 @@
 // game.cpp
 // Author: abramann
-// Note this file is influnced by game.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by game.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
 // Note parts of this code are licensed under CC BY 3.0
 
 // Programming 2D Games Copyright (c) 2011 by: Charles Kelly 
@@ -20,24 +20,26 @@
 
 Game::Game() : m_timeDeltaMillsec(0)
 {
-	m_pGraphics = new Graphics;
-	m_pInput = new Input;
-	m_pAudio = new Audio;
-	m_pTextureManger = new TextureManger;
-	m_pTimer = new Timer;
-	m_pInterface = new Interface;
-	m_pMap = new Map;
+	//m_pGraphics = new Graphics;
+	m_pGraphics = std::make_shared<Graphics>();
+	m_pInput = std::make_shared<Input>();
+	m_pAudio = std::make_shared<Audio>();
+	m_pTextureManger = std::make_shared<TextureManger>();
+	m_pTimer = std::make_shared<Timer>();
+	m_pInterface = std::make_shared<Interface>();
+	m_pMap = std::make_shared<Map>();
 }
 
 Game::~Game()
 {
-	safeDelete(m_pGraphics);
+	m_pGraphics.reset();
+	/*safeDelete(m_pGraphics);
 	safeDelete(m_pInput);
 	safeDelete(m_pAudio);
 	safeDelete(m_pInterface);
 	safeDelete(m_pTextureManger);
 	safeDelete(m_pMap);
-	safeDelete(m_pTimer);
+	safeDelete(m_pTimer);*/
 }
 
 LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -57,7 +59,7 @@ void Game::initialize(HINSTANCE hInstance, HWND hwnd)
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize Graphics");
 	if (!m_pAudio->initialize())
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize Audio");
-	if (!m_pTextureManger->initialize(m_pGraphics))
+	if (!m_pTextureManger->initialize(m_pGraphics.get()))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize TextureManger");
 
 	m_pMap->initialize(this);

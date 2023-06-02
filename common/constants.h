@@ -1,6 +1,6 @@
 // constant.h
 // Author: abramann
-// Note this file is influnced by constant.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by constant.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
 // Note parts of this code are licensed under CC BY 3.0
 
 #ifndef _CONSTANTS_H            // Prevent multiple definitions if this

@@ -4,22 +4,22 @@
 #include "tankswarserver.h"
 #include "fileio.h"
 #include "texturemanger.h"
+#include "interface.h"
 
 TanksWarServer::TanksWarServer()
 {
-	m_pServer = new Server;
+	m_pServer = std::make_shared<Server>();
 }
 
 TanksWarServer::~TanksWarServer()
 {
-	safeDelete(m_pServer);
 }
 
 void TanksWarServer::initialize(HINSTANCE hInstance, HWND hwnd)
 {
 	Game::initialize(hInstance, hwnd);
 	m_pServer->initialize(this);
-	m_pInterface->initialize(m_pServer, this);
+	m_pInterface->initialize(m_pServer.get(), this);
 }
 
 void TanksWarServer::update()
@@ -32,8 +32,8 @@ void TanksWarServer::render()
 	m_pInterface->show();
 	if(m_pServer->getState() == SERVER_RUNNING_HANDLING)
 	{
-		m_pMap->draw();
-		for (auto pClientData : m_pServer->getClientData())
-			pClientData->draw();
+		// m_pMap->draw();
+	//	for (auto pClientData : m_pServer->getClientData())
+		//	pClientData->draw();
 	}	
 } 

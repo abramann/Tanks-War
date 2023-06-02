@@ -4,6 +4,9 @@
 #include "server.h"
 #include "..\common\fileio.h"
 #include "game.h"
+#include "timer.h"
+#include "map.h"
+#include "texturemanger.h"
 
 Server::Server() : m_serverPort(netNS::DEFAULT_PORT), m_state(SERVER_NOT_RUNNING), m_pAudio(0), m_pGraphics(0),
 m_pTimer(0), m_pTextureManger(0), m_pMap(0)

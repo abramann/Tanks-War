@@ -1,10 +1,11 @@
 // graphics.h
 // Author: abramann
-// Note this file is influnced by graphics.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by graphics.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
 
 #ifndef _GRAPHICS_H
 #define _GRAPHICS_H
 #include "constants.h"
+#include <memory>
 
 class Game;
 class Image;
@@ -52,7 +53,7 @@ public:
 	void setWorldMatrix(Matrix worldMatrix);
 	void streamVertexBuffer(LPVertexBuffer vb);
 	bool checkFullscreenSupport() const;
-	Camera* getCamera() const { return m_pCamera; }
+	Camera* getCamera() const { return m_pCamera.get(); }
 
 private:
 
@@ -79,10 +80,10 @@ private:
 
 	void setVSConstBuffer(const void* data);
 	Vertex* getVertexBufferData(LPVertexBuffer vb, uint32& size) const;
-
 #endif
+
 	DWORD m_deviceState;
-	Camera* m_pCamera;
+	std::shared_ptr<Camera> m_pCamera;
 };
 
 

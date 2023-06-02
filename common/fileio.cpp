@@ -108,9 +108,7 @@ Crc32 FileIO::getCRC32(const char* file)
 	f.seekg(0, std::ios::beg);
 	std::vector<char> buffer(size);
 	if (f.read(buffer.data(), size))
-	{
 		result = crc32_fast(&buffer[0], size);
-	}
 
 	return result;
 }

@@ -493,11 +493,12 @@
     <ClCompile Include="..\common\audio.cpp" />
     <ClCompile Include="..\common\bullet.cpp" />
     <ClCompile Include="..\common\camera.cpp" />
+    <ClCompile Include="..\common\clientplayer.cpp" />
     <ClCompile Include="..\common\crc32.cpp" />
     <ClCompile Include="..\common\fileio.cpp" />
     <ClCompile Include="..\common\game.cpp" />
     <ClCompile Include="..\common\graphics.cpp" />
-    <ClCompile Include="..\common\image2.cpp" />
+    <ClCompile Include="..\common\image.cpp" />
     <ClCompile Include="..\common\imgui\imgui.cpp" />
     <ClCompile Include="..\common\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\common\imgui\imgui_draw.cpp" />
@@ -508,12 +509,12 @@
     <ClCompile Include="..\common\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\common\input.cpp" />
     <ClCompile Include="..\common\interface.cpp" />
-    <ClCompile Include="..\common\map2.cpp" />
+    <ClCompile Include="..\common\map.cpp" />
     <ClCompile Include="..\common\net.cpp" />
-    <ClCompile Include="..\common\object2.cpp" />
+    <ClCompile Include="..\common\object.cpp" />
     <ClCompile Include="..\common\player.cpp" />
     <ClCompile Include="..\common\serverplayer.cpp" />
-    <ClCompile Include="..\common\tank2.cpp" />
+    <ClCompile Include="..\common\tank.cpp" />
     <ClCompile Include="..\common\texture.cpp" />
     <ClCompile Include="..\common\texturemanger.cpp" />
     <ClCompile Include="..\common\timer.cpp" />
@@ -525,26 +526,45 @@
     <ClInclude Include="..\common\audio.h" />
     <ClInclude Include="..\common\bullet.h" />
     <ClInclude Include="..\common\camera.h" />
+    <ClInclude Include="..\common\clientplayer.h" />
     <ClInclude Include="..\common\constants.h" />
     <ClInclude Include="..\common\crc32.h" />
+    <ClInclude Include="..\common\dirent.h" />
     <ClInclude Include="..\common\fileio.h" />
     <ClInclude Include="..\common\game.h" />
     <ClInclude Include="..\common\gameerror.h" />
     <ClInclude Include="..\common\graphics.h" />
-    <ClInclude Include="..\common\image2.h" />
+    <ClInclude Include="..\common\image.h" />
     <ClInclude Include="..\common\input.h" />
     <ClInclude Include="..\common\interface.h" />
-    <ClInclude Include="..\common\map2.h" />
+    <ClInclude Include="..\common\map.h" />
     <ClInclude Include="..\common\net.h" />
-    <ClInclude Include="..\common\object2.h" />
+    <ClInclude Include="..\common\object.h" />
     <ClInclude Include="..\common\player.h" />
     <ClInclude Include="..\common\serverplayer.h" />
-    <ClInclude Include="..\common\tank2.h" />
+    <ClInclude Include="..\common\shader.h" />
+    <ClInclude Include="..\common\tank.h" />
     <ClInclude Include="..\common\texture.h" />
     <ClInclude Include="..\common\texturemanger.h" />
     <ClInclude Include="..\common\timer.h" />
     <ClInclude Include="server.h" />
     <ClInclude Include="tankswarServer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\common\shader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug D3D11 S|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release D3D11 S|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='D3D11 RLS|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug D3D11 S|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release D3D11 S|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='D3D11 RLS|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DBG D1D11|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

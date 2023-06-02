@@ -92,7 +92,7 @@ private:
 	PlayerID getLastRecieverId();
 
 	const Game* m_pGame;
-	Map2* m_pMap;
+	Map* m_pMap;
 	Graphics* m_pGraphics;
 	TextureManger* m_pTextureManger;
 	Audio* m_pAudio;

@@ -1,6 +1,6 @@
 // game.h
 // Author: abramann
-// Note this file is influnced by game.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by game.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
 // Note parts of this code are licensed under CC BY 3.0
 
 // Programming 2D Games Copyright (c) 2011 by: Charles Kelly 
@@ -40,7 +40,7 @@ public:
 	Game();
 	~Game();
 
-	LRESULT messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	LRESULT messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	virtual void initialize(HINSTANCE hInstance, HWND hWnd);
 	virtual void run();
 	virtual void renderGame();
@@ -48,32 +48,32 @@ public:
 	virtual void update() = 0;
 	virtual void render() = 0;
 	
-	Graphics* getGraphics()	const { return m_pGraphics; }
-	Input* getInput()	const { return m_pInput; }
-	Audio* getAudio()	const { return m_pAudio; }
-	TextureManger* getTextureManger() const { return m_pTextureManger; }
-	Map* getMap()	const { return m_pMap; }
-	Timer* getTimer()	const { return m_pTimer; }
+	Graphics* getGraphics()	const { return m_pGraphics.get(); }
+	Input* getInput()	const { return m_pInput.get(); }
+	Audio* getAudio()	const { return m_pAudio.get(); }
+	TextureManger* getTextureManger() const { return m_pTextureManger.get(); }
+	Map* getMap()	const { return m_pMap.get(); }
+	Timer* getTimer()	const { return m_pTimer.get(); }
 #ifdef _CLIENT_BUILD
-	Client* getClient() const { return m_pClient; }
+	Client* getClient() const { return m_pClient.get(); }
 #else ifdef _SERVER_BUILD
-	Server* getServer() const { return m_pServer; }
+	Server* getServer() const { return m_pServer.get(); }
 #endif
 	HWND getHwnd() const { return m_hwnd; }
 
 protected:
 
-	Graphics* m_pGraphics;
-	Input* m_pInput;
-	Audio* m_pAudio;
-	TextureManger* m_pTextureManger;
-	Interface* m_pInterface;
-	Map* m_pMap;
-	Timer* m_pTimer;
+	std::shared_ptr<Graphics> m_pGraphics;
+	std::shared_ptr<Input> m_pInput;
+	std::shared_ptr<Audio> m_pAudio;
+	std::shared_ptr<TextureManger> m_pTextureManger;
+	std::shared_ptr<Interface> m_pInterface;
+	std::shared_ptr<Map> m_pMap;
+	std::shared_ptr<Timer> m_pTimer;
 #ifdef _CLIENT_BUILD
-	Client* m_pClient;
+	std::shared_ptr<Client> m_pClient;
 #else ifdef _SERVER_BUILD
-	Server* m_pServer;
+	std::shared_ptr<Server> m_pServer;
 #endif
 	HWND m_hwnd;
 	float m_timeDeltaMillsec;

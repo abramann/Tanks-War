@@ -1,5 +1,5 @@
 // winmain.cpp
-// Note this file is influnced by winmain.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by winmain.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
 // Note parts of this code are licensed under CC BY 3.0
 
 #include "constants.h"

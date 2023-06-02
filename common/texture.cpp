@@ -1,6 +1,6 @@
 // texture.cpp
 // Author: abramann
-// Note this file is influnced by texture.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by texture.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
 
 #include "texture.h"
 #include <fstream>

@@ -1,6 +1,6 @@
 // timer.cpp
 // Author: abramann
-// Note this file is influnced by GameTimer.h from F.Luna's Introduction To Game Programming in D3D11 
+// Note this file is influenced by GameTimer.h from F.Luna's Introduction To Game Programming in D3D11 
 
 #include "timer.h"
 

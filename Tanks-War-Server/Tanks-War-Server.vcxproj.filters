@@ -49,32 +49,8 @@
     <ClCompile Include="..\common\imgui\imgui_demo.cpp">
       <Filter>Common\Sources\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\fileio.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\game.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\graphics.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\image2.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\input.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\interface.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\map2.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\net.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\object2.cpp">
-      <Filter>Common\Sources</Filter>
+    <ClCompile Include="..\common\imgui\imgui_impl_dx11.cpp">
+      <Filter>Common\Sources\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\common\player.cpp">
       <Filter>Common\Sources</Filter>
@@ -82,7 +58,7 @@
     <ClCompile Include="..\common\serverplayer.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\tank2.cpp">
+    <ClCompile Include="..\common\tank.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\texture.cpp">
@@ -94,6 +70,9 @@
     <ClCompile Include="..\common\timer.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\winmain.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\common\audio.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
@@ -103,14 +82,38 @@
     <ClCompile Include="..\common\camera.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\clientplayer.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\common\crc32.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\winmain.cpp">
+    <ClCompile Include="..\common\fileio.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\imgui\imgui_impl_dx11.cpp">
-      <Filter>Common\Sources\imgui</Filter>
+    <ClCompile Include="..\common\game.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\graphics.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\image.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\input.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interface.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\map.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\net.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\object.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -120,40 +123,22 @@
     <ClInclude Include="tankswarServer.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\timer.h">
+    <ClInclude Include="..\common\camera.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\input.h">
+    <ClInclude Include="..\common\clientplayer.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\interface.h">
+    <ClInclude Include="..\common\constants.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\map2.h">
+    <ClInclude Include="..\common\crc32.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\net.h">
+    <ClInclude Include="..\common\dirent.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\object2.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\player.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\serverplayer.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\tank2.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\texture.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\graphics.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\image2.h">
+    <ClInclude Include="..\common\fileio.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\common\game.h">
@@ -162,10 +147,46 @@
     <ClInclude Include="..\common\gameerror.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\crc32.h">
+    <ClInclude Include="..\common\graphics.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\fileio.h">
+    <ClInclude Include="..\common\image.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\input.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\interface.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\map.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\net.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\object.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\player.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\serverplayer.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\shader.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\tank.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\texture.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\texturemanger.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\timer.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\common\audio.h">
@@ -174,14 +195,10 @@
     <ClInclude Include="..\common\bullet.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\camera.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\constants.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\texturemanger.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\common\shader.hlsl">
+      <Filter>Common</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

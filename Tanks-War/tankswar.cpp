@@ -16,12 +16,11 @@ Tank tank2;
 
 TanksWar::TanksWar()
 {
-	m_pClient = new Client;
+	m_pClient = std::make_shared<Client>();
 }
 
 TanksWar::~TanksWar()
 {
-	safeDelete(m_pClient);
 }
 
 void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)

@@ -1,6 +1,6 @@
 // graphics.cpp
 // Author: abramann
-// Note this file is influnced by graphics.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by graphics.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
 
 #include "graphics.h"
 #include "texture.h"
@@ -16,11 +16,11 @@
 #include "shader.h"
 #endif
 
-uint64_t  g_frameCounter = 0;
+uint64  g_frameCounter = 0;
 
 Graphics::Graphics() : m_lpDevice3d(NULL), m_deviceState(NULL)
 {
-	m_pCamera = new Camera;
+	m_pCamera = std::make_shared<Camera>();
 #ifdef _BUILD_WITH_D3D9
 	m_lpDirect3d = NULL;
 	m_presentParameter = {};
@@ -42,7 +42,7 @@ Graphics::Graphics() : m_lpDevice3d(NULL), m_deviceState(NULL)
 
 Graphics::~Graphics()
 {
-	safeDelete(m_pCamera);
+	//safeDelete(m_pCamera);
 	release();
 }
 
