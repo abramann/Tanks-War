@@ -9,6 +9,14 @@
 #include "game.h"
 #include "imgui\imgui_impl_win32.h"
 #include "texturemanger.h"
+#include "graphics.h"
+#include "input.h"
+#include "timer.h"
+#include "texture.h"
+#include "image.h"
+#include "audio.h"
+#include "interface.h"
+#include "map.h"
 
 Game::Game() : m_timeDeltaMillsec(0)
 {
@@ -18,7 +26,7 @@ Game::Game() : m_timeDeltaMillsec(0)
 	m_pTextureManger = new TextureManger;
 	m_pTimer = new Timer;
 	m_pInterface = new Interface;
-	m_pMap = new Map2;
+	m_pMap = new Map;
 }
 
 Game::~Game()

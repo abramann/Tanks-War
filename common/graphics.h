@@ -7,7 +7,7 @@
 #include "constants.h"
 
 class Game;
-class Image2;
+class Image;
 class Camera;
 
 #ifdef _BUILD_WITH_D3D9
@@ -33,7 +33,7 @@ public:
 	bool loadTexture(const char* file, UINT& width, UINT& height, Color transparency, LPTextureD3D& texture);
 	static Matrix V3ToMatrix(const V3 v3, MatrixType type);
 	Result begin();
-	void drawImage(const Image2* image);
+	void drawImage(const Image* image);
 	Result drawPrimitive(UINT startVertex, UINT count);
 	Result end();
 	Result showBackbuffer();

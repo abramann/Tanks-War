@@ -3,7 +3,7 @@
 
 #ifndef _PLAYER_H
 #define _PLAYER_H
-#include "tank2.h"
+#include "tank.h"
 
 enum PlayerType
 {
@@ -11,7 +11,7 @@ enum PlayerType
 	PLAYER_ENEMY
 };
 
-class Player : public Tank2
+class Player : public Tank
 {
 public:
 

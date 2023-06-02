@@ -4,7 +4,7 @@
 class Game;
 class Graphics;
 class Audio;
-class Map2;
+class Map;
 
 #ifdef _CLIENT_BUILD
 #include "..\Tanks-War\client.h"
@@ -59,7 +59,7 @@ private:
 
 	Graphics* m_pGraphics;
 	Audio* m_pAudio;
-	Map2* m_pMap;
+	Map* m_pMap;
 	ImFont* m_font[3];
 
 #ifdef _CLIENT_BUILD

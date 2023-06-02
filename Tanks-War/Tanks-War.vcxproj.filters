@@ -60,18 +60,6 @@
     <ClInclude Include="..\common\constants.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\image2.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\object2.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\tank2.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\map2.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\bullet.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
@@ -92,6 +80,18 @@
     </ClInclude>
     <ClInclude Include="clientplayer.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\image.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\map.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\object.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\tank.h">
+      <Filter>Common\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -149,15 +149,6 @@
     <ClCompile Include="..\common\crc32.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\image2.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\object2.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\tank2.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\bullet.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
@@ -179,11 +170,20 @@
     <ClCompile Include="..\common\winmain.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\map2.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="clientplayer.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\tank.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\image.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\map.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\object.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

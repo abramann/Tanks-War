@@ -3,7 +3,7 @@
 
 #include "camera.h"
 #include "game.h"
-#include "map2.h"
+#include "map.h"
 
 Camera::Camera() : m_pGraphics(0), m_z(CAMERA_HEIGHT), m_nearPlane(CAMERA_NEARPLANE), m_farPlane(CAMERA_FARPLANE),
 m_fov(CAMERA_FOV)

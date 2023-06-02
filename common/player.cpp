@@ -25,7 +25,7 @@ void Player::initialize(PlayerID id, const char* name, PlayerType playerType, co
 	else if (playerType == PLAYER_ENEMY)
 		texture = pTextureManger->getTexture(TEXTURE_ENEMY_TANK);
 
-	Tank2::initialize(texture, game);
+	Tank::initialize(texture, game);
 }
 
 void Player::applyPlayerUpdate(const PlayerUpdate playerUpdate)

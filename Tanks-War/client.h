@@ -10,7 +10,7 @@
 #include <memory>
 
 class Game;
-class Map2;
+class Map;
 class TextureManger;
 class Input;
 class Timer;
@@ -68,7 +68,7 @@ private:
 	Audio* m_pAudio;
 	Graphics* m_pGraphics;
 	Input* m_pInput;
-	Map2* m_pMap;
+	Map* m_pMap;
 	Timer* m_pTimer;
 	Game* m_pGame;
 

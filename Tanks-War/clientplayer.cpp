@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "texturemanger.h"
 #include "texture.h"
+#include "input.h"
 
 ClientPlayer::ClientPlayer() : m_handleInput(true)
 {
@@ -46,18 +47,18 @@ void ClientPlayer::update(float frameTime)
 void ClientPlayer::executeForward()
 {
 	m_act = PLAYER_ACT_FORWRAD;
-	Object2::executeForward();
+	Object::executeForward();
 }
 
 void ClientPlayer::executeBack()
 {
 	m_act = PLAYER_ACT_BACK;
-	Object2::executeBack();
+	Object::executeBack();
 }
 
 void ClientPlayer::executeRight()
 {
-	Object2::executeRight();
+	Object::executeRight();
 	switch (m_act)
 	{
 	case PLAYER_ACT_FORWRAD:
@@ -74,7 +75,7 @@ void ClientPlayer::executeRight()
 
 void ClientPlayer::executeLeft()
 {
-	Object2::executeLeft();
+	Object::executeLeft();
 	switch (m_act)
 	{
 	case PLAYER_ACT_FORWRAD:

@@ -1,0 +1,53 @@
+// tank.h
+// Author: abramann
+
+#ifndef _TANK_H
+#define _TANK_H
+#include "object.h"
+#include <memory>
+
+class Game;
+class Bullet;
+class Timer;
+
+constexpr auto BULLET_SPEED = 20;
+constexpr auto BULLET_DAMAGE = 40;
+
+class Tank : public Object
+{
+public:
+
+	Tank();
+	~Tank();
+	virtual void initialize(Texture* texture, const Game* game);
+	virtual void update(const float frameTime);
+	virtual void draw();
+	virtual void executeAttack();
+	virtual void executeBack(float frameTime);
+	virtual void executeDie();
+	virtual void executeForward(float frameTime);
+	virtual void executeLeft(float frameTime);
+	virtual void executeRight(float frameTime);
+
+	float getBulletSpeed() const { return m_bulletSpeed; }
+	float getBulletDamage() const { return m_bulletDamage; }
+	bool isBulletLaunching() const { return (m_pBullet.size() > 0); }
+
+protected:
+
+	virtual void playSoundForward();
+	virtual void playSoundBack();
+	virtual void playSoundRight();
+	virtual void playSoundLeft();
+	virtual void playSoundDie();
+	virtual void playSoundAttack();
+
+	Sound m_soundAttack;
+	float m_bulletSpeed, m_bulletDamage;
+	std::vector<std::shared_ptr<Bullet>> m_pBullet;
+	TextureManger* m_pTextureManger;
+	Timer* m_pTimer;
+};
+
+
+#endif

@@ -5,7 +5,9 @@
 #include "fileio.h"
 #include "game.h"
 #include "net.h"
-#include "tank2.h"
+#include "tank.h"
+#include "map.h"
+#include "timer.h"
 
 Client::Client() : m_gamePlayers(0), m_state(CLIENT_UNCONNECTED), m_presentTime(0)
 {

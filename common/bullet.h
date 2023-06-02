@@ -4,19 +4,19 @@
 #ifndef _BULLET_H
 #define _BULLET_H
 #include "constants.h"
-#include "image2.h"
+#include "image.h"
 
 class Game;
-class Tank2;
-class Map2;
+class Tank;
+class Map;
 class Audio;
 class TextureManger;
 
-class Bullet : public Image2
+class Bullet : public Image
 {
 public:
 
-	Bullet(const Game* game, const Tank2 * tank);
+	Bullet(const Game* game, const Tank * tank);
 	Bullet();
 	~Bullet();
 	virtual void update(const float frameTime);
@@ -35,10 +35,10 @@ private:
 	void executeLaunching(float frameTime);
 
 	const Game* m_pGame;
-	Map2* m_pMap;
+	Map* m_pMap;
 	Audio* m_pAudio;
 	TextureManger* m_pTextureManger;
-	const Tank2* m_pTank;
+	const Tank* m_pTank;
 	float m_speed, m_damage;
 	bool m_hit, m_finish;
 };

@@ -7,7 +7,7 @@
 
 class Game;
 class Graphics;
-class Map2;
+class Map;
 
 constexpr auto CAMERA_NEARPLANE = 1.0f;
 constexpr auto CAMERA_FARPLANE = 1000.0f;
@@ -26,7 +26,7 @@ public:
 private:
 
 	Graphics* m_pGraphics;
-	Map2* m_pMap;
+	Map* m_pMap;
 	Matrix m_proj, m_camera;
 	float m_fov, m_aspectRation,
 		m_nearPlane, m_farPlane,

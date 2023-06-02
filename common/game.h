@@ -9,20 +9,29 @@
 #ifndef _GAME_H
 #define _GAME_H
 #include "constants.h"
-#include "graphics.h"
+/*#include "graphics.h"
 #include "input.h"
 #include "timer.h"
 #include "texture.h"
-#include "image2.h"
+#include "image.h"
 #include "audio.h"
 #include "interface.h"
-#include "map2.h"
+#include "map.h"*/
 #ifdef _CLIENT_BUILD
 #include "..\Tanks-War\client.h"
 #else ifdef _SERVER_BUILD
 #include "..\Tanks-War-Server\server.h"
 #endif
 #include <memory>
+
+class Graphics;
+class Input;
+class Timer;
+class Texture;
+class Image;
+class Audio;
+class Interface;
+class Map;
 
 class Game
 {
@@ -43,7 +52,7 @@ public:
 	Input* getInput()	const { return m_pInput; }
 	Audio* getAudio()	const { return m_pAudio; }
 	TextureManger* getTextureManger() const { return m_pTextureManger; }
-	Map2* getMap()	const { return m_pMap; }
+	Map* getMap()	const { return m_pMap; }
 	Timer* getTimer()	const { return m_pTimer; }
 #ifdef _CLIENT_BUILD
 	Client* getClient() const { return m_pClient; }
@@ -59,7 +68,7 @@ protected:
 	Audio* m_pAudio;
 	TextureManger* m_pTextureManger;
 	Interface* m_pInterface;
-	Map2* m_pMap;
+	Map* m_pMap;
 	Timer* m_pTimer;
 #ifdef _CLIENT_BUILD
 	Client* m_pClient;
@@ -69,7 +78,7 @@ protected:
 	HWND m_hwnd;
 	float m_timeDeltaMillsec;
 	float m_fps;
-	Image2 m_logo;
+	Image m_logo;
 };
 
 #endif

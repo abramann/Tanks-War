@@ -5,7 +5,7 @@
 #include "graphics.h"
 #include "texture.h"
 #include "fileio.h"
-#include "image2.h"
+#include "image.h"
 #include "camera.h"
 #include "game.h"
 
@@ -291,7 +291,7 @@ Result Graphics::begin()
 	return r;
 }
 
-void Graphics::drawImage(const Image2* image)
+void Graphics::drawImage(const Image* image)
 {
 	int16 vertices = image->getVertices();
 	LPVertexBuffer vb = image->getVertexBuffer();

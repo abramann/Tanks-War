@@ -1,9 +1,9 @@
 // map.cpp
 // Author: abramann
 
-#include "map2.h"
+#include "map.h"
 #include "game.h"
-#include "object2.h"
+#include "object.h"
 #include "texturemanger.h"
 #include "texture.h"
 #include "constants.h"
@@ -11,22 +11,22 @@
 #include <fstream>
 #include <string>
 
-Map2::Map2() : m_lpVertexBuffer(0)
+Map::Map() : m_lpVertexBuffer(0)
 {
 }
 
-Map2::~Map2()
+Map::~Map()
 {
 	safeRelease(m_lpVertexBuffer);
 }
 
-void Map2::initialize(const Game * game)
+void Map::initialize(const Game * game)
 {
 	m_pGraphics = game->getGraphics();
 	m_pTextureManger = game->getTextureManger();
 }
 
-bool Map2::load(const char * map)
+bool Map::load(const char * map)
 {
 	strcpy_s(m_loadedMap, map);
 	if (!read())
@@ -38,8 +38,7 @@ bool Map2::load(const char * map)
 
 	m_tiledSize.x = m_pTexture[0]->getWidth();;
 	m_tiledSize.y = m_pTexture[0]->getHeight();
-	std::vector< std::vector< std::vector<TextureVertices>>> vertices;
-	vertices.resize(m_usedBitmaps);
+	std::vector< std::vector< std::vector<TextureVertices>>> vertices(m_usedBitmaps);
 	for (auto& element : vertices)
 	{
 		element.resize(m_height);
@@ -126,7 +125,7 @@ bool Map2::load(const char * map)
 	return true;
 }
 
-void Map2::draw() const
+void Map::draw() const
 {
 	m_pGraphics->setDrawProperties();
 	m_pGraphics->streamVertexBuffer(m_lpVertexBuffer);
@@ -137,7 +136,7 @@ void Map2::draw() const
 	}
 }
 
-void Map2::clear()
+void Map::clear()
 {
 	m_freeSpace.clear();
 	m_noSpace.clear();
@@ -145,61 +144,68 @@ void Map2::clear()
 	safeRelease(m_lpVertexBuffer);
 }
 
-float Map2::passX(const Object2 * object, float x)
+float Map::passX(const Object * object, float x) const
 {
 	Space is = object->getSpace(x, 0);
 	float x0 = object->getPosition().x;
-	if (isCollided(is, object))
+	bool collided = isCollided(is, object);
+	if (collided)
 		return x0;
 
 	return x;
 }
 
-float Map2::passY(const Object2 * object, float y)
+float Map::passY(const Object * object, float y) const
 {
 	Space is = object->getSpace(0, y);
 	float y0 = object->getPosition().y;
-	if (isCollided(is, object))
+	bool collided = isCollided(is, object);
+	if (collided)
 		return y0;
 
 	return y;
 }
 
-bool Map2::isCollided(const Image2* image)
+bool Map::isCollided(const Image* image) const
 {
 	Space s = image->getSpace();
-	bool r = isCollided(s);
-	return r;
+	bool collided = isCollided(s);
+	return collided;
 }
 
-bool Map2::isCollided(const Object2 * object)
+bool Map::isCollided(const Object * object) const
 {
 	Space is = object->getSpace();
-	bool r = isCollided(is, object);
-	return r;
+	bool collided = isCollided(is, object);
+	return collided;
 }
 
-bool Map2::isCollided(const Space is, const Object2* object)
+bool Map::isCollided(const Space is, const Object* object) const
 {
-	if (isOutOfRange(is))
+	bool outOfRange = isOutOfRange(is);
+	if (outOfRange)
 		return true;
 	for (auto space : m_noSpace)
-		if (areSpacesCollided(space, is))
+	{
+		bool spacesCollided = areSpacesCollided(space, is);
+		if (spacesCollided)
 			return true;
+	}
 	for (auto pObj : m_pObject)
 	{
 		if (object == pObj)
 			continue;
 
 		Space space = pObj->getSpace();
-		if (areSpacesCollided(space, is))
+		bool spacesCollided = areSpacesCollided(space, is);
+		if (spacesCollided)
 			return true;
 	}
 
 	return false;
 }
 
-bool Map2::isOutOfRange(const Space space) const
+bool Map::isOutOfRange(const Space space) const
 {
 	const int32 x = m_width*m_tiledSize.x,
 		y = m_height*m_tiledSize.y;
@@ -217,13 +223,14 @@ bool Map2::isOutOfRange(const Space space) const
 	return true;
 }
 
-Object2 * Map2::getObject(const Space space)
+Object * Map::getObject(const Space space) const
 {
-	Object2* pObject = 0;
+	Object* pObject = 0;
 	for (auto _pObject : m_pObject)
 	{
 		Space is = _pObject->getSpace();
-		if (areSpacesCollided(space, is))
+		bool collided = areSpacesCollided(space, is);
+		if (collided)
 		{
 			pObject = _pObject;
 			break;
@@ -233,7 +240,7 @@ Object2 * Map2::getObject(const Space space)
 	return pObject;
 }
 
-bool Map2::read()
+bool Map::read()
 {
 	std::string path = MAP_DIR;
 	path.operator+=(m_loadedMap);
@@ -268,7 +275,7 @@ bool Map2::read()
 	return true;
 }
 
-bool Map2::areSpacesCollided(const Space s1, const Space s2) const
+bool Map::areSpacesCollided(const Space s1, const Space s2) const
 {
 	float maxX1 = s1.getMaxX(),
 		minX1 = s1.getMinX(),
@@ -289,17 +296,20 @@ bool Map2::areSpacesCollided(const Space s1, const Space s2) const
 	return false;
 }
 
-void Map2::clearUnnecessaryNospace()
+void Map::clearUnnecessaryNospace()
 {
 	for (size_t i = 0; i < m_noSpace.size(); i++)
-		if (isNospaceUseless(m_noSpace[i]))
+	{
+		bool isUseless = isNospaceUseless(m_noSpace[i]);
+		if (isUseless)
 		{
 			m_noSpace.erase(std::next(m_noSpace.begin(), i));
 			i--;
 		}
+	}
 }
 
-Space Map2::getRightSpace(Space s) const
+Space Map::getRightSpace(Space s) const
 {
 	s.addX(m_tiledSize.x);
 	if (isOutOfRange(s))
@@ -308,7 +318,7 @@ Space Map2::getRightSpace(Space s) const
 	return s;
 }
 
-Space Map2::getLeftSpace(Space s) const
+Space Map::getLeftSpace(Space s) const
 {
 	s.addX(-m_tiledSize.x);
 	if (isOutOfRange(s))
@@ -317,7 +327,7 @@ Space Map2::getLeftSpace(Space s) const
 	return s;
 }
 
-Space Map2::getUpSpace(Space s) const
+Space Map::getUpSpace(Space s) const
 {
 	s.addY(m_tiledSize.y);
 	if (isOutOfRange(s))
@@ -326,7 +336,7 @@ Space Map2::getUpSpace(Space s) const
 	return s;
 }
 
-Space Map2::getDownSpace(Space s) const
+Space Map::getDownSpace(Space s) const
 {
 	s.addY(-m_tiledSize.y);
 	if (isOutOfRange(s))
@@ -335,7 +345,7 @@ Space Map2::getDownSpace(Space s) const
 	return s;
 }
 
-bool Map2::isNospaceUseless(Space s) const
+bool Map::isNospaceUseless(Space s) const
 {
 	Space space[] = { getUpSpace(s),getDownSpace(s),getRightSpace(s),getLeftSpace(s) };
 	for (int i = 0; i < SPACE_VERTICES; i++)
@@ -347,17 +357,15 @@ bool Map2::isNospaceUseless(Space s) const
 	return true;
 }
 
-bool Map2::isFreeSpace(Space s) const
+bool Map::isFreeSpace(Space s) const
 {
 	for (Space freeSpace : m_freeSpace)
 		if (s.isSame(freeSpace))
-		{
 			return true;
-		}
 	return false;
 }
 
-Crc32 Map2::getCrc32() const
+Crc32 Map::getCrc32() const
 {
 	std::string path(MAP_DIR);
 	path.operator+=(m_loadedMap);
@@ -367,7 +375,7 @@ Crc32 Map2::getCrc32() const
 	return crc32;
 }
 
-const char* Map2::loadRandom()
+const char* Map::loadRandom()
 {
 	std::vector<std::string> list = FileIO::getDirFileList(MAP_DIR);
 	std::string map = list[_rand(list.size() - 1)];
@@ -376,13 +384,13 @@ const char* Map2::loadRandom()
 	return m_loadedMap;
 }
 
-Space Map2::getRandomEmptySpace() const
+Space Map::getRandomEmptySpace() const
 {
 	Space freeSpace = m_freeSpace[_rand(m_freeSpace.size())];
 	return freeSpace;
 }
 
-void Map2::addObject(Object2* object)
+void Map::addObject(Object* object)
 {
 	m_pObject.push_back(object);
 }

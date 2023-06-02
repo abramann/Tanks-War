@@ -1,20 +1,21 @@
-//bullet.cpp
+// bullet.cpp
 // Author: abamann
 
 #include "bullet.h"
 #include "game.h"
-#include "tank2.h"
+#include "tank.h"
 #include "texturemanger.h"
 #include "texture.h"
+#include "map.h"
 
-Bullet::Bullet(const Game * game, const Tank2 * tank) : m_pTank(tank), m_hit(false), m_finish(false)
+Bullet::Bullet(const Game * game, const Tank * tank) : m_pTank(tank), m_hit(false), m_finish(false)
 {
 	m_pGame = game;
 	m_pMap = game->getMap();
 	m_pAudio = game->getAudio();
 	m_pTextureManger = game->getTextureManger();
 	Texture* pTexture = m_pTextureManger->getTexture(TEXTURE_BULLET);
-	Image2::initialize(pTexture, game);
+	Image::initialize(pTexture, game);
 	executeLaunch();
 }
 
@@ -29,9 +30,7 @@ Bullet::~Bullet()
 
 void Bullet::update(float frameTime)
 {
-	//m_position = getBulletLaunchPosition();
-	//m_rotate = m_pTank->getRotate();
-	Image2::update(frameTime);
+	Image::update(frameTime);
 	if (m_finish)
 		return;
 	if (!m_hit)
@@ -73,9 +72,9 @@ void Bullet::executeHit()
 {
 	m_hit = true;
 	Texture* pTexture = m_pTextureManger->getTexture(TEXTURE_BULLET_DESTROY);
-	Image2::initialize(pTexture, m_pGame, TEXTURE_BULLET_ROWS_COLUMNS, TEXTURE_BULLET_ROWS_COLUMNS, UPDATE_DELAY_BULLET);
+	Image::initialize(pTexture, m_pGame, TEXTURE_BULLET_ROWS_COLUMNS, TEXTURE_BULLET_ROWS_COLUMNS, UPDATE_DELAY_BULLET);
 	Space s = getSpace();
-	Object2* pObject = m_pMap->getObject(s);
+	Object* pObject = m_pMap->getObject(s);
 #ifdef _SERVER_BUILD
 	if (pObject)
 		pObject->damage(m_damage);

@@ -184,9 +184,4 @@
       <Filter>Common\Headers</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\cs.fx">
-      <Filter>Sources</Filter>
-    </FxCompile>
-  </ItemGroup>
 </Project>

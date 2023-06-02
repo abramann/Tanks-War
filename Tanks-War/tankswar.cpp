@@ -2,16 +2,16 @@
 // Author: abramann
 
 #include "TanksWar.h"
-#include "fileio.h"
-#include "tank2.h"
-#include "map2.h"
-#include "texturemanger.h"
-#include "camera.h"
+#include "interface.h"
 
 #define TEST_NO_SERVER_INTERFACE
 #ifdef TEST_NO_SERVER_INTERFACE
-Image2 image2;
-Tank2 tank2;
+#include "input.h"
+#include "camera.h"
+#include "tank.h"
+#include "texturemanger.h"
+Image image2;
+Tank tank2;
 #endif
 
 TanksWar::TanksWar()
