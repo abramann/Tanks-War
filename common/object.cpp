@@ -63,6 +63,3 @@ void Object::damage(float dmg)
 	if (m_health <= 0)
 		executeDie();
 }
-
-
-

@@ -9,11 +9,6 @@ class Game;
 class Graphics;
 class Map;
 
-constexpr auto CAMERA_NEARPLANE = 1.0f;
-constexpr auto CAMERA_FARPLANE = 1000.0f;
-constexpr auto CAMERA_FOV = 1.5707963f;
-constexpr auto CAMERA_HEIGHT = -300;
-
 class Camera
 {
 public:
@@ -31,8 +26,6 @@ private:
 	float m_fov, m_aspectRation,
 		m_nearPlane, m_farPlane,
 		m_z;
-
 };
-
 
 #endif

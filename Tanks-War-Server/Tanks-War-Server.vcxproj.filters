@@ -195,6 +195,9 @@
     <ClInclude Include="..\common\bullet.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\math.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\common\shader.hlsl">

@@ -538,6 +538,7 @@
     <ClInclude Include="..\common\input.h" />
     <ClInclude Include="..\common\interface.h" />
     <ClInclude Include="..\common\map.h" />
+    <ClInclude Include="..\common\math.h" />
     <ClInclude Include="..\common\net.h" />
     <ClInclude Include="..\common\object.h" />
     <ClInclude Include="..\common\player.h" />

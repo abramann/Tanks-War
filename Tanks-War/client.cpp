@@ -11,7 +11,7 @@
 
 Client::Client() : m_gamePlayers(0), m_state(CLIENT_UNCONNECTED), m_presentTime(0)
 {
-	memset(m_map, 0, MAX_NAME_LEN);
+	memset(m_map, 0, gameNS::MAX_NAME_LEN);
 	m_pCpsIni = (CpsIni*)&m_sData;
 	m_pCpsDisconnect = (CpsDisconnect*)&m_sData;
 	m_pCpsPresent = (CpsPresent*)&m_sData;
@@ -87,7 +87,6 @@ void Client::update(float frameTime)
 			throw GameError(gameErrorNS::WARNING, "Unknown packet has been received from Server.\n The server may have a different version.");
 		}
 	}
-	
 }
 
 bool Client::connect()
@@ -96,7 +95,7 @@ bool Client::connect()
 	m_net.createClient(m_clientInfo.serverIP, m_clientInfo.serverPort, netNS::UDP);
 	m_pCpsIni->packetType = PACKET_INI;
 	strcpy(m_pCpsIni->name, m_clientInfo.name);
-	m_port = _rand(MAX_PORT);
+	m_port = _rand(networkNS::MAX_PORT);
 	int size = sizeof(CpsIni);
 	send(size);
 	Sleep(500);
@@ -121,7 +120,7 @@ bool Client::connect()
 			m_state = CLIENT_UNCONNECTED_MAP_NOT_LOAD;
 			return false;
 		}
-		
+
 		int8 players = 0;
 		do
 		{
@@ -147,11 +146,11 @@ bool Client::connect()
 void Client::present()
 {
 	auto timeDelta = m_pTimer->getCurrentTime() - m_presentTime;
-	if (timeDelta < CLIENT_PRESENT_TIME * 1000)
+	if (timeDelta < networkNS::CLIENT_PRESENT_TIME * 1000)
 		return;
 
 	m_pCpsPresent->packet = PACKET_PRESENT_CLIENT;
-//	m_pCpsPresent->id = m_id;
+	//	m_pCpsPresent->id = m_id;
 	send();
 	m_presentTime = m_pTimer->getCurrentTime();
 }
@@ -272,7 +271,6 @@ void Client::playerUpdate()
 		ClientData& clientData = *getIDClient(id);
 		clientData.serverPlayer.applyPlayerUpdate(playerUpdate);
 	}
-
 }
 
 void Client::playersUpdate()

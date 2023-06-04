@@ -9,7 +9,7 @@ m_timeUntilLastUpdate(0), m_updateDelay(0), m_width(0), m_height(0), m_textureWi
 m_textureHeight(0), m_lpVertexBuffer(0), m_position(0, 0, 0), m_rotate(0, 0, 0), m_scalling(1, 1, 1),
 m_initialized(false)
 {
-	m_vertices = VERTICES_IMAGE;
+	m_vertices = graphicsNS::VERTICES_IMAGE;
 }
 
 Image::~Image()
@@ -91,7 +91,6 @@ Space Image::getSpace(float x0, float y0) const
 	return is;
 }
 
-
 void Image::createVertexBuffer()
 {
 	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(m_vertices, (VB_USAGE)VB_USAGE_WRITE);
@@ -101,7 +100,7 @@ void Image::setLocalCoordinate()
 {
 	float width = m_width*1.0f, height = m_height*1.0f;
 	float u = 1.0f / m_rows, v = 1.0f / m_columns;
-	Vertex vx[VERTICES_IMAGE];
+	Vertex vx[graphicsNS::VERTICES_IMAGE];
 	vx[0] = Vertex(width, 0, 0.0f, 0.0f, v);
 	vx[1] = Vertex(0, 0, 0.0f, u, v);
 	vx[2] = Vertex(0, height, 0.0f, u, 0.0f);

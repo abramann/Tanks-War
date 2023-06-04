@@ -8,7 +8,6 @@ ServerPlayer::ServerPlayer()
 {
 }
 
-
 ServerPlayer::~ServerPlayer()
 {
 }

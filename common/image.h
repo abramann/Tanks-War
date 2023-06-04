@@ -10,9 +10,6 @@ class Game;
 class TextureManger;
 class Graphics;
 
-const auto VERTICES_IMAGE = 6;
-const auto UPDATE_DELAY_IMAGE = 50.0f;;
-
 class Image
 {
 public:
@@ -20,7 +17,7 @@ public:
 	Image();
 	~Image();
 	virtual void initialize(Texture* texture, const Game* game, int8 columns = 1, int8 rows = 1,
-		float updateDelay = UPDATE_DELAY_IMAGE);
+		float updateDelay = logicNS::UPDATE_DELAY_IMAGE);
 	virtual void update(const float frameTime);
 	virtual void draw() const;
 	virtual V3 getRotateCenter() const;
@@ -55,7 +52,6 @@ protected:
 	virtual void setLocalCoordinate();
 	virtual void executeAnimateRepeat() { m_row = 1, m_column = 1; }
 
-
 	Graphics* m_pGraphics;
 	Texture* m_pTexture;
 	int32 m_textureWidth, m_textureHeight;
@@ -73,6 +69,5 @@ private:
 
 	bool m_animate;
 };
-
 
 #endif

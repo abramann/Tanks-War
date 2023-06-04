@@ -7,9 +7,8 @@
 
 class Input
 {
-
 public:
-	
+
 	Input();
 	~Input();
 	bool initialize(HWND hwnd);
@@ -23,8 +22,6 @@ public:
 private:
 
 	HWND m_hwnd;
-
 };
-
 
 #endif

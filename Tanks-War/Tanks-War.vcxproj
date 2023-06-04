@@ -66,6 +66,7 @@
     <ClInclude Include="..\common\fileio.h" />
     <ClInclude Include="..\common\game.h" />
     <ClInclude Include="..\common\gameerror.h" />
+    <ClInclude Include="..\common\gamemath.h" />
     <ClInclude Include="..\common\player.h" />
     <ClInclude Include="..\common\serverplayer.h" />
     <ClInclude Include="..\common\shader.h" />

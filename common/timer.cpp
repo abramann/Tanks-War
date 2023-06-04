@@ -1,6 +1,6 @@
 // timer.cpp
 // Author: abramann
-// Note this file is influenced by GameTimer.h from F.Luna's Introduction To Game Programming in D3D11 
+// Note this file is influenced by GameTimer.h from F.Luna's Introduction To Game Programming in D3D11
 
 #include "timer.h"
 
@@ -8,11 +8,10 @@ Timer::Timer()
 {
 	QueryPerformanceFrequency((LARGE_INTEGER*)&m_countsPerSecond);
 	m_secondsPerCount = 1.0f / m_countsPerSecond;
-	m_minFrameTime = 1000 / FRAME_RATE;
+	m_minFrameTime = 1000 / gameNS::FRAME_RATE;
 	m_maxFrameTime = m_minFrameTime * 10;
 	m_prevCounts = getCurrentCounts();
 }
-
 
 Timer::~Timer()
 {
@@ -34,7 +33,7 @@ void Timer::update()
 	static float fpsUpdateDelay = 0;
 	fpsUpdateDelay += m_timeDeltaMillsec;
 
-	if (fpsUpdateDelay >= UPDATE_DELAY_FPS)
+	if (fpsUpdateDelay >= gameNS::UPDATE_DELAY_FPS)
 	{
 		m_fps = 1000.0f / m_timeDeltaMillsec;
 		fpsUpdateDelay = 0;
@@ -46,8 +45,8 @@ void Timer::update()
 		Sleep(sleepTime);
 		m_timeDeltaMillsec = m_minFrameTime;
 	}
-//	else if (m_timeDeltaMillsec > m_maxFrameTime)
-//		m_timeDeltaMillsec = m_maxFrameTime;
+	//	else if (m_timeDeltaMillsec > m_maxFrameTime)
+	//		m_timeDeltaMillsec = m_maxFrameTime;
 }
 
 int64 Timer::getCurrentCounts() const

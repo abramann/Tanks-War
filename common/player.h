@@ -27,8 +27,7 @@ public:
 protected:
 
 	PlayerID m_id;
-	char m_name[MAX_NAME_LEN];
+	char m_name[gameNS::MAX_NAME_LEN];
 };
-
 
 #endif

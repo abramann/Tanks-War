@@ -1,4 +1,3 @@
-
 cbuffer cbPerObject
 {
 	float4x4 gcWVP;
@@ -7,7 +6,6 @@ cbuffer cbPerObject
 Texture2D gTexture;
 
 SamplerState gSamplerState;
-
 
 struct VS_Input
 {

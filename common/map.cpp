@@ -33,12 +33,12 @@ bool Map::load(const char * map)
 		return false;
 
 	int32 totalBitmaps = m_width*m_height;
-	for (int i = 0; i < TEXTURE_TILEDS; i++)
+	for (int i = 0; i < textureNS::TEXTURE_TILEDS; i++)
 		m_pTexture[i] = m_pTextureManger->getTexture(i + TEXTURE_TILED0);
 
 	m_tiledSize.x = m_pTexture[0]->getWidth();;
 	m_tiledSize.y = m_pTexture[0]->getHeight();
-	std::vector< std::vector< std::vector<TextureVertices>>> vertices(m_usedBitmaps);
+	std::vector<std::vector< std::vector<TextureVertices>>> vertices(m_usedBitmaps);
 	for (auto& element : vertices)
 	{
 		element.resize(m_height);
@@ -46,10 +46,7 @@ bool Map::load(const char * map)
 		{
 			element2.resize(m_width);
 			for (auto& element3 : element2)
-			{
-				memset(&element3, 0, sizeof(Vertex) * 6);
-				element3.v1.x = UNDEFINED_POSITION;
-			}
+				element3.v1.x = mapNS::UNDEFINED_POSITION;
 		}
 	}
 
@@ -63,7 +60,6 @@ bool Map::load(const char * map)
 			vertices[m_map[h][w]][h][w].v4 = { (w)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,-1.0f,0.0f };
 			vertices[m_map[h][w]][h][w].v5 = { (w + 1)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,0.0f,0.0f };
 			vertices[m_map[h][w]][h][w].v6 = { (w + 1)*m_tiledSize.x,(h)*m_tiledSize.y,0.0f,0.0f,1.0f };
-
 			Space space;
 			bool prevented = false;
 			for (auto preventedBM : m_preventedBitmap)
@@ -82,7 +78,6 @@ bool Map::load(const char * map)
 
 			if (prevented)
 				continue;
-
 
 			space.v1.x = w*m_tiledSize.x;
 			space.v1.y = h*m_tiledSize.y;
@@ -105,7 +100,7 @@ bool Map::load(const char * map)
 		{
 			for (auto k = 0; k < m_width; k++)
 			{
-				if (vertices[i][j][k].v1.x == UNDEFINED_POSITION)
+				if (vertices[i][j][k].v1.x == mapNS::UNDEFINED_POSITION)
 					continue;
 
 				pData.push_back(vertices[i][j][k].v1);
@@ -121,7 +116,6 @@ bool Map::load(const char * map)
 	}
 
 	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(totalBitmaps * 6, VB_USAGE_CONST, &pData[0]);
-	LPDevice device = m_pGraphics->getDevice();
 	return true;
 }
 
@@ -220,6 +214,7 @@ bool Map::isOutOfRange(const Space space) const
 			IN_RANGE_OR_EQUAL(space.v4.y, 0, y)
 			)
 			return false;
+
 	return true;
 }
 
@@ -242,7 +237,7 @@ Object * Map::getObject(const Space space) const
 
 bool Map::read()
 {
-	std::string path = MAP_DIR;
+	std::string path = fileNS::MAP_DIR;
 	path.operator+=(m_loadedMap);
 	path.operator+=(".map");
 	std::ifstream file(path);
@@ -259,17 +254,24 @@ bool Map::read()
 		element.resize(m_width);
 
 	std::string line;
-	int32 i = 0;
-	while (std::getline(file, line))
+	for (int32 i = 0; std::getline(file, line); i++)
 	{
 		for (int32 j = 0; j < m_width; j++)
 		{
 			m_map[i][j] = line[j * 2];
-			byte n = m_map[i][j];
-			m_map[i][j] = std::stoi((char*)&n);
+			m_map[i][j] = std::atof(&m_map[i][j]);
+			bool exist = false;
+			for (int k = 0; k < m_usedBitmaps; k++) // check if the map element exist if used map elements
+			{
+				if (m_map[i][j] == k)
+				{
+					exist = true;
+					break;
+				}
+			}
+			if (!exist)
+				return false;
 		}
-
-		i++;
 	}
 
 	return true;
@@ -313,7 +315,7 @@ Space Map::getRightSpace(Space s) const
 {
 	s.addX(m_tiledSize.x);
 	if (isOutOfRange(s))
-		s.v1.x = UNDEFINED_POSITION;
+		s.v1.x = mapNS::UNDEFINED_POSITION;
 
 	return s;
 }
@@ -322,7 +324,7 @@ Space Map::getLeftSpace(Space s) const
 {
 	s.addX(-m_tiledSize.x);
 	if (isOutOfRange(s))
-		s.v1.x = UNDEFINED_POSITION;
+		s.v1.x = mapNS::UNDEFINED_POSITION;
 
 	return s;
 }
@@ -331,7 +333,7 @@ Space Map::getUpSpace(Space s) const
 {
 	s.addY(m_tiledSize.y);
 	if (isOutOfRange(s))
-		s.v1.x = UNDEFINED_POSITION;
+		s.v1.x = mapNS::UNDEFINED_POSITION;
 
 	return s;
 }
@@ -340,7 +342,7 @@ Space Map::getDownSpace(Space s) const
 {
 	s.addY(-m_tiledSize.y);
 	if (isOutOfRange(s))
-		s.v1.x = UNDEFINED_POSITION;
+		s.v1.x = mapNS::UNDEFINED_POSITION;
 
 	return s;
 }
@@ -348,7 +350,7 @@ Space Map::getDownSpace(Space s) const
 bool Map::isNospaceUseless(Space s) const
 {
 	Space space[] = { getUpSpace(s),getDownSpace(s),getRightSpace(s),getLeftSpace(s) };
-	for (int i = 0; i < SPACE_VERTICES; i++)
+	for (int i = 0; i < mapNS::SPACE_VERTICES; i++)
 	{
 		if (space[i].isValid())
 			if (isFreeSpace(space[i]))
@@ -362,12 +364,13 @@ bool Map::isFreeSpace(Space s) const
 	for (Space freeSpace : m_freeSpace)
 		if (s.isSame(freeSpace))
 			return true;
+
 	return false;
 }
 
 Crc32 Map::getCrc32() const
 {
-	std::string path(MAP_DIR);
+	std::string path(fileNS::MAP_DIR);
 	path.operator+=(m_loadedMap);
 	path.operator+=(".map");
 	const char* cPath = path.c_str();
@@ -377,7 +380,7 @@ Crc32 Map::getCrc32() const
 
 const char* Map::loadRandom()
 {
-	std::vector<std::string> list = FileIO::getDirFileList(MAP_DIR);
+	std::vector<std::string> list = FileIO::getDirFileList(fileNS::MAP_DIR);
 	std::string map = list[_rand(list.size() - 1)];
 	map = map.substr(0, map.size() - 4);
 	load(map.c_str());

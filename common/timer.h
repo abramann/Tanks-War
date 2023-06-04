@@ -1,6 +1,6 @@
 // timer.h
 // Author: abramann
-// Note this file is influenced by GameTimer.h from F.Luna's Introduction To Game Programming in D3D11 
+// Note this file is influenced by GameTimer.h from F.Luna's Introduction To Game Programming in D3D11
 
 #include "constants.h"
 
@@ -24,4 +24,3 @@ private:
 	float m_maxFrameTime, m_minFrameTime;
 	int16 m_fps;
 };
-

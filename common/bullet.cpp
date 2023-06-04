@@ -23,7 +23,6 @@ Bullet::Bullet()
 {
 }
 
-
 Bullet::~Bullet()
 {
 }
@@ -39,7 +38,6 @@ void Bullet::update(float frameTime)
 		if (isCollided())
 			executeHit();
 	}
-
 }
 
 V3 Bullet::getBulletLaunchPosition()
@@ -72,7 +70,7 @@ void Bullet::executeHit()
 {
 	m_hit = true;
 	Texture* pTexture = m_pTextureManger->getTexture(TEXTURE_BULLET_DESTROY);
-	Image::initialize(pTexture, m_pGame, TEXTURE_BULLET_ROWS_COLUMNS, TEXTURE_BULLET_ROWS_COLUMNS, UPDATE_DELAY_BULLET);
+	Image::initialize(pTexture, m_pGame, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, logicNS::UPDATE_DELAY_BULLET);
 	Space s = getSpace();
 	Object* pObject = m_pMap->getObject(s);
 #ifdef _SERVER_BUILD

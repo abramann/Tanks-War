@@ -55,11 +55,11 @@ private:
 	void initPlayers();
 	void playersUpdate();
 	void playerUpdate();
-	void rbClear() { memset(m_rData, 0, MAX_PACKET_SIZE); }
+	void rbClear() { memset(m_rData, 0, networkNS::MAX_PACKET_SIZE); }
 	void recv(bool wait);
 	void removeClient(PlayerID id);
-	void sbClear() { memset(m_sData, 0, MAX_PACKET_SIZE); }
-	void send(int size = MAX_PACKET_SIZE);
+	void sbClear() { memset(m_sData, 0, networkNS::MAX_PACKET_SIZE); }
+	void send(int size = networkNS::MAX_PACKET_SIZE);
 	void checkClientPlayerAct();
 	void implementPlayerAct();
 	ClientData* Client::getIDClient(const PlayerID id);
@@ -78,7 +78,7 @@ private:
 	int8_t m_gamePlayers;
 	ClientState m_state;
 
-	char m_map[MAX_NAME_LEN];
+	char m_map[gameNS::MAX_NAME_LEN];
 
 	CpsIni* m_pCpsIni;
 	CpsDisconnect* m_pCpsDisconnect;
@@ -93,11 +93,9 @@ private:
 	PacketType* m_pPacketType;
 
 	float m_presentTime;
-	char m_rData[MAX_PACKET_SIZE], m_sData[MAX_PACKET_SIZE];
+	char m_rData[networkNS::MAX_PACKET_SIZE], m_sData[networkNS::MAX_PACKET_SIZE];
 	std::vector<std::shared_ptr<ClientData> > m_pClientData;
 	std::shared_ptr<ClientPlayer> m_pClientPlayer;
-
 };
-
 
 //#endif

@@ -1,6 +1,6 @@
 // texture.cpp
 // Author: abramann
-// Note this file is influenced by texture.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by texture.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 
 #include "texture.h"
 #include <fstream>
@@ -20,7 +20,7 @@ bool Texture::initialize(const char* file, Graphics* graphics)
 	bool result = false;
 	m_pGraphics = graphics;
 	m_file = file;
-	result = m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, COLOR_ALPHA, m_lpTexture);
+	result = m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, graphicsNS::COLOR_ALPHA, m_lpTexture);
 	return result;
 }
 
@@ -31,7 +31,7 @@ void Texture::onLostDevice()
 
 void Texture::onResetDevice()
 {
-	m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, COLOR_BLACK, m_lpTexture);
+	m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, graphicsNS::COLOR_BLACK, m_lpTexture);
 }
 
 void Texture::release()

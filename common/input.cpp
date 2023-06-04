@@ -23,14 +23,14 @@ bool Input::initialize(HWND hwnd)
 	m_hwnd = hwnd;
 	ImGui::CreateContext();
 	bool result = ImGui_ImplWin32_Init(m_hwnd);
-	if(result)
+	if (result)
 		m_handleInput = true;
 
-/*	// ImGui::GetIO().KeyRepeatDelay = 0.257f;
-	ImGui::GetIO().KeyRepeatRate = 0.05f;*/
-	
+	/*	// ImGui::GetIO().KeyRepeatDelay = 0.257f;
+		ImGui::GetIO().KeyRepeatRate = 0.05f;*/
+
 	ImGui::GetIO().KeyRepeatDelay = 0.0f;
-	ImGui::GetIO().KeyRepeatRate = 0.05f; 
+	ImGui::GetIO().KeyRepeatRate = 0.05f;
 	ImGui::GetIO().IniFilename = 0;
 	return result;
 }

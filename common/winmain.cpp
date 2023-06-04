@@ -1,5 +1,5 @@
 // winmain.cpp
-// Note this file is influenced by winmain.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by winmain.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 // Note parts of this code are licensed under CC BY 3.0
 
 #include "constants.h"
@@ -14,10 +14,10 @@ typedef TanksWarServer GameBuildType;
 #include <memory>
 
 #ifdef _DEBUG
- #include "vld\vld.h" // For detect memory leaks
+#include "vld\vld.h" // For detect memory leaks
 #endif
 #pragma comment(lib,"Ws2_32.lib")
-#pragma comment(lib,"d3dx9.lib")
+//#pragma comment(lib,"d3dx9.lib")
 #ifdef _BUILD_WITH_D3D9
 #pragma comment(lib,"d3d9.lib")
 #else ifdef _BUILD_WITH_D3D11
@@ -46,8 +46,6 @@ int message(std::string msg, int type)
 bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 {
 	const char CLASS_NAME[] = "GameClass";
-
-	//HWND hwnd;
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -90,7 +88,7 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{	
+{
 	game = std::make_shared<GameBuildType>();
 	HWND hwnd = NULL;
 	g_gameInfo = FileIO::readGameInfo();
@@ -134,4 +132,3 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	return 0;
 }
-

@@ -43,5 +43,4 @@ private:
 	bool m_hit, m_finish;
 };
 
-
 #endif

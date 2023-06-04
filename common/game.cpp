@@ -1,9 +1,9 @@
 // game.cpp
 // Author: abramann
-// Note this file is influenced by game.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by game.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 // Note parts of this code are licensed under CC BY 3.0
 
-// Programming 2D Games Copyright (c) 2011 by: Charles Kelly 
+// Programming 2D Games Copyright (c) 2011 by: Charles Kelly
 // game.cpp
 
 #include "game.h"
@@ -55,7 +55,7 @@ void Game::initialize(HINSTANCE hInstance, HWND hwnd)
 	m_hwnd = hwnd;
 	if (!m_pInput->initialize(m_hwnd))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize Input");
-	if(!m_pGraphics->initialize(this))
+	if (!m_pGraphics->initialize(this))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize Graphics");
 	if (!m_pAudio->initialize())
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize Audio");
@@ -63,12 +63,12 @@ void Game::initialize(HINSTANCE hInstance, HWND hwnd)
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize TextureManger");
 
 	m_pMap->initialize(this);
-//	m_logo.initialize(m_pTextureManger->getTexture(TEXTURE_LOGO), this);
+	//	m_logo.initialize(m_pTextureManger->getTexture(TEXTURE_LOGO), this);
 }
 
 void Game::run()
 {
-	if (m_pInput->isKeyDown(ESCAPE_KEY))
+	if (m_pInput->isKeyDown(inputNS::ESCAPE_KEY))
 		PostQuitMessage(0);
 
 	updateGame();
@@ -78,8 +78,8 @@ void Game::run()
 void Game::renderGame()
 {
 	m_pGraphics->begin();
-//	 if (m_logo.drawRapidly())
- 		render();
+	//	 if (m_logo.drawRapidly())
+	render();
 
 	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 	m_pGraphics->end();

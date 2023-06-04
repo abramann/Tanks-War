@@ -38,5 +38,4 @@ private:
 	Texture* m_pTexture;
 };
 
-
 #endif

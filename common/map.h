@@ -53,7 +53,7 @@ private:
 	bool isFreeSpace(Space s) const;
 
 	TextureManger* m_pTextureManger;
-	Texture* m_pTexture[TEXTURE_TILEDS];
+	Texture* m_pTexture[textureNS::TEXTURE_TILEDS];
 	Graphics* m_pGraphics;
 	std::vector< std::vector<char>> m_map;
 	int32 m_width, m_height;
@@ -65,8 +65,7 @@ private:
 	std::vector<uint32_t> m_startVertex, m_lenVertex;
 	std::vector<Object*> m_pObject;
 	V2 m_tiledSize;
-	char m_loadedMap[MAX_NAME_LEN];
+	char m_loadedMap[gameNS::MAX_NAME_LEN];
 };
-
 
 #endif

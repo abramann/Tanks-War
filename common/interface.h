@@ -13,7 +13,6 @@ class Map;
 #include "..\Tanks-War-Server\server.h"
 #endif
 
-
 #define TITLE_BUTTON_COLOR Vec4(0.94f, 0.25f, 0.20f, 1.0f)
 #define TITLE_BUTTON_TEXT_COLOR ImVec4(1,1,1,1)
 
@@ -35,7 +34,7 @@ public:
 	void settingMenu();
 	void show();
 	void showFPS(uint16_t fps);
-	
+
 	Menu m_menu;
 
 private:
@@ -67,8 +66,6 @@ private:
 #else ifdef _SERVER_BUILD
 	Server* m_pServer;
 #endif
-
 };
-
 
 #endif

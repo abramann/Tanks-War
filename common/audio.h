@@ -1,6 +1,6 @@
 // audio.h
 // Author: abramann.h
-// Note this file is influenced by audio.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by audio.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 
 #ifndef _AUDIO_H
 #define _AUDIO_H
@@ -70,9 +70,6 @@ private:
 	irrklang::ISoundEngine* m_pSound;
 	irrklang::ISoundSource* m_pSource[SOUNDS];
 	irrklang::ISoundSource* m_pSourceMusic[MUSICS];
-
-
 };
-
 
 #endif

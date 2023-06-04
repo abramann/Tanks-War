@@ -7,7 +7,7 @@
 
 Player::Player() : m_id(0)
 {
-	memset(m_name, 0, MAX_NAME_LEN);
+	memset(m_name, 0, gameNS::MAX_NAME_LEN);
 }
 
 Player::~Player()

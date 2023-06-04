@@ -1,6 +1,6 @@
 // audio.cpp
 // Author: abramann
-// Note this file is influenced by audio.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by audio.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 
 #include "audio.h"
 #include "fileio.h"
@@ -10,7 +10,6 @@ using namespace irrklang;
 Audio::Audio() : m_pSound(NULL)
 {
 }
-
 
 Audio::~Audio()
 {
@@ -28,7 +27,7 @@ bool Audio::initialize()
 		m_pSourceMusic[i] = m_pSound->addSoundSourceFromFile(MUSIC_PATH[i]);
 	for (int i = 0; i < SOUNDS; i++)
 		m_pSource[i] = m_pSound->addSoundSourceFromFile(SOUND_PATH[i]);
-	*/	
+	*/
 	return true;
 }
 

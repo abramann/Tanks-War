@@ -22,10 +22,9 @@ public:
 	void onResetDevice();
 
 private:
-	
+
 	uint8_t m_players;
 	char* m_pServerIP;
 };
-
 
 #endif

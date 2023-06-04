@@ -6,7 +6,7 @@
 #include <fstream>
 #include <dirent.h>
 
-FileIO::FileIO() 
+FileIO::FileIO()
 {
 }
 
@@ -17,7 +17,8 @@ FileIO::~FileIO()
 bool FileIO::isFileExist(const char* file)
 {
 	std::ifstream f(file);
-	return f.is_open();
+	bool exist = f.is_open();
+	return exist;
 }
 
 uint8 FileIO::getDirFiles(std::string directory)
@@ -39,7 +40,7 @@ size_t find_last_of(std::string str, char c)
 	return result;
 }
 
-std::vector<std::string> FileIO::getDirFileList(const char * directory, const char * start, const char* end , bool extension)
+std::vector<std::string> FileIO::getDirFileList(const char * directory, const char * start, const char* end, bool extension)
 {
 	std::vector<std::string> list;
 	DIR* dir = opendir(directory);
@@ -73,11 +74,11 @@ std::vector<std::string> FileIO::getDirFileList(const char * directory, const ch
 GameInfo FileIO::readGameInfo()
 {
 	GameInfo gameInfo = { 0 };
-	std::ifstream file(GAME_INFO_PATH);
+	std::ifstream file(fileNS::GAME_INFO_PATH);
 	std::string line;
 	readValues<int8>(file, { &gameInfo.windowed });
 	readValues<int16>(file, { &gameInfo.width, &gameInfo.height });
-	
+
 	return gameInfo;
 }
 
@@ -117,7 +118,7 @@ Crc32 FileIO::getCRC32(const char* file)
 ClientInfo FileIO::readClientInfo()
 {
 	ClientInfo clientInfo;
-	std::ifstream file(CLIENT_INFO_PATH);
+	std::ifstream file(fileNS::CLIENT_INFO_PATH);
 	std::string line;
 	std::string s1, s2;
 	readValues(file, { &s1, &s2 });
@@ -129,7 +130,7 @@ ClientInfo FileIO::readClientInfo()
 
 void FileIO::createClientInfo(const ClientInfo& clientInfo)
 {
-	std::ofstream file(CLIENT_INFO_PATH);
+	std::ofstream file(fileNS::CLIENT_INFO_PATH);
 	file << "PlayerName =" << clientInfo.name << std::endl;
 	file << "ServerIP =" << clientInfo.serverIP << std::endl;
 	file << "Port =" << clientInfo.serverPort;
@@ -139,7 +140,7 @@ void FileIO::createClientInfo(const ClientInfo& clientInfo)
 
 void FileIO::createServerInfo(const ServerInfo& serverInfo)
 {
-	std::ofstream file(SERVER_INFO_PATH);
+	std::ofstream file(fileNS::SERVER_INFO_PATH);
 	file << "Port =" << serverInfo.port << std::endl;
 	file << "Players =" << std::to_string(serverInfo.players) << std::endl;
 }
@@ -147,11 +148,10 @@ void FileIO::createServerInfo(const ServerInfo& serverInfo)
 ServerInfo FileIO::readServerInfo()
 {
 	ServerInfo serverInfo;
-	std::ifstream file(SERVER_INFO_PATH);
+	std::ifstream file(fileNS::SERVER_INFO_PATH);
 	std::string line;
 	readValues<Port>(file, { &serverInfo.port });
 	readValues<uint8>(file, { &serverInfo.players });
-
 	return serverInfo;
 }
 #endif
@@ -160,9 +160,9 @@ void FileIO::createGameInfo(const GameInfo& info)
 {
 	int16 width, height;
 	GameInfo oInfo = readGameInfo();
-	std::ofstream file(GAME_INFO_PATH);
+	std::ofstream file(fileNS::GAME_INFO_PATH);
 	int8 windowed = (info.windowed == -1) ? oInfo.windowed : info.windowed; // check if windowed requires to change in case change width and height only
-	width =  (info.width == -1) ? oInfo.width : info.width; // check if width and height require to change in case change windowed only
+	width = (info.width == -1) ? oInfo.width : info.width; // check if width and height require to change in case change windowed only
 	height = (info.height == -1) ? oInfo.height : info.height;
 	file << "windowed=" << windowed << std::endl;
 	file << "width=" << std::to_string(width) << std::endl;
@@ -173,6 +173,20 @@ inline std::string getTargetEqualStringValue(std::string str)
 {
 	str.erase(0, str.find('=') + 1);
 	return str;
+}
+
+char* FileIO::loadFileInMemory(const std::string name, uint32& size)
+{
+	std::ifstream file(name , std::ifstream::ate);
+	//if (!file.is_open())
+	//	return 0;
+
+	size = file.tellg().seekpos();
+	file.close();
+	file.open(name, std::ifstream::binary);
+	char* buffer = new char[size];
+	file.read(buffer, size);
+	return buffer;
 }
 
 template<typename T>

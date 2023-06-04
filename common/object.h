@@ -40,5 +40,4 @@ protected:
 	bool m_playSound;
 };
 
-
 #endif

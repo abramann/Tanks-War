@@ -4,6 +4,8 @@
 #ifndef _FILEIO_H
 #define _FILE_IO_H
 #include "constants.h"
+#include <memory>
+#include <string>
 
 class FileIO
 {
@@ -17,6 +19,7 @@ public:
 	static 	GameInfo readGameInfo();
 	static MapData readMapInfo(std::ifstream& ifs);
 	static Crc32 getCRC32(const char* file);
+	static char* loadFileInMemory(const std::string name, uint32& size);
 
 #ifdef _CLIENT_BUILD
 	static ClientInfo readClientInfo();
@@ -26,13 +29,12 @@ public:
 	static void createServerInfo(const ServerInfo& serverInfo);
 #endif
 	static void createGameInfo(const GameInfo& info);
-	
+
 private:
 
 	template <typename T>
 	static void readValues(std::ifstream & file, std::initializer_list<T*> values);
 	static void readValues(std::ifstream & file, std::initializer_list<std::string*> values);
 };
-
 
 #endif

@@ -14,13 +14,12 @@
 
 ClientPlayer::ClientPlayer() : m_handleInput(true)
 {
-	m_forward = W_KEY,
-		m_back = S_KEY,
-		m_right = D_KEY,
-		m_left = A_KEY,
-		m_attack = F_KEY;
+	m_forward = inputNS::W_KEY,
+		m_back = inputNS::S_KEY,
+		m_right = inputNS::D_KEY,
+		m_left = inputNS::A_KEY,
+		m_attack = inputNS::F_KEY;
 }
-
 
 ClientPlayer::~ClientPlayer()
 {
@@ -39,7 +38,7 @@ void ClientPlayer::update(float frameTime)
 	m_act = PLAYER_ACT_NONE;
 	if (m_handleInput)
 		handleInput();
-	
+
 	m_pCamera->update(m_position);
 	Player::update(frameTime);
 }
@@ -88,7 +87,6 @@ void ClientPlayer::executeLeft()
 		m_act = PLAYER_ACT_LEFT;
 		break;
 	}
-	
 }
 
 void ClientPlayer::executeAttack()
@@ -115,7 +113,6 @@ void ClientPlayer::handleInput()
 	if (m_pInput->isKeyDown(m_attack))
 		executeAttack();
 }
-
 
 #endif
 #endif

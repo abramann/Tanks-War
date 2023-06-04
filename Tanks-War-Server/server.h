@@ -72,13 +72,13 @@ private:
 	void removeLastClient();
 	void removeClient(PlayerID id);
 	void present();
-	void sbClear() { memset(m_sData, 0, MAX_PACKET_SIZE); }
-	void rbClear() { memset(m_rData, 0, MAX_PACKET_SIZE); }
-	void send(PlayerID id, int size = MAX_PACKET_SIZE);
-	void reply(int size = MAX_PACKET_SIZE);
+	void sbClear() { memset(m_sData, 0, networkNS::MAX_PACKET_SIZE); }
+	void rbClear() { memset(m_rData, 0, networkNS::MAX_PACKET_SIZE); }
+	void send(PlayerID id, int size = networkNS::MAX_PACKET_SIZE);
+	void reply(int size = networkNS::MAX_PACKET_SIZE);
 	void replyPlayersExist();
 	void replyPlayersIniData();
-	void post(int size = MAX_PACKET_SIZE);
+	void post(int size = networkNS::MAX_PACKET_SIZE);
 	void postPlayersExist();
 	void postPlayersIniData();
 	void postPlayerUpdate(PlayerID id);
@@ -100,8 +100,8 @@ private:
 
 	Net m_net;
 	Port m_serverPort;
-	char m_IP[netNS::IP_SIZE], m_sIP[netNS::IP_SIZE], m_map[MAX_NAME_LEN], m_crc32[CRC32_SIZE],
-		m_rData[MAX_PACKET_SIZE], m_sData[MAX_PACKET_SIZE];
+	char m_IP[netNS::IP_SIZE], m_sIP[netNS::IP_SIZE], m_map[networkNS::MAX_PACKET_SIZE], m_crc32[CRC32_SIZE],
+		m_rData[networkNS::MAX_PACKET_SIZE], m_sData[networkNS::MAX_PACKET_SIZE];
 	uint8_t m_gameMaxPlayers;
 	ServerState m_state;
 	std::vector<std::shared_ptr<ClientData> > m_pClientData;

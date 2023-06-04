@@ -4,12 +4,12 @@
 #include "camera.h"
 #include "game.h"
 #include "map.h"
+#include "gamemath.h"
 
-Camera::Camera() : m_pGraphics(0), m_z(CAMERA_HEIGHT), m_nearPlane(CAMERA_NEARPLANE), m_farPlane(CAMERA_FARPLANE),
-m_fov(CAMERA_FOV)
+Camera::Camera() : m_pGraphics(0), m_z(graphicsNS::CAMERA_HEIGHT), m_nearPlane(graphicsNS::CAMERA_NEARPLANE), m_farPlane(graphicsNS::CAMERA_FARPLANE),
+m_fov(graphicsNS::CAMERA_FOV)
 {
 }
-
 
 Camera::~Camera()
 {
@@ -20,7 +20,7 @@ void Camera::initialize(const Game* game)
 	m_aspectRation = g_gameInfo.width*1.0f / g_gameInfo.height*1.0f;
 	m_pGraphics = game->getGraphics();
 	m_pMap = game->getMap();
-	D3DXMatrixPerspectiveFovLH(&m_proj, m_fov, m_aspectRation, m_nearPlane,
+	gameMathNS::matrixPerspectiveFovLH(&m_proj, m_fov, m_aspectRation, m_nearPlane,
 		m_farPlane);
 #ifdef _BUILD_WITH_D3D9
 	LPDevice lpDevice3d = m_pGraphics->getDevice();
@@ -34,7 +34,7 @@ void Camera::update(V3 lookTo)
 	V2 mapSize = m_pMap->getMapSize();
 	if (lookTo.x / m_aspectRation <= abs(m_z))
 		lookTo.x = abs(m_z)*m_aspectRation;
-	else if (lookTo.x > mapSize.x - abs(m_z) )
+	else if (lookTo.x > mapSize.x - abs(m_z))
 		lookTo.x = (mapSize.x - abs(m_z));
 
 	if (lookTo.y <= abs(m_z))
@@ -50,13 +50,13 @@ void Camera::update(V3 lookTo)
 	V3 up(0.0f, 1.0f, 0.0f);
 
 	Matrix eye;
-	D3DXMatrixLookAtLH(&eye, &position, &target, &up);
+	gameMathNS::matrixLookAtLH(&eye, &position, &target, &up);
 	Matrix viewMatrix;
-	D3DXMatrixIdentity(&viewMatrix);
+	gameMathNS::matrixIdentity(&viewMatrix);
 #ifdef _BUILD_WITH_D3D9
 	viewMatrix = eye;
 #else ifdef _BUILD_WITH_D3D11
 	viewMatrix = viewMatrix*eye*m_proj;
 #endif
-	m_pGraphics->setViewMatrix(viewMatrix);
+	m_pGraphics->setViewMatrix(&viewMatrix);
 }

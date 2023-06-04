@@ -37,7 +37,7 @@ void Tank::update(float frameTime)
 {
 	Object::update(frameTime);
 	int8 i = 0;
-	for (size_t i = 0; i < m_pBullet.size();i++)
+	for (size_t i = 0; i < m_pBullet.size(); i++)
 	{
 		Bullet* pBullet = m_pBullet[i].get();
 		if (pBullet->isFinished())
@@ -55,7 +55,7 @@ void Tank::update(float frameTime)
 void Tank::draw()
 {
 	Object::draw();
-	for (size_t i = 0; i < m_pBullet.size();i++)
+	for (size_t i = 0; i < m_pBullet.size(); i++)
 		m_pBullet[i]->draw();
 }
 
@@ -80,7 +80,7 @@ void Tank::executeBack(float frameTime)
 void Tank::executeDie()
 {
 	m_pTexture = m_pTextureManger->getTexture(TEXTURE_TANK_DESTROY);
-	Image::initialize(m_pTexture, m_pGame, TEXTURE_TANK_DESTROY_ROWS_COLUMNS, TEXTURE_TANK_DESTROY_ROWS_COLUMNS, UPDATE_DELAY_TANK_DESTORY);
+	Image::initialize(m_pTexture, m_pGame, textureNS::TEXTURE_TANK_DESTROY_ROWS_COLUMNS, textureNS::TEXTURE_TANK_DESTROY_ROWS_COLUMNS, UPDATE_DELAY_TANK_DESTORY);
 	Object::executeDie();
 }
 
@@ -98,9 +98,9 @@ void Tank::executeLeft(float frameTime)
 	if (m_rotate.z >= (TANK_MAX_ANGLE - 0.01f))
 		m_rotate.z *= -1;
 
-	m_rotate.z += TANK_ROTATE_AMOUNT;
-	if(m_pMap->isCollided(this))
-		m_rotate.z -= TANK_ROTATE_AMOUNT;
+	m_rotate.z += logicNS::TANK_ROTATE_AMOUNT;
+	if (m_pMap->isCollided(this))
+		m_rotate.z -= logicNS::TANK_ROTATE_AMOUNT;
 
 	Object::executeLeft();
 }
@@ -110,9 +110,9 @@ void Tank::executeRight(float frameTime)
 	if (m_rotate.z <= -TANK_MAX_ANGLE)
 		m_rotate.z *= -1;
 
-	m_rotate.z -= TANK_ROTATE_AMOUNT;
+	m_rotate.z -= logicNS::TANK_ROTATE_AMOUNT;
 	if (m_pMap->isCollided(this))
-		m_rotate.z += TANK_ROTATE_AMOUNT;
+		m_rotate.z += logicNS::TANK_ROTATE_AMOUNT;
 	Object::executeRight();
 }
 

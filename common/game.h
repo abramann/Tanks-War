@@ -1,9 +1,9 @@
 // game.h
 // Author: abramann
-// Note this file is influenced by game.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by game.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 // Note parts of this code are licensed under CC BY 3.0
 
-// Programming 2D Games Copyright (c) 2011 by: Charles Kelly 
+// Programming 2D Games Copyright (c) 2011 by: Charles Kelly
 // game.h
 
 #ifndef _GAME_H
@@ -47,7 +47,7 @@ public:
 	virtual void updateGame();
 	virtual void update() = 0;
 	virtual void render() = 0;
-	
+
 	Graphics* getGraphics()	const { return m_pGraphics.get(); }
 	Input* getInput()	const { return m_pInput.get(); }
 	Audio* getAudio()	const { return m_pAudio.get(); }

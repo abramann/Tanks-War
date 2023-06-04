@@ -18,13 +18,11 @@ public:
 	virtual void initialize(PlayerID id, const char* name, const Game* game);
 #ifdef _SERVER_BUILD
 	virtual void damage(float dmg);
-	
+
 private:
 
 	Server* m_pServer;
 #endif
-
 };
-
 
 #endif

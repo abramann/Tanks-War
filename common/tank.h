@@ -49,5 +49,4 @@ protected:
 	Timer* m_pTimer;
 };
 
-
 #endif

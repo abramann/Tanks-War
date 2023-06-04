@@ -1,6 +1,6 @@
 // constant.h
 // Author: abramann
-// Note this file is influenced by constant.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0 
+// Note this file is influenced by constant.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 // Note parts of this code are licensed under CC BY 3.0
 
 #ifndef _CONSTANTS_H            // Prevent multiple definitions if this
@@ -13,21 +13,16 @@
 #include<iostream>
 #include<vector>
 #include <stdarg.h>
-#include<Windows.h>
+#include <Windows.h>
 #include <d3dx9.h>
-
-
+#include <DirectXMath.h>
 
 extern uint64_t g_frameCounter;
 
 #define COLOR_ARGB D3DCOLOR_ARGB
 #define COLOR_XRGB D3DCOLOR_XRGB
-#define MILLSEC
 typedef D3DCOLOR Color;
-typedef D3DXVECTOR2 V2;
-typedef D3DXVECTOR3 V3;
 typedef uint8_t PlayerID;
-typedef ImGuiKey Key;
 typedef unsigned short Port;
 typedef uint8_t Protocol;
 typedef uint32_t Crc32;
@@ -41,14 +36,15 @@ typedef uint8_t uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
 typedef uint64_t uint64;
-typedef D3DXMATRIX Matrix;
 typedef HRESULT Result;
+typedef ImGuiKey Key;
+typedef DirectX::XMMATRIX Matrix;
+typedef DirectX::XMFLOAT2 V2;
+typedef D3DXVECTOR3 V3;
 
 #ifdef _BUILD_WITH_D3D9
-
 typedef LPDIRECT3DTEXTURE9 LPTextureD3D;
 typedef LPDIRECT3DVERTEXBUFFER9 LPVertexBuffer;
-
 #else ifdef _BUILD_WITH_D3D11
 
 #include <D3D11.h>
@@ -58,86 +54,115 @@ typedef LPDIRECT3DVERTEXBUFFER9 LPVertexBuffer;
 
 typedef ID3D11ShaderResourceView* LPTextureD3D;
 typedef ID3D11Buffer* LPVertexBuffer;
-
 #endif
 
 #define IN_RANGE(n, a, b) (bool)( (n > a && n < b) || (n > b && n < a))
 #define IN_RANGE_OR_EQUAL(n, a, b) (bool)( (n >= a && n <= b) || (n >= b && n <= a))
 
 constexpr float PI = 3.1415926535897f;
-constexpr auto  MIN_RESOLUTION_WIDTH = 800;
-constexpr auto  MIN_RESOLUTION_HEIGHT = 600;
-constexpr auto  VERTEX_FVF = D3DFVF_XYZ | D3DFVF_TEX1;
-constexpr auto CLIENT_INFO_PATH = "Assets\\ini\\client-info.txt";
-constexpr auto CLIENT_PRESENT_TIME = 5000;
-constexpr auto COLOR_ALPHA = COLOR_ARGB(0, 0, 0, 255);
-constexpr auto COLOR_BLACK = COLOR_XRGB(0, 0, 0);
-constexpr auto COLOR_WHITE = COLOR_XRGB(255, 255, 255);
-constexpr auto FRAME_RATE = 60;
-constexpr auto GAME_INFO_PATH = "Assets\\ini\\game-info.txt";
-constexpr auto IMAGE_INFO_PATH = "Assets\\ini\\image-info.txt";
-constexpr auto INVALID_DATA = 0xFFFF;
-constexpr auto MAP_DIR = "Assets\\maps\\";
-constexpr auto MAX_NAME_LEN = 20;
-constexpr auto MAX_PACKET_SIZE = 256;
-constexpr auto MAX_PLAYERS = 12;
-constexpr auto PROJECT_FAR_PLANE = 1000.0f;
-constexpr auto PROJECT_FOV = PI / 2;
-constexpr auto PROJECT_NEAR_PLANE = 1.0f;
-constexpr auto SERVER_INFO_PATH = "Assets\\ini\\server-info.txt";
-constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
-constexpr auto TANK_INFO_PATH = "Assets\\ini\\tank-info.txt";
-constexpr auto TANK_ROTATE_AMOUNT = PI / 64.0f;
-constexpr auto TEXTURE_DIR = "Assets\\texture\\";
-constexpr auto TEXTURE_TANK_DESTROY_ROWS_COLUMNS = 8;
-constexpr auto UPDATE_DELAY_FPS = 0.5f;
-constexpr auto UPDATE_DELAY_TANK_DESTROY = 100;
-constexpr BYTE BYTE_INVALID_DATA = 0xFF;
-constexpr DWORD INVALID_ADDRESS = 0xFFFFFFF;
-constexpr float UNDEFINED_POSITION = 0xFFFF;
-constexpr int MAX_PORT = 4861;
-constexpr int MIN_PORT = 10;
-constexpr uint8_t INVALID_ID = -1;
-constexpr uint8_t MAX_FILE_NAME = 255;
-constexpr unsigned short UNSPECIFIED_PORT = 0xCCCC;
-constexpr auto TEXTURE_BULLET_ROWS_COLUMNS = 3;
-constexpr auto 	TEXTURE_TILEDS = 3;
-constexpr auto UPDATE_DELAY_BULLET = 80;
-const auto UNSPECIFIED_POS = V3(0.1f, 0.1f, 0.1f);
-const auto SPACE_VERTICES = 4;
 
-constexpr Key A_KEY = ImGuiKey_A;
-constexpr Key B_KEY = ImGuiKey_B;
-constexpr Key C_KEY = ImGuiKey_C;
-constexpr Key D_KEY = ImGuiKey_D;
-constexpr Key E_KEY = ImGuiKey_E;
-constexpr Key F_KEY = ImGuiKey_F;
-constexpr Key G_KEY = ImGuiKey_G;
-constexpr Key H_KEY = ImGuiKey_H;
-constexpr Key I_KEY = ImGuiKey_I;
-constexpr Key J_KEY = ImGuiKey_J;
-constexpr Key K_KEY = ImGuiKey_K;
-constexpr Key L_KEY = ImGuiKey_L;
-constexpr Key M_KEY = ImGuiKey_M;
-constexpr Key N_KEY = ImGuiKey_N;
-constexpr Key O_KEY = ImGuiKey_O;
-constexpr Key P_KEY = ImGuiKey_P;
-constexpr Key Q_KEY = ImGuiKey_Q;
-constexpr Key R_KEY = ImGuiKey_R;
-constexpr Key S_KEY = ImGuiKey_S;
-constexpr Key T_KEY = ImGuiKey_T;
-constexpr Key U_KEY = ImGuiKey_U;
-constexpr Key V_KEY = ImGuiKey_V;
-constexpr Key W_KEY = ImGuiKey_W;
-constexpr Key X_KEY = ImGuiKey_X;
-constexpr Key Y_KEY = ImGuiKey_Y;
-constexpr Key Z_KEY = ImGuiKey_Z;
-constexpr Key ENTER_KEY = ImGuiKey_Enter;
-constexpr Key ESCAPE_KEY = ImGuiKey_Escape;
-constexpr Key SPACE_KEY = ImGuiKey_Space;
-constexpr Key BACKSPACE_KEY = ImGuiKey_Backspace;
-constexpr Key RSHIFT_KEY = ImGuiKey_RightShift;
-constexpr Key LSHIFT_KEY = ImGuiKey_LeftShift;
+namespace fileNS
+{
+	constexpr auto CLIENT_INFO_PATH = "Assets\\ini\\client-info.txt";
+	constexpr auto GAME_INFO_PATH = "Assets\\ini\\game-info.txt";
+	constexpr auto MAP_DIR = "Assets\\maps\\";
+	constexpr auto SERVER_INFO_PATH = "Assets\\ini\\server-info.txt";
+	constexpr auto TEXTURE_DIR = "Assets\\texture\\";
+}
+
+namespace graphicsNS
+{
+	const auto VERTICES_IMAGE = 6;
+	//constexpr auto  VERTEX_FVF = D3DFVF_XYZ | D3DFVF_TEX1;
+	constexpr auto CAMERA_FARPLANE = 1000.0f;
+	constexpr auto CAMERA_FOV = 1.5707963f;
+	constexpr auto CAMERA_HEIGHT = -300;
+	constexpr auto CAMERA_NEARPLANE = 1.0f;
+	constexpr auto COLOR_ALPHA = 111;// COLOR_ARGB(0, 0, 0, 255);
+	constexpr auto COLOR_BLACK = 1212;// COLOR_XRGB(0, 0, 0);
+	constexpr auto COLOR_WHITE = 4444;// COLOR_XRGB(255, 255, 255);
+	constexpr auto PROJECT_FAR_PLANE = 1000.0f;
+	constexpr auto PROJECT_FOV = PI / 2;
+	constexpr auto PROJECT_NEAR_PLANE = 1.0f;
+}
+
+namespace textureNS
+{
+	constexpr auto TEXTURE_BULLET_ROWS_COLUMNS = 3;
+	constexpr auto TEXTURE_TANK_DESTROY_ROWS_COLUMNS = 8;
+	constexpr auto 	TEXTURE_TILEDS = 3;
+}
+
+namespace mapNS
+{
+	const auto SPACE_VERTICES = 4;
+	constexpr float UNDEFINED_POSITION = 0xFFFF;
+}
+
+namespace gameNS
+{
+	constexpr auto MAX_PLAYERS = 12;
+	constexpr auto MAX_NAME_LEN = 20;
+	constexpr auto FRAME_RATE = 60;
+	constexpr auto  MIN_RESOLUTION_HEIGHT = 600;
+	constexpr auto  MIN_RESOLUTION_WIDTH = 800;
+	constexpr auto UPDATE_DELAY_FPS = 0.5f;
+}
+
+namespace logicNS
+{
+	const auto UPDATE_DELAY_IMAGE = 50.0f;
+	constexpr auto TANK_ROTATE_AMOUNT = PI / 64.0f;
+	constexpr auto UPDATE_DELAY_BULLET = 80;
+	constexpr auto UPDATE_DELAY_TANK_DESTROY = 100;
+}
+
+namespace networkNS
+{
+	constexpr auto CLIENT_PRESENT_TIME = 5000;
+	constexpr auto MAX_PACKET_SIZE = 256;
+	constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
+	constexpr int MAX_PORT = 4861;
+	constexpr int MIN_PORT = 10; // already in netNS
+	constexpr uint8_t INVALID_ID = -1;
+	constexpr unsigned short UNSPECIFIED_PORT = 0xCCCC;
+}
+
+namespace inputNS
+{
+	constexpr Key A_KEY = ImGuiKey_A;
+	constexpr Key B_KEY = ImGuiKey_B;
+	constexpr Key C_KEY = ImGuiKey_C;
+	constexpr Key D_KEY = ImGuiKey_D;
+	constexpr Key E_KEY = ImGuiKey_E;
+	constexpr Key F_KEY = ImGuiKey_F;
+	constexpr Key G_KEY = ImGuiKey_G;
+	constexpr Key H_KEY = ImGuiKey_H;
+	constexpr Key I_KEY = ImGuiKey_I;
+	constexpr Key J_KEY = ImGuiKey_J;
+	constexpr Key K_KEY = ImGuiKey_K;
+	constexpr Key L_KEY = ImGuiKey_L;
+	constexpr Key M_KEY = ImGuiKey_M;
+	constexpr Key N_KEY = ImGuiKey_N;
+	constexpr Key O_KEY = ImGuiKey_O;
+	constexpr Key P_KEY = ImGuiKey_P;
+	constexpr Key Q_KEY = ImGuiKey_Q;
+	constexpr Key R_KEY = ImGuiKey_R;
+	constexpr Key S_KEY = ImGuiKey_S;
+	constexpr Key T_KEY = ImGuiKey_T;
+	constexpr Key U_KEY = ImGuiKey_U;
+	constexpr Key V_KEY = ImGuiKey_V;
+	constexpr Key W_KEY = ImGuiKey_W;
+	constexpr Key X_KEY = ImGuiKey_X;
+	constexpr Key Y_KEY = ImGuiKey_Y;
+	constexpr Key Z_KEY = ImGuiKey_Z;
+	constexpr Key ENTER_KEY = ImGuiKey_Enter;
+	constexpr Key ESCAPE_KEY = ImGuiKey_Escape;
+	constexpr Key SPACE_KEY = ImGuiKey_Space;
+	constexpr Key BACKSPACE_KEY = ImGuiKey_Backspace;
+	constexpr Key RSHIFT_KEY = ImGuiKey_RightShift;
+	constexpr Key LSHIFT_KEY = ImGuiKey_LeftShift;
+};
 
 constexpr const char* strSERVER_STATE[] = { "Not started" , "Waiting for players...", "Preparibg game..." , "Handlubg" };
 constexpr Vec4 colSERVER_STATE[] = { Vec4(0.7f,0.7f,0.7f,0.5f), Vec4(0.87f,0.77f,0,1), Vec4(0,1,0,1) };
@@ -236,7 +261,6 @@ struct TextureVertices
 	Vertex v4, v5, v6;
 };
 
-
 struct GameInfo
 {
 	int8 windowed;
@@ -250,7 +274,6 @@ struct ImageInfo
 	bool animate;
 	float animateSpeed, scalling;
 };
-
 
 struct BitmapData
 {
@@ -296,8 +319,8 @@ inline void add4(const T amount, T& v1, T& v2, T& v3, T& v4)
 struct Space
 {
 	V3 v1, v2, v3, v4;
-	bool isSame(Space s) const { return ( ( (s.v1 == v1 && s.v2 == v2) || (s.v1 == v2 && s.v2 == v1) ) && ( ( s.v3 == v3 && s.v4 == v4) || (s.v3 == v4 && s.v4 == v3) ) ) ? true : false; }
-	bool isValid() const { return (v1.x == UNDEFINED_POSITION) ? false : true; }
+	bool isSame(Space s) const { return ((s.v1 == v1 && s.v2 == v2) || (s.v1 == v2 && s.v2 == v1)) && ((s.v3 == v3 && s.v4 == v4) || (s.v3 == v4 && s.v4 == v3)) ? true : false; }
+	bool isValid() const { return (v1.x == mapNS::UNDEFINED_POSITION) ? false : true; }
 	float getMaxX() const { return getMax<float>({ v1.x,v2.x,v3.x,v4.x }); }
 	float getMinX() const { return getMin<float>({ v1.x,v2.x,v3.x,v4.x }); }
 	float getMaxY() const { return getMax<float>({ v1.y, v2.y, v3.y, v4.y }); }
@@ -314,13 +337,13 @@ struct ServerInfo
 
 struct ClientInfo
 {
-	char name[MAX_NAME_LEN], serverIP[netNS::IP_SIZE];
+	char name[gameNS::MAX_NAME_LEN], serverIP[netNS::IP_SIZE];
 	Port serverPort;
 };
 
 struct PlayerIniData
 {
-	char name[MAX_NAME_LEN];
+	char name[gameNS::MAX_NAME_LEN];
 	PlayerID id;
 };
 
@@ -357,7 +380,7 @@ struct SpsPlayerUpdate
 struct CpsIni
 {
 	PacketType  packetType = PACKET_INI;
-	char name[MAX_NAME_LEN];
+	char name[gameNS::MAX_NAME_LEN];
 };
 
 struct CpsDisconnect
@@ -383,7 +406,7 @@ struct SpsIni
 	PacketType packetType = PACKET_INI;
 	PlayerID id;
 	uint8_t gamePlayers;
-	char  map[MAX_NAME_LEN];
+	char  map[gameNS::MAX_NAME_LEN];
 	Crc32 checksum;
 	PlayerIniData playerIniData;
 };
@@ -409,7 +432,7 @@ struct SpsDisconnect
 /*struct SpsNewPlayer
 {
 	PacketType packet = PACKET_NEW_PLAYER;
-	char name[MAX_NAME_LEN];
+	char name[gameNS::MAX_NAME_LEN];
 	PlayerID id;
 };*/
 
@@ -418,7 +441,6 @@ enum MatrixType
 	MATRIX_TYPE_TRANSLATE,
 	MATRIX_TYPE_SCALL,
 	MATRIX_TYPE_ROTATE,
-
 };
 
 enum Textures

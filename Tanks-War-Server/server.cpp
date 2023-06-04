@@ -13,8 +13,8 @@ m_pTimer(0), m_pTextureManger(0), m_pMap(0)
 {
 	memset(m_IP, 0, netNS::IP_SIZE);
 	memset(m_sIP, 0, netNS::IP_SIZE);
-	memset(m_sData, 0, MAX_PACKET_SIZE);
-	memset(m_rData, 0, MAX_PACKET_SIZE);
+	memset(m_sData, 0, networkNS::MAX_PACKET_SIZE);
+	memset(m_rData, 0, networkNS::MAX_PACKET_SIZE);
 	m_pCpsIni =  (CpsIni*)&m_rData;
 	m_pCpsPresent = (CpsPresent*)&m_rData;
 	m_pCpsDisconnect = (CpsDisconnect*)&m_rData;
@@ -250,7 +250,7 @@ bool Server::recv(bool wait)
 	bool result = false;
 	do
 	{
-		int size = MAX_PACKET_SIZE;
+		int size = networkNS::MAX_PACKET_SIZE;
 		m_net.readData(m_rData, size, m_IP, m_port);
 		if (size > 0)
 		{
@@ -279,7 +279,7 @@ void Server::checkClients()
 		for (auto pClientData : m_pClientData)
 		{
 			auto deltaTime = m_pTimer->getCurrentTime() - pClientData->presentTime;
-			if (deltaTime > SERVER_RECIEVE_PRESENT_TIME)
+			if (deltaTime > networkNS::SERVER_RECIEVE_PRESENT_TIME)
 			{
 				PlayerID id = pClientData->getID();
 				m_pSpsDisconnect->packetType = PACKET_DISCONNECT;
@@ -402,7 +402,7 @@ void Server::removeClient(PlayerID id)
 
 PlayerID Server::getLastRecieverId()
 {
-	PlayerID id = INVALID_ID;
+	PlayerID id = 0;
 	for (auto pClientData : m_pClientData)
 	{
 		if (strcmp(pClientData->getIP() , m_IP) == 0 && pClientData->getPort() == m_port)

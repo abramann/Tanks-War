@@ -3,8 +3,9 @@
 
 #include "TanksWar.h"
 #include "interface.h"
+#include "input.h"
 
-#define TEST_NO_SERVER_INTERFACE
+//#define TEST_NO_SERVER_INTERFACE
 #ifdef TEST_NO_SERVER_INTERFACE
 #include "input.h"
 #include "camera.h"
@@ -27,27 +28,27 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 {
 	Game::initialize(hInstance, hWnd);
 #ifdef TEST_NO_SERVER_INTERFACE
-	m_pMap->load("Old Empire");
+	m_pMap->load("Nova");
 	tank2.initialize(m_pTextureManger->getTexture(TEXTURE_PLAYER_TANK), this);
 	tank2.setPosition(V3(330, 300, 0));
 #else
 	m_pClient->initialize(this);
-	m_pInterface->initialize(m_pClient, this);
+	m_pInterface->initialize(m_pClient.get(), this);
 #endif
 }
 
 void TanksWar::update()
 {
 #ifdef TEST_NO_SERVER_INTERFACE
-	if (m_pInput->isKeyDown(W_KEY))
+	if (m_pInput->isKeyDown(inputNS::W_KEY))
 		tank2.executeForward(0);
-	if (m_pInput->isKeyDown(S_KEY))
+	if (m_pInput->isKeyDown(inputNS::S_KEY))
 		tank2.executeBack(0);
-	if (m_pInput->isKeyPressed(D_KEY))
+	if (m_pInput->isKeyPressed(inputNS::D_KEY))
 		tank2.executeRight(0);
-	if (m_pInput->isKeyPressed(A_KEY))
+	if (m_pInput->isKeyPressed(inputNS::A_KEY))
 		tank2.executeLeft(0);
-	if (m_pInput->isKeyDown(E_KEY))
+	if (m_pInput->isKeyDown(inputNS::E_KEY))
 		tank2.executeAttack();
 	if (GetAsyncKeyState('Q'))
 		tank2.damage(100);
@@ -59,7 +60,7 @@ void TanksWar::update()
 #endif
 	m_pClient->update(m_timeDeltaMillsec);
 	if (m_pClient->getState() == CLIENT_CONNECTED_PLAYING)
-		if (m_pInput->isKeyDown(I_KEY))
+		if (m_pInput->isKeyDown(inputNS::I_KEY))
 			if (m_pInterface->m_menu == MULTIPLAYER_MENU)
 				m_pInterface->m_menu = PLAYING_MENU;
 			else if (m_pInterface->m_menu == PLAYING_MENU)
@@ -79,7 +80,7 @@ void TanksWar::render()
 		ClientPlayer* clientPlayer = m_pClient->getClientPlayer();
 		clientPlayer->draw();
 		auto pClientData = m_pClient->getClientData();
-		for (auto element : pClientData )
+		for (auto element : pClientData)
 			element->serverPlayer.draw();
 	}
 
@@ -101,15 +102,12 @@ void TanksWar::render()
 	default:
 		break;
 	}
-
-} 
+}
 
 void TanksWar::onResetDevice()
 {
- 
 }
 
 void TanksWar::onLostDevice()
 {
- 
 }

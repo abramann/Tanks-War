@@ -1,12 +1,15 @@
 #include "interface.h"
 #include "fileio.h"
 #include "game.h"
+#ifdef _SERVER_BUILD
+#include "map.h"
+#endif
 
 using namespace ImGui;
 
 const std::string stringCLIENT_STATE[] = { "Unconnected", "Disconnected", "Server map not found", "Error map could not load",
 "Waiting server...", "Running" };
-const auto OPTIONS_COLOR =  Vec4(0.83f, 0.83f, 0.70f, 0.875f);
+const auto OPTIONS_COLOR = Vec4(0.83f, 0.83f, 0.70f, 0.875f);
 const auto NOOPTIONS_COLOR = Vec4(0.83f, 0.83f, 0.70f, 0.6f);
 const auto CHOOSE_COLOR = Vec4(0.98f, 0.99f, 0.0f, 1.0f);
 #define SUB_MENU_SIZE Vec2(g_gameInfo.width / 4, g_gameInfo.height / 4)
@@ -27,7 +30,6 @@ Interface::Interface() : m_menu(MAIN_MENU)
 {
 }
 
-
 Interface::~Interface()
 {
 }
@@ -43,7 +45,6 @@ void Interface::initialize(Server* server, Game* game)
 	m_font[SMALL] = io.Fonts->AddFontFromFileTTF(PROGGYCLEAN_FONT, 12);
 	m_font[MED] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 19);
 	m_font[LARGE] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 28);
-	
 }
 
 #else ifdef _CLIENT_BUILD
@@ -113,7 +114,7 @@ void Interface::settingMenu()
 		TITLE_BUTTON_COLOR, TITLE_BUTTON_COLOR);
 
 	BeginChild("Graphics");
-	text("Resolution",OPTIONS_COLOR);
+	text("Resolution", OPTIONS_COLOR);
 	BeginChild("Resolution", ImVec2(g_gameInfo.width / 8, g_gameInfo.height / 7), true);
 	Resolution currResol = m_pGraphics->getResolution();
 	for (auto resol : m_pGraphics->getSupportedResolutions())
@@ -147,7 +148,6 @@ void Interface::settingMenu()
 
 	EndChild();
 	popSubMenu();
-
 }
 
 void Interface::show()
@@ -164,14 +164,13 @@ void Interface::show()
 		settingMenu();
 		break;
 	case PLAYING_MENU:
-	//	playerInterface();
+		//	playerInterface();
 		break;
 	case QUIT_MENU:
 		PostQuitMessage(0);
 	default:
 		break;
 	}
-
 }
 
 void Interface::showFPS(uint16_t fps)
@@ -179,9 +178,9 @@ void Interface::showFPS(uint16_t fps)
 	SetNextWindowPos(Vec2(200, 0));
 	if (GetAsyncKeyState(VK_RETURN))
 		SetNextWindowFocus();
-	Begin("fps", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize 
+	Begin("fps", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize
 		| ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
-	Text("FPS %d",fps);
+	Text("FPS %d", fps);
 	End();
 }
 
@@ -206,7 +205,7 @@ void Interface::multiplayerMenu()
 	button("Multiplayer config", ImVec2(0, 0), TITLE_BUTTON_TEXT_COLOR, TITLE_BUTTON_COLOR,
 		TITLE_BUTTON_COLOR, TITLE_BUTTON_COLOR);
 	inputText("Player Name", colConfig, "##PlayerName", m_pClient->getPlayerName(),
-		MAX_NAME_LEN, colConfig, configFlags);
+		gameNS::MAX_NAME_LEN, colConfig, configFlags);
 	inputText("Server IP", colConfig, "##ServerIP", (char*)m_pClient->getServerIP(),
 		netNS::IP_SIZE, colConfig, configFlags);
 
@@ -220,7 +219,7 @@ void Interface::multiplayerMenu()
 		TITLE_BUTTON_COLOR, TITLE_BUTTON_COLOR); SameLine();
 	text(stringCLIENT_STATE[state].c_str(), colorCLIENT_STATE[state]);
 	inputText("Game Map", NOOPTIONS_COLOR, "##GamerMap", m_pClient->getGameMap(),
-		MAX_NAME_LEN, OPTIONS_COLOR, ImGuiInputTextFlags_ReadOnly);
+		gameNS::MAX_NAME_LEN, OPTIONS_COLOR, ImGuiInputTextFlags_ReadOnly);
 	int gamePlayers = 0, connectedPlayers = 0;
 	connectedPlayers = (int)m_pClient->getConnectedPlayers(); SetNextItemWidth(30);
 	gamePlayers = m_pClient->getGamePlayers();
@@ -248,7 +247,7 @@ void Interface::multiplayerMenu()
 #else ifdef _SERVER_BUILD
 void Interface::multiplayerMenu()
 {
-	pushSubMenu("Server Info"); 
+	pushSubMenu("Server Info");
 	BeginChild("Server Config", ImVec2(g_gameInfo.width / 2, g_gameInfo.height*1.0f / 2.4f), true);
 	title("Server Config");
 	static char ip[netNS::IP_SIZE] = { 0 };
@@ -265,18 +264,18 @@ void Interface::multiplayerMenu()
 		colConfig = NOOPTIONS_COLOR;
 		configFlag = ImGuiInputTextFlags_ReadOnly;
 	}
-	
+
 	inputInt("Port", NOOPTIONS_COLOR, "##ServerPort", &iPort,
 		colConfig, 6, 0, 0, ImGuiInputTextFlags_CharsDecimal | configFlag);
 	*port = iPort;
 	text("Map", NOOPTIONS_COLOR); SameLine();
-	BeginChild("Maps", ImVec2(g_gameInfo.width/5, g_gameInfo.height/5), true);
+	BeginChild("Maps", ImVec2(g_gameInfo.width / 5, g_gameInfo.height / 5), true);
 	static std::string selectedMap;
 	PushStyleColor(ImGuiCol_Text, colConfig);
-	static auto mapList = FileIO::getDirFileList(MAP_DIR, 0, ".map", false);
+	static auto mapList = FileIO::getDirFileList(fileNS::MAP_DIR, 0, ".map", false);
 	for (auto m : mapList)
 	{
-		bool select =( m.compare(selectedMap) == 0) ? true : false;
+		bool select = (m.compare(selectedMap) == 0) ? true : false;
 		if (Selectable(m.c_str(), select) && colConfig.operator==(CHOOSE_COLOR))
 		{
 			selectedMap = m;
@@ -289,9 +288,9 @@ void Interface::multiplayerMenu()
 	SameLine();
 	int players = 0;
 	players = m_pServer->getGamePlayers();
-	inputInt("Players", colConfig, "##Players", &players, colConfig, 2,2, 32, ImGuiInputTextFlags_CharsDecimal | configFlag);
+	inputInt("Players", colConfig, "##Players", &players, colConfig, 2, 2, 32, ImGuiInputTextFlags_CharsDecimal | configFlag);
 	m_pServer->setGamePlayers(players);
-	
+
 	if (state == SERVER_NOT_RUNNING)
 	{
 		if (button("Start"))
@@ -324,7 +323,7 @@ void Interface::multiplayerMenu()
 	for (size_t i = 0; i < pClientData->size(); i++)
 	{
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_NoHorizontalScroll;
-		inputText("Player", NOOPTIONS_COLOR, " ", (char*)pClientData->at(i)->getName(), MAX_NAME_LEN, NOOPTIONS_COLOR, flags);
+		inputText("Player", NOOPTIONS_COLOR, " ", (char*)pClientData->at(i)->getName(), gameNS::MAX_NAME_LEN, NOOPTIONS_COLOR, flags);
 		inputText("IP", NOOPTIONS_COLOR, " ", (char*)(pClientData->at(i)->getIP()), netNS::IP_SIZE, NOOPTIONS_COLOR, flags);
 		int port = 0;
 		port = pClientData->at(i)->getPort();
@@ -385,22 +384,22 @@ bool Interface::button(const char* text, Vec2 size, Vec4 colText, Vec4 colButton
 
 	bool coText = (!colText.isEmpty()), coButton = (!colButton.isEmpty()),
 		coActive = (!colActive.isEmpty()), coHorvered = (!colHorvored.isEmpty());
-	
+
 	if (coText)
 		PushStyleColor(ImGuiCol_Text, colText);
 	if (coButton)
 		PushStyleColor(ImGuiCol_Button, colButton);
-	if(coActive)
+	if (coActive)
 		PushStyleColor(ImGuiCol_ButtonActive, colActive);
-	if(coHorvered)
+	if (coHorvered)
 		PushStyleColor(ImGuiCol_ButtonHovered, colHorvored);
 
 	clicked = Button(text, size);
-	if(clicked)
+	if (clicked)
 		m_pAudio->play(SOUND_BUTTON_CLICKED);
 
 	PopStyleColor(coText + coButton + coActive + coHorvered);
-	
+
 	return clicked;
 }
 
@@ -408,15 +407,15 @@ void Interface::inputText(const char* desc, const Vec4& descColor, const char* l
 	char* buf, const uint16_t& len, const Vec4& color, ImGuiInputTextFlags flags)
 {
 	text(desc, descColor); SameLine(0, g_gameInfo.width / 200);
-	SetNextItemWidth(len*8);
-	inputText(label, buf, MAX_NAME_LEN, color, flags);
+	SetNextItemWidth(len * 8);
+	inputText(label, buf, gameNS::MAX_NAME_LEN, color, flags);
 }
 
 void Interface::inputInt(const char* label, int* buf, const ImVec4& textColor,
 	int32_t min, int32_t max, ImGuiInputTextFlags flags)
 {
 	PushStyleColor(ImGuiCol_Text, textColor);
-	InputInt(label, buf, 0, 0, flags);	
+	InputInt(label, buf, 0, 0, flags);
 	PopStyleColor();
 	if (min == max)
 		return;
