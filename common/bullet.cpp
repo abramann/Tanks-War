@@ -42,7 +42,7 @@ void Bullet::update(float frameTime)
 
 V3 Bullet::getBulletLaunchPosition()
 {
-	Space s = getSpace();
+	Space s = m_pTank->getSpace();
 	V3 position;
 	position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2);
 	position.y = (s.v4.y + (s.v3.y - s.v4.y) / 2);
