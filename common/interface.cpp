@@ -116,8 +116,9 @@ void Interface::settingMenu()
 	BeginChild("Graphics");
 	text("Resolution", OPTIONS_COLOR);
 	BeginChild("Resolution", ImVec2(g_gameInfo.width / 8, g_gameInfo.height / 7), true);
-	Resolution currResol = m_pGraphics->getResolution();
-	for (auto resol : m_pGraphics->getSupportedResolutions())
+	auto currResol = m_pGraphics->getResolution();
+	static auto supportedResol = m_pGraphics->getSupportedResolutions();
+	for (auto resol : supportedResol)
 	{
 		PushStyleColor(ImGuiCol_Text, CHOOSE_COLOR);
 		std::string sResol;

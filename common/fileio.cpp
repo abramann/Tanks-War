@@ -164,7 +164,7 @@ void FileIO::createGameInfo(const GameInfo& info)
 	int8 windowed = (info.windowed == -1) ? oInfo.windowed : info.windowed; // check if windowed requires to change in case change width and height only
 	width = (info.width == -1) ? oInfo.width : info.width; // check if width and height require to change in case change windowed only
 	height = (info.height == -1) ? oInfo.height : info.height;
-	file << "windowed=" << windowed << std::endl;
+	file << "windowed=" << std::to_string(windowed) << std::endl;
 	file << "width=" << std::to_string(width) << std::endl;
 	file << "height=" << std::to_string(height) << std::endl;
 }

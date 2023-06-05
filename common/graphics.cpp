@@ -495,7 +495,7 @@ void Graphics::setResolution(const Resolution& resolution)
 	info.width = resolution.width;
 	info.height = resolution.height;
 	FileIO::createGameInfo(info);
-	resize(1, 1);
+	//resize(1, 1);
 }
 
 void Graphics::setTexture(LPTextureD3D texture)
