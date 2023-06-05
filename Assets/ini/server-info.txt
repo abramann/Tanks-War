@@ -1,3 +1,2 @@
-port=922
-players=2
-map=Battle Ground
+Port =922
+Players =6

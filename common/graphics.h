@@ -70,7 +70,6 @@ private:
 	LPDIRECT3D9 m_lpDirect3d;
 	D3DPRESENT_PARAMETERS m_presentParameter;
 #else ifdef _BUILD_WITH_D3D11
-
 	void initSwapChain(DXGI_SWAP_CHAIN_DESC& swapChainDesc);
 	void initDepthStencil(D3D11_TEXTURE2D_DESC& depthStencilDesc);
 	void initViewport(D3D11_VIEWPORT& viewport);

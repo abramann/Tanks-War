@@ -78,7 +78,6 @@ protected:
 	HWND m_hwnd;
 	float m_timeDeltaMillsec;
 	float m_fps;
-	Image m_logo;
 };
 
 #endif
