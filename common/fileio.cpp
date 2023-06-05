@@ -175,11 +175,11 @@ inline std::string getTargetEqualStringValue(std::string str)
 	return str;
 }
 
-char* FileIO::loadFileInMemory(const std::string name, uint32& size)
+char* FileIO::loadInMemory(const std::string name, uint32& size)
 {
 	std::ifstream file(name , std::ifstream::ate);
-	//if (!file.is_open())
-	//	return 0;
+	if (!file.is_open())
+		return 0;
 
 	size = file.tellg().seekpos();
 	file.close();

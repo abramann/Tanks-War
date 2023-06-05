@@ -1,4 +1,4 @@
-//bullet.h
+// bullet.h
 // Author: abamann
 
 #ifndef _BULLET_H
@@ -19,7 +19,7 @@ public:
 	Bullet(const Game* game, const Tank * tank);
 	Bullet();
 	~Bullet();
-	virtual void update(const float frameTime);
+	virtual void update();
 	void executeLaunch();
 	void executeHit();
 	bool isFinished() const { return m_finish; }
@@ -32,7 +32,7 @@ protected:
 
 private:
 
-	void executeLaunching(float frameTime);
+	void executeLaunching();
 
 	const Game* m_pGame;
 	Map* m_pMap;

@@ -135,9 +135,6 @@
     <ClInclude Include="..\common\crc32.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\dirent.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\fileio.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
@@ -196,6 +193,9 @@
       <Filter>Common\Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\common\math.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\gamemath.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
   </ItemGroup>

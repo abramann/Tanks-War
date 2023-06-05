@@ -4,6 +4,7 @@
 #include "object.h"
 #include "game.h"
 #include "map.h"
+#include "timer.h"
 
 Object::Object()
 {
@@ -22,9 +23,9 @@ void Object::initialize(Texture * texture, const Game* game)
 	Image::initialize(texture, game);
 }
 
-void Object::update(float frameTime)
+void Object::update()
 {
-	Image::update(frameTime);
+	Image::update();
 }
 
 void Object::executeBack()

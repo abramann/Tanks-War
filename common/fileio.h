@@ -19,7 +19,7 @@ public:
 	static 	GameInfo readGameInfo();
 	static MapData readMapInfo(std::ifstream& ifs);
 	static Crc32 getCRC32(const char* file);
-	static char* loadFileInMemory(const std::string name, uint32& size);
+	static char* loadInMemory(const std::string name, uint32& size);
 
 #ifdef _CLIENT_BUILD
 	static ClientInfo readClientInfo();

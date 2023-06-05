@@ -111,10 +111,16 @@ namespace gameNS
 
 namespace logicNS
 {
-	const auto UPDATE_DELAY_IMAGE = 50.0f;
+	constexpr auto UPDATE_DELAY_IMAGE = 50.0f;
 	constexpr auto TANK_ROTATE_AMOUNT = PI / 64.0f;
 	constexpr auto UPDATE_DELAY_BULLET = 80;
 	constexpr auto UPDATE_DELAY_TANK_DESTROY = 100;
+	constexpr auto HEALTH_TANK = 100;
+	constexpr auto VELOCITY_TANK = 10;
+	constexpr auto UPDATE_DELAY_TANK_DESTORY = 100;
+	constexpr auto TANK_MAX_ANGLE = PI - 0.01f;
+	constexpr auto BULLET_SPEED = 20;
+	constexpr auto BULLET_DAMAGE = 40;
 }
 
 namespace networkNS

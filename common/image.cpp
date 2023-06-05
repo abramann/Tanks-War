@@ -3,6 +3,7 @@
 
 #include "image.h"
 #include "game.h"
+#include "timer.h"
 
 Image::Image() : m_animate(false), m_column(1), m_row(1), m_columns(0), m_rows(0),
 m_timeUntilLastUpdate(0), m_updateDelay(0), m_width(0), m_height(0), m_textureWidth(0),
@@ -22,6 +23,7 @@ void Image::initialize(Texture * texture, const Game* game, int8 columns, int8 r
 {
 	m_pTexture = texture;
 	m_pGraphics = game->getGraphics();
+	m_pTimer = game->getTimer();
 	m_columns = columns;
 	m_rows = rows;
 	m_textureWidth = m_pTexture->getWidth();
@@ -47,10 +49,13 @@ void Image::initialize(Texture * texture, const Game* game, int8 columns, int8 r
 	m_initialized = true;
 }
 
-void Image::update(const float frameTime)
+void Image::update()
 {
 	if (m_animate)
+	{
+		auto frameTime = m_pTimer->getTimeDelta();
 		updateTextureCoordinate(frameTime);
+	}
 }
 
 void Image::draw() const

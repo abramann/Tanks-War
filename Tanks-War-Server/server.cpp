@@ -47,12 +47,12 @@ void Server::initialize(const Game* game)
 	m_gameMaxPlayers = info.players;
 }
 
-void Server::update(float frameTime)
+void Server::update()
 {
 	if (!isStarted())
 		return;
 		for (auto& pClientData : m_pClientData)
-			pClientData->update(0);
+			pClientData->update();
 
 	//checkClients();
 
@@ -70,7 +70,7 @@ void Server::update(float frameTime)
 			present();
 			break;
 		case PACKET_PLAYER_ACT:
-			applyPlayerAct(frameTime);
+			applyPlayerAct();
 			break;
 		case PACKET_INI:
 			getClients();
@@ -304,12 +304,12 @@ ClientData* Server::getIDClientData(PlayerID requiredID)
 	return pClientData;
 }
 
-void Server::applyPlayerAct(float frameTime)
+void Server::applyPlayerAct()
 {
 	PlayerID& id = m_pCpsPlayerAct->id;
 	ServerPlayer& serverPlayer = getIDClientData(id)->serverPlayer;
 	PlayerAct& act = m_pCpsPlayerAct->act;
-	/*if (act >= PLAYER_ACT_ATTACK)
+	if (act >= PLAYER_ACT_ATTACK)
 	{
 		act -= PLAYER_ACT_ATTACK;
 		if (!serverPlayer.isBulletLaunching())
@@ -321,41 +321,41 @@ void Server::applyPlayerAct(float frameTime)
 			post(sizeof(m_pSpsPlayerAct));
 		}
 	}
-	*/
+	
 	switch (act)
 	{
 	case PLAYER_ACT_NONE:
 	break; 
 	case PLAYER_ACT_FORWRAD:
-		serverPlayer.executeForward(frameTime);
+		serverPlayer.executeForward();
 		break;
 	case PLAYER_ACT_BACK:
-		serverPlayer.executeBack(frameTime);
+		serverPlayer.executeBack();
 		break;
 	case PLAYER_ACT_RIGHT:
-		serverPlayer.executeRight(frameTime);
+		serverPlayer.executeRight();
 		break;
 	case PLAYER_ACT_LEFT:
-		serverPlayer.executeLeft(frameTime);
+		serverPlayer.executeLeft();
 		break;
 	case PLAYER_ACT_ATTACK:
 		serverPlayer.executeAttack();
 		break;
 	case PLAYER_ACT_FORWARD_LEFT:
-		serverPlayer.executeLeft(frameTime);
-		serverPlayer.executeForward(frameTime);
+		serverPlayer.executeLeft();
+		serverPlayer.executeForward();
 		break;
 	case PLAYER_ACT_FORWARD_RIGHT:
-		serverPlayer.executeRight(frameTime);
-		serverPlayer.executeForward(frameTime);
+		serverPlayer.executeRight();
+		serverPlayer.executeForward();
 		break;
 	case PLAYER_ACT_BACK_LEFT:
-		serverPlayer.executeLeft(frameTime);
-		serverPlayer.executeBack(frameTime);
+		serverPlayer.executeLeft();
+		serverPlayer.executeBack();
 		break;
 	case PLAYER_ACT_BACK_RIGHT:
-		serverPlayer.executeRight(frameTime);
-		serverPlayer.executeBack(frameTime);
+		serverPlayer.executeRight();
+		serverPlayer.executeBack();
 		break;
 	default:
 		throw GameError(gameErrorNS::WARNING, "Unknown player act has been recieved!\n The other player(s) may have a different game version.");

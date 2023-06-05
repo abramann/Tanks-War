@@ -403,7 +403,7 @@
       <Optimization>Disabled</Optimization>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D9;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D9;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -419,7 +419,7 @@
       <Optimization>Disabled</Optimization>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -435,7 +435,7 @@
       <Optimization>Disabled</Optimization>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -451,7 +451,7 @@
       <Optimization>Disabled</Optimization>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D9;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D9;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -467,7 +467,7 @@
       <Optimization>Disabled</Optimization>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -483,7 +483,7 @@
       <Optimization>Disabled</Optimization>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -501,7 +501,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -521,7 +521,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -541,7 +541,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;_BUILD_WITH_D3D11;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -561,7 +561,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;_BUILD_WITH_D3D11;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -581,7 +581,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -601,7 +601,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -621,7 +621,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -641,7 +641,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>4244;4305;4996;4005;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CLIENT_BUILD;_BUILD_WITH_D3D11;%(PreprocessorDefinitions);_XM_NO_INTRINSICS_</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

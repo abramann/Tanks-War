@@ -5,6 +5,7 @@
 #define _TEXTURE_MANGER_H
 #include "constants.h"
 #include "texture.h"
+#include <memory>
 
 class Graphics;
 
@@ -35,7 +36,7 @@ private:
 	bool load();
 
 	Graphics* m_pGraphics;
-	Texture* m_pTexture;
+	Texture m_pTexture[TEXTURES];
 };
 
 #endif

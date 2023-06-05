@@ -55,7 +55,7 @@ void Client::update(float frameTime)
 		for (auto& pClientData : m_pClientData)
 		{
 			ServerPlayer& serverPlayer = pClientData->serverPlayer;
-			serverPlayer.update(frameTime);
+			serverPlayer.update();
 		}
 	}
 	if (recv())

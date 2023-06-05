@@ -33,6 +33,8 @@ void Player::applyPlayerUpdate(const PlayerUpdate playerUpdate)
 	m_position = playerUpdate.position;
 	m_rotate = playerUpdate.rotate;
 	m_health = playerUpdate.health;
+	if (m_health < 0)
+		executeDie();
 }
 
 PlayerUpdate Player::getPlayerUpdate() const

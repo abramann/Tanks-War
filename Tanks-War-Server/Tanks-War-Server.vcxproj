@@ -54,7 +54,7 @@
     <ProjectGuid>{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TanksWarServer</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -85,7 +85,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release D3D11 S|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -529,10 +529,10 @@
     <ClInclude Include="..\common\clientplayer.h" />
     <ClInclude Include="..\common\constants.h" />
     <ClInclude Include="..\common\crc32.h" />
-    <ClInclude Include="..\common\dirent.h" />
     <ClInclude Include="..\common\fileio.h" />
     <ClInclude Include="..\common\game.h" />
     <ClInclude Include="..\common\gameerror.h" />
+    <ClInclude Include="..\common\gamemath.h" />
     <ClInclude Include="..\common\graphics.h" />
     <ClInclude Include="..\common\image.h" />
     <ClInclude Include="..\common\input.h" />

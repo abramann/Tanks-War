@@ -40,7 +40,7 @@ void ClientPlayer::update(float frameTime)
 		handleInput();
 
 	m_pCamera->update(m_position);
-	Player::update(frameTime);
+	Player::update();
 }
 
 void ClientPlayer::executeForward()

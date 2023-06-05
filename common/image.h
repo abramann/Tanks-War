@@ -9,6 +9,7 @@
 class Game;
 class TextureManger;
 class Graphics;
+class Timer;
 
 class Image
 {
@@ -18,10 +19,10 @@ public:
 	~Image();
 	virtual void initialize(Texture* texture, const Game* game, int8 columns = 1, int8 rows = 1,
 		float updateDelay = logicNS::UPDATE_DELAY_IMAGE);
-	virtual void update(const float frameTime);
+	virtual void update();
 	virtual void draw() const;
 	virtual V3 getRotateCenter() const;
-
+	
 	int16 getHeight() const { return m_height; }
 	int16 getVertices() const { return m_vertices; }
 	int16 getWidth() const { return m_width; }
@@ -61,6 +62,7 @@ protected:
 	int16 m_vertices, m_width, m_height;
 	int8_t m_columns, m_rows, m_column, m_row;
 	bool m_initialized;
+	Timer* m_pTimer;
 
 private:
 

@@ -7,6 +7,7 @@
 #include "texturemanger.h"
 #include "texture.h"
 #include "map.h"
+#include "timer.h"
 
 Bullet::Bullet(const Game * game, const Tank * tank) : m_pTank(tank), m_hit(false), m_finish(false)
 {
@@ -27,14 +28,14 @@ Bullet::~Bullet()
 {
 }
 
-void Bullet::update(float frameTime)
+void Bullet::update()
 {
-	Image::update(frameTime);
+	Image::update();
 	if (m_finish)
 		return;
 	if (!m_hit)
 	{
-		executeLaunching(frameTime);
+		executeLaunching();
 		if (isCollided())
 			executeHit();
 	}
@@ -63,7 +64,7 @@ void Bullet::executeLaunch()
 	V3 pos = m_pTank->getPosition();
 	float f1 = 1.0f - abs((0.636619772f *m_rotate.z));
 	m_position = getBulletLaunchPosition();
-	executeLaunching(0);
+	executeLaunching();
 }
 
 void Bullet::executeHit()
@@ -84,10 +85,11 @@ void Bullet::executeAnimateRepeat()
 	m_finish = true;
 }
 
-void Bullet::executeLaunching(float frameTime)
+void Bullet::executeLaunching()
 {
-	float incX = m_speed*sin(m_rotate.z),
-		incY = m_speed*cos(m_rotate.z);
+	auto timeFactor = m_pTimer->getTimeFactor();
+	float incX = m_speed*sin(m_rotate.z)*timeFactor,
+		incY = m_speed*cos(m_rotate.z)*timeFactor;
 	m_position;
 	addX(-incX);
 	addY(incY);

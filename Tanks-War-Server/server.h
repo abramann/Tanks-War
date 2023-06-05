@@ -29,7 +29,7 @@ struct ClientData
 	const char* getName() const { return serverPlayer.getName(); }
 	const char* getIP() const { return _ip; }
 	Port getPort() const { return _port; }
-	void update(float frameTime) { serverPlayer.update(frameTime); }
+	void update() { serverPlayer.update(); }
 	void draw() { serverPlayer.draw(); }
 	
 	char _ip[netNS::IP_SIZE];
@@ -48,7 +48,7 @@ public:
 	Server();
 	~Server();
 	void initialize(const Game* game);
-	void update(float frameTime);
+	void update();
 	void stop();
 	void start();
 
@@ -67,7 +67,7 @@ public:
 
 private:
 
-	void applyPlayerAct(float frameTime);
+	void applyPlayerAct();
 	bool addClient();
 	void removeLastClient();
 	void removeClient(PlayerID id);

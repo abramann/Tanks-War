@@ -20,7 +20,6 @@
 
 Game::Game() : m_timeDeltaMillsec(0)
 {
-	//m_pGraphics = new Graphics;
 	m_pGraphics = std::make_shared<Graphics>();
 	m_pInput = std::make_shared<Input>();
 	m_pAudio = std::make_shared<Audio>();
@@ -32,14 +31,7 @@ Game::Game() : m_timeDeltaMillsec(0)
 
 Game::~Game()
 {
-	m_pGraphics.reset();
-	/*safeDelete(m_pGraphics);
-	safeDelete(m_pInput);
-	safeDelete(m_pAudio);
-	safeDelete(m_pInterface);
-	safeDelete(m_pTextureManger);
-	safeDelete(m_pMap);
-	safeDelete(m_pTimer);*/
+	m_pGraphics.reset(); // for release ImGui_d3d implemet before imgui_win implement
 }
 
 LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -80,7 +72,6 @@ void Game::renderGame()
 	m_pGraphics->begin();
 	//	 if (m_logo.drawRapidly())
 	render();
-
 	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 	m_pGraphics->end();
 	m_pGraphics->showBackbuffer();

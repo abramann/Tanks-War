@@ -24,7 +24,7 @@ void TanksWarServer::initialize(HINSTANCE hInstance, HWND hwnd)
 
 void TanksWarServer::update()
 {
-	m_pServer->update(m_timeDeltaMillsec);
+	m_pServer->update();
 }
 
 void TanksWarServer::render()

@@ -76,6 +76,8 @@ private:
 	void initViewport(D3D11_VIEWPORT& viewport);
 	void initSampleState(D3D11_SAMPLER_DESC& sampDesc);
 	void initBlend(D3D11_RENDER_TARGET_BLEND_DESC& rtbd);
+	void setVSConstBuffer(const void* data);
+	Vertex* getVertexBufferData(LPVertexBuffer vb, uint32& size) const;
 
 	Microsoft::WRL::ComPtr<ID3D11Device> m_lpDevice3d;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_lpDeviceContext;
@@ -92,8 +94,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_lpStagingBuffer;
 	Matrix m_wvp;
 
-	void setVSConstBuffer(const void* data);
-	Vertex* getVertexBufferData(LPVertexBuffer vb, uint32& size) const;
 #endif
 
 	DWORD m_deviceState;

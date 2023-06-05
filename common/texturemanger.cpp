@@ -8,12 +8,11 @@
 
 TextureManger::TextureManger()
 {
-	m_pTexture = new Texture[TEXTURES];
 }
 
 TextureManger::~TextureManger()
 {
-	safeDeleteArray(m_pTexture);
+	//safeDeleteArray(m_pTexture);
 }
 
 bool TextureManger::initialize(Graphics* graphics)

@@ -41,19 +41,19 @@ void TanksWar::update()
 {
 #ifdef TEST_NO_SERVER_INTERFACE
 	if (m_pInput->isKeyDown(inputNS::W_KEY))
-		tank2.executeForward(0);
+		tank2.executeForward();
 	if (m_pInput->isKeyDown(inputNS::S_KEY))
-		tank2.executeBack(0);
+		tank2.executeBack();
 	if (m_pInput->isKeyPressed(inputNS::D_KEY))
-		tank2.executeRight(0);
+		tank2.executeRight();
 	if (m_pInput->isKeyPressed(inputNS::A_KEY))
-		tank2.executeLeft(0);
+		tank2.executeLeft();
 	if (m_pInput->isKeyDown(inputNS::E_KEY))
 		tank2.executeAttack();
 	if (GetAsyncKeyState('Q'))
 		tank2.damage(100);
 
-	tank2.update(m_timeDeltaMillsec);
+	tank2.update();
 	m_pGraphics->getCamera()->update(tank2.getPosition());
 
 	return;

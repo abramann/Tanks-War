@@ -34,8 +34,8 @@ void Camera::update(V3 lookTo)
 	V2 mapSize = m_pMap->getMapSize();
 	if (lookTo.x / m_aspectRation <= abs(m_z))
 		lookTo.x = abs(m_z)*m_aspectRation;
-	else if (lookTo.x > mapSize.x - abs(m_z))
-		lookTo.x = (mapSize.x - abs(m_z));
+	else if (lookTo.x > (mapSize.x - abs(m_z)*m_aspectRation))
+		lookTo.x = (mapSize.x - abs(m_z)*m_aspectRation);
 
 	if (lookTo.y <= abs(m_z))
 		lookTo.y = abs(m_z);
@@ -44,11 +44,9 @@ void Camera::update(V3 lookTo)
 
 	int32 px = round(lookTo.x * 10) / 10,
 		py = round(lookTo.y * 10) / 10;
-
 	V3 position(px, py, m_z);
 	V3 target(lookTo.x, lookTo.y, lookTo.z);
 	V3 up(0.0f, 1.0f, 0.0f);
-
 	Matrix eye;
 	gameMathNS::matrixLookAtLH(&eye, &position, &target, &up);
 	Matrix viewMatrix;

@@ -10,6 +10,9 @@
 #include "fileio.h"
 #include <fstream>
 #include <string>
+#ifdef _DEBUG
+#pragma optimize("",on) // for collision detection
+#endif
 
 Map::Map() : m_lpVertexBuffer(0)
 {
@@ -258,8 +261,9 @@ bool Map::read()
 	{
 		for (int32 j = 0; j < m_width; j++)
 		{
-			m_map[i][j] = line[j * 2];
-			m_map[i][j] = std::atof(&m_map[i][j]);
+			char cell[2] = { 0 }; // 2 elements for avoid multi-byte mismatch happens when call std::atof
+			cell[0] = line[j * 2];
+			m_map[i][j] = std::atof(cell);
 			bool exist = false;
 			for (int k = 0; k < m_usedBitmaps; k++) // check if the map element exist if used map elements
 			{
@@ -397,3 +401,6 @@ void Map::addObject(Object* object)
 {
 	m_pObject.push_back(object);
 }
+#ifdef _DEBUG
+#pragma optimize("",off)
+#endif

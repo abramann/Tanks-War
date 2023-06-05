@@ -71,15 +71,12 @@ private:
 	Map* m_pMap;
 	Timer* m_pTimer;
 	Game* m_pGame;
-
 	Net m_net;
 	Port m_port;
 	ClientInfo m_clientInfo;
 	int8_t m_gamePlayers;
 	ClientState m_state;
-
 	char m_map[gameNS::MAX_NAME_LEN];
-
 	CpsIni* m_pCpsIni;
 	CpsDisconnect* m_pCpsDisconnect;
 	CpsSeasson* m_pCpsSeasson;
@@ -91,7 +88,6 @@ private:
 	SpsPlayerUpdate* m_pSpsPlayerUpdate;
 	SpsPlayerAct* m_pSpsPlayerAct;
 	PacketType* m_pPacketType;
-
 	float m_presentTime;
 	char m_rData[networkNS::MAX_PACKET_SIZE], m_sData[networkNS::MAX_PACKET_SIZE];
 	std::vector<std::shared_ptr<ClientData> > m_pClientData;
