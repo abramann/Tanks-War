@@ -21,9 +21,7 @@ S - Move backward
 
 D - Move right
 
-Space - Shoot
-
-Tab - Toggle UI
+F - Shoot
 
 
 
