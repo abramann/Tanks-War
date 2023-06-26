@@ -1,2 +1,44 @@
 # Tanks-War
-Simple multiplayer 2D game currently under development.
+
+
+Simple multiplayer 2D tank game currently under development.
+
+
+## How to play
+
+
+The player controls a tank and destroys other player's tanks. The play style will be improved after the basic game functions (audio, interface, server, and client) are implemented.
+
+
+### Controls
+
+
+W - Move forward
+
+A - Move left
+
+S - Move backward
+
+D - Move right
+
+Space - Shoot
+
+Tab - Toggle UI
+
+
+
+## How to build
+
+
+To build the game, you will need the Visual Studio 2015 (MSVC v140) or above. The needed DX headers and libraries are included in common folder. 
+
+
+## Credits
+
+
+Charles Kelly for the net library and the useful information in his book Programming 2D Games www.programming2dgames.net.
+
+Ocuntu for ImGui.
+
+Ambiera for IrrKlang audio library.
+
