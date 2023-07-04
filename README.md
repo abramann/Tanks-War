@@ -38,5 +38,7 @@ Charles Kelly for the net library and the useful information in his book Program
 
 Ocuntu for ImGui.
 
+Daniel Robbins for Dirent. 
+
 Ambiera for IrrKlang audio library.
 
