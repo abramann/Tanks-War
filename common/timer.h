@@ -9,7 +9,7 @@ class Timer
 public:
 	Timer();
 	~Timer();
-	float getCurrentTime();
+	int64 getCurrentTime();
 	int16 getFPS() { return m_fps; }
 	void update();
 	float getTimeDelta() { return m_timeDeltaMillsec; }
@@ -19,13 +19,15 @@ private:
 
 	void fpsUpdate();
 	void sleep(int32 millsec);
+	void spinLock(int32 millsec);
 
 	int64 getCurrentCounts() const;
 	float m_timeDeltaMillsec;
-	int64 m_countsPerSecond;
-	float m_secondsPerCount;
-	int64 m_prevCounts;
+	int64 m_prevTime;
 	int32 m_expectedFrameTimeMillsec;
 	int16 m_fps;
 	int32 m_fpsUpdateDelay;
+#ifdef PLATFORM_WINDOWS
+	int64 m_countsPerMillisecond;
+#endif
 };

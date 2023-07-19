@@ -94,7 +94,7 @@ bool Graphics::initialize(const Game* game)
 #else ifdef _BUILD_WITH_D3D11
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	initSwapChain(swapChainDesc);
-	uint32 flags = 0;// D3D11_CREATE_DEVICE_SINGLETHREADED;
+	uint32 flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 #ifdef _DEBUG
 	flags = D3D11_CREATE_DEVICE_DEBUG;
 #endif

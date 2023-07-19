@@ -16,6 +16,7 @@ typedef TanksWarServer GameBuildType;
 #ifdef _DEBUG
 #include "vld\vld.h" // For detect memory leaks
 #endif
+#pragma comment(lib,"winmm.lib")
 #pragma comment(lib,"Ws2_32.lib")
 //#pragma comment(lib,"d3dx9.lib")
 #ifdef _BUILD_WITH_D3D9

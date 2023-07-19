@@ -9,6 +9,7 @@ using namespace irrklang;
 
 Audio::Audio() : m_pSound(NULL)
 {
+	
 }
 
 Audio::~Audio()
@@ -21,19 +22,17 @@ bool Audio::initialize()
 	m_pSound = createIrrKlangDevice();
 	if (m_pSound == 0)
 		return false;
-
-	/*
+	
 	for (int i = 0; i < MUSICS; i++)
 		m_pSourceMusic[i] = m_pSound->addSoundSourceFromFile(MUSIC_PATH[i]);
 	for (int i = 0; i < SOUNDS; i++)
 		m_pSource[i] = m_pSound->addSoundSourceFromFile(SOUND_PATH[i]);
-	*/
+
 	return true;
 }
 
 void Audio::play(Sound sound)
 {
-	return;
 	m_pSound->play2D(m_pSource[sound]);
 }
 
