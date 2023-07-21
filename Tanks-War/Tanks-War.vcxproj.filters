@@ -57,9 +57,6 @@
     <ClInclude Include="client.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\constants.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\bullet.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
@@ -96,6 +93,18 @@
     <ClInclude Include="..\common\gamemath.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\v3.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\data.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\types.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\matrix4x4.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\input.cpp">
@@ -127,9 +136,6 @@
     </ClCompile>
     <ClCompile Include="tankswar.cpp">
       <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\imgui\imgui_impl_dx9.cpp">
-      <Filter>Common\Sources\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\common\imgui\imgui_impl_win32.cpp">
       <Filter>Common\Sources\imgui</Filter>
@@ -186,6 +192,12 @@
       <Filter>Common\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\object.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\v3.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\matrix4x4.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
   </ItemGroup>

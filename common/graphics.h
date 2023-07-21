@@ -4,7 +4,7 @@
 
 #ifndef _GRAPHICS_H
 #define _GRAPHICS_H
-#include "constants.h"
+#include "types.h"
 #include <memory>
 #ifdef _BUILD_WITH_D3D11
 #include <wrl\client.h>

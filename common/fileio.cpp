@@ -78,7 +78,7 @@ GameInfo FileIO::readGameInfo()
 	std::string line;
 	readValues<int8>(file, { &gameInfo.windowed });
 	readValues<int16>(file, { &gameInfo.width, &gameInfo.height });
-
+	readValues<int8>(file, { &gameInfo.vsync });
 	return gameInfo;
 }
 
@@ -162,6 +162,8 @@ void FileIO::createGameInfo(const GameInfo& info)
 	GameInfo oInfo = readGameInfo();
 	std::ofstream file(fileNS::GAME_INFO_PATH);
 	int8 windowed = (info.windowed == -1) ? oInfo.windowed : info.windowed; // check if windowed requires to change in case change width and height only
+	int8 vsync = (info.vsync == -1) ? oInfo.vsync : info.vsync; // check if vsync requires to change in case change width and height only
+
 	width = (info.width == -1) ? oInfo.width : info.width; // check if width and height require to change in case change windowed only
 	height = (info.height == -1) ? oInfo.height : info.height;
 	file << "windowed=" << std::to_string(windowed) << std::endl;
@@ -177,7 +179,7 @@ inline std::string getTargetEqualStringValue(std::string str)
 
 char* FileIO::loadInMemory(const std::string name, uint32& size)
 {
-	std::ifstream file(name , std::ifstream::ate);
+	std::ifstream file(name, std::ifstream::ate);
 	if (!file.is_open())
 		return 0;
 

@@ -13,7 +13,6 @@ const auto OPTIONS_COLOR = Vec4(0.83f, 0.83f, 0.70f, 0.875f);
 const auto NOOPTIONS_COLOR = Vec4(0.83f, 0.83f, 0.70f, 0.6f);
 const auto CHOOSE_COLOR = Vec4(0.98f, 0.99f, 0.0f, 1.0f);
 #define SUB_MENU_SIZE Vec2(g_gameInfo.width / 4, g_gameInfo.height / 4)
-constexpr Color COLOR_RAMADI = COLOR_XRGB(208, 247, 246);
 
 enum FontSize
 {

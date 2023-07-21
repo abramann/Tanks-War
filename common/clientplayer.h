@@ -18,7 +18,7 @@ public:
 	virtual void executeLeft();
 	virtual void executeAttack();
 	PlayerAct getAct() const { return m_act; }
-	
+
 protected:
 
 	void handleInput();
@@ -28,6 +28,4 @@ protected:
 	PlayerAct m_act;
 	Key m_forward, m_back, m_right, m_left;
 	bool m_handleInput;
-	
 };
-

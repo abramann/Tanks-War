@@ -4,8 +4,8 @@
 
 #ifndef _AUDIO_H
 #define _AUDIO_H
-#include "constants.h"
-#include "irrklang\irrKlang.h"
+#include "types.h"
+#include "sfml\Audio.hpp"
 
 enum Sound
 {
@@ -22,24 +22,25 @@ enum Sound
 	SOUNDS
 };
 
-constexpr char* MUSIC_PATH[] = {
-	"Assets\\audio\\music-main-menu.wav",
-	"Assets\\audio\\music-game.mp3",
-	"Assets\\audio\\music-win.mp3",
-	"Assets\\audio\\music-lose.mp3",
-};
-
 constexpr char* SOUND_PATH[] = {
 	"Assets\\audio\\sound-button-clicked.wav",
 	"Assets\\audio\\sound-tank-forward.wav",
 	"Assets\\audio\\sound-tank-back.wav",
 	"Assets\\audio\\sound-tank-right.wav",
 	"Assets\\audio\\sound-tank-left.wav",
-	"Assets\\audio\\sound-tank-death.wav"
+	"Assets\\audio\\sound-tank-destroy.wav",
 	"Assets\\audio\\sound-tank-attack.wav",
 	"Assets\\audio\\sound-tank-attacked.wav",
-	"Assets\\audio\\sound-fire-release.wav"
-	"Assets\\audio\\sound-fire-hited.wav",
+	"Assets\\audio\\sound-bullet-release.wav",
+	"Assets\\audio\\sound-bullet-explosion.wav",
+};
+
+constexpr char* MUSIC_PATH[] =
+{
+	"Assets\\audio\\music-main-menu.wav",
+	"Assets\\audio\\music-game.mp3",
+	"Assets\\audio\\music-win.mp3",
+	"Assets\\audio\\music-lose.mp3"
 };
 
 enum Music
@@ -67,9 +68,9 @@ public:
 
 private:
 
-	irrklang::ISoundEngine* m_pSound;
-	irrklang::ISoundSource* m_pSource[SOUNDS];
-	irrklang::ISoundSource* m_pSourceMusic[MUSICS];
+	sf::SoundBuffer m_soundBuffer[SOUNDS];
+	sf::Sound m_sound[SOUNDS];
+	sf::Music m_music[MUSICS];
 };
 
 #endif

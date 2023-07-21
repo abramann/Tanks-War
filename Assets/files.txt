@@ -1,5 +1,9 @@
-bullet https://opengameart.org/content/bullet-symbol
+textures:
+bullet from https://opengameart.org/content/bullet-symbol
 explosion https://opengameart.org/content/sophisticated-explosion
 tank textures from github user https://github.com/dev-dtech
 map textures from opengameart.org
 cursor.ani from www.cursors-4u.com
+audio:
+sound-tank-attack.wav from https://opengameart.org/content/dull-explosion
+sound-button-clicked from SFML Samples

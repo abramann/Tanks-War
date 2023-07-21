@@ -4,7 +4,7 @@
 #pragma once
 //#ifndef _CLIENT_H
 //#define _CLIENT_H
-#include "constants.h"
+#include "types.h"
 #include "clientplayer.h"
 #include "serverplayer.h"
 #include <memory>

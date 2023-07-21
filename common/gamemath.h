@@ -2,7 +2,7 @@
 // Author: abramann
 
 #pragma once
-#include "constants.h"
+#include "types.h"
 #include <DirectXMath.h>
 
 using namespace DirectX;

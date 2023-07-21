@@ -31,12 +31,11 @@ struct ClientData
 	Port getPort() const { return _port; }
 	void update() { serverPlayer.update(); }
 	void draw() { serverPlayer.draw(); }
-	
+
 	char _ip[netNS::IP_SIZE];
 	Port _port;
 	DWORD presentTime;
 	ServerPlayer serverPlayer;
-
 };
 
 class Server
@@ -118,6 +117,5 @@ private:
 	SpsPlayerAct* m_pSpsPlayerAct;
 	PacketType* m_pPacketType;
 };
-
 
 #endif

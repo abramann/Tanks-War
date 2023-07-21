@@ -6,7 +6,7 @@
 #include "object.h"
 #include "texturemanger.h"
 #include "texture.h"
-#include "constants.h"
+#include "types.h"
 #include "fileio.h"
 #include <fstream>
 #include <string>

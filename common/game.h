@@ -8,7 +8,7 @@
 
 #ifndef _GAME_H
 #define _GAME_H
-#include "constants.h"
+#include "types.h"
 /*#include "graphics.h"
 #include "input.h"
 #include "timer.h"

@@ -4,7 +4,7 @@
 
 #ifndef _TEXTURE_H
 #define _TEXTURE_H
-#include "constants.h"
+#include "types.h"
 #include "graphics.h"
 
 class Texture

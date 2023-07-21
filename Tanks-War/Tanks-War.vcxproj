@@ -62,7 +62,8 @@
     <ClInclude Include="..\common\audio.h" />
     <ClInclude Include="..\common\bullet.h" />
     <ClInclude Include="..\common\camera.h" />
-    <ClInclude Include="..\common\constants.h" />
+    <ClInclude Include="..\common\matrix4x4.h" />
+    <ClInclude Include="..\common\types.h" />
     <ClInclude Include="..\common\fileio.h" />
     <ClInclude Include="..\common\game.h" />
     <ClInclude Include="..\common\gameerror.h" />
@@ -81,6 +82,8 @@
     <ClInclude Include="..\common\tank.h" />
     <ClInclude Include="..\common\texture.h" />
     <ClInclude Include="..\common\texturemanger.h" />
+    <ClInclude Include="..\common\v3.h" />
+    <ClInclude Include="..\common\data.h" />
     <ClInclude Include="client.h" />
     <ClInclude Include="clientplayer.h" />
     <ClInclude Include="tankswar.h" />
@@ -93,6 +96,7 @@
     <ClCompile Include="..\common\fileio.cpp" />
     <ClCompile Include="..\common\game.cpp" />
     <ClCompile Include="..\common\map.cpp" />
+    <ClCompile Include="..\common\matrix4x4.cpp" />
     <ClCompile Include="..\common\player.cpp" />
     <ClCompile Include="..\common\serverplayer.cpp" />
     <ClCompile Include="..\common\timer.cpp" />
@@ -101,7 +105,6 @@
     <ClCompile Include="..\common\imgui\imgui.cpp" />
     <ClCompile Include="..\common\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\common\imgui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\common\imgui\imgui_impl_dx9.cpp" />
     <ClCompile Include="..\common\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="..\common\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\common\imgui\imgui_widgets.cpp" />
@@ -112,6 +115,7 @@
     <ClCompile Include="..\common\tank.cpp" />
     <ClCompile Include="..\common\texture.cpp" />
     <ClCompile Include="..\common\texturemanger.cpp" />
+    <ClCompile Include="..\common\v3.cpp" />
     <ClCompile Include="..\common\winmain.cpp" />
     <ClCompile Include="client.cpp" />
     <ClCompile Include="clientplayer.cpp" />

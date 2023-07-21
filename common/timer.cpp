@@ -5,7 +5,7 @@
 #include "timer.h"
 #include <timeapi.h>
 #include <thread>
-#ifndef PLATFORM_WINDOWS
+#ifndef WIN32
 #include <chrono>
 
 using namespace std;
@@ -14,12 +14,12 @@ using namespace chrono;
 
 Timer::Timer()
 {
-#ifdef PLATFORM_WINDOWS
+#ifdef WIN32
 	LARGE_INTEGER frequency;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 	m_countsPerMillisecond = frequency.QuadPart / 1000;
 #else
-	
+
 #endif
 	m_expectedFrameTimeMillsec = (1000 / gameNS::FRAME_RATE) * 2;
 	m_prevTime = getCurrentTime();
@@ -33,7 +33,7 @@ Timer::~Timer()
 int64 Timer::getCurrentTime()
 {
 	int64 currentTime;
-#ifdef PLATFORM_WINDOWS
+#ifdef WIN32
 	int64 counts = getCurrentCounts();
 	currentTime = counts / m_countsPerMillisecond;
 #else
@@ -47,7 +47,7 @@ void Timer::update()
 	int64 currentTime = getCurrentTime();
 	m_timeDeltaMillsec = currentTime - m_prevTime;
 	m_prevTime = currentTime;
-	if (m_timeDeltaMillsec < m_expectedFrameTimeMillsec)
+	if (!g_gameInfo.vsync && m_timeDeltaMillsec < m_expectedFrameTimeMillsec)
 	{
 		int32 sleepTime = m_expectedFrameTimeMillsec - m_timeDeltaMillsec;
 		int64 before = getCurrentTime();
@@ -57,16 +57,13 @@ void Timer::update()
 	}
 
 	m_fpsUpdateDelay += m_timeDeltaMillsec;
-	//if (m_fpsUpdateDelay >= gameNS::UPDATE_DELAY_FPS)
+	if (m_fpsUpdateDelay >= gameNS::UPDATE_DELAY_FPS)
 		fpsUpdate();
 }
 
 void Timer::fpsUpdate()
 {
 	m_fps = 1000.0f / m_timeDeltaMillsec;
-	static int fpsUp = 0;
-	if (m_fps > 65)
-		fpsUp++;
 	m_fpsUpdateDelay = 0;
 }
 
@@ -120,7 +117,7 @@ void Timer::sleep(int32 millsec)
 {
 	int64 start = getCurrentTime();
 	int64 now = 0, delta = 0;
-#ifdef PLATFORM_WINDOWS
+#ifdef WIN32
 	timeBeginPeriod(1);
 #endif
 	do
@@ -128,14 +125,13 @@ void Timer::sleep(int32 millsec)
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		now = getCurrentTime();
 		delta = now - start;
-	}
-	while (delta < millsec);
-#ifdef PLATFORM_WINDOWS
+	} while (delta < millsec);
+#ifdef WIN32
 	timeEndPeriod(1);
 #endif
 }
 
-#ifdef PLATFORM_WINDOWS
+#ifdef WIN32
 int64 Timer::getCurrentCounts() const
 {
 	LARGE_INTEGER counts = {};

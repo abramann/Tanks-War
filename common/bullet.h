@@ -3,7 +3,7 @@
 
 #ifndef _BULLET_H
 #define _BULLET_H
-#include "constants.h"
+#include "types.h"
 #include "image.h"
 
 class Game;

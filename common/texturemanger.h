@@ -3,7 +3,7 @@
 
 #ifndef _TEXTURE_MANGER_H
 #define _TEXTURE_MANGER_H
-#include "constants.h"
+#include "types.h"
 #include "texture.h"
 #include <memory>
 

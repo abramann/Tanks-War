@@ -3,7 +3,7 @@
 
 #ifndef _CAMERA_H
 #define _CAMERA_H
-#include "constants.h"
+#include "types.h"
 
 class Game;
 class Graphics;

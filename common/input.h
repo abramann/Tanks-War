@@ -3,7 +3,7 @@
 
 #ifndef _INPUT_H
 #define _INPUT_H
-#include "constants.h"
+#include "types.h"
 
 class Input
 {

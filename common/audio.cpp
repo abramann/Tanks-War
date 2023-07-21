@@ -5,60 +5,62 @@
 #include "audio.h"
 #include "fileio.h"
 
-using namespace irrklang;
-
-Audio::Audio() : m_pSound(NULL)
+Audio::Audio()
 {
-	
 }
 
 Audio::~Audio()
 {
-	release();
+	stopAll();
 }
 
 bool Audio::initialize()
 {
-	m_pSound = createIrrKlangDevice();
-	if (m_pSound == 0)
-		return false;
-	
-	for (int i = 0; i < MUSICS; i++)
-		m_pSourceMusic[i] = m_pSound->addSoundSourceFromFile(MUSIC_PATH[i]);
 	for (int i = 0; i < SOUNDS; i++)
-		m_pSource[i] = m_pSound->addSoundSourceFromFile(SOUND_PATH[i]);
+	{
+		bool loaded = m_soundBuffer[i].loadFromFile(SOUND_PATH[i]);
+		m_sound[i].setBuffer(m_soundBuffer[i]);
+		//	if (!loaded)
+		//	return false;
+	}
+	for (int i = 0; i < MUSICS; i++)
+	{
+		bool opened = m_music[i].openFromFile(MUSIC_PATH[i]);
+		//	if (!opened)
+		//	return false;
+	}
 
 	return true;
 }
 
 void Audio::play(Sound sound)
 {
-	m_pSound->play2D(m_pSource[sound]);
+	m_sound[sound].play();
 }
 
 void Audio::stop(Sound sound)
 {
+	m_sound[sound].stop();
 }
 
 void Audio::playMusic(Music music, bool looped)
 {
-	return;
-	if (m_pSound->isCurrentlyPlaying(m_pSourceMusic[music]))
+	if (m_music->getStatus() == sf::SoundSource::Status::Playing)
 		return;
 
-	m_pSound->play2D(m_pSourceMusic[music], looped);
+	m_music[music].setLoop(looped);
+	m_music[music].play();
 }
 
 void Audio::stopMusic(Music music)
 {
+	m_music[music].stop();
 }
 
 void Audio::stopAll()
 {
-}
-
-void Audio::release()
-{
-	if (m_pSound)
-		m_pSound->drop();
+	for (int i = 0; i < MUSICS; i++)
+		m_music[i].stop();
+	for (int i = 0; i < SOUNDS; i++)
+		m_sound[i].stop();
 }

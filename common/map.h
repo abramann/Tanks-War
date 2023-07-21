@@ -3,7 +3,7 @@
 
 #ifndef _MAP_H
 #define _MAP_H
-#include "constants.h"
+#include "types.h"
 #include <vector>
 
 class Game;

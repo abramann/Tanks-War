@@ -12,7 +12,6 @@ ClientPlayer::ClientPlayer() : m_handleInput(true)
 {
 }
 
-
 ClientPlayer::~ClientPlayer()
 {
 }
@@ -34,7 +33,7 @@ void ClientPlayer::update(float frameTime)
 	m_act = PLAYER_ACT_NONE;
 	if (m_handleInput)
 		handleInput();
-	
+
 	m_pCamera->update(m_position);
 	Player::update(frameTime);
 }
@@ -101,7 +100,6 @@ void ClientPlayer::handleInput()
 	else if (m_pInput->isKeyIn(m_left))
 		executeLeft();
 }
-
 
 #endif
 #endif

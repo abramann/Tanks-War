@@ -30,10 +30,10 @@ void TanksWarServer::update()
 void TanksWarServer::render()
 {
 	m_pInterface->show();
-	if(m_pServer->getState() == SERVER_RUNNING_HANDLING)
+	if (m_pServer->getState() == SERVER_RUNNING_HANDLING)
 	{
 		// m_pMap->draw();
 	//	for (auto pClientData : m_pServer->getClientData())
 		//	pClientData->draw();
-	}	
-} 
+	}
+}

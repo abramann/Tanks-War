@@ -3,7 +3,7 @@
 
 #ifndef _IMAGE_H
 #define _IMAGE_H
-#include "constants.h"
+#include "types.h"
 #include "texture.h"
 
 class Game;
@@ -22,7 +22,7 @@ public:
 	virtual void update();
 	virtual void draw() const;
 	virtual V3 getRotateCenter() const;
-	
+
 	int16 getHeight() const { return m_height; }
 	int16 getVertices() const { return m_vertices; }
 	int16 getWidth() const { return m_width; }

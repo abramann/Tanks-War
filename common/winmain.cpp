@@ -2,7 +2,7 @@
 // Note this file is influenced by winmain.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 // Note parts of this code are licensed under CC BY 3.0
 
-#include "constants.h"
+#include "types.h"
 #ifdef _CLIENT_BUILD
 #include "..\Tanks-War\tankswar.h"
 typedef TanksWar GameBuildType;
@@ -15,10 +15,13 @@ typedef TanksWarServer GameBuildType;
 
 #ifdef _DEBUG
 #include "vld\vld.h" // For detect memory leaks
+
+#pragma comment(lib,"sfml-audio-d.lib")
+#else
+#pragma comment(lib,"sfml-audio.lib")
 #endif
 #pragma comment(lib,"winmm.lib")
 #pragma comment(lib,"Ws2_32.lib")
-//#pragma comment(lib,"d3dx9.lib")
 #ifdef _BUILD_WITH_D3D9
 #pragma comment(lib,"d3d9.lib")
 #else ifdef _BUILD_WITH_D3D11

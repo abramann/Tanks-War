@@ -150,7 +150,7 @@ bool Graphics::initialize(const Game* game)
 	m_lpDeviceContext->PSSetShader(m_lpPShader.Get(), 0, 0);
 	D3D11_BUFFER_DESC desc = {};
 	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.ByteWidth = sizeof(D3DXMATRIX);
+	desc.ByteWidth = sizeof(Matrix);
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
@@ -259,35 +259,22 @@ Result Graphics::end()
 	Result r = S_OK;
 	ImGui::EndFrame();
 	ImGui::Render();
-#ifdef _BUILD_WITH_D3D9
-	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-	r = m_lpDevice3d->EndScene();
-#else _BUILD_WITH_D3D11
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-#endif
 	return r;
 }
 
 LPDevice Graphics::getDevice() const
 {
-#ifdef _BUILD_WITH_D3D9
-	return m_lpDevice3d;
-#else ifdef _BUILD_WITH_D3D11
 	return m_lpDevice3d.Get();
-#endif
 }
 
 Result Graphics::showBackbuffer()
 {
 	Result r;
-#ifdef _BUILD_WITH_D3D9
-	r = m_lpDevice3d->Present(NULL, NULL, NULL, NULL);
-#else #ifdef _BUILD_WITH_D3D11
-	r = m_lpSwapChain->Present(0, 0);
-#endif
-
+	r = m_lpSwapChain->Present(g_gameInfo.vsync, 0);
 	if (SUCCEEDED(r))
 		::g_frameCounter++;
+
 	return r;
 }
 
@@ -306,7 +293,7 @@ void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCent
 {
 	Matrix rot = V3ToMatrix(rotate, MATRIX_TYPE_ROTATE),
 		rotCent = V3ToMatrix(rotateCenter, MATRIX_TYPE_TRANSLATE),
-		rotCentN = V3ToMatrix(-1 * rotateCenter, MATRIX_TYPE_TRANSLATE),
+		rotCentN = V3ToMatrix(rotateCenter * -1, MATRIX_TYPE_TRANSLATE),
 		scal = V3ToMatrix(scall, MATRIX_TYPE_SCALL),
 		pos = V3ToMatrix(position, MATRIX_TYPE_TRANSLATE);
 
@@ -492,6 +479,7 @@ void Graphics::setResolution(const Resolution& resolution)
 {
 	GameInfo info;
 	info.windowed = -1;
+	info.vsync = -1;
 	info.width = resolution.width;
 	info.height = resolution.height;
 	FileIO::createGameInfo(info);

@@ -2,7 +2,7 @@
 // Author: abramann
 // Note this file is influenced by GameTimer.h from F.Luna's Introduction To Game Programming in D3D11
 
-#include "constants.h"
+#include "types.h"
 
 class Timer
 {
@@ -27,7 +27,7 @@ private:
 	int32 m_expectedFrameTimeMillsec;
 	int16 m_fps;
 	int32 m_fpsUpdateDelay;
-#ifdef PLATFORM_WINDOWS
+#ifdef WIN32
 	int64 m_countsPerMillisecond;
 #endif
 };

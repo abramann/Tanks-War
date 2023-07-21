@@ -15,7 +15,7 @@ m_pTimer(0), m_pTextureManger(0), m_pMap(0)
 	memset(m_sIP, 0, netNS::IP_SIZE);
 	memset(m_sData, 0, networkNS::MAX_PACKET_SIZE);
 	memset(m_rData, 0, networkNS::MAX_PACKET_SIZE);
-	m_pCpsIni =  (CpsIni*)&m_rData;
+	m_pCpsIni = (CpsIni*)&m_rData;
 	m_pCpsPresent = (CpsPresent*)&m_rData;
 	m_pCpsDisconnect = (CpsDisconnect*)&m_rData;
 	m_pCpsPlayerAct = (CpsPlayerAct*)&m_rData;
@@ -30,8 +30,8 @@ m_pTimer(0), m_pTextureManger(0), m_pMap(0)
 
 Server::~Server()
 {
-	if(isStarted())
-	stop();
+	if (isStarted())
+		stop();
 }
 
 void Server::initialize(const Game* game)
@@ -51,8 +51,8 @@ void Server::update()
 {
 	if (!isStarted())
 		return;
-		for (auto& pClientData : m_pClientData)
-			pClientData->update();
+	for (auto& pClientData : m_pClientData)
+		pClientData->update();
 
 	//checkClients();
 
@@ -96,7 +96,6 @@ void Server::start()
 	FileIO::createServerInfo(serverInfo);
 	if (m_net.createServer(m_serverPort, netNS::UDP) == netNS::NET_OK)
 		m_state = SERVER_RUNNING_WAITING;
-	
 }
 
 void Server::getClients()
@@ -156,9 +155,9 @@ void Server::postPlayersIniData()
 		strcpy_s(initData[i].name, m_pClientData[i]->getName());
 		initData[i].id = m_pClientData[i]->getID();
 	}
-	
+
 	int size = sizeof(SpsPlayersInitData) * connectedClients;
-//	size = 255;
+	//	size = 255;
 	post(size);
 }
 
@@ -181,7 +180,7 @@ void Server::postPlayersUpdate()
 		m_pSpsPlayerUpdate->playerUpdate[i].id = m_pClientData[i]->getID();
 	}
 
-	int size = sizeof(PacketType) +  sizeof(PlayerUpdate) * connectedClients;
+	int size = sizeof(PacketType) + sizeof(PlayerUpdate) * connectedClients;
 	//size = 255;
 	post(size);
 }
@@ -234,7 +233,7 @@ PlayerID Server::recvID(bool wait)
 	bool result = false;
 	Port port = 0;
 	bool recieved = recv(wait);
-	if(recieved)
+	if (recieved)
 		for (auto pClientData : m_pClientData)
 		{
 			if (strcmp(m_IP, pClientData->getIP()) == 0 && m_port == pClientData->getPort())
@@ -257,8 +256,7 @@ bool Server::recv(bool wait)
 			result = true;
 			break;
 		}
-	}
-	while (wait);
+	} while (wait);
 
 	return result;
 }
@@ -321,11 +319,11 @@ void Server::applyPlayerAct()
 			post(sizeof(m_pSpsPlayerAct));
 		}
 	}
-	
+
 	switch (act)
 	{
 	case PLAYER_ACT_NONE:
-	break; 
+		break;
 	case PLAYER_ACT_FORWRAD:
 		serverPlayer.executeForward();
 		break;
@@ -368,12 +366,12 @@ bool Server::addClient()
 {
 	for (auto pClientData : m_pClientData)
 		if (pClientData->getPort() == m_port)
-			if(strcmp(pClientData->getIP(), m_IP) == 0)
-			return false;
-	
+			if (strcmp(pClientData->getIP(), m_IP) == 0)
+				return false;
+
 	PlayerID id = generateID();
 	m_pSpsIni->id = id;
-	std::shared_ptr<ClientData> pClientData = std::make_shared<ClientData>(id, m_pCpsIni->name, m_IP, m_port,m_pGame);
+	std::shared_ptr<ClientData> pClientData = std::make_shared<ClientData>(id, m_pCpsIni->name, m_IP, m_port, m_pGame);
 	Space space = m_pMap->getRandomEmptySpace();
 	V3 position = V3(space.v1.x, space.v1.y, 0);
 	pClientData->serverPlayer.setPosition(position);
@@ -405,7 +403,7 @@ PlayerID Server::getLastRecieverId()
 	PlayerID id = 0;
 	for (auto pClientData : m_pClientData)
 	{
-		if (strcmp(pClientData->getIP() , m_IP) == 0 && pClientData->getPort() == m_port)
+		if (strcmp(pClientData->getIP(), m_IP) == 0 && pClientData->getPort() == m_port)
 		{
 			id = pClientData->getID();
 			break;
