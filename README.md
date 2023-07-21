@@ -28,7 +28,7 @@ F - Shoot
 ## How to build
 
 
-To build the game, you will need the Visual Studio 2015 (MSVC v140) or above. The needed DX headers and libraries are included in common folder. 
+To build the game, you will need the Visual Studio 2015 (MSVC v140) or above. The needed libraries are included in common folder. 
 
 
 ## Credits
