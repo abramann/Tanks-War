@@ -1,9 +1,9 @@
 // server.h
 // Author: abramann
 
-#ifndef _SERVER_H
-#define _SERVER_H
-#include "constants.h"
+#pragma once
+
+#include "types.h"
 
 #include "crc32.h"
 #include "texturemanger.h"
@@ -117,5 +117,3 @@ private:
 	SpsPlayerAct* m_pSpsPlayerAct;
 	PacketType* m_pPacketType;
 };
-
-#endif

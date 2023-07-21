@@ -2,8 +2,8 @@
 // Author: abramann.h
 // Note this file is influenced by audio.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 
-#ifndef _AUDIO_H
-#define _AUDIO_H
+#pragma once
+
 #include "types.h"
 #include "sfml\Audio.hpp"
 
@@ -72,5 +72,3 @@ private:
 	sf::Sound m_sound[SOUNDS];
 	sf::Music m_music[MUSICS];
 };
-
-#endif

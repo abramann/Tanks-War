@@ -1,8 +1,8 @@
 // player.h
 // Author: abramann
 
-#ifndef _PLAYER_H
-#define _PLAYER_H
+#pragma once
+
 #include "tank.h"
 
 enum PlayerType
@@ -29,5 +29,3 @@ protected:
 	PlayerID m_id;
 	char m_name[gameNS::MAX_NAME_LEN];
 };
-
-#endif

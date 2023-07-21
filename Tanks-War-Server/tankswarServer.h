@@ -1,8 +1,7 @@
 // tankswarserver.h
 // Author: abramann
 
-#ifndef _TANKSWARSERVER_H
-#define _TANKSWARSERVER_H
+#pragma once
 
 #include "game.h"
 #include "server.h"
@@ -19,5 +18,3 @@ public:
 
 private:
 };
-
-#endif

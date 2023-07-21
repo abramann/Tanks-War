@@ -6,8 +6,8 @@
 // gameError.h v1.2
 // Error class thrown by game engine.
 
-#ifndef _GAMEERROR_H            // Prevent multiple definitions if this
-#define _GAMEERROR_H            // file is included in more than one place
+#pragma once
+
 #define WIN32_LEAN_AND_MEAN
 
 class GameError;
@@ -54,5 +54,3 @@ public:
 	const char* getMessage() const throw() { return message.c_str(); }
 	int getErrorCode() const { return errorCode; }
 };
-
-#endif

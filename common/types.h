@@ -3,8 +3,8 @@
 // Note this file is influenced by constant.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 // Note parts of this code are licensed under CC BY 3.0
 
-#ifndef _CONSTANTS_H            // Prevent multiple definitions if this
-#define _CONSTANTS_H            // file is included in more than one place
+#pragma once
+
 #define WIN32_LEAN_AND_MEAN
 #include "gameerror.h"
 #include "net.h"
@@ -278,5 +278,3 @@ struct SpsDisconnect
 };
 
 extern GameInfo g_gameInfo;
-
-#endif

@@ -2,8 +2,6 @@
 // Author: abramann
 
 #ifdef _CLIENT_BUILD
-#ifndef _CLIENT_H
-#define _CLIENT_H
 #include "clientplayer.h"
 #include "game.h"
 #include "fileio.h"
@@ -114,5 +112,4 @@ void ClientPlayer::handleInput()
 		executeAttack();
 }
 
-#endif
 #endif

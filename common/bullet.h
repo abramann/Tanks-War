@@ -1,8 +1,7 @@
 // bullet.h
 // Author: abamann
 
-#ifndef _BULLET_H
-#define _BULLET_H
+#pragma once
 #include "types.h"
 #include "image.h"
 
@@ -42,5 +41,3 @@ private:
 	float m_speed, m_damage;
 	bool m_hit, m_finish;
 };
-
-#endif

@@ -1,8 +1,8 @@
 // image.h
 // Author: abramann
 
-#ifndef _IMAGE_H
-#define _IMAGE_H
+#pragma once
+
 #include "types.h"
 #include "texture.h"
 
@@ -71,5 +71,3 @@ private:
 
 	bool m_animate;
 };
-
-#endif

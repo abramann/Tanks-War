@@ -6,8 +6,8 @@
 // Programming 2D Games Copyright (c) 2011 by: Charles Kelly
 // game.h
 
-#ifndef _GAME_H
-#define _GAME_H
+#pragma once
+
 #include "types.h"
 /*#include "graphics.h"
 #include "input.h"
@@ -79,5 +79,3 @@ protected:
 	float m_timeDeltaMillsec;
 	float m_fps;
 };
-
-#endif

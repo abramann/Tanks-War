@@ -2,8 +2,8 @@
 // Author: abramann
 // Note this file is influenced by texture.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 
-#ifndef _TEXTURE_H
-#define _TEXTURE_H
+#pragma once
+
 #include "types.h"
 #include "graphics.h"
 
@@ -28,5 +28,3 @@ protected:
 	LPTextureD3D m_lpTexture;
 	uint32 m_width, m_height;
 };
-
-#endif

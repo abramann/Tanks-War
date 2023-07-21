@@ -1,8 +1,8 @@
 // map.h
 // Author: abramann
 
-#ifndef _MAP_H
-#define _MAP_H
+#pragma once
+
 #include "types.h"
 #include <vector>
 
@@ -67,5 +67,3 @@ private:
 	V2 m_tiledSize;
 	char m_loadedMap[gameNS::MAX_NAME_LEN];
 };
-
-#endif

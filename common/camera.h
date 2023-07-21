@@ -1,8 +1,7 @@
 // camera.h
 // Author: abramann
 
-#ifndef _CAMERA_H
-#define _CAMERA_H
+#pragma once
 #include "types.h"
 
 class Game;
@@ -27,5 +26,3 @@ private:
 		m_nearPlane, m_farPlane,
 		m_z;
 };
-
-#endif

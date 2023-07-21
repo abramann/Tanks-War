@@ -1,5 +1,7 @@
-#include<math.h>
-#include<assert.h>
+#include <math.h>
+#include <assert.h>
+
+#pragma once
 
 using namespace std;
 

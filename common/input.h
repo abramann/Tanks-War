@@ -1,8 +1,8 @@
 // input.h
 // Author: abramann
 
-#ifndef _INPUT_H
-#define _INPUT_H
+#pragma once
+
 #include "types.h"
 
 class Input
@@ -23,5 +23,3 @@ private:
 
 	HWND m_hwnd;
 };
-
-#endif

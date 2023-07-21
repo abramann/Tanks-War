@@ -1,5 +1,4 @@
-#ifndef _INTERFACE_H
-#define _INTERFACE_H
+#pragma once
 
 class Game;
 class Graphics;
@@ -67,5 +66,3 @@ private:
 	Server* m_pServer;
 #endif
 };
-
-#endif

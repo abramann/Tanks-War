@@ -1,8 +1,7 @@
 // tankswar.h
 // Author: abramann
 
-#ifndef _TANKSWAR_H
-#define _TANKSWAR_H
+#pragma once
 
 #include "game.h"
 #include "tank.h"
@@ -26,5 +25,3 @@ private:
 	uint8_t m_players;
 	char* m_pServerIP;
 };
-
-#endif

@@ -2,6 +2,8 @@
 // Author: abramann
 // Note this file is influenced by GameTimer.h from F.Luna's Introduction To Game Programming in D3D11
 
+#pragma once
+
 #include "types.h"
 
 class Timer

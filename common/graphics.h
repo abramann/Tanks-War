@@ -2,8 +2,8 @@
 // Author: abramann
 // Note this file is influenced by graphics.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 
-#ifndef _GRAPHICS_H
-#define _GRAPHICS_H
+#pragma once
+
 #include "types.h"
 #include <memory>
 #ifdef _BUILD_WITH_D3D11
@@ -98,5 +98,3 @@ private:
 	DWORD m_deviceState;
 	std::shared_ptr<Camera> m_pCamera;
 };
-
-#endif

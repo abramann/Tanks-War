@@ -2,8 +2,6 @@
 // Author: abramann
 
 #pragma once
-//#ifndef _CLIENT_H
-//#define _CLIENT_H
 #include "types.h"
 #include "clientplayer.h"
 #include "serverplayer.h"
@@ -93,5 +91,3 @@ private:
 	std::vector<std::shared_ptr<ClientData> > m_pClientData;
 	std::shared_ptr<ClientPlayer> m_pClientPlayer;
 };
-
-//#endif

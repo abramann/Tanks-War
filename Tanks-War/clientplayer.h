@@ -1,8 +1,7 @@
 // clientplayer.h
 // Author: abramann
 
-#ifndef _CLIENTPLAYER_H
-#define _CLIENTPLAYER_H
+#pragma once
 #include "player.h"
 
 class Input;
@@ -34,5 +33,3 @@ protected:
 	Key m_forward, m_back, m_right, m_left, m_attack;
 	bool m_handleInput;
 };
-
-#endif

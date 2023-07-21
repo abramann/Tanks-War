@@ -1,8 +1,8 @@
 // fileio.h
 // Author: abramann
 
-#ifndef _FILEIO_H
-#define _FILE_IO_H
+#pragma once
+
 #include "types.h"
 #include <memory>
 #include <string>
@@ -36,5 +36,3 @@ private:
 	static void readValues(std::ifstream & file, std::initializer_list<T*> values);
 	static void readValues(std::ifstream & file, std::initializer_list<std::string*> values);
 };
-
-#endif

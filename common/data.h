@@ -1,6 +1,8 @@
 #include "imgui\imgui_impl_win32.h"
 #include <D3D11.h>
 
+#pragma once
+
 typedef ImGuiKey Key;
 
 constexpr float PI = 3.1415926535897f;
