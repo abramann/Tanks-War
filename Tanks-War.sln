@@ -3,71 +3,36 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tanks-War", "Tanks-War\Tanks-War.vcxproj", "{8C8B036E-1332-402C-953D-C7F2418D353C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "src\Client\Client.vcxproj", "{C37737FD-C81E-46C2-9146-970CBDBE90F7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tanks-War-Server", "Tanks-War-Server\Tanks-War-Server.vcxproj", "{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "src\Server\Server.vcxproj", "{39559228-4481-4741-B881-E27975877C86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug D3D11 C|x64 = Debug D3D11 C|x64
-		Debug D3D11 C|x86 = Debug D3D11 C|x86
-		Debug D3D11 S|x64 = Debug D3D11 S|x64
-		Debug D3D11 S|x86 = Debug D3D11 S|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Release D3D11 C|x64 = Release D3D11 C|x64
-		Release D3D11 C|x86 = Release D3D11 C|x86
-		Release D3D11 S|x64 = Release D3D11 S|x64
-		Release D3D11 S|x86 = Release D3D11 S|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Debug D3D11 C|x64.ActiveCfg = Debug D3D11 C|x64
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Debug D3D11 C|x64.Build.0 = Debug D3D11 C|x64
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Debug D3D11 C|x86.ActiveCfg = Debug D3D11 C|Win32
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Debug D3D11 C|x86.Build.0 = Debug D3D11 C|Win32
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Debug D3D11 S|x64.ActiveCfg = Debug|x64
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Debug D3D11 S|x86.ActiveCfg = Debug|Win32
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Debug|x64.ActiveCfg = Debug|x64
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Debug|x64.Build.0 = Debug|x64
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Debug|x86.ActiveCfg = Debug|Win32
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Debug|x86.Build.0 = Debug|Win32
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Release D3D11 C|x64.ActiveCfg = Release D3D11 C|x64
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Release D3D11 C|x64.Build.0 = Release D3D11 C|x64
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Release D3D11 C|x86.ActiveCfg = Release D3D11 C|Win32
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Release D3D11 C|x86.Build.0 = Release D3D11 C|Win32
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Release D3D11 S|x64.ActiveCfg = Release|x64
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Release D3D11 S|x86.ActiveCfg = Release|Win32
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Release|x64.ActiveCfg = Release|x64
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Release|x64.Build.0 = Release|x64
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Release|x86.ActiveCfg = Release|Win32
-		{8C8B036E-1332-402C-953D-C7F2418D353C}.Release|x86.Build.0 = Release|Win32
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Debug D3D11 C|x64.ActiveCfg = Debug D3D11 S|x64
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Debug D3D11 C|x86.ActiveCfg = Debug D3D11 S|Win32
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Debug D3D11 S|x64.ActiveCfg = Debug D3D11 S|x64
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Debug D3D11 S|x64.Build.0 = Debug D3D11 S|x64
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Debug D3D11 S|x86.ActiveCfg = Debug D3D11 S|Win32
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Debug D3D11 S|x86.Build.0 = Debug D3D11 S|Win32
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Debug|x64.ActiveCfg = Debug|x64
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Debug|x64.Build.0 = Debug|x64
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Debug|x86.ActiveCfg = Debug|Win32
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Debug|x86.Build.0 = Debug|Win32
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Release D3D11 C|x64.ActiveCfg = Release D3D11 S|x64
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Release D3D11 C|x86.ActiveCfg = Release D3D11 S|Win32
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Release D3D11 S|x64.ActiveCfg = Release D3D11 S|x64
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Release D3D11 S|x64.Build.0 = Release D3D11 S|x64
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Release D3D11 S|x86.ActiveCfg = Release D3D11 S|Win32
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Release D3D11 S|x86.Build.0 = Release D3D11 S|Win32
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Release|x64.ActiveCfg = Release|x64
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Release|x64.Build.0 = Release|x64
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Release|x86.ActiveCfg = Release|Win32
-		{52320ABE-B4B8-4A90-91CD-22340FE0AEA4}.Release|x86.Build.0 = Release|Win32
+		{C37737FD-C81E-46C2-9146-970CBDBE90F7}.Debug|x64.ActiveCfg = Debug|x64
+		{C37737FD-C81E-46C2-9146-970CBDBE90F7}.Debug|x64.Build.0 = Debug|x64
+		{C37737FD-C81E-46C2-9146-970CBDBE90F7}.Debug|x86.ActiveCfg = Debug|Win32
+		{C37737FD-C81E-46C2-9146-970CBDBE90F7}.Debug|x86.Build.0 = Debug|Win32
+		{C37737FD-C81E-46C2-9146-970CBDBE90F7}.Release|x64.ActiveCfg = Release|x64
+		{C37737FD-C81E-46C2-9146-970CBDBE90F7}.Release|x64.Build.0 = Release|x64
+		{C37737FD-C81E-46C2-9146-970CBDBE90F7}.Release|x86.ActiveCfg = Release|Win32
+		{C37737FD-C81E-46C2-9146-970CBDBE90F7}.Release|x86.Build.0 = Release|Win32
+		{39559228-4481-4741-B881-E27975877C86}.Debug|x64.ActiveCfg = Debug|x64
+		{39559228-4481-4741-B881-E27975877C86}.Debug|x64.Build.0 = Debug|x64
+		{39559228-4481-4741-B881-E27975877C86}.Debug|x86.ActiveCfg = Debug|Win32
+		{39559228-4481-4741-B881-E27975877C86}.Debug|x86.Build.0 = Debug|Win32
+		{39559228-4481-4741-B881-E27975877C86}.Release|x64.ActiveCfg = Release|x64
+		{39559228-4481-4741-B881-E27975877C86}.Release|x64.Build.0 = Release|x64
+		{39559228-4481-4741-B881-E27975877C86}.Release|x86.ActiveCfg = Release|Win32
+		{39559228-4481-4741-B881-E27975877C86}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {D67F8996-4321-4693-8EFE-65A64BAB4954}
 	EndGlobalSection
 EndGlobal
