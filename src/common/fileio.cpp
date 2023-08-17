@@ -76,20 +76,11 @@ GameInfo FileIO::readGameInfo()
 	GameInfo gameInfo = { 0 };
 	std::ifstream file(fileNS::GAME_INFO_PATH);
 	if (!file.is_open())
-	{
-		MessageBoxA(nullptr, "Failed to read game info!", "ERROR", 0);
-		GameInfo defGameInfo;
-		defGameInfo.width = gameNS::MIN_RESOLUTION_WIDTH, defGameInfo.height = gameNS::MIN_RESOLUTION_HEIGHT;
-		defGameInfo.windowed = gameNS::WINDOWED_DEFAULT;
-		defGameInfo.vsync = gameNS::VSYNC_DEFAULT;
-		createGameInfo(defGameInfo);
-		return defGameInfo;
-	}
+		createGameInfo();
 
 	std::string line;
-	readValues<int8>(file, { &gameInfo.windowed });
 	readValues<int16>(file, { &gameInfo.width, &gameInfo.height });
-	readValues<int8>(file, { &gameInfo.vsync });
+	readValues<bool>(file, { &gameInfo.windowed, &gameInfo.vsync , &gameInfo.audio, &gameInfo.computeShader });
 	return gameInfo;
 }
 
@@ -109,14 +100,14 @@ MapData FileIO::readMapInfo(std::ifstream& ifs)
 	return mapData;
 }
 
-Crc32 FileIO::getCRC32(const char* file)
+Crc32 FileIO::getCRC32(const std::string& file)
 {
 	Crc32 result = 0;
 	std::ifstream f(file, std::ios::binary | std::ios::ate);
 	if (!f.is_open())
 		return result;
 
-	std::streamsize size = f.tellg();
+	size_t size = static_cast<size_t>(f.tellg());
 	f.seekg(0, std::ios::beg);
 	std::vector<char> buffer(size);
 	if (f.read(buffer.data(), size))
@@ -139,12 +130,12 @@ ClientInfo FileIO::readClientInfo()
 	return clientInfo;
 }
 
-void FileIO::createClientInfo(const ClientInfo& clientInfo)
+void FileIO::createClientInfo(const ClientInfo* pClientInfo)
 {
 	std::ofstream file(fileNS::CLIENT_INFO_PATH);
-	file << "PlayerName =" << clientInfo.name << std::endl;
-	file << "ServerIP =" << clientInfo.serverIP << std::endl;
-	file << "Port =" << clientInfo.serverPort;
+	file << "PlayerName =" << pClientInfo->name << '\n'
+		<< "ServerIP =" << pClientInfo->serverIP << '\n'
+		<< "Port =" << pClientInfo->serverPort << std::endl;
 }
 
 #else #ifdef _SERVER_BUILD
@@ -167,23 +158,36 @@ ServerInfo FileIO::readServerInfo()
 }
 #endif
 
-void FileIO::createGameInfo(const GameInfo& info)
+void FileIO::createGameInfo(const GameInfo* info)
 {
-	/*if (!info.isValid())
+	int16 width, height;
+	bool windowed, vsync, audio, computeShader;
+	if (info == nullptr)
 	{
-		GameInfo oInfo = readGameInfo();
-		int8 windowed = (info.isInvalidWindowed()) ? oInfo.windowed : info.windowed; // check if windowed requires to change in case change width and height only
-		int8 vsync = (info.isInvalidVSync()) ? oInfo.vsync : info.vsync; // check if vsync requires to change in case change width and height only
-		width = (info.width == -1) ? oInfo.width : info.width; // check if width and height require to change in case change windowed only
-		height = (info.height == -1) ? oInfo.height : info.height;
+		width = gameNS::MIN_RESOLUTION_WIDTH;
+		height = gameNS::MIN_RESOLUTION_HEIGHT;
+		windowed = gameNS::WINDOWED_DEFAULT;
+		vsync = gameNS::VSYNC_DEFAULT;
+		audio = gameNS::AUDIO_DEFAULT;
+		computeShader = gameNS::COMPUTESHADER_DEFAULT;
+	}
+	else
+	{
+		width = info->width;
+		height = info->height;
+		windowed = info->windowed;
+		vsync = info->vsync;
+		audio = info->audio;
+		computeShader = info->computeShader;
+	}
 
-	}*/
-	system("mkdir Assets\\ini");
 	std::ofstream file(fileNS::GAME_INFO_PATH);
-	file << "Width=" << std::to_string(info.width) << std::endl;
-	file << "Height=" << std::to_string(info.height) << std::endl;
-	file << "Windowed=" << std::to_string(info.windowed) << std::endl;
-	file << "VSync=" << std::to_string(info.vsync) << std::endl;
+	file << "Width=" << std::to_string(width) << '\n'
+		<< "Height=" << std::to_string(height) << '\n'
+		<< "Windowed=" << std::to_string(windowed) << '\n'
+		<< "VSync=" << std::to_string(vsync) << '\n'
+		<< "Audio=" << std::to_string(audio) << '\n'
+		<< "Compute Shader=" << std::to_string(computeShader) << std::endl;
 }
 
 inline std::string getTargetEqualStringValue(std::string str)

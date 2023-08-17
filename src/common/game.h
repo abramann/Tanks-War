@@ -49,6 +49,15 @@ public:
 	virtual void update() = 0;
 	virtual void render() = 0;
 
+	bool m_onResize;
+
+	bool checkGameFiles() const;
+	void setResolution(int16 width, int16 height) const;
+	void setWindowed(bool windowed) const;
+	Resolution getResolution() const;
+	bool isWindowed() const;
+	void showLogo() const;
+
 	Graphics* getGraphics()	const { return m_pGraphics.get(); }
 	Input* getInput()	const { return m_pInput.get(); }
 	Audio* getAudio()	const { return m_pAudio.get(); }

@@ -28,13 +28,13 @@ public:
 
 	TextureManger();
 	~TextureManger();
-	bool initialize(Graphics* graphics);
-	Texture* getTexture(uint8_t texture) { return &m_pTexture[texture]; }
+	void initialize(Graphics* graphics);
+	Texture* getTexture(std::string texture) { return &m_pTexture[texture]; }
 
 private:
 
-	bool load();
+	void load();
 
 	Graphics* m_pGraphics;
-	Texture m_pTexture[TEXTURES];
+	std::map<std::string, Texture> m_pTexture;
 };

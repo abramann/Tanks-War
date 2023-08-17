@@ -1,15 +1,15 @@
-// client.h
+// client.cpp
 // Author: abramann
 
 #include "client.h"
 #include "..\common\fileio.h"
-#include "..\common\game.h"
+#include "tankswar.h"
 #include "..\common\net.h"
 #include "..\common\tank.h"
 #include "..\common\map.h"
 #include "..\common\timer.h"
 
-Client::Client() : m_gamePlayers(0), m_state(CLIENT_UNCONNECTED), m_presentTime(0)
+Client::Client() : m_gamePlayers(0), m_status(CLIENT_UNCONNECTED), m_presentTime(0)
 {
 	memset(m_map, 0, gameNS::MAX_NAME_LEN);
 	m_pCpsIni = (CpsIni*)&m_sData;
@@ -31,7 +31,7 @@ Client::~Client()
 {
 }
 
-void Client::initialize(Game* game)
+void Client::initialize(TanksWar* game)
 {
 	m_pGame = game;
 	m_pMap = game->getMap();
@@ -40,14 +40,15 @@ void Client::initialize(Game* game)
 	m_pGraphics = game->getGraphics();
 	m_pInput = game->getInput();
 	m_pTimer = game->getTimer();
-	m_clientInfo = FileIO::readClientInfo();
+	m_pServerIP = game->getServerIP();
+	m_pClientName = game->getPlayerName();
 }
 
 void Client::update(int64 frameTime)
 {
 	//if (isConnected())
 	//	present();
-	if (m_state == CLIENT_CONNECTED_PLAYING)
+	if (m_status == CLIENT_CONNECTED_PLAYING)
 	{
 		m_pClientPlayer->update(frameTime);
 		checkClientPlayerAct();
@@ -91,10 +92,11 @@ void Client::update(int64 frameTime)
 
 bool Client::connect()
 {
-	FileIO::createClientInfo(m_clientInfo);
-	m_net.createClient(m_clientInfo.serverIP, m_clientInfo.serverPort, netNS::UDP);
+	//FileIO::createClientInfo(m_clientInfo);
+
+	m_net.createClient(m_pServerIP, m_serverPort, netNS::UDP);
 	m_pCpsIni->packetType = PACKET_INI;
-	strcpy(m_pCpsIni->name, m_clientInfo.name);
+	strcpy(m_pCpsIni->name, m_pClientName);
 	m_port = _rand(networkNS::MAX_PORT);
 	int size = sizeof(CpsIni);
 	send(size);
@@ -104,20 +106,20 @@ bool Client::connect()
 		strcpy(m_map, m_pSpsIni->map);
 		if (!m_pMap->isMapExist(m_map, m_pSpsIni->checksum))
 		{
-			m_state = CLIENT_UNCONNECTED_MAP_NOT_FOUND;
+			m_status = CLIENT_UNCONNECTED_MAP_NOT_FOUND;
 			m_net.closeSocket();
 			return false;
 		}
 
 		//	m_pCpsSeasson->packetType = PACKET_START_SEASSON;
 		//	send();
-		m_state = CLIENT_CONNECTED_PLAYING;
+		m_status = CLIENT_CONNECTED_PLAYING;
 		m_gamePlayers = m_pSpsIni->gamePlayers;
 		m_pClientPlayer->initialize(m_pSpsIni->id, m_pGame);
 		if (!m_pMap->load(m_map))
 		{
 			disconnect();
-			m_state = CLIENT_UNCONNECTED_MAP_NOT_LOAD;
+			m_status = CLIENT_UNCONNECTED_MAP_NOT_LOAD;
 			return false;
 		}
 
@@ -161,7 +163,7 @@ void Client::disconnect()
 	m_pCpsDisconnect->id = m_pClientPlayer->getID();
 	int size = sizeof(CpsDisconnect);
 	send(size);
-	m_state = CLIENT_UNCONNECTED_DISCONNECT;
+	m_status = CLIENT_UNCONNECTED_DISCONNECT;
 	m_net.closeSocket();
 	m_pClientData.clear();
 }
@@ -169,7 +171,7 @@ void Client::disconnect()
 void Client::send(int size)
 {
 	int s = size;
-	m_net.sendData(m_sData, s, m_clientInfo.serverIP, m_port);
+	m_net.sendData(m_sData, s, m_pServerIP, m_port);
 	sbClear();
 }
 
@@ -205,7 +207,7 @@ bool Client::recv()
 {
 	rbClear();
 	int size = 256;
-	m_net.readData(m_rData, size, m_clientInfo.serverIP, m_port);
+	m_net.readData(m_rData, size, m_pServerIP, m_port);
 	return (size > 0) ? true : false;
 }
 

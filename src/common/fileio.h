@@ -18,17 +18,17 @@ public:
 	static std::vector<std::string> getDirFileList(const char* dir, const char* start = 0, const char* end = 0, bool extension = true);
 	static 	GameInfo readGameInfo();
 	static MapData readMapInfo(std::ifstream& ifs);
-	static Crc32 getCRC32(const char* file);
+	static Crc32 getCRC32(const std::string& file);
 	static char* loadInMemory(const std::string name, uint32& size);
 
 #ifdef _CLIENT_BUILD
 	static ClientInfo readClientInfo();
-	static void createClientInfo(const ClientInfo& clientInfo);
+	static void createClientInfo(const ClientInfo* pClientInfo);
 #else ifdef _SERVER_BUILD
 	static ServerInfo readServerInfo();
 	static void createServerInfo(const ServerInfo& serverInfo);
 #endif
-	static void createGameInfo(const GameInfo& info);
+	static void createGameInfo(const GameInfo* info = nullptr);
 
 private:
 

@@ -50,9 +50,6 @@
     <ClInclude Include="..\common\map.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\matrix4x4.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\net.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
@@ -116,6 +113,9 @@
     <ClInclude Include="client.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\sprite.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\texturemanger.cpp">
@@ -166,9 +166,6 @@
     <ClCompile Include="..\common\map.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\matrix4x4.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\net.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
@@ -216,6 +213,9 @@
     </ClCompile>
     <ClCompile Include="client.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\sprite.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

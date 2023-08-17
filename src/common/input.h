@@ -15,7 +15,7 @@ public:
 	void handle(UINT msg, WPARAM wParam, LPARAM lParam);
 	bool isKeyDown(Key k);
 	bool isKeyPressed(Key k);
-	bool anyKeyPressed();
+	bool isAnyKeyPressed();
 
 	bool m_handleInput;
 

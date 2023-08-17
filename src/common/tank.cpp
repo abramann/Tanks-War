@@ -53,6 +53,7 @@ void Tank::executeAttack()
 	{
 		std::shared_ptr<Bullet> pBullet = std::make_shared<Bullet>(m_pGame, this);
 		m_pBullet.push_back(pBullet);
+		m_pAudio->play("tank-attack");
 	}
 }
 
@@ -68,7 +69,7 @@ void Tank::executeBack()
 
 void Tank::executeDie()
 {
-	m_pTexture = m_pTextureManger->getTexture(TEXTURE_TANK_DESTROY);
+	m_pTexture = m_pTextureManger->getTexture("tank-destroy");
 	Image::initialize(m_pTexture, m_pGame, textureNS::TEXTURE_TANK_DESTROY_ROWS_COLUMNS, textureNS::TEXTURE_TANK_DESTROY_ROWS_COLUMNS,
 		logicNS::UPDATE_DELAY_TANK_DESTORY);
 	Object::executeDie();
@@ -127,6 +128,7 @@ void Tank::playSoundLeft()
 
 void Tank::playSoundDie()
 {
+	m_pAudio->play("tank-destroy");
 }
 
 void Tank::playSoundAttack()

@@ -5,62 +5,54 @@
 #include "audio.h"
 #include "fileio.h"
 
-Audio::Audio()
+using namespace sf;
+
+Audio::Audio() : m_audioPlay(true)
 {
 }
 
 Audio::~Audio()
 {
-	stopAll();
+	safeDeleteArray(m_pSoundBuffer);
 }
 
-bool Audio::initialize()
+void Audio::initialize()
 {
-	for (int i = 0; i < SOUNDS; i++)
+	auto soundFiles = FileIO::getDirFileList(fileNS::AUDIO_DIR, 0, ".wav", false);
+	m_pSoundBuffer = new SoundBuffer[soundFiles.size()];
+	int8 notLoaded = 0;
+	for (size_t i = 0; i < soundFiles.size(); i++)
 	{
-		bool loaded = m_soundBuffer[i].loadFromFile(SOUND_PATH[i]);
-		m_sound[i].setBuffer(m_soundBuffer[i]);
-		//	if (!loaded)
-		//	return false;
+		std::string soundFile = soundFiles[i];
+		std::string sFile = strFormat("%s%s%s", fileNS::AUDIO_DIR, soundFile.c_str(), ".wav");
+		bool loaded = m_pSoundBuffer[i].loadFromFile(sFile);
+
+		m_soundAssembler[soundFile].setBuffer(m_pSoundBuffer[i]);
+		if (!loaded)
+		{
+			std::string msg = strFormat("Failed to load %s!", sFile.c_str());
+			messageBoxOk(msg, "WARNING");
+			notLoaded++;
+		}
 	}
-	for (int i = 0; i < MUSICS; i++)
+	if (notLoaded)
 	{
-		bool opened = m_music[i].openFromFile(MUSIC_PATH[i]);
-		//	if (!opened)
-		//	return false;
+		std::string msg = strFormat("%d audio file(s) could not be loaded", notLoaded);
+		messageBoxOk(msg, "WARNING");
 	}
-
-	return true;
 }
 
-void Audio::play(Sound sound)
+void Audio::play(std::string  sound)
 {
-	m_sound[sound].play();
+	if (m_audioPlay)
+		m_soundAssembler[sound].play();
 }
 
-void Audio::stop(Sound sound)
+void Audio::stop(std::string  sound)
 {
-	m_sound[sound].stop();
-}
-
-void Audio::playMusic(Music music, bool looped)
-{
-	if (m_music->getStatus() == sf::SoundSource::Status::Playing)
-		return;
-
-	m_music[music].setLoop(looped);
-	m_music[music].play();
-}
-
-void Audio::stopMusic(Music music)
-{
-	m_music[music].stop();
+	m_soundAssembler[sound].stop();
 }
 
 void Audio::stopAll()
 {
-	for (int i = 0; i < MUSICS; i++)
-		m_music[i].stop();
-	for (int i = 0; i < SOUNDS; i++)
-		m_sound[i].stop();
 }

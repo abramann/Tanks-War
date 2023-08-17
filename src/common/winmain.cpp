@@ -1,4 +1,6 @@
 // winmain.cpp
+// Author: abramann
+
 // Note this file is influenced by winmain.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 // Note parts of this code are licensed under CC BY 3.0
 
@@ -40,11 +42,6 @@ GameInfo g_gameInfo;
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	return game->messageHandler(hWnd, msg, wParam, lParam);
-}
-
-int message(std::string msg, int type)
-{
-	return MessageBoxA(NULL, msg.c_str(), "Tanks War", type);
 }
 
 bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
@@ -94,11 +91,15 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	game = std::make_shared<GameBuildType>();
+	bool filesExist = game->checkGameFiles();
+	if (!filesExist)
+		return 1;
+
 	HWND hwnd = NULL;
 	g_gameInfo = FileIO::readGameInfo();
 	if (!createGameWindow(hwnd, hInstance, nCmdShow))
 	{
-		message("CreateGameWindow() failed !", MB_OK);
+		messageBoxOk("CreateGameWindow() failed !", "ERROR");
 		return 1;
 	}
 
@@ -106,6 +107,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	try
 	{
 		game->initialize(hInstance, hwnd);
+#ifndef _DEBUG
+		game->showLogo();
+#endif
 		while (true)
 		{
 			// PeekMessage,non-blocking method for checking for Windows messages.
@@ -125,12 +129,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	catch (const GameError& err)
 	{
-		MessageBoxA(NULL, err.getMessage(), "EROR", MB_OK);
+		messageBoxOk(err.getMessage(), "ERROR");
 		DestroyWindow(hwnd);
 	}
 	catch (...)
 	{
-		MessageBoxA(NULL, "Unknown error occurded !", "ERROR", MB_OK);
+		messageBoxOk("Unknown error occurded !", "ERROR");
 		DestroyWindow(hwnd);
 	}
 

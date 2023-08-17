@@ -6,6 +6,7 @@
 
 #include "types.h"
 #include "sfml\Audio.hpp"
+#include <memory>
 
 enum Sound
 {
@@ -35,40 +36,22 @@ constexpr char* SOUND_PATH[] = {
 	"Assets\\audio\\sound-bullet-explosion.wav",
 };
 
-constexpr char* MUSIC_PATH[] =
-{
-	"Assets\\audio\\music-main-menu.wav",
-	"Assets\\audio\\music-game.mp3",
-	"Assets\\audio\\music-win.mp3",
-	"Assets\\audio\\music-lose.mp3"
-};
-
-enum Music
-{
-	MUSIC_MAIN_MENU,
-	MUSIC_GAME,
-	MUSIC_WIN,
-	MUSIC_LOSE,
-	MUSICS
-};
-
 class Audio
 {
 public:
 
 	Audio();
 	~Audio();
-	bool initialize();
-	void play(Sound sound);
-	void stop(Sound sound);
-	void playMusic(Music music, bool looped = true);
-	void stopMusic(Music music);
+	void initialize();
+	void play(std::string sound);
+	void stop(std::string  sound);
 	void stopAll();
 	void release();
+	bool isAudioPlaying() const { return m_audioPlay; }
 
 private:
 
-	sf::SoundBuffer m_soundBuffer[SOUNDS];
-	sf::Sound m_sound[SOUNDS];
-	sf::Music m_music[MUSICS];
+	bool m_audioPlay;
+	sf::SoundBuffer* m_pSoundBuffer;
+	std::map<std::string, sf::Sound> m_soundAssembler;
 };

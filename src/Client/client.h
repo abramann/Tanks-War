@@ -7,7 +7,7 @@
 #include "..\common\serverplayer.h"
 #include <memory>
 
-class Game;
+class TanksWar;
 class Map;
 class TextureManger;
 class Input;
@@ -31,17 +31,17 @@ public:
 	Client();
 	~Client();
 	bool connect();
-	bool isConnected() const { return (m_state == CLIENT_CONNECTED_WAITING || m_state == CLIENT_CONNECTED_PLAYING) ? true : false; }
+	bool isConnected() const { return (m_status == CLIENT_CONNECTED_WAITING || m_status == CLIENT_CONNECTED_PLAYING) ? true : false; }
 	char* getGameMap() { return (char*)m_map; }
-	char* getPlayerName() { return m_clientInfo.name; }
-	const char* getServerIP() { return m_clientInfo.serverIP; }
-	const ClientState getState() const { return m_state; }
+	//char* getPlayerName() { return m_clientInfo.name; }
+	//const char* getServerIP() { return m_clientInfo.serverIP; }
+	ClientStatus getStatus() const { return m_status; }
 	const size_t getConnectedPlayers()const { return m_pClientData.size(); }
 	const int8 getGamePlayers() const { return m_gamePlayers; }
-	Port* getServerPort() { return &m_clientInfo.serverPort; }
+	//Port* getServerPort() { return &m_clientInfo.serverPort; }
 	std::vector<std::shared_ptr<ClientData> > getClientData() { return m_pClientData; }
 	void disconnect();
-	void initialize(Game* game);
+	void initialize(TanksWar* game);
 	void present();
 	void update(int64 frameTime);
 	ClientPlayer* getClientPlayer() const { return m_pClientPlayer.get(); }
@@ -71,9 +71,8 @@ private:
 	Game* m_pGame;
 	Net m_net;
 	Port m_port;
-	ClientInfo m_clientInfo;
 	int8_t m_gamePlayers;
-	ClientState m_state;
+	ClientStatus m_status;
 	char m_map[gameNS::MAX_NAME_LEN];
 	CpsIni* m_pCpsIni;
 	CpsDisconnect* m_pCpsDisconnect;
@@ -90,4 +89,6 @@ private:
 	char m_rData[networkNS::MAX_PACKET_SIZE], m_sData[networkNS::MAX_PACKET_SIZE];
 	std::vector<std::shared_ptr<ClientData> > m_pClientData;
 	std::shared_ptr<ClientPlayer> m_pClientPlayer;
+	char* m_pServerIP, *m_pClientName;
+	Port m_serverPort;
 };

@@ -4,6 +4,7 @@
 #include "TanksWar.h"
 #include "..\common\interface.h"
 #include "..\common\input.h"
+#include "..\common\fileio.h"
 
 //#define TEST_NO_SERVER_INTERFACE
 #ifdef TEST_NO_SERVER_INTERFACE
@@ -34,6 +35,7 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 #else
 	m_pClient->initialize(this);
 	m_pInterface->initialize(m_pClient.get(), this);
+	m_clientInfo = FileIO::readClientInfo();
 #endif
 }
 
@@ -59,12 +61,13 @@ void TanksWar::update()
 	return;
 #endif
 	m_pClient->update(m_timeDeltaMillsec);
-	if (m_pClient->getState() == CLIENT_CONNECTED_PLAYING)
+
+	/*if (m_pClient->getState() == CLIENT_CONNECTED_PLAYING)
 		if (m_pInput->isKeyDown(inputNS::I_KEY))
 			if (m_pInterface->m_menu == MULTIPLAYER_MENU)
 				m_pInterface->m_menu = PLAYING_MENU;
 			else if (m_pInterface->m_menu == PLAYING_MENU)
-				m_pInterface->m_menu = MULTIPLAYER_MENU;
+				m_pInterface->m_menu = MULTIPLAYER_MENU;*/
 }
 
 void TanksWar::render()
@@ -74,7 +77,7 @@ void TanksWar::render()
 	tank2.draw();
 	return;
 #endif
-	if (m_pClient->getState() == CLIENT_CONNECTED_PLAYING)
+	if (m_pClient->getStatus() == CLIENT_CONNECTED_PLAYING)
 	{
 		m_pMap->draw();
 		ClientPlayer* clientPlayer = m_pClient->getClientPlayer();
@@ -83,10 +86,12 @@ void TanksWar::render()
 		for (auto element : pClientData)
 			element->serverPlayer.draw();
 	}
+	m_pInterface->render();
 
 	if (m_pClient->isConnected())
 		return;
-	switch (m_pInterface->m_menu)
+
+	/*switch (m_pInterface->m_menu)
 	{
 	case MAIN_MENU:
 		m_pInterface->mainMenu();
@@ -101,13 +106,16 @@ void TanksWar::render()
 		PostQuitMessage(0);
 	default:
 		break;
-	}
+	}*/
 }
 
-void TanksWar::onResetDevice()
+void TanksWar::updateClientInfo()
 {
+	FileIO::createClientInfo(&m_clientInfo);
 }
 
-void TanksWar::onLostDevice()
+void TanksWar::setServerPort(Port port)
 {
+	m_clientInfo.serverPort = port;
+	updateClientInfo();
 }

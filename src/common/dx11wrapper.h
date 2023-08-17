@@ -40,7 +40,6 @@ private:
 	void initBlend(D3D11_RENDER_TARGET_BLEND_DESC& rtbd);
 	Vertex* getVertexBufferData(LPVertexBuffer vb, uint32& size) const;
 
-
 	Microsoft::WRL::ComPtr<ID3D11Device> m_lpDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_lpDeviceContext;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_lpSwapChain;
@@ -56,5 +55,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_lpStagingBuffer;
 
 	HWND m_hwnd;
+	bool m_initialzed;
 };
-

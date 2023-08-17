@@ -10,14 +10,14 @@
 
 using namespace Microsoft::WRL;
 
-Dx11Wrapper::Dx11Wrapper()
+Dx11Wrapper::Dx11Wrapper() : m_initialzed(false)
 {
 }
 
-
 Dx11Wrapper::~Dx11Wrapper()
 {
-	ImGui_ImplDX11_Shutdown();
+	if (m_initialzed)
+		ImGui_ImplDX11_Shutdown();
 }
 
 bool Dx11Wrapper::initialize(const Game * game)
@@ -39,6 +39,7 @@ bool Dx11Wrapper::initialize(const Game * game)
 	if (!r)
 		return false;
 
+	m_initialzed = true;
 	return true;
 }
 
@@ -111,7 +112,7 @@ bool Dx11Wrapper::d3dInitialize()
 void Dx11Wrapper::d3dBegin()
 {
 	ImGui_ImplDX11_NewFrame();
-	float bgColor[4] = { 1.0f,1.0f,1.0f,1.0f };
+	float bgColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	m_lpDeviceContext->ClearRenderTargetView(m_lpRenderTargetView.Get(), bgColor);
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -148,14 +149,14 @@ bool Dx11Wrapper::loadSRVFromFile(const std::string & file, ID3D11ShaderResource
 	r = D3DX11GetImageInfoFromFileA(file.c_str(), 0, &info, &r);
 	if (FAILED(r))
 		return false;
-	
+
 	width = info.Width;
 	height = info.Height;
 
 	D3DX11CreateShaderResourceViewFromFileA(m_lpDevice.Get(), file.c_str(), 0, 0, &pSrv, &r);
 	if (FAILED(r))
 		return false;
-	
+
 	return true;
 }
 
@@ -242,7 +243,7 @@ void Dx11Wrapper::streamVertexBuffer(LPVertexBuffer vb)
 }
 
 ID3D11Buffer * Dx11Wrapper::createBuffer(uint32 size, D3D11_USAGE usage, D3D11_BIND_FLAG bindFlag, uint32 cpuAccess, void* initialData,
-	uint32 miscFlag , uint32 stride) const
+	uint32 miscFlag, uint32 stride) const
 {
 	D3D11_BUFFER_DESC desc = {};
 	desc.BindFlags = bindFlag;
@@ -260,7 +261,7 @@ ID3D11Buffer * Dx11Wrapper::createBuffer(uint32 size, D3D11_USAGE usage, D3D11_B
 		srData.pSysMem = initialData;
 		m_lpDevice->CreateBuffer(&desc, &srData, &buf);
 	}
-	
+
 	return buf;
 }
 

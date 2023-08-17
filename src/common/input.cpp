@@ -50,10 +50,10 @@ bool Input::isKeyPressed(Key key)
 	return (ImGui::IsKeyPressed(key)) ? true : false;
 }
 
-bool Input::anyKeyPressed()
+bool Input::isAnyKeyPressed()
 {
-	for (uint16_t k = ImGuiKey_Tab; k <= ImGuiKey_Pause; k++)
-		if (ImGui::IsKeyPressed((ImGuiKey)k))
+	for (size_t k = ImGuiKey_Tab; k <= ImGuiKey_Pause; k++)
+		if (ImGui::IsKeyPressed((Key)k))
 			return true;
 
 	return false;

@@ -1,4 +1,4 @@
-// constant.h
+// types.h
 // Author: abramann
 // Note this file is influenced by constant.h from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 // Note parts of this code are licensed under CC BY 3.0
@@ -83,8 +83,11 @@ inline void safeDelete(T ptr)
 template <typename T>
 inline void safeDeleteArray(T ptr)
 {
-	delete[] ptr;
-	ptr = NULL;
+	if (ptr)
+	{
+		delete[] ptr;
+		ptr = NULL;
+	}
 }
 
 inline uint32_t _rand(uint32_t max)
@@ -108,9 +111,8 @@ struct TextureVertices
 
 struct GameInfo
 {
-	int8 windowed;
 	int16 width, height;
-	int8 vsync;
+	bool windowed, vsync, audio, computeShader;
 };
 
 struct ImageInfo
@@ -160,6 +162,23 @@ inline void add4(const T amount, T& v1, T& v2, T& v3, T& v4)
 		v2 += amount,
 		v3 += amount,
 		v4 += amount;
+}
+
+//	https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
+template<typename ... Args>
+inline std::string strFormat(const std::string& format, Args ... args)
+{
+	int size_s = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
+	if (size_s <= 0) { throw std::runtime_error("Error during formatting."); }
+	auto size = static_cast<size_t>(size_s);
+	std::unique_ptr<char[]> buf = std::make_unique<char[]>(size);
+	std::snprintf(buf.get(), size, format.c_str(), args ...);
+	return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+}
+
+inline void messageBoxOk(std::string msg, std::string title)
+{
+	MessageBoxA(NULL, msg.c_str(), "Title", MB_OK);
 }
 
 struct Space

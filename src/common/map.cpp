@@ -37,7 +37,10 @@ bool Map::load(const char * map)
 
 	int32 totalBitmaps = m_width*m_height;
 	for (int i = 0; i < textureNS::TEXTURE_TILEDS; i++)
-		m_pTexture[i] = m_pTextureManger->getTexture(i + TEXTURE_TILED0);
+	{
+		std::string tex = strFormat("tiled-%d", i);
+		m_pTexture[i] = m_pTextureManger->getTexture(tex);
+	}
 
 	m_tiledSize.x = static_cast<float>(m_pTexture[0]->getWidth());;
 	m_tiledSize.y = static_cast<float>(m_pTexture[0]->getHeight());
@@ -322,31 +325,31 @@ void Map::clearUnnecessaryNospace()
 		{
 			if (i == j)
 				continue;
-			
+
 			Space& ns2 = m_noSpace[j];
-				if (ns.getMinX() == ns2.getMinX() &&
-					ns.getMaxX() == ns2.getMaxX())
+			if (ns.getMinX() == ns2.getMinX() &&
+				ns.getMaxX() == ns2.getMaxX())
+			{
+				if (ns.getMaxY() == ns2.getMinY() || ns.getMaxY() == ns2.getMaxY() ||
+					ns.getMinY() == ns2.getMinY() || ns.getMinY() == ns2.getMaxY())
 				{
-					if (ns.getMaxY() == ns2.getMinY() || ns.getMaxY() == ns2.getMaxY() ||
-						ns.getMinY() == ns2.getMinY() || ns.getMinY() == ns2.getMaxY())
-					{
-						//ns.v1.x = min(ns.getMinX(), ns2.getMinX());
-						ns.v1.y = min(ns.getMinY(), ns2.getMinY());
+					//ns.v1.x = min(ns.getMinX(), ns2.getMinX());
+					ns.v1.y = min(ns.getMinY(), ns2.getMinY());
 
 					//	ns.v2.x = max(ns.getMaxX(), ns2.getMaxX());
-						ns.v2.y = ns.v1.y;
+					ns.v2.y = ns.v1.y;
 
-						//ns.v3.x = ns.v2.x;
-						ns.v3.y = max(ns.getMaxY(), ns2.getMaxY());
+					//ns.v3.x = ns.v2.x;
+					ns.v3.y = max(ns.getMaxY(), ns2.getMaxY());
 
-						//ns.v4.x = ns.v1.x;
-						ns.v4.y = ns.v3.y;
+					//ns.v4.x = ns.v1.x;
+					ns.v4.y = ns.v3.y;
 
-						m_noSpace.erase(std::next(m_noSpace.begin(), j));
-						i = -1;
-						break;
-					}
+					m_noSpace.erase(std::next(m_noSpace.begin(), j));
+					i = -1;
+					break;
 				}
+			}
 		}
 	}
 

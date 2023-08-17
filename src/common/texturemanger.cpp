@@ -14,21 +14,31 @@ TextureManger::~TextureManger()
 {
 }
 
-bool TextureManger::initialize(Graphics* graphics)
+void TextureManger::initialize(Graphics* graphics)
 {
 	m_pGraphics = graphics;
-	bool result = load();
-	return result;
+	load();
 }
 
-bool TextureManger::load()
+void TextureManger::load()
 {
-	for (int i = 0; i < TEXTURES; i++)
+	auto textures = FileIO::getDirFileList(fileNS::TEXTURE_DIR, 0, ".png", false);
+	int8 notLoaded = 0;
+	for (auto texture : textures)
 	{
-		bool result = m_pTexture[i].initialize(gameTexturePath[i], m_pGraphics);
+		std::string texFile = strFormat("%s%s%s", fileNS::TEXTURE_DIR, texture.c_str(), ".png");
+		bool result = m_pTexture[texture].initialize(texFile, m_pGraphics);
 		if (!result)
-			return false;
+		{
+			std::string err = strFormat("Failed to load texture %s", texFile);
+			messageBoxOk(err, "WARNING");
+			notLoaded++;
+		}
 	}
 
-	return true;
+	if (notLoaded)
+	{
+		std::string msg = strFormat("%d textures have not been loaded!", notLoaded);
+		messageBoxOk(msg, "WARNING");
+	}
 }

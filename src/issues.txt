@@ -1,1 +1,5 @@
+- Fix timer
+- Apply runtime gameInfo change
+- Fix naming Adapter functiom in Graphics
+- Fix const ptr* const variables
 - Replace DX functions with D3DTK

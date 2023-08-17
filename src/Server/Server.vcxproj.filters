@@ -48,9 +48,6 @@
     <ClInclude Include="..\common\map.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\matrix4x4.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\net.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
@@ -134,9 +131,6 @@
     <ClCompile Include="..\common\camera.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\clientplayer.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\crc32.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
@@ -162,9 +156,6 @@
       <Filter>Common\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\map.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\matrix4x4.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\net.cpp">

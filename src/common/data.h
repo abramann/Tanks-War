@@ -1,5 +1,10 @@
+// data.h
+// Author: abramann
+
 #include "imgui\imgui_impl_win32.h"
-#include <D3D11.h>
+#include "imgui\imgui.h"
+//#include <D3D11.h>
+#include <map>
 
 #pragma once
 
@@ -11,7 +16,9 @@ namespace fileNS
 {
 	constexpr auto CLIENT_INFO_PATH = "Assets\\ini\\client-info.txt";
 	constexpr auto GAME_INFO_PATH = "Assets\\ini\\game-info.txt";
+	constexpr auto ASSETS_DIR = "Assets\\";
 	constexpr auto MAP_DIR = "Assets\\maps\\";
+	constexpr auto AUDIO_DIR = "Assets\\audio\\";
 	constexpr auto SERVER_INFO_PATH = "Assets\\ini\\server-info.txt";
 	constexpr auto TEXTURE_DIR = "Assets\\texture\\";
 }
@@ -24,12 +31,32 @@ namespace graphicsNS
 	constexpr auto CAMERA_FOV = 1.5707963f;
 	constexpr auto CAMERA_HEIGHT = -300.0f;
 	constexpr auto CAMERA_NEARPLANE = 1.0f;
-	constexpr auto COLOR_ALPHA = 111;// COLOR_ARGB(0, 0, 0, 255);
-	constexpr auto COLOR_BLACK = 1212;// COLOR_XRGB(0, 0, 0);
-	constexpr auto COLOR_WHITE = 4444;// COLOR_XRGB(255, 255, 255);
 	constexpr auto PROJECT_FAR_PLANE = 1000.0f;
 	constexpr auto PROJECT_FOV = PI / 2;
 	constexpr auto PROJECT_NEAR_PLANE = 1.0f;
+	constexpr auto FADE_INC = 0.01f;
+}
+
+namespace colorNS
+{
+	constexpr auto WHITE = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+	constexpr auto RED = ImVec4(1.0f, 0, 0, 1.0f);
+	constexpr auto GREEN = ImVec4(0.0f, 0.55f, 0.0f, 1.0f);
+	constexpr auto BLUE = ImVec4(0.3f, 0.7f, 0.9f, 1.0f);
+	constexpr auto BROWN = ImVec4(0.57f, 0.29f, 0.00f, 1.0f);
+	constexpr auto ORANGE = ImVec4(0.60f, 0.27f, 0.13f, 1.0f);
+	constexpr auto PURPLE = ImVec4(0.7f, 0.5f, 1.0f, 1.0f);
+	constexpr auto TAN = ImVec4(0.8f, 0.7f, 0.6f, 1.0f);
+	constexpr auto GREY = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+	constexpr auto GREY_LIGHT = ImVec4(0.7f, 0.7f, 0.7f, 1.0f);
+	constexpr auto TEAL = ImVec4(0.0f, 0.5f, 0.5f, 1.0f);
+	constexpr auto SILVER = ImVec4(0.75f, 0.75f, 0.75f, 1.0f);
+	constexpr auto NAVY = ImVec4(0.0f, 0.0f, 0.5f, 1.0f);
+	constexpr auto MAROON = ImVec4(0.6f, 0.0f, 0.0f, 1.0f);
+	constexpr auto CYAN = ImVec4(0.0f, 1.0f, 1.0f, 1.0f);
+	constexpr auto LIME = ImVec4(0.5f, 1.0f, 0.0f, 1.0f);
+	constexpr auto MAGENTA = ImVec4(1.0f, 0.0f, 1.0f, 1.0f);
+	constexpr auto YELLOW = ImVec4(0.95f, 0.95f, 0.00f, 1.0f);
 }
 
 namespace textureNS
@@ -55,20 +82,37 @@ namespace gameNS
 	constexpr auto VSYNC_DEFAULT = 1;
 	constexpr auto WINDOWED_DEFAULT = 1;
 	constexpr auto UPDATE_DELAY_FPS = 5;
+	constexpr auto AUDIO_DEFAULT = 1;
+	constexpr auto COMPUTESHADER_DEFAULT = 0;
+	constexpr auto LOGO_VIEW_TIME = 4000;
+	const std::map<std::string, uint32_t> gameFiles =
+	{ { "Assets\\cursor.cur", 0x02d949be },
+	  { "Assets\\Fonts\\tahoma.ttf", 0x44845b79 },
+	  { "Assets\\Audio\\button-click.wav", 0x8dbea76c },
+	  { "Assets\\Audio\\tank-attack.wav", 0x77ce040a },
+	  { "Assets\\Texture\\bullet.png", 0x2e300ec7 },
+	  { "Assets\\Texture\\bullet-destroy.png", 0x701cc174 },
+	  { "Assets\\Texture\\concrete.bmp", 0x88764328 },
+	  { "Assets\\Texture\\enemy-tank.png", 0x4d3c3ba4 },
+	  { "Assets\\Texture\\logo.png", 0x50dbf423 },
+	  { "Assets\\Texture\\player-tank.png", 0xd06d54ad },
+	  { "Assets\\Texture\\tank-destroy.png", 0x35f50b9e },
+	  { "Assets\\Texture\\tiled-0.png", 0xed106bdf },
+	  { "Assets\\Texture\\tiled-1.png", 0xe8853b23 } };
 }
 
 namespace logicNS
 {
-	constexpr auto UPDATE_DELAY_IMAGE = 50;
+	constexpr auto BULLET_DAMAGE = 40.0f;
+	constexpr auto BULLET_SPEED = 8.0f;
+	constexpr auto HEALTH_TANK = 100.0f;
+	constexpr auto TANK_MAX_ANGLE = PI - 0.01f;
 	constexpr auto TANK_ROTATE_AMOUNT = PI / 64.0f;
 	constexpr auto UPDATE_DELAY_BULLET = 80;
-	constexpr auto UPDATE_DELAY_TANK_DESTROY = 100;
-	constexpr auto HEALTH_TANK = 100.0f;
-	constexpr auto VELOCITY_TANK = 10.0f;
+	constexpr auto UPDATE_DELAY_IMAGE = 50;
 	constexpr auto UPDATE_DELAY_TANK_DESTORY = 100;
-	constexpr auto TANK_MAX_ANGLE = PI - 0.01f;
-	constexpr auto BULLET_SPEED = 20.0f;
-	constexpr auto BULLET_DAMAGE = 40.0f;
+	constexpr auto UPDATE_DELAY_TANK_DESTROY = 100;
+	constexpr auto VELOCITY_TANK = 3.0f;
 }
 
 namespace networkNS
@@ -118,6 +162,46 @@ namespace inputNS
 	constexpr Key LSHIFT_KEY = ImGuiKey_LeftShift;
 };
 
+namespace interfaceNS
+{
+	constexpr auto TAHOMA_FONT = "Assets\\Fonts\\tahoma.ttf";
+	constexpr float MAINACTIVITY_BUTTON_PADDING_Y = 0.2f;
+
+	enum _FontSize
+	{
+		FONTSIZE_TINY,
+		FONTSIZE_SMALL,
+		FONTSIZE_SMALL2,
+		FONTSIZE_MED,
+		FONTSIZE_MED2,
+		FONTSIZE_LARGE,
+		FONTSIZE_LARGE2,
+		FONTSIZES
+	};
+	typedef int8_t FontSize;
+
+	enum _Activity
+	{
+		MAIN_ACTIVITY,
+		MULTIPLAYER_ACTIVITY,
+		SETTINGS_ACTIVITY,
+		PLAYING_ACTIVITY,
+		QUIT_ACTIVITY,
+		ACTIVITIES,
+		NO_ACITVITY
+	};
+	typedef int8_t Activity;
+
+	enum _InputFieldListType
+	{
+		LIST_VERTICAL,
+		LIST_HORIOZONTIAL,
+		LIST_MAIN,
+		LIST_NONE
+	};
+	typedef int8_t ListType;
+}
+
 enum MatrixType
 {
 	MATRIX_TYPE_TRANSLATE,
@@ -146,17 +230,7 @@ enum KeyControl
 	KEY_TANK_ATTACK,
 };
 
-enum Menu
-{
-	NO_MENU = -1,
-	MAIN_MENU = 100,
-	MULTIPLAYER_MENU,
-	SETTING_MENU,
-	PLAYING_MENU,
-	QUIT_MENU
-};
-
-enum ClientState
+enum _ClientStatus
 {
 	CLIENT_UNCONNECTED,
 	CLIENT_UNCONNECTED_DISCONNECT,
@@ -165,24 +239,14 @@ enum ClientState
 	CLIENT_CONNECTED_WAITING,
 	CLIENT_CONNECTED_PLAYING
 };
+typedef int8_t ClientStatus;
 
-enum ServerState
+enum ServerStatus
 {
 	SERVER_NOT_RUNNING,
 	SERVER_RUNNING_WAITING,
 	SERVER_RUNNING_PREPGAME,
 	SERVER_RUNNING_HANDLING,
-};
-
-enum VB_USAGE
-{
-#ifdef _BUILD_WITH_D3D9
-	VB_USAGE_CONST = D3DUSAGE_WRITEONLY,
-	VB_USAGE_WRITE = D3DUSAGE_DYNAMIC
-#else ifdef _BUILD_WITH_D3D11
-	VB_USAGE_CONST = D3D11_USAGE_IMMUTABLE,
-	VB_USAGE_WRITE = D3D11_USAGE_DYNAMIC
-#endif
 };
 
 enum PacketType_
@@ -203,16 +267,15 @@ enum PacketType_
 
 enum gameTexure
 {
-	TEXTURE_LOGO,
+	/*TEXTURE_LOGO,
 	TEXTURE_PLAYER_TANK,
 	TEXTURE_ENEMY_TANK,
-	TEXTURE_TANK_DESTROY,
 	TEXTURE_BULLET,
 	TEXTURE_BULLET_DESTROY,
 	TEXTURE_TILED0,
 	TEXTURE_TILED1,
 	TEXTURE_TILED2,
-	TEXTURES
+	TEXTURES*/
 };
 
 enum PlayerAct_

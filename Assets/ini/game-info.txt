@@ -1,4 +1,6 @@
-windowed=1
-width=1366
-height=768
-vsync=1
+Width=800
+Height=600
+Windowed=1
+VSync=1
+Audio=1
+Compute Shader=0

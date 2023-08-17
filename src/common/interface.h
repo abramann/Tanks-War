@@ -1,19 +1,22 @@
+// Author: abramann
+// interface.h
+
 #pragma once
 
-class Game;
-class Graphics;
-class Audio;
-class Map;
-
+#include "types.h"
 #ifdef _CLIENT_BUILD
 #include "..\Client\client.h"
+
+class TanksWar;
 #endif
 #ifdef _SERVER_BUILD
 #include "..\Server\server.h"
-#endif
 
-#define TITLE_BUTTON_COLOR Vec4(0.94f, 0.25f, 0.20f, 1.0f)
-#define TITLE_BUTTON_TEXT_COLOR ImVec4(1,1,1,1)
+class TanksWarServer;
+#endif
+class Graphics;
+class Audio;
+class Map;
 
 class Interface
 {
@@ -23,23 +26,22 @@ public:
 	~Interface();
 
 #ifdef _CLIENT_BUILD
-	void initialize(Client* client, Game* game);
+	void initialize(Client* client, TanksWar* game);
 #else ifdef _SERVER_BUILD
 	void initialize(Server* server, Game* game);
 #endif
-
-	void mainMenu();
-	void multiplayerMenu();
-	void settingMenu();
-	void show();
-	void showFPS(uint16_t fps);
-
-	Menu m_menu;
+	void executeMainActivity();
+	void executeMultiplayerActivity();
+	void executeSettingsActivity();
+	void executePlayingActivity();
+	void render();
+	void beginActivity(bool blankActivity, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED);
+	void endActivity(bool backButton = false, interfaceNS::Activity backActivity = interfaceNS::NO_ACITVITY);
 
 private:
 
-	void title(const char* text, Vec4 colText = TITLE_BUTTON_TEXT_COLOR, Vec4 colButton = TITLE_BUTTON_COLOR);
-	void inputText(const char* desc, const ImVec4& descColor, const char* label,
+	void showFPS(uint16_t fps);
+	/*void inputText(const char* desc, const ImVec4& descColor, const char* label,
 		char* buf, const uint16_t& len, const ImVec4& color, ImGuiInputTextFlags flags);
 	void inputText(const char* label, char* buf, const uint16_t& len, const ImVec4& textColor,
 		ImGuiInputTextFlags flags = 0);
@@ -47,19 +49,25 @@ private:
 		int32_t min = 0, int32_t max = 0, ImGuiInputTextFlags flags = 0);
 	void inputInt(const char* desc, const Vec4& descColor, const char* label, int* buf,
 		const Vec4& color, const int32_t elements, const int32_t min = 0, const int32_t max = 0,
-		ImGuiInputTextFlags flags = 0);
-	bool button(const char* text, ImVec2 size = Vec2(0, 0), ImVec4 colText = Vec4(0, 0, 0, 0), ImVec4 colButton = Vec4(0, 0, 0, 0),
-		ImVec4 colActive = Vec4(0, 0, 0, 0), ImVec4 colHorvored = Vec4(0, 0, 0, 0), ImGuiButtonFlags flags = 0);
-	void text(const char* text, const ImVec4 color = Vec4(0, 0, 0, 0));
-	void fillWindow();
-	void pushSubMenu(const char* label);
-	void popSubMenu();
+		ImGuiInputTextFlags flags = 0);*/
 
+	bool inputText(std::string desc, char* buf, size_t length, ImGuiInputTextFlags flags, interfaceNS::ListType listType = interfaceNS::LIST_NONE);
+	bool inputInt(std::string desc, int32* pValue, ImGuiInputTextFlags flags, interfaceNS::ListType listType = interfaceNS::LIST_NONE);
+	bool button(std::string text, Vec2 size = Vec2(0, 0));
+	void separatorText(std::string text, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED, Vec4 color = Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+#ifdef _CLIENT_BUILD
+	TanksWar* m_pGame;
+#else
+	TanksWarServer* m_pGame;
+#endif
 	Graphics* m_pGraphics;
 	Audio* m_pAudio;
 	Map* m_pMap;
-	ImFont* m_font[3];
-
+	ImFont* m_pFont[interfaceNS::FONTSIZES];
+	bool m_blankActivity;
+	int8 m_activity;
+	Vec2 m_inputFieldListPos;
 #ifdef _CLIENT_BUILD
 	Client* m_pClient;
 #else ifdef _SERVER_BUILD

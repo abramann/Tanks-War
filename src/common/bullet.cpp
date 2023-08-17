@@ -1,5 +1,5 @@
 // bullet.cpp
-// Author: abamann
+// Author: abramann
 
 #include "bullet.h"
 #include "game.h"
@@ -15,7 +15,7 @@ Bullet::Bullet(const Game * game, const Tank * tank) : m_pTank(tank), m_hit(fals
 	m_pMap = game->getMap();
 	m_pAudio = game->getAudio();
 	m_pTextureManger = game->getTextureManger();
-	Texture* pTexture = m_pTextureManger->getTexture(TEXTURE_BULLET);
+	Texture* pTexture = m_pTextureManger->getTexture("bullet");
 	Image::initialize(pTexture, game);
 	executeLaunch();
 }
@@ -70,10 +70,11 @@ void Bullet::executeLaunch()
 void Bullet::executeHit()
 {
 	m_hit = true;
-	Texture* pTexture = m_pTextureManger->getTexture(TEXTURE_BULLET_DESTROY);
+	Texture* pTexture = m_pTextureManger->getTexture("bullet-destroy");
 	Image::initialize(pTexture, m_pGame, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, logicNS::UPDATE_DELAY_BULLET);
 	Space s = getSpace();
 	Object* pObject = m_pMap->getObject(s);
+	m_pAudio->play("bullet-explosion");
 #ifdef _SERVER_BUILD
 	if (pObject)
 		pObject->damage(m_damage);

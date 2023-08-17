@@ -1,33 +1,39 @@
+// interface.cpp
+// Author: abramann
+
 #include "interface.h"
 #include "fileio.h"
-#include "game.h"
+#ifdef _CLIENT_BUILD
+#include "..\..\Client\tankswar.h"
+#else
+#include "..\..\Server\tankswarserver.h"
+#endif
+#include "imgui\imgui.h"
+#include "texturemanger.h"
+#include "sprite.h"
+
+extern void HelpMarker(const char* desc);
+
 #ifdef _SERVER_BUILD
 #include "map.h"
 #endif
 
 #pragma warning(disable : 4244)
 
+using namespace colorNS;
 using namespace ImGui;
+using namespace interfaceNS;
 
-const std::string stringCLIENT_STATE[] = { "Unconnected", "Disconnected", "Server map not found", "Error map could not load",
-"Waiting server...", "Running" };
-const auto OPTIONS_COLOR = Vec4(0.83f, 0.83f, 0.70f, 0.875f);
-const auto NOOPTIONS_COLOR = Vec4(0.83f, 0.83f, 0.70f, 0.6f);
-const auto CHOOSE_COLOR = Vec4(0.98f, 0.99f, 0.0f, 1.0f);
-#define SUB_MENU_SIZE Vec2(g_gameInfo.width / 4, g_gameInfo.height / 4)
-
-enum FontSize
-{
-	SMALL,
-	MED,
-	LARGE
+static std::map<int, std::pair<const char*, ImVec4>>  ClientConnectionStatus = {
+	{ CLIENT_UNCONNECTED,{ "Not Connected", GREY}},
+	{CLIENT_UNCONNECTED_DISCONNECT, {"Disconnected", RED}},
+	//{CLIENT_UNCONNECTED_MAP_NOT_FOUND, {"Server map doesn't exist", YELLOW}},
+	//{ CLIENT_UNCONNECTED_MAP_NOT_LOAD,{ "Failed to load server map", YELLOW } },
+	{ CLIENT_CONNECTED_WAITING,{ "Connected, Waiting server to start...",GREEN } },
+	{ CLIENT_CONNECTED_PLAYING,{ "Connected",GREEN } }
 };
 
-constexpr auto SEGA_FONT = "Assets\\Fonts\\NiseSegaSonic.ttf";
-constexpr auto PROGGYCLEAN_FONT = "Assets\\Fonts\\proggyclean.ttf";
-constexpr auto TAHOMA_FONT = "Assets\\Fonts\\tahoma.ttf";
-
-Interface::Interface() : m_menu(MAIN_MENU)
+Interface::Interface() : m_activity(MAIN_ACTIVITY), m_blankActivity(true)
 {
 }
 
@@ -38,137 +44,119 @@ Interface::~Interface()
 #ifdef _SERVER_BUILD
 void Interface::initialize(Server* server, Game* game)
 {
-	m_pGraphics = game->getGraphics();
-	m_pAudio = game->getAudio();
-	m_pMap = game->getMap();
 	m_pServer = server;
-	ImGuiIO& io = GetIO();
-	m_font[SMALL] = io.Fonts->AddFontFromFileTTF(PROGGYCLEAN_FONT, 12);
-	m_font[MED] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 19);
-	m_font[LARGE] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 28);
-}
-
 #else ifdef _CLIENT_BUILD
-
-void Interface::initialize(Client* client, Game* game)
+void Interface::initialize(Client* client, TanksWar* game)
 {
+	m_pClient = client;
+#endif
 	m_pGraphics = game->getGraphics();;
 	m_pAudio = game->getAudio();
-	m_pClient = client;
 	m_pMap = game->getMap();
+	m_pGame = game;
 	ImGuiIO& io = GetIO();
-	m_font[SMALL] = io.Fonts->AddFontFromFileTTF(PROGGYCLEAN_FONT, 12);
-	m_font[MED] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 19);
-	m_font[LARGE] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 28);
+	m_pFont[FONTSIZE_TINY] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 10);
+	m_pFont[FONTSIZE_SMALL] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 15);
+	m_pFont[FONTSIZE_SMALL2] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 18);
+	m_pFont[FONTSIZE_MED] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 22);
+	m_pFont[FONTSIZE_MED2] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 24);
+	m_pFont[FONTSIZE_LARGE] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 26);
+	m_pFont[FONTSIZE_LARGE2] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 32);
 }
+
+void Interface::executeMainActivity()
+{
+	beginActivity(true, FONTSIZE_LARGE2);
+	Vec2 butSize = Vec2(g_gameInfo.width / 3, g_gameInfo.height / 10),
+		butPos = Vec2((g_gameInfo.width / 2) - butSize.x / 2, g_gameInfo.height / 10);
+	SetCursorPos(butPos);
+	if (button("Multiplayer", butSize))
+		m_activity = MULTIPLAYER_ACTIVITY;
+
+	butPos.y += butSize.y + butSize.y*MAINACTIVITY_BUTTON_PADDING_Y;
+	SetCursorPos(butPos);
+	if (button("Settings", butSize))
+		m_activity = SETTINGS_ACTIVITY;
+
+	butPos.y += butSize.y + butSize.y*MAINACTIVITY_BUTTON_PADDING_Y;
+	SetCursorPos(butPos);
+	if (button("Quit", butSize))
+		m_activity = QUIT_ACTIVITY;
+
+	endActivity();
+}
+
+void Interface::executeSettingsActivity()
+{
+	beginActivity(false, FONTSIZE_SMALL2);
+	///////////////////////////////////
+	//	Graphics section
+	separatorText("Graphcis", FONTSIZE_LARGE, RED);
+	static GameInfo gameInfo = g_gameInfo;
+	bool cWin = Checkbox("Windowed", &gameInfo.windowed);
+	bool cVsync = Checkbox("VSync", &gameInfo.vsync);
+	bool cComputeShader = Checkbox("Compute Shader", &gameInfo.computeShader); SameLine();  HelpMarker("Use GPU for collision detection.");
+	ShowDemoWindow();
+	if (cWin || cVsync)
+		FileIO::createGameInfo(&gameInfo);
+
+	static char** suppModes = m_pGraphics->getSupportedAdapterModesAsCArray();
+	static size_t modes = m_pGraphics->getAdapterModes();
+	static int currMode = m_pGraphics->getCurrentAdapterMode();
+	if (ListBox("##resolution", &currMode, (char**)suppModes, modes))
+	{
+		std::string resol = suppModes[currMode];
+		auto x = resol.find('x');
+		gameInfo.width = std::stoi(resol.substr(0, x)),
+			gameInfo.height = std::stoi(resol.substr(x + 1, resol.length()));
+		FileIO::createGameInfo(&gameInfo);
+	}
+
+	/////////////////////////////////////////////////
+	//	Audio section
+	separatorText("Audio", FONTSIZE_LARGE, RED);
+	if (Checkbox("Play audio", &gameInfo.audio))
+		FileIO::createGameInfo(&gameInfo);
+
+#ifdef _CLIENT_BUILD
+	/////////////////////////////////////////////////
+	// Multiplayer section
+	separatorText("Multiplayer", FONTSIZE_LARGE, RED);
+	ImGuiInputTextFlags configFlags = ImGuiInputTextFlags_None;
+	bool connected = m_pClient->isConnected();
+	if (connected)
+		configFlags = ImGuiInputTextFlags_ReadOnly;
+
+	static char* pPlayerName = m_pGame->getPlayerName();
+	bool input = inputText("Player Name", pPlayerName, gameNS::MAX_NAME_LEN, configFlags);
+	if (input)
+		m_pGame->updateClientInfo();
+
 #endif
-
-void Interface::mainMenu()
-{
-	m_pAudio->playMusic(MUSIC_MAIN_MENU);
-	PushFont(m_font[LARGE]);
-	ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize;
-	Vec2 pos = Vec2(0, 0);
-	Vec2 size = Vec2(g_gameInfo.width, g_gameInfo.height);
-	Vec2 buttonSize = Vec2(size.x / 3, size.y / 5);
-	ImGui::SetNextWindowPos(pos);
-	ImGui::SetNextWindowSize(size);
-	PushStyleVar(ImGuiStyleVar_WindowPadding, Vec2((size.x / 2) - buttonSize.x / 2, buttonSize.y / 2));
-	ImGui::Begin("Main Menu", 0, flag);
-	int8_t counter = 0;
-	Menu menu = NO_MENU;
-	for (auto item : { "Multiplayer","Setting","Quit" })
-	{
-		if (ImGui::Button(item, buttonSize))
-		{
-			menu = (Menu)counter;
-			m_pAudio->play(SOUND_BUTTON_CLICKED);
-		}
-
-		counter++;;
-	}
-
-	ImGui::End();
-	PopStyleVar();
-	PopFont();
-
-	switch (menu)
-	{
-	case 0:
-		m_menu = MULTIPLAYER_MENU;
-		break;
-	case 1:
-		m_menu = SETTING_MENU;
-		break;
-	case 2:
-		m_menu = QUIT_MENU;
-		break;
-	default:
-		break;
-	}
+	endActivity(true, MAIN_ACTIVITY);
 }
 
-void Interface::settingMenu()
+void Interface::executePlayingActivity()
 {
-	pushSubMenu("Setting");
-	button("Graphics", Vec2(0, 0), TITLE_BUTTON_TEXT_COLOR, TITLE_BUTTON_COLOR,
-		TITLE_BUTTON_COLOR, TITLE_BUTTON_COLOR);
-
-	BeginChild("Graphics");
-	text("Resolution", OPTIONS_COLOR);
-	BeginChild("Resolution", ImVec2(g_gameInfo.width / 8, g_gameInfo.height / 7), true);
-	auto currResol = m_pGraphics->getResolution();
-	static auto supportedResol = m_pGraphics->getSupportedResolutions();
-	for (auto resol : supportedResol)
-	{
-		PushStyleColor(ImGuiCol_Text, CHOOSE_COLOR);
-		std::string sResol;
-		sResol = std::to_string(resol.width);
-		sResol.operator+=("x");
-		sResol.operator+=(std::to_string(resol.height));
-		bool select = false;
-		if (currResol.height == resol.height && currResol.width == resol.width)
-			select = true;
-
-		if (Selectable(sResol.c_str(), select))
-		{
-			m_pGraphics->setResolution(resol);
-			m_pAudio->play(SOUND_BUTTON_CLICKED);
-		}
-
-		PopStyleColor();
-	}
-
-	EndChild();
-	bool windowed = m_pGraphics->isWindowed();
-	text("Windowed", OPTIONS_COLOR); SameLine(0, 5.0f);
-	if (Checkbox("##Windowed", &windowed))
-	{
-		m_pGraphics->setWindowed(windowed);
-		m_pAudio->play(SOUND_BUTTON_CLICKED);
-	}
-
-	EndChild();
-	popSubMenu();
 }
 
-void Interface::show()
+void Interface::render()
 {
-	switch (m_menu)
+	switch (m_activity)
 	{
-	case MAIN_MENU:
-		mainMenu();
+	case MAIN_ACTIVITY:
+		executeMainActivity();
 		break;
-	case MULTIPLAYER_MENU:
-		multiplayerMenu();
+	case MULTIPLAYER_ACTIVITY:
+		executeMultiplayerActivity();
 		break;
-	case SETTING_MENU:
-		settingMenu();
+	case SETTINGS_ACTIVITY:
+		executeSettingsActivity();
 		break;
-	case PLAYING_MENU:
-		//	playerInterface();
-		break;
-	case QUIT_MENU:
+	case PLAYING_ACTIVITY:
+		executePlayingActivity();
+			break;
+	case QUIT_ACTIVITY:
 		PostQuitMessage(0);
 	default:
 		break;
@@ -177,49 +165,109 @@ void Interface::show()
 
 void Interface::showFPS(uint16_t fps)
 {
-	SetNextWindowPos(Vec2(200, 0));
-	if (GetAsyncKeyState(VK_RETURN))
-		SetNextWindowFocus();
+	SetCursorPos(Vec2(0, 0));
 	Begin("fps", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize
 		| ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
+	SetCursorPos(Vec2(0, 0));
 	Text("FPS %d", fps);
 	End();
 }
 
-#ifdef _CLIENT_BUILD
-const ImVec4 colorCLIENT_STATE[] = { ImVec4(0.78f,0.78f,0.78f,0.5f),
-ImVec4(0.78f,0.78f,0.78f,0.5f), ImVec4(0.78f,0.78f,0.78f,0.5f),ImVec4(0.78f,0.78f,0.78f,0.5f)
-,ImVec4(0.78f,0.78f,0.78f,0.5f) ,ImVec4(0.78f,0.78f,0.78f,0.5f) ,ImVec4(0.78f,0.78f,0.78f,0.5f) };
-
-void Interface::multiplayerMenu()
+void Interface::beginActivity(bool blankActivity, interfaceNS::FontSize fontSize)
 {
-	pushSubMenu("Multiplayer");
+	SetNextWindowPos(Vec2(0, 0));
+	SetNextWindowSize(Vec2(g_gameInfo.width, g_gameInfo.height));
+	Begin("Activity", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+	PushFont(m_pFont[fontSize]);
+	m_blankActivity = blankActivity;
+	if (!m_blankActivity)
+	{
+		PushStyleVar(ImGuiStyleVar_ChildBorderSize, 5);
+		PushStyleVar(ImGuiStyleVar_WindowBorderSize, 4);
+		BeginChild("Window", Vec2(g_gameInfo.width / 2, g_gameInfo.height*1.0f / 1.5f), true, ImGuiWindowFlags_NoTitleBar);
+		PopStyleVar(2);
+	}
+}
 
+void Interface::endActivity(bool backButton, Activity backActivity)
+{
+	if (!m_blankActivity)
+		EndChild();
+
+	PopFont();
+	if (backButton)
+	{
+		Vec2 m_backButPos = Vec2(g_gameInfo.width / 2.0f, g_gameInfo.height * 0.7f);
+		Vec2 m_backButSize = Vec2(g_gameInfo.width / 10, g_gameInfo.height / 12);
+		PushFont(m_pFont[FONTSIZE_LARGE]);
+		SetCursorPos(m_backButPos);
+		if (button("Back", m_backButSize))
+			m_activity = backActivity;
+
+		PopFont();
+	}
+
+	End();
+}
+
+#ifdef _CLIENT_BUILD
+void Interface::executeMultiplayerActivity()
+{
+	beginActivity(false, FONTSIZE_SMALL2);
+	separatorText("Multiplayer Config", FONTSIZE_LARGE, RED);
 	ImGuiInputTextFlags configFlags = ImGuiInputTextFlags_None;
-	ClientState state = (ClientState)m_pClient->getState();
-	if (state)
+	bool connected = m_pClient->isConnected();
+	if (connected)
 		configFlags = ImGuiInputTextFlags_ReadOnly;
 
-	Vec4 colConfig = (m_pClient->isConnected()) ? NOOPTIONS_COLOR : CHOOSE_COLOR;
+	Vec4 colorChangeable = (m_pClient->isConnected()) ? SILVER : WHITE;
+	static char* serverIP = m_pGame->getServerIP();
+	bool input = inputText("Server IP", serverIP, gameNS::MAX_NAME_LEN, configFlags, LIST_MAIN);
+	if (input)
+		m_pGame->updateClientInfo();
 
-	BeginChild("Multiplayer", ImVec2(static_cast<float>(g_gameInfo.width) / 3, static_cast<float>(g_gameInfo.height) / 4), true);
+	static int32 port = m_pGame->getServerPort();
+	input = inputInt("Port", &port, configFlags, LIST_VERTICAL);
+	if (input)
+		m_pGame->setServerPort(port);
 
-	button("Multiplayer config", ImVec2(0, 0), TITLE_BUTTON_TEXT_COLOR, TITLE_BUTTON_COLOR,
-		TITLE_BUTTON_COLOR, TITLE_BUTTON_COLOR);
-	inputText("Player Name", colConfig, "##PlayerName", m_pClient->getPlayerName(),
-		gameNS::MAX_NAME_LEN, colConfig, configFlags);
-	inputText("Server IP", colConfig, "##ServerIP", (char*)m_pClient->getServerIP(),
-		netNS::IP_SIZE, colConfig, configFlags);
+	Text("status");
+	SameLine();
+	SetCursorPosX(m_inputFieldListPos.x);
+	auto status = m_pClient->getStatus();
+	PushStyleColor(ImGuiCol_Text, ClientConnectionStatus[status].second);
+	Text(ClientConnectionStatus[status].first);
+	PopStyleColor();
+	SetCursorPosX(m_inputFieldListPos.x * 1.5f);
+	PushStyleVar(ImGuiStyleVar_FrameRounding, 20);
+	if (!connected)
+	{
+		PushStyleColor(ImGuiCol_Button, GREEN);
+		input = button("Connect");
+		if (input)
+			m_pClient->connect();
+	}
+	else
+	{
+		PushStyleColor(ImGuiCol_Button, ORANGE);
+		input = button("Disconnect");
+		if (input)
+			m_pClient->disconnect();
+	}
 
+	PopStyleColor();
+	PopStyleVar();
+	/*
 	unsigned short* usPort = m_pClient->getServerPort();
 	int iPort = (int)*usPort;
-	inputInt("Port", colConfig, "##Port", &iPort, colConfig, 5);
+	inputInt("Port", colorChangeable, "##Port", &iPort, colorChangeable, 5);
 	*usPort = iPort;
-	EndChild();
-	BeginChild("Server State", ImVec2(g_gameInfo.width / 2, g_gameInfo.height / 4), true);
-	button("Server State", ImVec2(0, 0), TITLE_BUTTON_TEXT_COLOR, TITLE_BUTTON_COLOR,
-		TITLE_BUTTON_COLOR, TITLE_BUTTON_COLOR); SameLine();
-	text(stringCLIENT_STATE[state].c_str(), colorCLIENT_STATE[state]);
+	PopFont();
+
+	SeparatorText("Server Status");
+	PushFont(m_pFont[FONTSIZE_MED]);
+	m_pClient->getstatus();
+	text(stringCLIENT_status[status].c_str(), colorCLIENT_status[status]);
 	inputText("Game Map", NOOPTIONS_COLOR, "##GamerMap", m_pClient->getGameMap(),
 		gameNS::MAX_NAME_LEN, OPTIONS_COLOR, ImGuiInputTextFlags_ReadOnly);
 	int gamePlayers = 0, connectedPlayers = 0;
@@ -242,8 +290,8 @@ void Interface::multiplayerMenu()
 
 		//if (button("Join game", Vec2(0, 0), Vec4(0.1f, 1, 0.6f, 1)));
 	}
-	EndChild();
-	popSubMenu();
+	*/
+	endActivity(true, MAIN_ACTIVITY);
 }
 
 #else ifdef _SERVER_BUILD
@@ -259,7 +307,7 @@ void Interface::multiplayerMenu()
 	int iPort = 0;
 	iPort = *port;
 	ImGuiInputTextFlags configFlag = 0;
-	ServerState state = m_pServer->getState();
+	Serverstatus status = m_pServer->getstatus();
 	Vec4 colConfig = CHOOSE_COLOR;
 	if (m_pServer->isStarted())
 	{
@@ -293,7 +341,7 @@ void Interface::multiplayerMenu()
 	inputInt("Players", colConfig, "##Players", &players, colConfig, 2, 2, 32, ImGuiInputTextFlags_CharsDecimal | configFlag);
 	m_pServer->setGamePlayers(players);
 
-	if (state == SERVER_NOT_RUNNING)
+	if (status == SERVER_NOT_RUNNING)
 	{
 		if (button("Start"))
 		{
@@ -313,14 +361,14 @@ void Interface::multiplayerMenu()
 
 	EndChild();
 	BeginChild(" ", ImVec2(g_gameInfo.width / 3, g_gameInfo.height / 5), true);
-	title("Server State"); SameLine(); text(strSERVER_STATE[state], colSERVER_STATE[state]);
+	title("Server status"); SameLine(); text(strSERVER_status[status], colSERVER_status[status]);
 	int connected = 0;
 	connected = m_pServer->getConnectedPlayers();
 	inputInt("Connected", NOOPTIONS_COLOR, "##ConnectedPlayers", &connected, NOOPTIONS_COLOR,
 		0, 0, ImGuiInputTextFlags_ReadOnly);
 
 	EndChild();
-	BeginChild("ServerState", Vec2(g_gameInfo.width / 4, g_gameInfo.height / 2));
+	BeginChild("Serverstatus", Vec2(g_gameInfo.width / 4, g_gameInfo.height / 2));
 	const auto pClientData = m_pServer->getClientsData();
 	for (size_t i = 0; i < pClientData->size(); i++)
 	{
@@ -334,122 +382,78 @@ void Interface::multiplayerMenu()
 	EndChild();
 	popSubMenu();
 }
-
 #endif
 
-void Interface::title(const char* text, Vec4 colText, Vec4 colButton)
+bool Interface::inputText(std::string desc, char * buf, size_t length, ImGuiInputTextFlags flags, ListType listType)
 {
-	button(text, ImVec2(0, 0), colText, colButton,
-		colButton, colButton);
-}
-
-void Interface::fillWindow()
-{
-	SetNextWindowPos(Vec2(0, 0));
-	SetNextWindowSize(Vec2(g_gameInfo.width, g_gameInfo.height));
-}
-
-void Interface::pushSubMenu(const char* str_id)
-{
-	PushStyleVar(ImGuiStyleVar_ChildBorderSize, 5);
-	PushFont(m_font[MED]);
-	fillWindow();
-	PushStyleVar(ImGuiStyleVar_WindowPadding, Vec2(g_gameInfo.width / 10, g_gameInfo.height / 8));
-	Begin("Sub Menu", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-	PopStyleVar();
-	PushStyleVar(ImGuiStyleVar_WindowBorderSize, 4);
-	BeginChild(str_id, Vec2(g_gameInfo.width / 2, g_gameInfo.height*1.0f / 1.5f), true, ImGuiWindowFlags_NoTitleBar);
-	PopStyleVar(2);
-}
-
-void Interface::popSubMenu()
-{
-	EndChild();
-	PopFont();
-	PushFont(m_font[LARGE]);
-	PushStyleVar(ImGuiStyleVar_WindowPadding, Vec2(g_gameInfo.width*0.9, 1));
-	if (Button("Back", Vec2(g_gameInfo.width / 10, g_gameInfo.height / 10)))
+	Text(desc.c_str());
+	PushItemWidth(GetFontSize()*length / 2);
+	std::string label = strFormat("%s%s", "##", desc.c_str());
+	SameLine(0.0f, 0.0f);
+	switch (listType)
 	{
-		m_menu = MAIN_MENU;
-		m_pAudio->play(SOUND_BUTTON_CLICKED);
+	case LIST_NONE:
+		break;
+	case LIST_MAIN:
+		m_inputFieldListPos = GetCursorPos();
+		break;
+	case LIST_VERTICAL:
+		SetCursorPosX(m_inputFieldListPos.x);
+		break;
+	case LIST_HORIOZONTIAL:
+		SetCursorPosY(m_inputFieldListPos.y);
+		break;
+	default:
+		break;
 	}
 
-	PopStyleVar();
+	bool input = InputText(label.c_str(), buf, length, flags);
+	PopItemWidth();
+	return input;
+}
+
+bool Interface::inputInt(std::string desc, int32 * pValue, ImGuiInputTextFlags flags, ListType listType)
+{
+	Text(desc.c_str());
+	std::string label = strFormat("%s%s", "##", desc.c_str());
+	PushItemWidth(GetFontSize() * 4);
+	SameLine(0.0f, 0.0f);
+	switch (listType)
+	{
+	case LIST_NONE:
+		break;
+	case LIST_MAIN:
+		m_inputFieldListPos = GetCursorPos();
+		break;
+	case LIST_VERTICAL:
+		SetCursorPosX(m_inputFieldListPos.x);
+		break;
+	case LIST_HORIOZONTIAL:
+		SetCursorPosY(m_inputFieldListPos.y);
+		break;
+	default:
+		break;
+	}
+
+	bool input = InputInt(label.c_str(), pValue, 0, 0, flags);
+	PopItemWidth();
+	return input;
+}
+
+bool Interface::button(std::string text, Vec2 size)
+{
+	bool click = Button(text.c_str(), size); ;
+	if (click)
+		m_pAudio->play("button-click");
+
+	return click;
+}
+
+void Interface::separatorText(std::string text, FontSize fontSize, Vec4 color)
+{
+	PushFont(m_pFont[fontSize]);
+	PushStyleColor(ImGuiCol_Text, color);
+	SeparatorText(text.c_str());
+	PopStyleColor();
 	PopFont();
-	End();
-}
-
-bool Interface::button(const char* text, Vec2 size, Vec4 colText, Vec4 colButton,
-	Vec4 colActive, Vec4 colHorvored, ImGuiButtonFlags flags)
-{
-	bool clicked = false;
-
-	bool coText = (!colText.isEmpty()), coButton = (!colButton.isEmpty()),
-		coActive = (!colActive.isEmpty()), coHorvered = (!colHorvored.isEmpty());
-
-	if (coText)
-		PushStyleColor(ImGuiCol_Text, colText);
-	if (coButton)
-		PushStyleColor(ImGuiCol_Button, colButton);
-	if (coActive)
-		PushStyleColor(ImGuiCol_ButtonActive, colActive);
-	if (coHorvered)
-		PushStyleColor(ImGuiCol_ButtonHovered, colHorvored);
-
-	clicked = Button(text, size);
-	if (clicked)
-		m_pAudio->play(SOUND_BUTTON_CLICKED);
-
-	PopStyleColor(coText + coButton + coActive + coHorvered);
-
-	return clicked;
-}
-
-void Interface::inputText(const char* desc, const Vec4& descColor, const char* label,
-	char* buf, const uint16_t& len, const Vec4& color, ImGuiInputTextFlags flags)
-{
-	text(desc, descColor); SameLine(0, g_gameInfo.width / 200);
-	SetNextItemWidth(len * 8);
-	inputText(label, buf, gameNS::MAX_NAME_LEN, color, flags);
-}
-
-void Interface::inputInt(const char* label, int* buf, const ImVec4& textColor,
-	int32_t min, int32_t max, ImGuiInputTextFlags flags)
-{
-	PushStyleColor(ImGuiCol_Text, textColor);
-	InputInt(label, buf, 0, 0, flags);
-	PopStyleColor();
-	if (min == max)
-		return;
-
-	if (*buf > max)
-		*buf = max;
-	else if (*buf < min)
-		*buf = min;
-}
-
-void Interface::inputInt(const char* desc, const Vec4& descColor, const char* label,
-	int* buf, const Vec4& color, const int32_t elements, const int32_t min, const int32_t max, ImGuiInputTextFlags flags)
-{
-	text(desc, descColor); SameLine(0, g_gameInfo.width / 200);
-	SetNextItemWidth(g_gameInfo.width / 15);
-	inputInt(label, buf, color, min, max, flags);
-}
-
-void Interface::inputText(const char* label, char* buf, const uint16_t& len, const Vec4& textColor,
-	ImGuiInputTextFlags flags)
-{
-	PushStyleColor(ImGuiCol_Text, textColor);
-	InputText(label, buf, len, flags);
-	PopStyleColor();
-}
-
-void Interface::text(const char* text, const Vec4 color)
-{
-	bool col = (!color.isEmpty());
-	if (col)
-		PushStyleColor(ImGuiCol_Text, color);
-	Text(text);
-	if (col)
-		PopStyleColor();
 }

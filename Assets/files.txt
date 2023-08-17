@@ -7,3 +7,4 @@ cursor.ani from www.cursors-4u.com
 audio:
 sound-tank-attack.wav from https://opengameart.org/content/dull-explosion
 sound-button-clicked from SFML Samples
+sound-bullet-explosion.wav https://opengameart.org/content/big-explosion

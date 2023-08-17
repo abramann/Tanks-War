@@ -65,7 +65,7 @@ void Image::draw() const
 
 V3 Image::getRotateCenter() const
 {
-	V3 center = V3(static_cast<float>(m_width / 2),static_cast<float>(m_height / 2), 0);
+	V3 center = V3(static_cast<float>(m_width / 2), static_cast<float>(m_height / 2), 0);
 	return center;
 }
 

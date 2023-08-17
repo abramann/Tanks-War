@@ -20,11 +20,13 @@ void Player::initialize(PlayerID id, const char* name, PlayerType playerType, co
 	strcpy_s(m_name, name);
 	Texture* pTexture = 0;
 	TextureManger* pTextureManger = game->getTextureManger();
+	std::string tex;
 	if (playerType == PLAYER_SELF)
-		pTexture = pTextureManger->getTexture(TEXTURE_PLAYER_TANK);
+		tex = "player-tank";
 	else if (playerType == PLAYER_ENEMY)
-		pTexture = pTextureManger->getTexture(TEXTURE_ENEMY_TANK);
+		tex = "enemy-tank";
 
+	pTexture = pTextureManger->getTexture(tex);
 	Tank::initialize(pTexture, game);
 }
 

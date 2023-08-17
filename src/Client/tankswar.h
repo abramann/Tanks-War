@@ -17,11 +17,14 @@ public:
 	void initialize(HINSTANCE hInstance, HWND hWnd);
 	void update();
 	void render();
-	void onLostDevice();
-	void onResetDevice();
+	char* getServerIP() { return m_clientInfo.serverIP; }
+	char* getPlayerName() { return m_clientInfo.name; }
+	Port getServerPort() { return m_clientInfo.serverPort; }
+	void updateClientInfo();
+	void setServerPort(Port port);
 
 private:
 
+	ClientInfo m_clientInfo;
 	uint8_t m_players;
-	char* m_pServerIP;
 };

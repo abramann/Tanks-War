@@ -62,4 +62,28 @@ namespace gameMathNS
 	{
 		*mat = XMMatrixIdentity();
 	}
+
+	inline Matrix V3ToMatrix(const V3 v3, MatrixType type)
+	{
+		Matrix mat;
+		const float &x = v3.x, &y = v3.y, &z = v3.z;
+		switch (type)
+		{
+		case MATRIX_TYPE_TRANSLATE:
+			gameMathNS::matrixTranslation(&mat, x, y, z);
+			break;
+		case MATRIX_TYPE_SCALL:
+			gameMathNS::matrixScaling(&mat, x, y, z);
+			break;
+		case MATRIX_TYPE_ROTATE:
+			gameMathNS::matrixRotationX(&mat, x);
+			gameMathNS::matrixRotationY(&mat, y);
+			gameMathNS::matrixRotationZ(&mat, z);
+			break;
+		default:
+			break;
+		}
+
+		return mat;
+	}
 }

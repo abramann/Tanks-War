@@ -73,28 +73,28 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <LibraryPath>$(SolutionDir)src\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)bin\obj\$(TargetName)\</IntDir>
+    <IntDir>$(SolutionDir)bin\obj\$(ProjectName)-$(Configuration)-$(Platform)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <LibraryPath>$(SolutionDir)src\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)bin\obj\$(TargetName)\</IntDir>
+    <IntDir>$(SolutionDir)bin\obj\$(ProjectName)-$(Configuration)-$(Platform)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <LibraryPath>$(SolutionDir)src\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)bin\obj\$(TargetName)\</IntDir>
+    <IntDir>$(SolutionDir)bin\obj\$(ProjectName)-$(Configuration)-$(Platform)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <LibraryPath>$(SolutionDir)src\common\lib\$(Platform);$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)bin\obj\$(TargetName)\</IntDir>
+    <IntDir>$(SolutionDir)bin\obj\$(ProjectName)-$(Configuration)-$(Platform)\</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)-$(Platform)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -103,7 +103,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CLIENT_BUILD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CLIENT_BUILD;_XM_NO_INTRINSICS_</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)src\common\directx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -118,7 +118,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CLIENT_BUILD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CLIENT_BUILD;_XM_NO_INTRINSICS_</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)src\common\directx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -135,7 +135,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CLIENT_BUILD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CLIENT_BUILD;_XM_NO_INTRINSICS_</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)src\common\directx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -154,7 +154,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CLIENT_BUILD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CLIENT_BUILD;_XM_NO_INTRINSICS_</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)src\common;$(SolutionDir)src\common\directx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -182,12 +182,12 @@
     <ClInclude Include="..\common\input.h" />
     <ClInclude Include="..\common\interface.h" />
     <ClInclude Include="..\common\map.h" />
-    <ClInclude Include="..\common\matrix4x4.h" />
     <ClInclude Include="..\common\net.h" />
     <ClInclude Include="..\common\object.h" />
     <ClInclude Include="..\common\player.h" />
     <ClInclude Include="..\common\serverplayer.h" />
     <ClInclude Include="..\common\shader.h" />
+    <ClInclude Include="..\common\sprite.h" />
     <ClInclude Include="..\common\tank.h" />
     <ClInclude Include="..\common\texture.h" />
     <ClInclude Include="..\common\texturemanger.h" />
@@ -218,11 +218,11 @@
     <ClCompile Include="..\common\input.cpp" />
     <ClCompile Include="..\common\interface.cpp" />
     <ClCompile Include="..\common\map.cpp" />
-    <ClCompile Include="..\common\matrix4x4.cpp" />
     <ClCompile Include="..\common\net.cpp" />
     <ClCompile Include="..\common\object.cpp" />
     <ClCompile Include="..\common\player.cpp" />
     <ClCompile Include="..\common\serverplayer.cpp" />
+    <ClCompile Include="..\common\sprite.cpp" />
     <ClCompile Include="..\common\tank.cpp" />
     <ClCompile Include="..\common\texture.cpp" />
     <ClCompile Include="..\common\texturemanger.cpp" />
