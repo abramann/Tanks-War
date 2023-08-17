@@ -34,7 +34,7 @@ To build the game, you will need the Visual Studio 2015 (MSVC v140) or above. Th
 ## Credits
 
 
-Charles Kelly for the net library and the useful information in his book Programming 2D Games www.programming2dgames.net.
+Charles Kelly for the net library and the useful information in his book [Programming 2D Games](http://www.programming2dgames.com).
 
 Ocuntu for ImGui.
 
