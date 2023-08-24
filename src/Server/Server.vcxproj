@@ -73,6 +73,7 @@
     <ClCompile Include="..\common\object.cpp" />
     <ClCompile Include="..\common\player.cpp" />
     <ClCompile Include="..\common\serverplayer.cpp" />
+    <ClCompile Include="..\common\sprite.cpp" />
     <ClCompile Include="..\common\tank.cpp" />
     <ClCompile Include="..\common\texture.cpp" />
     <ClCompile Include="..\common\texturemanger.cpp" />

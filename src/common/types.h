@@ -19,6 +19,8 @@
 #include <D3D11.h>
 #include <D3D10.h>
 
+#pragma warning(disable : 4200)
+
 extern uint64_t g_frameCounter;
 
 struct Color
@@ -31,7 +33,7 @@ struct Color
 #define COLOR_ARGB(a,b,c) Color(a,b,c)
 #define COLOR_XRGB Color(a,b,c)
 
-typedef uint8_t PlayerID;
+typedef int8_t PlayerID;
 typedef unsigned short Port;
 typedef uint8_t Protocol;
 typedef uint32_t Crc32;
@@ -46,7 +48,6 @@ typedef uint16_t uint16;
 typedef uint32_t uint32;
 typedef uint64_t uint64;
 typedef HRESULT Result;
-typedef int8 PacketType;
 typedef int8 PlayerAct;
 typedef DirectX::XMMATRIX Matrix;
 typedef DirectX::XMFLOAT2 V2;
@@ -222,29 +223,47 @@ struct PlayerUpdate
 
 struct CpsPlayerAct
 {
-	PacketType packetType = PACKET_PLAYER_UPDATE;
+	PacketType packetType = PACKET_CLIENT_UPDATE;
 	PlayerAct act;
 	PlayerID id;
+};
+
+struct CpsJoin
+{
+	PacketType packetType = PACKET_CLIENT_JOIN;
+	char name[];
+};
+
+struct SpsJoin
+{
+	PacketType packetType = PACKET_CLIENT_JOIN;
+	PlayerID id;
+	char name[];
+};
+
+struct SpsClientGameState
+{
+	PacketType packetType = PACKET_CLIENT_GAME_STATE;
+	PlayerID id;
+	V3 position, rotate;
+	float health, velocity;
 };
 
 struct SpsPlayerAct
 {
-	PacketType packetType = PACKET_PLAYER_UPDATE;
+	PacketType packetType = PACKET_CLIENT_UPDATE;
 	PlayerAct act;
 	PlayerID id;
 };
 
-#pragma warning(disable : 4200)
-
 struct SpsPlayerUpdate
 {
-	PacketType packetType = PACKET_PLAYER_UPDATE;
+	PacketType packetType = PACKET_CLIENT_UPDATE;
 	PlayerUpdate playerUpdate[];
 };
 
 struct CpsIni
 {
-	PacketType  packetType = PACKET_INI;
 	char name[gameNS::MAX_NAME_LEN];
 };
 
@@ -254,9 +273,9 @@ struct CpsDisconnect
 	PlayerID id;
 };
 
-struct CpsPresent
+struct CpsHeartbeat
 {
-	PacketType packet = PACKET_PRESENT_CLIENT;
+	PacketType packet = PACKET_CLIENT_HEARTBEAT;
 	PlayerID id;
 };
 
@@ -268,24 +287,11 @@ struct CpsSeasson
 
 struct SpsIni
 {
-	PacketType packetType = PACKET_INI;
+	PacketType packetType = PACKET_CLIENT_JOIN;
 	PlayerID id;
-	uint8_t gamePlayers;
+	int gamePlayers;
 	char  map[gameNS::MAX_NAME_LEN];
 	Crc32 checksum;
-	PlayerIniData playerIniData;
-};
-
-struct SpsPlayersExist
-{
-	PacketType packetType = PACKET_PLAYERS_EXIST;
-	uint8_t players;
-};
-
-struct SpsPlayersInitData
-{
-	PacketType packetType = PACKET_PLAYERS_INI_DATA;
-	PlayerIniData playerIniData[];
 };
 
 struct SpsDisconnect

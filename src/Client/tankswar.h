@@ -19,9 +19,9 @@ public:
 	void render();
 	char* getServerIP() { return m_clientInfo.serverIP; }
 	char* getPlayerName() { return m_clientInfo.name; }
-	Port getServerPort() { return m_clientInfo.serverPort; }
-	void updateClientInfo();
 	void setServerPort(Port port);
+	Port getServerPort() const { return m_clientInfo.serverPort; }
+	void updateClientInfo();
 
 private:
 

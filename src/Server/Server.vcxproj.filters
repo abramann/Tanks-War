@@ -203,5 +203,8 @@
     <ClCompile Include="server.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\sprite.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

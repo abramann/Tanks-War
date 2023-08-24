@@ -23,6 +23,8 @@ public:
 	virtual void executeRight();
 	virtual void damage(float dmg);
 	void addVeclocity(float addV) { m_velocity += addV; }
+	float getHealth() const { return m_health; }
+	float getVelocity() const { return m_velocity; }
 
 protected:
 

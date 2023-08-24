@@ -68,7 +68,7 @@ private:
 	Input* m_pInput;
 	Map* m_pMap;
 	Timer* m_pTimer;
-	Game* m_pGame;
+	TanksWar* m_pGame;
 	Net m_net;
 	Port m_port;
 	int8_t m_gamePlayers;

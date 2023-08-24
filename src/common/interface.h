@@ -28,7 +28,7 @@ public:
 #ifdef _CLIENT_BUILD
 	void initialize(Client* client, TanksWar* game);
 #else ifdef _SERVER_BUILD
-	void initialize(Server* server, Game* game);
+	void initialize(Server* server, TanksWarServer* game);
 #endif
 	void executeMainActivity();
 	void executeMultiplayerActivity();

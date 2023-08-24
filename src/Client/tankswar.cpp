@@ -30,7 +30,7 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
 	Game::initialize(hInstance, hWnd);
 #ifdef TEST_NO_SERVER_INTERFACE
 	m_pMap->load("Nova");
-	tank2.initialize(m_pTextureManger->getTexture(TEXTURE_PLAYER_TANK), this);
+	tank2.initialize(m_pTextureManger->getTexture("player-tank"), this);
 	tank2.setPosition(V3(330, 300, 0));
 #else
 	m_pClient->initialize(this);

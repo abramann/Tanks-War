@@ -92,9 +92,11 @@ void Client::update(int64 frameTime)
 
 bool Client::connect()
 {
-	//FileIO::createClientInfo(m_clientInfo);
+	m_serverPort = m_pGame->getServerPort();
+	auto create = m_net.createClient(m_pServerIP, m_serverPort, netNS::UDP);
+	if (create != netNS::NET_OK)
+		return false;
 
-	m_net.createClient(m_pServerIP, m_serverPort, netNS::UDP);
 	m_pCpsIni->packetType = PACKET_INI;
 	strcpy(m_pCpsIni->name, m_pClientName);
 	m_port = _rand(networkNS::MAX_PORT);

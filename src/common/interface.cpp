@@ -20,18 +20,39 @@ extern void HelpMarker(const char* desc);
 
 #pragma warning(disable : 4244)
 
+namespace clientNS
+{
+	static std::map<int, std::pair<const char*, ImVec4>>  CLIENT_STATUS = {
+		{ CLIENT_UNCONNECTED,{ "Not Connected", colorNS::GREY}},
+		{CLIENT_UNCONNECTED_DISCONNECT, {"Disconnected", colorNS::RED}},
+		//{CLIENT_UNCONNECTED_MAP_NOT_FOUND, {"Server map doesn't exist", colorNS::YELLOW}},
+		//{ CLIENT_UNCONNECTED_MAP_NOT_LOAD,{ "Failed to load server map", colorNS::YELLOW } },
+		{ CLIENT_CONNECTED_WAITING,{ "Connected, Waiting server to start...",colorNS::GREEN } },
+		{ CLIENT_CONNECTED_PLAYING,{ "Connected",colorNS::GREEN } }
+	};
+}
+
+namespace interfaceNS
+{
+	constexpr float MAINACTIVITY_BUTTON_PADDING_Y = 0.05f;
+}
+namespace serverNS
+{
+	static std::map<ServerStatus, std::pair<const char*, ImVec4>>  SERVER_STATUS = {
+		{ SERVER_NOT_RUNNING,{ "Not Started", colorNS::BROWN } },
+		{ SERVER_RUNNING_HANDLING,{ "Handling Requests...", colorNS::GREEN} },
+		{ SERVER_DISCONNECTED,{ "Disconnected", colorNS::RED } }
+	};
+}
+
+namespace colorNS
+{
+	
+}
+
 using namespace colorNS;
 using namespace ImGui;
 using namespace interfaceNS;
-
-static std::map<int, std::pair<const char*, ImVec4>>  ClientConnectionStatus = {
-	{ CLIENT_UNCONNECTED,{ "Not Connected", GREY}},
-	{CLIENT_UNCONNECTED_DISCONNECT, {"Disconnected", RED}},
-	//{CLIENT_UNCONNECTED_MAP_NOT_FOUND, {"Server map doesn't exist", YELLOW}},
-	//{ CLIENT_UNCONNECTED_MAP_NOT_LOAD,{ "Failed to load server map", YELLOW } },
-	{ CLIENT_CONNECTED_WAITING,{ "Connected, Waiting server to start...",GREEN } },
-	{ CLIENT_CONNECTED_PLAYING,{ "Connected",GREEN } }
-};
 
 Interface::Interface() : m_activity(MAIN_ACTIVITY), m_blankActivity(true)
 {
@@ -42,7 +63,7 @@ Interface::~Interface()
 }
 
 #ifdef _SERVER_BUILD
-void Interface::initialize(Server* server, Game* game)
+void Interface::initialize(Server* server, TanksWarServer* game)
 {
 	m_pServer = server;
 #else ifdef _CLIENT_BUILD
@@ -67,7 +88,7 @@ void Interface::initialize(Client* client, TanksWar* game)
 void Interface::executeMainActivity()
 {
 	beginActivity(true, FONTSIZE_LARGE2);
-	Vec2 butSize = Vec2(g_gameInfo.width / 3, g_gameInfo.height / 10),
+	Vec2 butSize = Vec2(g_gameInfo.width / 2, g_gameInfo.height / 5),
 		butPos = Vec2((g_gameInfo.width / 2) - butSize.x / 2, g_gameInfo.height / 10);
 	SetCursorPos(butPos);
 	if (button("Multiplayer", butSize))
@@ -89,13 +110,17 @@ void Interface::executeMainActivity()
 void Interface::executeSettingsActivity()
 {
 	beginActivity(false, FONTSIZE_SMALL2);
+	PushStyleColor(ImGuiCol_Text, YELLOW);
 	///////////////////////////////////
 	//	Graphics section
 	separatorText("Graphcis", FONTSIZE_LARGE, RED);
 	static GameInfo gameInfo = g_gameInfo;
 	bool cWin = Checkbox("Windowed", &gameInfo.windowed);
 	bool cVsync = Checkbox("VSync", &gameInfo.vsync);
-	bool cComputeShader = Checkbox("Compute Shader", &gameInfo.computeShader); SameLine();  HelpMarker("Use GPU for collision detection.");
+	bool cComputeShader = Checkbox("Compute Shader", &gameInfo.computeShader); SameLine();  
+	PopStyleColor();
+	HelpMarker("Use GPU for collision detection.");
+	PushStyleColor(ImGuiCol_Text, YELLOW);
 	ShowDemoWindow();
 	if (cWin || cVsync)
 		FileIO::createGameInfo(&gameInfo);
@@ -133,6 +158,7 @@ void Interface::executeSettingsActivity()
 		m_pGame->updateClientInfo();
 
 #endif
+	PopStyleColor();
 	endActivity(true, MAIN_ACTIVITY);
 }
 
@@ -210,10 +236,10 @@ void Interface::endActivity(bool backButton, Activity backActivity)
 	End();
 }
 
-#ifdef _CLIENT_BUILD
 void Interface::executeMultiplayerActivity()
 {
 	beginActivity(false, FONTSIZE_SMALL2);
+#ifdef _CLIENT_BUILD
 	separatorText("Multiplayer Config", FONTSIZE_LARGE, RED);
 	ImGuiInputTextFlags configFlags = ImGuiInputTextFlags_None;
 	bool connected = m_pClient->isConnected();
@@ -235,8 +261,8 @@ void Interface::executeMultiplayerActivity()
 	SameLine();
 	SetCursorPosX(m_inputFieldListPos.x);
 	auto status = m_pClient->getStatus();
-	PushStyleColor(ImGuiCol_Text, ClientConnectionStatus[status].second);
-	Text(ClientConnectionStatus[status].first);
+	PushStyleColor(ImGuiCol_Text, clientNS::CLIENT_STATUS[status].second);
+	Text(clientNS::CLIENT_STATUS[status].first);
 	PopStyleColor();
 	SetCursorPosX(m_inputFieldListPos.x * 1.5f);
 	PushStyleVar(ImGuiStyleVar_FrameRounding, 20);
@@ -291,10 +317,50 @@ void Interface::executeMultiplayerActivity()
 		//if (button("Join game", Vec2(0, 0), Vec4(0.1f, 1, 0.6f, 1)));
 	}
 	*/
+#else ifdef _SERVER_BUILD
+
+	separatorText("Server Config", FONTSIZE_LARGE, RED);
+	ImGuiInputTextFlags configFlags = (m_pServer->isStarted()) ? ImGuiInputTextFlags_ReadOnly : 0;
+	static char pServerIP[netNS::IP_SIZE];
+	m_pServer->getIP(pServerIP);
+	inputText("Server IP", pServerIP, netNS::IP_SIZE, ImGuiInputTextFlags_ReadOnly, LIST_MAIN);
+	static int32 port = m_pServer->getPort();
+	bool input = inputInt("Port", &port, configFlags, LIST_VERTICAL);
+	if (input)
+		m_pServer->setPort(port);
+
+	Text("status");
+	SameLine();
+	SetCursorPosX(m_inputFieldListPos.x);
+	auto status = m_pServer->getStatus();
+	PushStyleColor(ImGuiCol_Text, serverNS::SERVER_STATUS[status].second);
+	Text(serverNS::SERVER_STATUS[status].first);
+	PopStyleColor();
+	SetCursorPosX(m_inputFieldListPos.x * 1.5f);
+	PushStyleVar(ImGuiStyleVar_FrameRounding, 20);
+	bool srvStarted = m_pServer->isStarted();
+	if (!srvStarted)
+	{
+		PushStyleColor(ImGuiCol_Button, GREEN);
+		input = button("Start");
+		if (input)
+			m_pServer->start();
+
+	}
+	else
+	{
+		PushStyleColor(ImGuiCol_Button, ORANGE);
+		input = button("Disconnect");
+		if (input)
+			m_pServer->stop();
+	}
+
+	PopStyleColor();
+	PopStyleVar();
+#endif
 	endActivity(true, MAIN_ACTIVITY);
 }
-
-#else ifdef _SERVER_BUILD
+/*#else ifdef _SERVER_BUILD
 void Interface::multiplayerMenu()
 {
 	pushSubMenu("Server Info");
@@ -383,6 +449,7 @@ void Interface::multiplayerMenu()
 	popSubMenu();
 }
 #endif
+*/
 
 bool Interface::inputText(std::string desc, char * buf, size_t length, ImGuiInputTextFlags flags, ListType listType)
 {
