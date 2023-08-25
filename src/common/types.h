@@ -198,7 +198,7 @@ struct Space
 struct ServerInfo
 {
 	Port port;
-	uint8_t players;
+	int32 maxClients;
 };
 
 struct ClientInfo

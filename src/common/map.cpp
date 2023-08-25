@@ -457,15 +457,6 @@ Crc32 Map::getCrc32() const
 	return crc32;
 }
 
-const char* Map::loadRandom()
-{
-	std::vector<std::string> list = FileIO::getDirFileList(fileNS::MAP_DIR);
-	std::string map = list[_rand(list.size() - 1)];
-	map = map.substr(0, map.size() - 4);
-	load(map.c_str());
-	return m_loadedMap;
-}
-
 Space Map::getRandomEmptySpace() const
 {
 	Space freeSpace = m_freeSpace[_rand(m_freeSpace.size())];

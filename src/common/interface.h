@@ -26,9 +26,9 @@ public:
 	~Interface();
 
 #ifdef _CLIENT_BUILD
-	void initialize(Client* client, TanksWar* game);
+	void initialize(Client* client, TanksWar* pTK);
 #else ifdef _SERVER_BUILD
-	void initialize(Server* server, TanksWarServer* game);
+	void initialize(TanksWarServer* pTKServer);
 #endif
 	void executeMainActivity();
 	void executeMultiplayerActivity();
@@ -57,13 +57,12 @@ private:
 	void separatorText(std::string text, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED, Vec4 color = Vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 #ifdef _CLIENT_BUILD
-	TanksWar* m_pGame;
+	TanksWar* m_pTK;
 #else
-	TanksWarServer* m_pGame;
+	TanksWarServer* m_pTKServer;
 #endif
 	Graphics* m_pGraphics;
 	Audio* m_pAudio;
-	Map* m_pMap;
 	ImFont* m_pFont[interfaceNS::FONTSIZES];
 	bool m_blankActivity;
 	int8 m_activity;
@@ -71,6 +70,6 @@ private:
 #ifdef _CLIENT_BUILD
 	Client* m_pClient;
 #else ifdef _SERVER_BUILD
-	Server* m_pServer;
+	//Server* m_pServer;
 #endif
 };

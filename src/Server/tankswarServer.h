@@ -5,24 +5,10 @@
 
 #include "..\common\game.h"
 #include "server.h"
+#include "..\common\serverplayer.h"
+//class ServerPlayer;
 
-struct Client
-{
-	Client(PlayerID id, std::string name, std::string _ip, Port _port, const Game* game)
-	{
-		port = _port;
-		strcpy_s(ip, _ip.c_str());
-		serverPlayer.initialize(id, name.c_str(), game);
-	}
-
-	void update() { serverPlayer.update(); }
-	void draw() { serverPlayer.draw(); }
-
-	char ip[netNS::IP_SIZE];
-	Port port;
-	int64 heartbeatTime;
-	ServerPlayer serverPlayer;
-};
+typedef ServerPlayer Client;
 
 class TanksWarServer : public Game
 {
@@ -39,39 +25,39 @@ public:
 	void createClient();
 	bool clientExist();
 	void receiveClientHeartbeat();
-	void disconnectClient(Client* pClient);
+	void disconnectClient(std::shared_ptr<Client> pClient);
 	void disonnectInactiveClient();
 	void serverStart();
 	void serverShutdown();
 	void applyPlayerMove();
-	int32 getGameMaxPlayers() const { return m_gameMaxPlayers; }
+	int32 getMaxClients() const { return m_maxClients; }
 	Port* getPort() { return &m_port; }
 	void post(int size = networkNS::MAX_PACKET_SIZE);
 	void send(Client* pClient, int size = networkNS::MAX_PACKET_SIZE);
 	void resetClientGameState(Client* pClient);
 	void updateClientGameState(Client* pClient);
+	bool isActive() const { return m_active; }
+	void setPort(Port port);
+	void setMaxClients(int32 maxClients);
+	void setMap(std::string map) { m_map = map; }
+	void getIP(char* pIP) { m_pServer->getIP(pIP); }
+	std::string getMap() const { return m_map; }
+	ServerStatus getStatus() const { return m_status; }
 
 private:
 
 	PlayerID generateClientID() const;
-	/*
-	void reply(int size = networkNS::MAX_PACKET_SIZE);
-	void replyPlayersExist();
-	void replyPlayersIniData();
-	void post(int size = networkNS::MAX_PACKET_SIZE);
-	void postPlayersIniData();
-	void postPlayerUpdate(PlayerID id);
-	void postPlayersUpdate();
-	void postNewPlayer();
-	*/
+	std::string getRandomMap() const;
+	bool recv();
 
+	bool m_active;
 	Port m_port, * m_pReceiverPort;
-	int32 m_gameMaxPlayers;
+	std::shared_ptr<Client> m_pReceiverClient;
+	int32 m_maxClients;
 	ServerStatus m_status;
-	std::vector<std::shared_ptr<Client>> m_pClient;
-	const char* m_pSData, * m_pRData;
-	char* m_pReceiverIP;
-
+	std::vector<std::shared_ptr<ServerPlayer> > m_pClient;
+	const char* m_pSData, * m_pRData, * m_pReceiverIP;
+	std::string m_map;
 	CpsJoin* m_pCpsJoin;
 	CpsHeartbeat* m_pCpsHeartbeat;
 	CpsDisconnect* m_pCpsDisconnect;

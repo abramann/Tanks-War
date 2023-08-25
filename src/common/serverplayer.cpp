@@ -3,6 +3,9 @@
 
 #include "serverplayer.h"
 #include "game.h"
+#ifdef _SERVER_BUILD
+#include "..\Server\tankswarServer.h"
+#endif
 
 ServerPlayer::ServerPlayer()
 {
@@ -12,18 +15,28 @@ ServerPlayer::~ServerPlayer()
 {
 }
 
-void ServerPlayer::initialize(PlayerID id, const char * name, const Game * game)
-{
 #ifdef _SERVER_BUILD
-	m_pServer = game->getServer();
-#endif
-	Player::initialize(id, name, PLAYER_ENEMY, game);
+ServerPlayer::ServerPlayer(PlayerID id, const char* name, const char* ip, Port port,TanksWarServer* pTKServer)
+{
+	initialize(id, name, ip, port, pTKServer);
 }
 
-#ifdef _SERVER_BUILD
+void ServerPlayer::initialize(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTKServer)
+{
+	m_pTKServer = pTKServer;
+	strcpy(m_ip, ip);
+	Player::initialize(id, name, PLAYER_ENEMY, pTKServer);
+}
+
 void ServerPlayer::damage(float dmg)
 {
 	Player::damage(dmg);
-	m_pServer->postPlayerUpdate(m_id);
+	m_pTKServer->updateClientGameState(this);
+}
+
+#else
+void ServerPlayer::initialize(PlayerID id, const char* name, const Game * game)
+{
+	Player::initialize(id, name, PLAYER_ENEMY, game);
 }
 #endif

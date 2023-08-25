@@ -3,22 +3,24 @@
 
 #include "interface.h"
 #include "fileio.h"
-#ifdef _CLIENT_BUILD
-#include "..\..\Client\tankswar.h"
-#else
-#include "..\..\Server\tankswarserver.h"
-#endif
 #include "imgui\imgui.h"
 #include "texturemanger.h"
 #include "sprite.h"
+#ifdef _CLIENT_BUILD
+#include "..\..\Client\tankswar.h"
+#else
+#include "..\Server\tankswarServer.h"
+#include "map.h"
+#include "fileio.h"
+#endif
 
 extern void HelpMarker(const char* desc);
 
-#ifdef _SERVER_BUILD
-#include "map.h"
-#endif
-
 #pragma warning(disable : 4244)
+
+using namespace colorNS;
+using namespace ImGui;
+using namespace interfaceNS;
 
 namespace clientNS
 {
@@ -36,23 +38,15 @@ namespace interfaceNS
 {
 	constexpr float MAINACTIVITY_BUTTON_PADDING_Y = 0.05f;
 }
+
 namespace serverNS
 {
 	static std::map<ServerStatus, std::pair<const char*, ImVec4>>  SERVER_STATUS = {
 		{ SERVER_NOT_RUNNING,{ "Not Started", colorNS::BROWN } },
-		{ SERVER_RUNNING_HANDLING,{ "Handling Requests...", colorNS::GREEN} },
+		{ SERVER_RUNNING_HANDLING,{ "Handling Requests...", colorNS::ORANGE }},
 		{ SERVER_DISCONNECTED,{ "Disconnected", colorNS::RED } }
 	};
 }
-
-namespace colorNS
-{
-	
-}
-
-using namespace colorNS;
-using namespace ImGui;
-using namespace interfaceNS;
 
 Interface::Interface() : m_activity(MAIN_ACTIVITY), m_blankActivity(true)
 {
@@ -63,18 +57,19 @@ Interface::~Interface()
 }
 
 #ifdef _SERVER_BUILD
-void Interface::initialize(Server* server, TanksWarServer* game)
+void Interface::initialize(TanksWarServer* pTKServer)
 {
-	m_pServer = server;
+	m_pTKServer = pTKServer;
+	TanksWarServer*& game = pTKServer;
 #else ifdef _CLIENT_BUILD
-void Interface::initialize(Client* client, TanksWar* game)
+void Interface::initialize(Client* client, TanksWar* pTK)
 {
 	m_pClient = client;
+	m_pTK = pTK;
+	TanksWar*& game = pTK;
 #endif
 	m_pGraphics = game->getGraphics();;
 	m_pAudio = game->getAudio();
-	m_pMap = game->getMap();
-	m_pGame = game;
 	ImGuiIO& io = GetIO();
 	m_pFont[FONTSIZE_TINY] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 10);
 	m_pFont[FONTSIZE_SMALL] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 15);
@@ -236,6 +231,13 @@ void Interface::endActivity(bool backButton, Activity backActivity)
 	End();
 }
 
+bool VectorOfStringGetter(void* data, int n, const char** out_text)
+{
+	const vector<string>* v = (vector<string>*)data;
+	*out_text = v->at(n).c_str();
+	return true;
+}
+
 void Interface::executeMultiplayerActivity()
 {
 	beginActivity(false, FONTSIZE_SMALL2);
@@ -256,6 +258,16 @@ void Interface::executeMultiplayerActivity()
 	input = inputInt("Port", &port, configFlags, LIST_VERTICAL);
 	if (input)
 		m_pGame->setServerPort(port);
+
+	auto map = FileIO::getDirFileList(fileNS::MAP_DIR, 0, ".map", false);
+	if (ListBox("##resolution", &, (char**)suppModes, modes))
+	{
+		std::string resol = suppModes[currMode];
+		auto x = resol.find('x');
+		gameInfo.width = std::stoi(resol.substr(0, x)),
+			gameInfo.height = std::stoi(resol.substr(x + 1, resol.length()));
+		FileIO::createGameInfo(&gameInfo);
+	}
 
 	Text("status");
 	SameLine();
@@ -320,39 +332,55 @@ void Interface::executeMultiplayerActivity()
 #else ifdef _SERVER_BUILD
 
 	separatorText("Server Config", FONTSIZE_LARGE, RED);
-	ImGuiInputTextFlags configFlags = (m_pServer->isStarted()) ? ImGuiInputTextFlags_ReadOnly : 0;
-	static char pServerIP[netNS::IP_SIZE];
-	m_pServer->getIP(pServerIP);
-	inputText("Server IP", pServerIP, netNS::IP_SIZE, ImGuiInputTextFlags_ReadOnly, LIST_MAIN);
-	static int32 port = m_pServer->getPort();
-	bool input = inputInt("Port", &port, configFlags, LIST_VERTICAL);
-	if (input)
-		m_pServer->setPort(port);
+	bool srvActive = m_pTKServer->isActive();
+	if (srvActive)
+		PushStyleColor(ImGuiCol_Text, colorNS::GREY);
+	else
+		PushStyleColor(ImGuiCol_Text, colorNS::YELLOW);
 
+	ImGuiInputTextFlags configFlags = (srvActive) ? ImGuiInputTextFlags_ReadOnly : 0;
+	static char pServerIP[netNS::IP_SIZE];
+	static int32 maxClients = m_pTKServer->getMaxClients();
+	bool input = inputInt("Max Clients", &maxClients, configFlags, LIST_MAIN);
+	if (input)
+		m_pTKServer->setMaxClients(maxClients);
+
+	m_pTKServer->getIP(pServerIP);
+	inputText("Server IP", pServerIP, netNS::IP_SIZE, ImGuiInputTextFlags_ReadOnly, LIST_VERTICAL);
+	static int32 port = *m_pTKServer->getPort();
+	input = inputInt("Port", &port, configFlags, LIST_VERTICAL);
+	if (input)
+		m_pTKServer->setPort(port);
+
+	static auto map = FileIO::getDirFileList(fileNS::MAP_DIR, 0, ".map", false);
+	int32 iCurrMap = std::find(map.begin(), map.end(), m_pTKServer->getMap()) - map.begin();
+	input = ListBox("Map", &iCurrMap, VectorOfStringGetter, &map, map.size());
+	if (input && !srvActive)
+		m_pTKServer->setMap(map[iCurrMap]);
+	
+	PopStyleColor();
 	Text("status");
 	SameLine();
 	SetCursorPosX(m_inputFieldListPos.x);
-	auto status = m_pServer->getStatus();
+	auto status = m_pTKServer->getStatus();
 	PushStyleColor(ImGuiCol_Text, serverNS::SERVER_STATUS[status].second);
 	Text(serverNS::SERVER_STATUS[status].first);
 	PopStyleColor();
 	SetCursorPosX(m_inputFieldListPos.x * 1.5f);
-	PushStyleVar(ImGuiStyleVar_FrameRounding, 20);
-	bool srvStarted = m_pServer->isStarted();
-	if (!srvStarted)
+	PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
+	if (!srvActive)
 	{
 		PushStyleColor(ImGuiCol_Button, GREEN);
 		input = button("Start");
 		if (input)
-			m_pServer->start();
-
+			m_pTKServer->serverStart();
 	}
 	else
 	{
 		PushStyleColor(ImGuiCol_Button, ORANGE);
 		input = button("Disconnect");
 		if (input)
-			m_pServer->stop();
+			m_pTKServer->serverShutdown();
 	}
 
 	PopStyleColor();

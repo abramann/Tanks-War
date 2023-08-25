@@ -36,8 +36,7 @@ uint8 FileIO::getDirFiles(std::string directory)
 
 size_t find_last_of(std::string str, char c)
 {
-	size_t result = str.find_last_of(c);
-	return result;
+	return str.find_last_of(c);
 }
 
 std::vector<std::string> FileIO::getDirFileList(const char * directory, const char * start, const char* end, bool extension)
@@ -139,12 +138,11 @@ void FileIO::createClientInfo(const ClientInfo* pClientInfo)
 }
 
 #else #ifdef _SERVER_BUILD
-
 void FileIO::createServerInfo(const ServerInfo& serverInfo)
 {
 	std::ofstream file(fileNS::SERVER_INFO_PATH);
 	file << "Port =" << serverInfo.port << std::endl;
-	file << "Players =" << std::to_string(serverInfo.players) << std::endl;
+	file << "Max Clients =" << std::to_string(serverInfo.maxClients) << std::endl;
 }
 
 ServerInfo FileIO::readServerInfo()
@@ -153,7 +151,7 @@ ServerInfo FileIO::readServerInfo()
 	std::ifstream file(fileNS::SERVER_INFO_PATH);
 	std::string line;
 	readValues<Port>(file, { &serverInfo.port });
-	readValues<uint8>(file, { &serverInfo.players });
+	readValues<int32>(file, { &serverInfo.maxClients });
 	return serverInfo;
 }
 #endif

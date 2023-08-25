@@ -44,7 +44,7 @@ namespace colorNS
 	constexpr auto GREEN = ImVec4(0.0f, 0.55f, 0.0f, 1.0f);
 	constexpr auto BLUE = ImVec4(0.3f, 0.7f, 0.9f, 1.0f);
 	constexpr auto BROWN = ImVec4(0.57f, 0.29f, 0.00f, 1.0f);
-	constexpr auto ORANGE = ImVec4(0.60f, 0.27f, 0.13f, 1.0f);
+	constexpr auto ORANGE = ImVec4(0.96f, 0.64f, 0.58f, 1.0f);
 	constexpr auto PURPLE = ImVec4(0.7f, 0.5f, 1.0f, 1.0f);
 	constexpr auto TAN = ImVec4(0.8f, 0.7f, 0.6f, 1.0f);
 	constexpr auto GREY = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -260,7 +260,7 @@ enum PacketType_
 	PACKET_CLIENT_UPDATE,
 	PACKET_CLIENT_ACT
 };
-typedef int8 PacketType;
+typedef int8_t PacketType;
 
 enum gameTexure
 {

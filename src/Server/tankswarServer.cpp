@@ -6,22 +6,18 @@
 #include "..\common\texturemanger.h"
 #include "..\common\interface.h"
 #include "..\common\map.h"
+#include "..\common\serverplayer.h"
+#include "..\common\timer.h"
 
-TanksWarServer::TanksWarServer()
+namespace tanksWarServerNS
+{
+	auto CLIENT_TIMEOUT = 60000;
+}
+
+TanksWarServer::TanksWarServer() : m_active(false), m_status(SERVER_NOT_RUNNING)
 {
 	m_pServer = std::make_shared<Server>();
-	
-}
 
-TanksWarServer::~TanksWarServer()
-{
-}
-
-void TanksWarServer::initialize(HINSTANCE hInstance, HWND hwnd)
-{
-	Game::initialize(hInstance, hwnd);
-	m_pInterface->initialize(m_pServer.get(), this);
-	m_pServer->initialize(this);
 	m_pRData = m_pServer->getReceiveBuffer();
 	m_pSData = m_pServer->getSendBuffer();
 	m_pReceiverIP = m_pServer->getReceiverIP();
@@ -37,8 +33,27 @@ void TanksWarServer::initialize(HINSTANCE hInstance, HWND hwnd)
 	m_pSpsClientGameState = (SpsClientGameState*)m_pSData;
 }
 
+TanksWarServer::~TanksWarServer()
+{
+}
+
+void TanksWarServer::initialize(HINSTANCE hInstance, HWND hwnd)
+{
+	Game::initialize(hInstance, hwnd);
+	m_pInterface->initialize(this);
+	m_pServer->initialize(this);
+	ServerInfo info = FileIO::readServerInfo();
+	m_port = info.port;
+	m_maxClients = info.maxClients;
+}
+
 void TanksWarServer::update()
 {
+	if (m_active)
+	{
+		communicate();
+		updateGameState();
+	}
 }
 
 void TanksWarServer::updateGameState()
@@ -52,8 +67,14 @@ void TanksWarServer::render()
 
 void TanksWarServer::communicate()
 {
-	if (m_pClient.size() < m_gameMaxPlayers)
+	if (!recv)
+		return;
+
+	if (m_pClient.size() < m_maxClients)
 		handleNewClient();
+
+	receiveClientHeartbeat();
+	disonnectInactiveClient();
 }
 
 void TanksWarServer::handleNewClient()
@@ -68,7 +89,7 @@ void TanksWarServer::handleNewClient()
 void TanksWarServer::createClient()
 {
 	PlayerID uniqueID = generateClientID();
-	auto pClient = make_shared<Client>(uniqueID, *m_pCpsJoin->name, m_pReceiverIP);
+	auto pClient = make_shared<Client>();// (uniqueID, m_pCpsJoin->name, m_pReceiverIP, *m_pReceiverPort, this);
 	m_pSpsJoin->id = uniqueID;
 	strcpy(m_pSpsJoin->name, m_pSpsJoin->name);
 	post(sizeof(m_pSpsJoin));
@@ -78,7 +99,7 @@ void TanksWarServer::createClient()
 bool TanksWarServer::clientExist()
 {
 	for (auto pClient : m_pClient)
-		if (strcmp(m_pReceiverIP, pClient->ip) == 0 && *m_pReceiverPort == pClient->port)
+		if (strcmp(m_pReceiverIP, pClient->getIP()) == 0 && *m_pReceiverPort == pClient->getPort())
 			return true;
 
 	return false;
@@ -86,45 +107,46 @@ bool TanksWarServer::clientExist()
 
 void TanksWarServer::receiveClientHeartbeat()
 {
-	/*if (*m_pPacketType == PACKET_PRESENT_CLIENT)
+	if (*m_pPacketType == PACKET_CLIENT_HEARTBEAT)
 	{
-		for (auto& pClientData : m_pClientData)
-			if (pClientData->getID() == getLastRecieverId())
-				pClientData->presentTime = m_pTimer->getCurrentTime();
-	}*/
+		int64 currTime = m_pTimer->getCurrentTime();
+		m_pReceiverClient->setHeartbeatTime(currTime);
+	}
 }
 
-void TanksWarServer::disconnectClient(Client* pClient)
+void TanksWarServer::disconnectClient(std::shared_ptr<Client> pClient)
 {
-	auto it = std::find(m_pClient.begin(), m_pClient.end(), pClient);
+	auto ite = std::find(m_pClient.begin(), m_pClient.end(), pClient);
 	m_pSpsDisconnect->packetType = PACKET_CLIENT_DISCONNECTED;
-	m_pSpsDisconnect->id = pClient->serverPlayer.getID();
-	m_pClient.erase(it);
+	m_pSpsDisconnect->id = pClient->getID();
+	m_pClient.erase(ite);
 	post(sizeof(SpsDisconnect));
 }
 
 void TanksWarServer::disonnectInactiveClient()
 {
-	/*if (m_pClientData.size() > 0)
-		for (auto pClientData : m_pClientData)
-		{
-			auto deltaTime = m_pTimer->getCurrentTime() - pClientData->presentTime;
-			if (deltaTime > networkNS::SERVER_RECIEVE_PRESENT_TIME)
-			{
-				PlayerID id = pClientData->getID();
-				m_pSpsDisconnect->packetType = PACKET_DISCONNECT;
-				int size = sizeof(SpsDisconnect);
-				send(id, size);
-				removeClient(id);
-				break;
-			}
-		}*/
+	int64 currTime = m_pTimer->getCurrentTime();
+	for (auto pClient : m_pClient)
+	{
+		int64 delta = currTime - pClient->getHeartbeatTime();
+		if (delta > tanksWarServerNS::CLIENT_TIMEOUT)
+			disconnectClient(pClient);
+	}
 }
 
 void TanksWarServer::serverStart()
 {
-	m_pServer->start();
-	
+	if (m_pServer->start())
+	{
+		m_active = true;
+		m_status = SERVER_RUNNING_HANDLING;
+		if (m_map.empty())
+			m_map = getRandomMap();
+
+		if (!m_pMap->load(m_map.c_str()))
+			serverShutdown();
+	}
+
 }
 
 void TanksWarServer::serverShutdown()
@@ -133,6 +155,9 @@ void TanksWarServer::serverShutdown()
 	post();
 	m_pServer->close();
 	m_pClient.clear();
+	m_pMap->clear();
+	m_active = false;
+	m_status = SERVER_DISCONNECTED;
 }
 
 void TanksWarServer::applyPlayerMove()
@@ -203,26 +228,44 @@ void TanksWarServer::post(int size)
 
 void TanksWarServer::send(Client* pClient, int size)
 {
-	m_pServer->send(pClient->ip, pClient->port, size);
+	m_pServer->send(pClient->getIP(), pClient->getPort(), size);
 }
 
 void TanksWarServer::resetClientGameState(Client* pClient)
 {
 	Space space = m_pMap->getRandomEmptySpace();
 	V3 position = V3(space.v1.x, space.v1.y, 0);
-	pClient->serverPlayer.setPosition(position);
+	pClient->setPosition(position);
 	updateClientGameState(pClient);
 }
 
 void TanksWarServer::updateClientGameState(Client* pClient)
 {
 	m_pSpsClientGameState->packetType = PACKET_CLIENT_GAME_STATE;
-	m_pSpsClientGameState->id = pClient->serverPlayer.getID();
-	m_pSpsClientGameState->position = pClient->serverPlayer.getPosition();
-	m_pSpsClientGameState->rotate = pClient->serverPlayer.getRotate();
-	m_pSpsClientGameState->health = pClient->serverPlayer.getHealth();
-	m_pSpsClientGameState->velocity = pClient->serverPlayer.getVelocity();
+	m_pSpsClientGameState->id = pClient->getID();
+	m_pSpsClientGameState->position = pClient->getPosition();
+	m_pSpsClientGameState->rotate = pClient->getRotate();
+	m_pSpsClientGameState->health = pClient->getHealth();
+	m_pSpsClientGameState->velocity = pClient->getVelocity();
 	post(sizeof(SpsClientGameState));
+}
+
+void TanksWarServer::setPort(Port port)
+{
+	m_port = port;
+	ServerInfo info;
+	info.port = port;
+	info.maxClients = m_maxClients;
+	FileIO::createServerInfo(info);
+}
+
+void TanksWarServer::setMaxClients(int32 maxClients)
+{
+	m_maxClients = maxClients;
+	ServerInfo info;
+	info.maxClients = m_maxClients;
+	info.port = m_port;
+	FileIO::createServerInfo(info);
 }
 
 PlayerID TanksWarServer::generateClientID() const
@@ -231,8 +274,31 @@ PlayerID TanksWarServer::generateClientID() const
 	PlayerID id = 0;
 	do
 		id = _rand(255);
-	while ((std::find(clientID.begin(), clientID.end(), id) != clientID.end());
+	while (std::binary_search(clientID.begin(),clientID.end(), id) || id == 0);
 
 	clientID.push_back(id);
 	return id;
+}
+
+std::string TanksWarServer::getRandomMap() const
+{
+	std::vector<std::string> mapList = FileIO::getDirFileList(fileNS::MAP_DIR);
+	std::string map = mapList[_rand(mapList.size() - 1)];
+	map = map.substr(0, map.size() - 4);
+	return map;
+}
+
+bool TanksWarServer::recv()
+{
+	if (m_pServer->recv())
+	{
+		for (auto pClient : m_pClient)
+			if (pClient->getPort() == *m_pReceiverPort && strcmp(pClient->getIP, m_pReceiverIP) == 0)
+			{
+				m_pReceiverClient = pClient;
+				return true;
+			}
+	}
+
+	return false;
 }

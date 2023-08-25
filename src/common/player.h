@@ -17,7 +17,7 @@ public:
 
 	Player();
 	~Player();
-	virtual void initialize(PlayerID id, const char* name, PlayerType playerType, const Game * game);
+	virtual void initialize(PlayerID id, const char* name, PlayerType playerType, const Game* game);
 	void applyPlayerUpdate(const PlayerUpdate playerUpdate);
 	PlayerUpdate getPlayerUpdate() const;
 	PlayerID getID() const { return m_id; }
