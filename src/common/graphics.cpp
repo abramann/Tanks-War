@@ -11,8 +11,6 @@
 #include "gamemath.h"
 #include "dx11wrapper.h"
 
-#include "shader.h"
-
 using Microsoft::WRL::ComPtr;
 
 uint64  g_frameCounter = 0;

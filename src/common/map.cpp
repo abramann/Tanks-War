@@ -20,6 +20,7 @@ Map::Map() : m_lpVertexBuffer(0), m_lpNoSpaceBuf(0), m_lpNoSpaceSRV(0), m_lpNoSp
 m_lpNoSpaceCountSRV(0), m_lpCollisionCS(0), m_lpSpaceBuf(0), m_lpSpaceSRV(0),
 m_lpResultBuf(0), m_lpResultUAV(0), m_lpResultStagingBuf(0)
 {
+	m_threadGroups = 2;
 }
 
 Map::~Map()
@@ -144,6 +145,10 @@ bool Map::load(const char * map)
 	uint32 noSpaceCount = m_noSpace.size();
 	m_lpNoSpaceCountBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(uint32), 1, (void*)&noSpaceCount, 0);
 	m_lpNoSpaceCountSRV = m_pDx11Wrapper->createBufferSRV(m_lpNoSpaceCountBuf);
+	m_threadGroups = (m_noSpace.size() / 32);
+	float f = (m_noSpace.size()*1.0f / 32.0f) - m_threadGroups;
+	if (f > 0.001f)
+		m_threadGroups++;
 
 	return true;
 }
@@ -219,10 +224,9 @@ bool Map::isCollided(const Space is, const Object* object) const
 		m_pDx11Wrapper->copyToResource(m_lpSpaceBuf,(void*) &is, sizeof(Space));
 		LPShaderResourceView ppSRV[] = { m_lpNoSpaceSRV,m_lpNoSpaceCountSRV, m_lpSpaceSRV };
 		LPUnorderedAccessView ppUAV[] = { m_lpResultUAV };
-		m_pDx11Wrapper->runComputeShader(m_lpCollisionCS, 3, ppSRV, 1, ppUAV,
-			1, 1, 1);
-		uint32 result = 77;
+		m_pDx11Wrapper->runComputeShader(m_lpCollisionCS, 3, ppSRV, 1, ppUAV, m_threadGroups, 1, 1);
 		m_pDx11Wrapper->copyResourceToResource(m_lpResultStagingBuf, m_lpResultBuf);
+		int32 result = 0;
 		m_pDx11Wrapper->copyResource(&result, m_lpResultStagingBuf, 4);
 		if (result == 1)
 			return true;
@@ -234,6 +238,7 @@ bool Map::isCollided(const Space is, const Object* object) const
 		if (spacesCollided)
 			return true;
 	}
+
 	for (auto pObj : m_pObject)
 	{
 		if (object == pObj)

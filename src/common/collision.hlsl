@@ -95,7 +95,7 @@ RWStructuredBuffer<int> g_result : register(u0);
 void main(uint3 DTid : SV_DispatchThreadID)
 {
 	uint id = DTid.x;	
-	if (id == 1)
+	if (id == 0)
 		g_result[0] = 0;
 	if (g_result[0] == 1)
 		return;
