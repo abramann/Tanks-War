@@ -5,8 +5,10 @@
 #include "..\common\interface.h"
 #include "..\common\input.h"
 #include "..\common\fileio.h"
+#include "..\common\data.h"
+#include "..\common\serverplayer.h"
 
-//#define TEST_NO_SERVER_INTERFACE
+#define TEST_NO_SERVER_INTERFACE
 #ifdef TEST_NO_SERVER_INTERFACE
 #include "..\common\input.h"
 #include "..\common\camera.h"
@@ -16,25 +18,33 @@ Image image2;
 Tank tank2;
 #endif
 
-TanksWar::TanksWar()
+TanksWar::TanksWar() : m_status(clientNS::CLIENT_UNCONNECTED)
 {
+
 	m_pClient = std::make_shared<Client>();
+	m_pRData = m_pClient->getReceiveBuffer();
+	m_pSData = m_pClient->getSendBuffer();
+
+	m_pCpsJoin = (CpsJoin*)m_pSData;
+	m_pCpsHeartbeat = (CpsHeartbeat*)m_pSData;
+	m_pCpsDisconnect = (CpsDisconnect*)m_pSData;
+	m_pSpsJoin = (SpsJoin*)m_pRData;
 }
 
 TanksWar::~TanksWar()
 {
 }
 
-void TanksWar::initialize(HINSTANCE hInstance, HWND hWnd)
+void TanksWar::initialize(HINSTANCE hInstance, HWND hwnd)
 {
-	Game::initialize(hInstance, hWnd);
+	Game::initialize(hInstance, hwnd);
 #ifdef TEST_NO_SERVER_INTERFACE
 	m_pMap->load("Nova");
 	tank2.initialize(m_pTextureManger->getTexture("player-tank"), this);
 	tank2.setPosition(V3(330, 300, 0));
 #else
 	m_pClient->initialize(this);
-	m_pInterface->initialize(m_pClient.get(), this);
+	m_pInterface->initialize(this);
 	m_clientInfo = FileIO::readClientInfo();
 #endif
 }
@@ -60,14 +70,6 @@ void TanksWar::update()
 
 	return;
 #endif
-	m_pClient->update(m_timeDeltaMillsec);
-
-	/*if (m_pClient->getState() == CLIENT_CONNECTED_PLAYING)
-		if (m_pInput->isKeyDown(inputNS::I_KEY))
-			if (m_pInterface->m_menu == MULTIPLAYER_MENU)
-				m_pInterface->m_menu = PLAYING_MENU;
-			else if (m_pInterface->m_menu == PLAYING_MENU)
-				m_pInterface->m_menu = MULTIPLAYER_MENU;*/
 }
 
 void TanksWar::render()
@@ -77,41 +79,62 @@ void TanksWar::render()
 	tank2.draw();
 	return;
 #endif
-	if (m_pClient->getStatus() == CLIENT_CONNECTED_PLAYING)
-	{
-		m_pMap->draw();
-		ClientPlayer* clientPlayer = m_pClient->getClientPlayer();
-		clientPlayer->draw();
-		auto pClientData = m_pClient->getClientData();
-		for (auto element : pClientData)
-			element->serverPlayer.draw();
-	}
 	m_pInterface->render();
+}
 
-	if (m_pClient->isConnected())
-		return;
+void TanksWar::communicate()
+{
+}
 
-	/*switch (m_pInterface->m_menu)
+bool TanksWar::connect()
+{
+	if (!m_pClient->connect(m_clientInfo.serverIP, m_clientInfo.serverPort))
+		return false;
+
+	// Send join request packet
+	m_pCpsJoin->packetType = PACKET_CLIENT_JOIN;
+	strcpy(m_pCpsJoin->name, m_clientInfo.name);
+	m_pClient->send<CpsJoin>();
+
+	// Receive map and clients data packet
+	if (m_pClient->recv(2000) && m_pSpsJoin->packetType == PACKET_CLIENT_JOIN)
 	{
-	case MAIN_MENU:
-		m_pInterface->mainMenu();
-		break;
-	case MULTIPLAYER_MENU:
-		m_pInterface->multiplayerMenu();
-		break;
-	case SETTING_MENU:
-		m_pInterface->settingMenu();
-		break;
-	case QUIT_MENU:
-		PostQuitMessage(0);
-	default:
-		break;
-	}*/
+		m_id = m_pSpsJoin->id;
+		recvGameProperties();
+		m_status = clientNS::CLIENT_CONNECTED;
+		return true;
+	}
+	
+	disconnect();
+	return false;
+}
+
+void TanksWar::disconnect()
+{
+	m_pClient->disconnect();
+	m_pMap->clear();
+	m_pRemoteClient.clear();
 }
 
 void TanksWar::updateClientInfo()
 {
 	FileIO::createClientInfo(&m_clientInfo);
+}
+
+void TanksWar::recvGameProperties()
+{
+	strcpy(m_map, m_pSpsJoin->map);
+	m_pMap->load(m_map);
+	m_clients = m_pSpsJoin->clients;
+	auto& pServerClient = m_pSpsJoin->clientGameState;
+	for (int i = 0; i < m_clients; i++)
+	{
+		if (pServerClient[i].id != m_id)
+		{
+			auto pClient = std::make_shared<RemoteClient>(pServerClient[i].id, pServerClient[i].name, this);
+			m_pRemoteClient.push_back(pClient);
+		}
+	}
 }
 
 void TanksWar::setServerPort(Port port)

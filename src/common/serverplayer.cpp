@@ -5,11 +5,9 @@
 #include "game.h"
 #ifdef _SERVER_BUILD
 #include "..\Server\tankswarServer.h"
+#else
+#include "..\Client\tankswar.h"
 #endif
-
-ServerPlayer::ServerPlayer()
-{
-}
 
 ServerPlayer::~ServerPlayer()
 {
@@ -35,8 +33,14 @@ void ServerPlayer::damage(float dmg)
 }
 
 #else
-void ServerPlayer::initialize(PlayerID id, const char* name, const Game * game)
+ServerPlayer::ServerPlayer(PlayerID id, const char * name, TanksWar * pTK)
 {
-	Player::initialize(id, name, PLAYER_ENEMY, game);
+	initialize(id, name, pTK);
+}
+
+void ServerPlayer::initialize(PlayerID id, const char* name, TanksWar* pTK)
+{
+	m_pTK = pTK;
+	Player::initialize(id, name, PLAYER_ENEMY, m_pTK);
 }
 #endif

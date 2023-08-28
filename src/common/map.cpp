@@ -8,25 +8,42 @@
 #include "texture.h"
 #include "types.h"
 #include "fileio.h"
+#include "dx11wrapper.h"
+#include "collisionshader.h"
 #include <fstream>
 #include <string>
 #ifdef _DEBUG
 #pragma optimize("",on) // for collision detection
 #endif
 
-Map::Map() : m_lpVertexBuffer(0)
+Map::Map() : m_lpVertexBuffer(0), m_lpNoSpaceBuf(0), m_lpNoSpaceSRV(0), m_lpNoSpaceCountBuf(0),
+m_lpNoSpaceCountSRV(0), m_lpCollisionCS(0), m_lpSpaceBuf(0), m_lpSpaceSRV(0),
+m_lpResultBuf(0), m_lpResultUAV(0), m_lpResultStagingBuf(0)
 {
 }
 
 Map::~Map()
 {
-	safeRelease(m_lpVertexBuffer);
+	clear();
+	safeRelease(m_lpCollisionCS);
+	safeRelease(m_lpSpaceBuf);
+	safeRelease(m_lpSpaceSRV);
+	safeRelease(m_lpResultBuf);
+	safeRelease(m_lpResultUAV);
+	safeRelease(m_lpResultStagingBuf);
 }
 
 void Map::initialize(const Game * game)
 {
 	m_pGraphics = game->getGraphics();
 	m_pTextureManger = game->getTextureManger();
+	m_pDx11Wrapper = game->getDx11Wrapper();
+	m_lpCollisionCS = m_pDx11Wrapper->createComputeShader(g_pCollisionShader, ARRAYSIZE(g_pCollisionShader));
+	m_lpResultBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(int), 1, 0, 0);
+	m_lpResultUAV = m_pDx11Wrapper->createBufferUAV(m_lpResultBuf);
+	m_lpResultStagingBuf = m_pDx11Wrapper->createStagingBuffer(D3D11_CPU_ACCESS_READ, sizeof(int), 1, 0);
+	m_lpSpaceBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(Space), 1, 0, D3D11_CPU_ACCESS_WRITE);
+	m_lpSpaceSRV = m_pDx11Wrapper->createBufferSRV(m_lpSpaceBuf);
 }
 
 bool Map::load(const char * map)
@@ -96,7 +113,7 @@ bool Map::load(const char * map)
 			m_freeSpace.push_back(space);
 		}
 	}
-	m_noSpace;
+
 	clearUnnecessaryNospace();
 	std::vector<Vertex> pData;
 	for (auto i = 0; i < m_usedBitmaps; i++)
@@ -122,6 +139,12 @@ bool Map::load(const char * map)
 	}
 
 	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(totalBitmaps * 6, &pData[0]);
+	m_lpNoSpaceBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(Space), m_noSpace.size(), &m_noSpace[0], 0);
+	m_lpNoSpaceSRV = m_pDx11Wrapper->createBufferSRV(m_lpNoSpaceBuf);
+	uint32 noSpaceCount = m_noSpace.size();
+	m_lpNoSpaceCountBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(uint32), 1, (void*)&noSpaceCount, 0);
+	m_lpNoSpaceCountSRV = m_pDx11Wrapper->createBufferSRV(m_lpNoSpaceCountBuf);
+
 	return true;
 }
 
@@ -142,6 +165,10 @@ void Map::clear()
 	m_noSpace.clear();
 	m_lenVertex.clear();
 	safeRelease(m_lpVertexBuffer);
+	safeRelease(m_lpNoSpaceBuf);
+	safeRelease(m_lpNoSpaceSRV);
+	safeRelease(m_lpNoSpaceCountBuf);
+	safeRelease(m_lpNoSpaceCountSRV);
 }
 
 float Map::passX(const Object * object, float x) const
@@ -185,9 +212,25 @@ bool Map::isCollided(const Space is, const Object* object) const
 	bool outOfRange = isOutOfRange(is);
 	if (outOfRange)
 		return true;
+	
+	bool spacesCollided;
+	if (g_gameInfo.computeShader)
+	{
+		m_pDx11Wrapper->copyToResource(m_lpSpaceBuf,(void*) &is, sizeof(Space));
+		LPShaderResourceView ppSRV[] = { m_lpNoSpaceSRV,m_lpNoSpaceCountSRV, m_lpSpaceSRV };
+		LPUnorderedAccessView ppUAV[] = { m_lpResultUAV };
+		m_pDx11Wrapper->runComputeShader(m_lpCollisionCS, 3, ppSRV, 1, ppUAV,
+			1, 1, 1);
+		uint32 result = 77;
+		m_pDx11Wrapper->copyResourceToResource(m_lpResultStagingBuf, m_lpResultBuf);
+		m_pDx11Wrapper->copyResource(&result, m_lpResultStagingBuf, 4);
+		if (result == 1)
+			return true;
+	}
+	else
 	for (auto space : m_noSpace)
 	{
-		bool spacesCollided = areSpacesCollided(space, is);
+		spacesCollided = areSpacesCollided(space, is);
 		if (spacesCollided)
 			return true;
 	}

@@ -11,28 +11,19 @@
 #include "gamemath.h"
 #include "dx11wrapper.h"
 
-#ifdef _BUILD_WITH_D3D9
-#include "imgui\imgui_impl_dx9.h"
-#else ifdef _BUILD_WITH_D3D11
-#include "imgui\imgui_impl_dx11.h"
 #include "shader.h"
 
 using Microsoft::WRL::ComPtr;
-#endif
 
 uint64  g_frameCounter = 0;
 
-Graphics::Graphics() : m_ppcSuppResol(0)
+Graphics::Graphics()
 {
 	m_pCamera = std::make_shared<Camera>();
 }
 
 Graphics::~Graphics()
 {
-	for (size_t i = 0; i < m_suppModes.size(); i++)
-		safeDeleteArray(m_ppcSuppResol[i]);
-
-	safeDeleteArray(m_ppcSuppResol);
 }
 
 bool Graphics::initialize(const Game* game)
@@ -91,16 +82,6 @@ void Graphics::drawPrimitive(uint32 startVertex, uint32 count)
 	m_pDx11Wrapper->d3dDraw(count * 3, startVertex);
 }
 
-size_t Graphics::getCurrentAdapterMode() const
-{
-	for (size_t i = 0; i < m_suppModes.size(); i++)
-		if (m_suppModes[i].width == g_gameInfo.width &&
-			m_suppModes[i].height == g_gameInfo.height)
-			return i;
-
-	return 0;
-}
-
 void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCenter)
 {
 	Matrix rot = gameMathNS::V3ToMatrix(rotate, MATRIX_TYPE_ROTATE),
@@ -142,24 +123,6 @@ void Graphics::setVertexBufferUV(LPVertexBuffer vb, Vertex * vertex, int8 len)
 	m_pDx11Wrapper->setVertexBufferUV(vb, vertex, len);
 }
 
-/*
-void Graphics::resize(Resolution resol)
-{
-	RECT clientRect;
-	GetClientRect(m_hwnd, &clientRect);
-	MoveWindow(m_hwnd,
-		0,                                           // Left
-		0,                                           // Top
-		g_gameInfo.width + (g_gameInfo.width - clientRect.right),    // Right
-		g_gameInfo.height + (g_gameInfo.height - clientRect.bottom), // Bottom
-		TRUE);
-}
-
-void Graphics::setWindowedMode(bool fullscreen)
-{
-}
-*/
-
 void Graphics::setWorldMatrix(Matrix* worldMatrix)
 {
 #ifdef _BUILD_WITH_D3D9
@@ -169,7 +132,7 @@ void Graphics::setWorldMatrix(Matrix* worldMatrix)
 #endif
 }
 
-std::vector<Resolution> Graphics::getSupportedAdapterModes() const
+std::vector<Resolution> Graphics::getSupportedAdapterMode() const
 {
 	if (!m_suppModes.empty())
 		return m_suppModes;
@@ -206,23 +169,20 @@ std::vector<Resolution> Graphics::getSupportedAdapterModes() const
 	return m_suppModes;
 }
 
-char** Graphics::getSupportedAdapterModesAsCArray() const
+std::vector<std::string> Graphics::getSupportedAdapterModesAsString() const
 {
-	if (m_ppcSuppResol != nullptr)
-		return m_ppcSuppResol;
+	auto mode = getSupportedAdapterMode();
+	std::vector<std::string> strMode;
+	for (auto m : mode)
+		strMode.push_back(strFormat("%dx%d", m.width, m.height));
 
-	auto supResol = getSupportedAdapterModes();
-	int8 supResols = static_cast<int8>(getSupportedAdapterModes().size());
+	return strMode;
+}
 
-	m_ppcSuppResol = new char*[supResols];
-	for (int i = 0; i < supResols; i++)
-	{
-		m_ppcSuppResol[i] = new char[9];
-		memset(m_ppcSuppResol[i], 0, 9);
-		sprintf(m_ppcSuppResol[i], "%dx%d", supResol[i].width, supResol[i].height);
-	}
-
-	return m_ppcSuppResol;
+std::string Graphics::getCurrentAdapterModeAsString() const
+{
+	std::string currMode = strFormat("%dx%d", g_gameInfo.width, g_gameInfo.height);
+	return currMode;
 }
 
 void Graphics::setTexture(LPTextureD3D texture)
@@ -236,7 +196,7 @@ void Graphics::setTexture(LPTextureD3D texture)
 
 bool Graphics::checkFullscreenSupport() const
 {
-	std::vector<Resolution> resolution = getSupportedAdapterModes();
+	std::vector<Resolution> resolution = getSupportedAdapterMode();
 	for (auto resol : resolution)
 		if (g_gameInfo.width == resol.width && g_gameInfo.height == g_gameInfo.height)
 			return true;

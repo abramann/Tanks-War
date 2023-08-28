@@ -1,5 +1,7 @@
 - Fix timer
 - Apply runtime gameInfo change
-- Fix naming Adapter functiom in Graphics
+- Fix naming Adapter functions in Graphics
 - Fix const ptr* const variables
-- Replace DX functions with D3DTK
+- Replace DirecrXMath with GLM
+- Add Console class
+- Improve element search in std::vector in server / client (e.g binary_search)

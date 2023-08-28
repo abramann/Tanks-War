@@ -4,25 +4,10 @@
 #pragma once
 #include "..\common\types.h"
 #include "clientplayer.h"
-#include "..\common\serverplayer.h"
 #include <memory>
 
 class TanksWar;
-class Map;
-class TextureManger;
-class Input;
-class Timer;
 class Net;
-
-struct ClientData
-{
-	ClientData() {};
-	ClientData(PlayerID id, const char* name, Game* game) { serverPlayer.initialize(id, name, game); }
-	ServerPlayer serverPlayer;
-	PlayerID getID() const { return serverPlayer.getID(); }
-	void setID(PlayerID id) { serverPlayer.setID(id); }
-	const char* getName() const { return serverPlayer.getName(); }
-};
 
 class Client
 {
@@ -30,65 +15,30 @@ public:
 
 	Client();
 	~Client();
-	bool connect();
-	bool isConnected() const { return (m_status == CLIENT_CONNECTED_WAITING || m_status == CLIENT_CONNECTED_PLAYING) ? true : false; }
-	char* getGameMap() { return (char*)m_map; }
-	//char* getPlayerName() { return m_clientInfo.name; }
-	//const char* getServerIP() { return m_clientInfo.serverIP; }
-	ClientStatus getStatus() const { return m_status; }
-	const size_t getConnectedPlayers()const { return m_pClientData.size(); }
-	const int8 getGamePlayers() const { return m_gamePlayers; }
-	//Port* getServerPort() { return &m_clientInfo.serverPort; }
-	std::vector<std::shared_ptr<ClientData> > getClientData() { return m_pClientData; }
+	bool connect(char* ip, Port port);
 	void disconnect();
 	void initialize(TanksWar* game);
-	void present();
-	void update(int64 frameTime);
-	ClientPlayer* getClientPlayer() const { return m_pClientPlayer.get(); }
-
-private:
-
-	bool recv();
-	void addNewPlayer();
-	void initPlayers();
-	void playersUpdate();
-	void playerUpdate();
-	void rbClear() { memset(m_rData, 0, networkNS::MAX_PACKET_SIZE); }
-	void recv(bool wait);
-	void removeClient(PlayerID id);
+	char* getReceiveBuffer() { return m_rData; }
+	char* getSendBuffer() { return m_sData; }
 	void sbClear() { memset(m_sData, 0, networkNS::MAX_PACKET_SIZE); }
+	void rbClear() { memset(m_rData, 0, networkNS::MAX_PACKET_SIZE); }
+	bool recv();
+	bool recv(int64 waitTime);
 	void send(int size = networkNS::MAX_PACKET_SIZE);
-	void checkClientPlayerAct();
-	void implementPlayerAct();
-	ClientData* Client::getIDClient(const PlayerID id);
+	template<typename T>
+	void send();
 
-	TextureManger* m_pTextureManger;
-	Audio* m_pAudio;
-	Graphics* m_pGraphics;
-	Input* m_pInput;
-	Map* m_pMap;
-	Timer* m_pTimer;
-	TanksWar* m_pGame;
+	TanksWar* m_pTK;
 	Net m_net;
 	Port m_port;
-	int8_t m_gamePlayers;
-	ClientStatus m_status;
-	char m_map[gameNS::MAX_NAME_LEN];
-	CpsIni* m_pCpsIni;
-	CpsDisconnect* m_pCpsDisconnect;
-	CpsSeasson* m_pCpsSeasson;
-	CpsPresent* m_pCpsPresent;
-	CpsPlayerAct* m_pCpsPlayerAct;
-	SpsIni* m_pSpsIni;
-	SpsPlayersExist* m_pSpsPlayersExist;
-	SpsPlayersInitData* m_pSpsPlayerIniData;
-	SpsPlayerUpdate* m_pSpsPlayerUpdate;
-	SpsPlayerAct* m_pSpsPlayerAct;
-	PacketType* m_pPacketType;
-	int64 m_presentTime;
 	char m_rData[networkNS::MAX_PACKET_SIZE], m_sData[networkNS::MAX_PACKET_SIZE];
-	std::vector<std::shared_ptr<ClientData> > m_pClientData;
-	std::shared_ptr<ClientPlayer> m_pClientPlayer;
-	char* m_pServerIP, *m_pClientName;
+	char* m_pServerIP;
 	Port m_serverPort;
 };
+
+template<typename T>
+inline void Client::send()
+{
+	int size = sizeof(T);
+	this->send(size);
+}

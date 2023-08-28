@@ -36,13 +36,13 @@ public:
 	void send(Client* pClient, int size = networkNS::MAX_PACKET_SIZE);
 	void resetClientGameState(Client* pClient);
 	void updateClientGameState(Client* pClient);
-	bool isActive() const { return m_active; }
+	bool isActive() const { return (m_status == serverNS::SERVER_RUNNING_HANDLING); }
 	void setPort(Port port);
 	void setMaxClients(int32 maxClients);
 	void setMap(std::string map) { m_map = map; }
 	void getIP(char* pIP) { m_pServer->getIP(pIP); }
 	std::string getMap() const { return m_map; }
-	ServerStatus getStatus() const { return m_status; }
+	serverNS::ServerStatus getStatus() const { return m_status; }
 
 private:
 
@@ -50,11 +50,10 @@ private:
 	std::string getRandomMap() const;
 	bool recv();
 
-	bool m_active;
 	Port m_port, * m_pReceiverPort;
 	std::shared_ptr<Client> m_pReceiverClient;
 	int32 m_maxClients;
-	ServerStatus m_status;
+	serverNS::ServerStatus m_status;
 	std::vector<std::shared_ptr<ServerPlayer> > m_pClient;
 	const char* m_pSData, * m_pRData, * m_pReceiverIP;
 	std::string m_map;
@@ -62,7 +61,6 @@ private:
 	CpsHeartbeat* m_pCpsHeartbeat;
 	CpsDisconnect* m_pCpsDisconnect;
 	SpsJoin* m_pSpsJoin;
-	SpsClientGameState* m_pSpsClientGameState;
 	SpsDisconnect* m_pSpsDisconnect;
 	PacketType* m_pPacketType;
 };

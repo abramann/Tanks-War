@@ -9,6 +9,7 @@
 #include "..\common\serverplayer.h"
 #include "..\common\timer.h"
 
+using namespace serverNS;
 namespace tanksWarServerNS
 {
 	auto CLIENT_TIMEOUT = 60000;
@@ -30,7 +31,6 @@ TanksWarServer::TanksWarServer() : m_active(false), m_status(SERVER_NOT_RUNNING)
 
 	m_pSpsDisconnect = (SpsDisconnect*)m_pSData;
 	m_pSpsJoin = (SpsJoin*)m_pSData;
-	m_pSpsClientGameState = (SpsClientGameState*)m_pSData;
 }
 
 TanksWarServer::~TanksWarServer()
@@ -49,7 +49,7 @@ void TanksWarServer::initialize(HINSTANCE hInstance, HWND hwnd)
 
 void TanksWarServer::update()
 {
-	if (m_active)
+	if (isActive())
 	{
 		communicate();
 		updateGameState();
@@ -67,7 +67,7 @@ void TanksWarServer::render()
 
 void TanksWarServer::communicate()
 {
-	if (!recv)
+	if (!recv())
 		return;
 
 	if (m_pClient.size() < m_maxClients)
@@ -138,7 +138,6 @@ void TanksWarServer::serverStart()
 {
 	if (m_pServer->start())
 	{
-		m_active = true;
 		m_status = SERVER_RUNNING_HANDLING;
 		if (m_map.empty())
 			m_map = getRandomMap();
@@ -245,8 +244,6 @@ void TanksWarServer::updateClientGameState(Client* pClient)
 	m_pSpsClientGameState->id = pClient->getID();
 	m_pSpsClientGameState->position = pClient->getPosition();
 	m_pSpsClientGameState->rotate = pClient->getRotate();
-	m_pSpsClientGameState->health = pClient->getHealth();
-	m_pSpsClientGameState->velocity = pClient->getVelocity();
 	post(sizeof(SpsClientGameState));
 }
 
@@ -293,7 +290,7 @@ bool TanksWarServer::recv()
 	if (m_pServer->recv())
 	{
 		for (auto pClient : m_pClient)
-			if (pClient->getPort() == *m_pReceiverPort && strcmp(pClient->getIP, m_pReceiverIP) == 0)
+			if (pClient->getPort() == *m_pReceiverPort && strcmp(pClient->getIP(), m_pReceiverIP) == 0)
 			{
 				m_pReceiverClient = pClient;
 				return true;

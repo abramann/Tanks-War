@@ -7,18 +7,20 @@
 
 #ifdef _SERVER_BUILD
 class TanksWarServer;
+#else
+class TanksWar;
 #endif
 
 class ServerPlayer : public Player
 {
 public:
 
-	ServerPlayer();
+	ServerPlayer() {};
 	~ServerPlayer();
-
 #ifdef _SERVER_BUILD
 	ServerPlayer(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTKServer);
-	void initialize(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTKServer);
+	
+	virtual void initialize(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTKServer);
 	virtual void damage(float dmg);
 	char* getIP() { return m_ip; }
 	Port getPort() { return m_port; }
@@ -33,6 +35,12 @@ private:
 	int64 m_heartbeatTime;
 
 #else
-	virtual void initialize(PlayerID id, const char* name, const Game* game);
+	ServerPlayer(PlayerID id, const char* name, TanksWar* pTK);
+	
+	virtual void initialize(PlayerID id, const char* name, TanksWar* pTK);
+
+private:
+
+	TanksWar* m_pTK;
 #endif
 };

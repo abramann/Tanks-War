@@ -19,6 +19,9 @@
     <Filter Include="Sources">
       <UniqueIdentifier>{15efaedc-0057-40f6-a67d-6ef09cfe6411}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Shaders">
+      <UniqueIdentifier>{111afdaa-b5e6-4b33-9839-9562fc452777}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\fileio.h">
@@ -206,5 +209,16 @@
     <ClCompile Include="..\common\sprite.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\common\pixel.hlsl">
+      <Filter>Common\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\common\vertex.hlsl">
+      <Filter>Common\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\common\collision.hlsl">
+      <Filter>Common\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

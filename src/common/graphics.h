@@ -35,10 +35,9 @@ public:
 	void endRender();
 	void showBackbuffer();
 	Resolution getResolution();
-	std::vector<Resolution> getSupportedAdapterModes() const;
-	char** getSupportedAdapterModesAsCArray() const;
-	size_t getCurrentAdapterMode() const;
-	size_t getAdapterModes() const { if (m_suppModes.empty()) getSupportedAdapterModes(); return m_suppModes.size(); }
+	std::vector<Resolution> getSupportedAdapterMode() const;
+	std::vector<std::string> getSupportedAdapterModesAsString() const;
+	std::string getCurrentAdapterModeAsString() const;
 	void setDrawProperties(V3 position = V3(0, 0, 0), V3 scall = V3(1, 1, 1), V3 rotate = V3(0, 0, 0), V3 rotateCenter = V3(0, 0, 0));
 	void setTexture(LPTextureD3D texture);
 	void setWorldMatrix(Matrix* worldMatrix);
@@ -58,5 +57,4 @@ private:
 	std::shared_ptr<Camera> m_pCamera;
 	mutable std::vector<Resolution> m_suppModes;
 	Dx11Wrapper* m_pDx11Wrapper;
-	mutable char** m_ppcSuppResol;
 };

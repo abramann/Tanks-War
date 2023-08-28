@@ -81,7 +81,7 @@ namespace gameNS
 	constexpr auto  MIN_RESOLUTION_WIDTH = 800;
 	constexpr auto VSYNC_DEFAULT = 1;
 	constexpr auto WINDOWED_DEFAULT = 1;
-	constexpr auto UPDATE_DELAY_FPS = 5;
+	constexpr auto UPDATE_DELAY_FPS = 800;
 	constexpr auto AUDIO_DEFAULT = 1;
 	constexpr auto COMPUTESHADER_DEFAULT = 0;
 	constexpr auto LOGO_VIEW_TIME = 4000;
@@ -201,6 +201,34 @@ namespace interfaceNS
 	typedef int8_t ListType;
 }
 
+namespace serverNS
+{
+	enum _ServerStatus
+	{
+		SERVER_NOT_RUNNING,
+		SERVER_RUNNING_HANDLING,
+		SERVER_DISCONNECTED
+	};
+	typedef int8_t ServerStatus;
+}
+
+namespace clientNS
+{
+	enum _ClientStatus
+	{
+		CLIENT_UNCONNECTED,
+		CLIENT_DISCONNECTED,
+		CLIENT_CONNECTED
+	};
+	typedef int8_t ClientStatus;
+
+	static std::map<int, std::pair<const char*, ImVec4>>  CLIENT_STATUS = {
+		{ CLIENT_UNCONNECTED,{ "Not Connected", colorNS::BROWN } },
+		{ CLIENT_DISCONNECTED,{ "Disconnected", colorNS::RED } },
+		{ CLIENT_CONNECTED,{ "Connected",colorNS::ORANGE } }
+	};
+}
+
 enum MatrixType
 {
 	MATRIX_TYPE_TRANSLATE,
@@ -228,25 +256,6 @@ enum KeyControl
 	KEY_OBJECT_LEFT,
 	KEY_TANK_ATTACK,
 };
-
-enum _ClientStatus
-{
-	CLIENT_UNCONNECTED,
-	CLIENT_UNCONNECTED_DISCONNECT,
-	CLIENT_UNCONNECTED_MAP_NOT_FOUND,
-	CLIENT_UNCONNECTED_MAP_NOT_LOAD,
-	CLIENT_CONNECTED_WAITING,
-	CLIENT_CONNECTED_PLAYING
-};
-typedef int8_t ClientStatus;
-
-enum _ServerStatus
-{
-	SERVER_NOT_RUNNING,
-	SERVER_RUNNING_HANDLING,
-	SERVER_DISCONNECTED
-};
-typedef int8_t ServerStatus;
 
 enum PacketType_
 {

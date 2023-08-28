@@ -4,6 +4,7 @@
 #pragma once
 
 #include "types.h"
+#include <d3d11.h>
 #include <vector>
 
 class Game;
@@ -13,6 +14,12 @@ class Object;
 class Image;
 class Texture;
 class Bullet;
+class Dx11Wrapper;
+
+typedef ID3D11Buffer* LPDxBuffer;
+typedef ID3D11ShaderResourceView* LPShaderResourceView;
+typedef ID3D11UnorderedAccessView* LPUnorderedAccessView;
+typedef ID3D11ComputeShader* LPComputeShader;
 
 class Map
 {
@@ -53,6 +60,10 @@ private:
 
 	TextureManger* m_pTextureManger;
 	Texture* m_pTexture[textureNS::TEXTURE_TILEDS];
+	LPDxBuffer m_lpNoSpaceBuf, m_lpResultBuf, m_lpResultStagingBuf, m_lpSpaceBuf, m_lpNoSpaceCountBuf;
+	LPShaderResourceView m_lpNoSpaceSRV, m_lpSpaceSRV, m_lpNoSpaceCountSRV;
+	LPUnorderedAccessView m_lpResultUAV;
+	LPComputeShader m_lpCollisionCS;
 	Graphics* m_pGraphics;
 	std::vector< std::vector<char>> m_map;
 	int32 m_width, m_height;
@@ -65,4 +76,5 @@ private:
 	std::vector<Object*> m_pObject;
 	V2 m_tiledSize;
 	char m_loadedMap[gameNS::MAX_NAME_LEN];
+	Dx11Wrapper* m_pDx11Wrapper;
 };

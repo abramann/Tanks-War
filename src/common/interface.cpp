@@ -6,6 +6,7 @@
 #include "imgui\imgui.h"
 #include "texturemanger.h"
 #include "sprite.h"
+#include "timer.h"
 #ifdef _CLIENT_BUILD
 #include "..\..\Client\tankswar.h"
 #else
@@ -22,18 +23,6 @@ using namespace colorNS;
 using namespace ImGui;
 using namespace interfaceNS;
 
-namespace clientNS
-{
-	static std::map<int, std::pair<const char*, ImVec4>>  CLIENT_STATUS = {
-		{ CLIENT_UNCONNECTED,{ "Not Connected", colorNS::GREY}},
-		{CLIENT_UNCONNECTED_DISCONNECT, {"Disconnected", colorNS::RED}},
-		//{CLIENT_UNCONNECTED_MAP_NOT_FOUND, {"Server map doesn't exist", colorNS::YELLOW}},
-		//{ CLIENT_UNCONNECTED_MAP_NOT_LOAD,{ "Failed to load server map", colorNS::YELLOW } },
-		{ CLIENT_CONNECTED_WAITING,{ "Connected, Waiting server to start...",colorNS::GREEN } },
-		{ CLIENT_CONNECTED_PLAYING,{ "Connected",colorNS::GREEN } }
-	};
-}
-
 namespace interfaceNS
 {
 	constexpr float MAINACTIVITY_BUTTON_PADDING_Y = 0.05f;
@@ -46,6 +35,13 @@ namespace serverNS
 		{ SERVER_RUNNING_HANDLING,{ "Handling Requests...", colorNS::ORANGE }},
 		{ SERVER_DISCONNECTED,{ "Disconnected", colorNS::RED } }
 	};
+}
+
+bool vectorOfStringGetter(void* data, int n, const char** out_text)
+{
+	const vector<string>* v = (vector<string>*)data;
+	*out_text = v->at(n).c_str();
+	return true;
 }
 
 Interface::Interface() : m_activity(MAIN_ACTIVITY), m_blankActivity(true)
@@ -62,14 +58,14 @@ void Interface::initialize(TanksWarServer* pTKServer)
 	m_pTKServer = pTKServer;
 	TanksWarServer*& game = pTKServer;
 #else ifdef _CLIENT_BUILD
-void Interface::initialize(Client* client, TanksWar* pTK)
+void Interface::initialize(TanksWar* pTK)
 {
-	m_pClient = client;
 	m_pTK = pTK;
 	TanksWar*& game = pTK;
 #endif
 	m_pGraphics = game->getGraphics();;
 	m_pAudio = game->getAudio();
+	m_pTimer = game->getTimer();
 	ImGuiIO& io = GetIO();
 	m_pFont[FONTSIZE_TINY] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 10);
 	m_pFont[FONTSIZE_SMALL] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 15);
@@ -120,12 +116,12 @@ void Interface::executeSettingsActivity()
 	if (cWin || cVsync)
 		FileIO::createGameInfo(&gameInfo);
 
-	static char** suppModes = m_pGraphics->getSupportedAdapterModesAsCArray();
-	static size_t modes = m_pGraphics->getAdapterModes();
-	static int currMode = m_pGraphics->getCurrentAdapterMode();
-	if (ListBox("##resolution", &currMode, (char**)suppModes, modes))
+	static auto suppMode = m_pGraphics->getSupportedAdapterModesAsString();
+	static auto currMode = std::find(suppMode.begin(), suppMode.end(), m_pGraphics->getCurrentAdapterModeAsString()) - suppMode.begin();
+	bool input = ListBox("Resolution", &currMode, vectorOfStringGetter, &suppMode, suppMode.size());
+	if (input)
 	{
-		std::string resol = suppModes[currMode];
+		std::string resol = suppMode[currMode];
 		auto x = resol.find('x');
 		gameInfo.width = std::stoi(resol.substr(0, x)),
 			gameInfo.height = std::stoi(resol.substr(x + 1, resol.length()));
@@ -143,14 +139,14 @@ void Interface::executeSettingsActivity()
 	// Multiplayer section
 	separatorText("Multiplayer", FONTSIZE_LARGE, RED);
 	ImGuiInputTextFlags configFlags = ImGuiInputTextFlags_None;
-	bool connected = m_pClient->isConnected();
+	bool connected = m_pTK->isConnected();
 	if (connected)
 		configFlags = ImGuiInputTextFlags_ReadOnly;
 
-	static char* pPlayerName = m_pGame->getPlayerName();
-	bool input = inputText("Player Name", pPlayerName, gameNS::MAX_NAME_LEN, configFlags);
+	static char* pPlayerName = m_pTK->getClientName();
+	input = inputText("Player Name", pPlayerName, gameNS::MAX_NAME_LEN, configFlags);
 	if (input)
-		m_pGame->updateClientInfo();
+		m_pTK->updateClientInfo();
 
 #endif
 	PopStyleColor();
@@ -182,16 +178,15 @@ void Interface::render()
 	default:
 		break;
 	}
+	
+	showFPS();
 }
 
-void Interface::showFPS(uint16_t fps)
+void Interface::showFPS()
 {
-	SetCursorPos(Vec2(0, 0));
-	Begin("fps", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize
-		| ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
-	SetCursorPos(Vec2(0, 0));
-	Text("FPS %d", fps);
-	End();
+	auto draw_list = ImGui::GetForegroundDrawList();
+	std::string text = strFormat("FPS %d", m_pTimer->getFPS());
+	draw_list->AddText(ImVec2(0, 0), ImColor(255.0f, 255.0f, 255.0f, 255.0f), text.c_str());
 }
 
 void Interface::beginActivity(bool blankActivity, interfaceNS::FontSize fontSize)
@@ -231,48 +226,31 @@ void Interface::endActivity(bool backButton, Activity backActivity)
 	End();
 }
 
-bool VectorOfStringGetter(void* data, int n, const char** out_text)
-{
-	const vector<string>* v = (vector<string>*)data;
-	*out_text = v->at(n).c_str();
-	return true;
-}
-
 void Interface::executeMultiplayerActivity()
 {
 	beginActivity(false, FONTSIZE_SMALL2);
 #ifdef _CLIENT_BUILD
 	separatorText("Multiplayer Config", FONTSIZE_LARGE, RED);
 	ImGuiInputTextFlags configFlags = ImGuiInputTextFlags_None;
-	bool connected = m_pClient->isConnected();
+	bool connected = m_pTK->isConnected();
 	if (connected)
 		configFlags = ImGuiInputTextFlags_ReadOnly;
 
-	Vec4 colorChangeable = (m_pClient->isConnected()) ? SILVER : WHITE;
-	static char* serverIP = m_pGame->getServerIP();
+	Vec4 colorChangeable = (m_pTK->isConnected()) ? SILVER : WHITE;
+	static char* serverIP = m_pTK->getServerIP();
 	bool input = inputText("Server IP", serverIP, gameNS::MAX_NAME_LEN, configFlags, LIST_MAIN);
 	if (input)
-		m_pGame->updateClientInfo();
+		m_pTK->updateClientInfo();
 
-	static int32 port = m_pGame->getServerPort();
+	static int32 port = m_pTK->getServerPort();
 	input = inputInt("Port", &port, configFlags, LIST_VERTICAL);
 	if (input)
-		m_pGame->setServerPort(port);
-
-	auto map = FileIO::getDirFileList(fileNS::MAP_DIR, 0, ".map", false);
-	if (ListBox("##resolution", &, (char**)suppModes, modes))
-	{
-		std::string resol = suppModes[currMode];
-		auto x = resol.find('x');
-		gameInfo.width = std::stoi(resol.substr(0, x)),
-			gameInfo.height = std::stoi(resol.substr(x + 1, resol.length()));
-		FileIO::createGameInfo(&gameInfo);
-	}
+		m_pTK->setServerPort(port);
 
 	Text("status");
 	SameLine();
 	SetCursorPosX(m_inputFieldListPos.x);
-	auto status = m_pClient->getStatus();
+	auto status = m_pTK->getStatus();
 	PushStyleColor(ImGuiCol_Text, clientNS::CLIENT_STATUS[status].second);
 	Text(clientNS::CLIENT_STATUS[status].first);
 	PopStyleColor();
@@ -283,14 +261,14 @@ void Interface::executeMultiplayerActivity()
 		PushStyleColor(ImGuiCol_Button, GREEN);
 		input = button("Connect");
 		if (input)
-			m_pClient->connect();
+			m_pTK->connect();
 	}
 	else
 	{
 		PushStyleColor(ImGuiCol_Button, ORANGE);
 		input = button("Disconnect");
 		if (input)
-			m_pClient->disconnect();
+			m_pTK->disconnect();
 	}
 
 	PopStyleColor();
@@ -354,7 +332,7 @@ void Interface::executeMultiplayerActivity()
 
 	static auto map = FileIO::getDirFileList(fileNS::MAP_DIR, 0, ".map", false);
 	int32 iCurrMap = std::find(map.begin(), map.end(), m_pTKServer->getMap()) - map.begin();
-	input = ListBox("Map", &iCurrMap, VectorOfStringGetter, &map, map.size());
+	input = ListBox("Map", &iCurrMap, vectorOfStringGetter, &map, map.size());
 	if (input && !srvActive)
 		m_pTKServer->setMap(map[iCurrMap]);
 	

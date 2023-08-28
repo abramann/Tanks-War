@@ -234,19 +234,20 @@ struct CpsJoin
 	char name[];
 };
 
+struct ClientGameState
+{
+	PlayerID id;
+	char name[gameNS::MAX_NAME_LEN];
+};
+
 struct SpsJoin
 {
 	PacketType packetType = PACKET_CLIENT_JOIN;
 	PlayerID id;
-	char name[];
-};
-
-struct SpsClientGameState
-{
-	PacketType packetType = PACKET_CLIENT_GAME_STATE;
-	PlayerID id;
-	V3 position, rotate;
-	float health, velocity;
+	char name[gameNS::MAX_NAME_LEN];
+	char map[gameNS::MAX_NAME_LEN];
+	int16 clients;
+	ClientGameState clientGameState[];
 };
 
 struct SpsPlayerAct
