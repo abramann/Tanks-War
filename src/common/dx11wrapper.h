@@ -28,8 +28,8 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createStructuredBuffer(uint32 elementSize, uint32 count, void* pInitData, int32 cpuAccess);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createStagingBuffer(D3D11_CPU_ACCESS_FLAG cpuAccess, uint32 elementSize, uint32 count, void* pInitData);
 	void setComputeShader(ID3D11ComputeShader* lpComputeShader);
-	void setComputeShaderSRV(uint32 srvs, ID3D11ShaderResourceView** ppShaderResourceView);
-	void setComputeShaderUAV(uint32 uavs, ID3D11UnorderedAccessView** ppUnorderedAccessView);
+	//void setComputeShaderSRV(uint32 srvs, ID3D11ShaderResourceView** ppShaderResourceView);
+	//void setComputeShaderUAV(uint32 uavs, ID3D11UnorderedAccessView** ppUnorderedAccessView);
 	void copyResourceToResource(ID3D11Resource* lpDest, ID3D11Resource* lpSource);
 	void copyResource(void* pDest, ID3D11Resource* lpSource, uint32 size);
 	void copyToResource(ID3D11Resource* lpDest, void* pSource, uint32 size);
@@ -38,7 +38,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader> createComputeShader(const BYTE* pByteCode, size_t byteCodeSize);
 	void runComputeShader(ID3D11ComputeShader* lpComputeShader, uint32 srvs, ID3D11ShaderResourceView** ppShaderResourceView,
 		uint32 uavs, ID3D11UnorderedAccessView** ppUnorderedAccessView, uint32 x, uint32 y, uint32 z);
-	void d3dStreamVertexBuffer(ID3D11Buffer * vertexBuffer, uint32 strides, uint32 offset, uint32 numBuffers = 1, uint32 startSlot = 0);
+	void iaSetStreamBuffer(ID3D11Buffer * pVB, uint32 strides, uint32 offset, uint32 numBuffers = 1, uint32 startSlot = 0);
 	void streamVertexBuffer(ID3D11Buffer* lpVB);
 	void vsSetConstBuffer(const void* data);
 

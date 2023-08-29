@@ -14,10 +14,10 @@ Client::~Client()
 {
 }
 
-void Client::initialize(TanksWar* pTK)
+void Client::initialize(TanksWar* pTW)
 {
-	m_pTK = pTK;
-	m_pServerIP = pTK->getServerIP();
+	m_pTW = pTW;
+	m_pServerIP = pTW->getServerIP();
 }
 
 bool Client::connect(char* ip, Port port)
@@ -56,6 +56,6 @@ bool Client::recv(int64 waitTime)
 		else
 			Sleep(waitTime--);
 	} while (waitTime > 0);
-	
+
 	return false;
 }

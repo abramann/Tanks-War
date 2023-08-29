@@ -16,10 +16,10 @@ public:
 	bool isKeyDown(Key k);
 	bool isKeyPressed(Key k);
 	bool isAnyKeyPressed();
-
-	bool m_handleInput;
+	bool isInputHandled() const { return m_handleInput; }
 
 private:
 
 	HWND m_hwnd;
+	bool m_handleInput;
 };

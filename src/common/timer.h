@@ -9,6 +9,7 @@
 class Timer
 {
 public:
+
 	Timer();
 	~Timer();
 	int64 getCurrentTime();
@@ -22,7 +23,6 @@ private:
 	void fpsUpdate();
 	void sleep(int64 millsec);
 	void spinLock(int32 millsec);
-
 	int64 getCurrentCounts() const;
 
 	int64 m_timeDeltaMillsec;

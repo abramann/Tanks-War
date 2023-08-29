@@ -13,10 +13,6 @@
 #include <fstream>
 #include <string>
 
-#ifdef _DEBUG
-#pragma optimize("",on) // for collision detection
-#endif
-
 Map::Map() : m_pVertexBuf(0), m_pNoSpaceBuf(0), m_pNoSpaceSRV(0), m_pNoSpaceCountBuf(0),
 m_pNoSpaceCountSRV(0), m_pCollisionCS(0), m_pSpaceBuf(0), m_pSpaceSRV(0),
 m_pResultBuf(0), m_pResultUAV(0), m_pResultStagingBuf(0), m_threadGroups(1)
@@ -27,11 +23,11 @@ Map::~Map()
 {
 }
 
-void Map::initialize(const Game * game)
+void Map::initialize(const Game * pGame)
 {
-	m_pGraphics = game->getGraphics();
-	m_pTextureManger = game->getTextureManger();
-	m_pDx11Wrapper = game->getDx11Wrapper();
+	m_pGraphics = pGame->getGraphics();
+	m_pTextureManger = pGame->getTextureManger();
+	m_pDx11Wrapper = pGame->getDx11Wrapper();
 	m_pCollisionCS = m_pDx11Wrapper->createComputeShader(g_pCollisionShader, ARRAYSIZE(g_pCollisionShader));
 	m_pResultBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(int), 1, 0, 0);
 	m_pResultUAV = m_pDx11Wrapper->createBufferUAV(m_pResultBuf.Get());
@@ -204,12 +200,12 @@ bool Map::isCollided(const Object * object) const
 }
 
 bool Map::isCollided(const Space is, const Object* object) const
-{	
+{
 	if (g_gameInfo.computeShader)
 	{
-		m_pDx11Wrapper->copyToResource(m_pSpaceBuf.Get(),(void*) &is, sizeof(Space));
+		m_pDx11Wrapper->copyToResource(m_pSpaceBuf.Get(), (void*)&is, sizeof(Space));
 		DxShaderResourceView* ppSRV[] = { m_pNoSpaceSRV.Get(),m_pNoSpaceCountSRV.Get(), m_pSpaceSRV.Get(), m_pMapRangeSRV.Get() };
-		DxUnorderedAccessView* ppUAV[] = { m_pResultUAV.Get()};
+		DxUnorderedAccessView* ppUAV[] = { m_pResultUAV.Get() };
 		m_pDx11Wrapper->runComputeShader(m_pCollisionCS.Get(), ARRAYSIZE(ppSRV), ppSRV, ARRAYSIZE(ppUAV), ppUAV,
 			m_threadGroups, 1, 1);
 		m_pDx11Wrapper->copyResourceToResource(m_pResultStagingBuf.Get(), m_pResultBuf.Get());
@@ -503,6 +499,3 @@ void Map::addObject(Object* object)
 {
 	m_pObject.push_back(object);
 }
-#ifdef _DEBUG
-#pragma optimize("",off)
-#endif

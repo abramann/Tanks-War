@@ -24,13 +24,15 @@ Graphics::~Graphics()
 {
 }
 
-bool Graphics::initialize(const Game* game)
+bool Graphics::initialize(const Game* pGame)
 {
-	m_hwnd = game->getHwnd();
-	m_pDx11Wrapper = game->getDx11Wrapper();
-	bool result = m_pDx11Wrapper->d3dInitialize();
-	m_pCamera->initialize(game);
-	return result;
+	m_hwnd = pGame->getHwnd();
+	m_pDx11Wrapper = pGame->getDx11Wrapper();
+	if (!m_pDx11Wrapper->d3dInitialize())
+		return false;
+
+	m_pCamera->initialize(pGame);
+	return true;
 }
 
 void Graphics::beginRender()
@@ -41,7 +43,7 @@ void Graphics::beginRender()
 void Graphics::drawImage(const Image* image)
 {
 	int16 vertices = image->getVertices();
-	DxBuffer* lpVB = image->getVertexBuffer();
+	DxBuffer* pVB = image->getVertexBuffer();
 	LPTextureD3D texture = image->getTexture();
 	V3 position = image->getPosition(),
 		&scalling = image->getScalling(),
@@ -53,7 +55,7 @@ void Graphics::drawImage(const Image* image)
 	setTexture(texture);
 	m_lpDevice3d->DrawPrimitive(D3DPT_TRIANGLELIST, 0, vertices / 3);
 #else ifdef _BUILD_WITH_D3D11
-	m_pDx11Wrapper->d3dStreamVertexBuffer(lpVB, sizeof(Vertex), 0);
+	m_pDx11Wrapper->streamVertexBuffer(pVB);
 	setTexture(texture);
 	m_pDx11Wrapper->d3dDraw(vertices, 0);
 
@@ -97,8 +99,7 @@ void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCent
 
 bool Graphics::loadTexture(const char* file, int32& width, int32& height, LPTextureD3D& texture)
 {
-	bool result = m_pDx11Wrapper->createSRVFromFile(file, texture, width, height);
-	return result;
+	return m_pDx11Wrapper->createSRVFromFile(file, texture, width, height);
 }
 
 void Graphics::setWorldMatrix(Matrix* worldMatrix)

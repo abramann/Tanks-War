@@ -20,11 +20,11 @@ Tank::~Tank()
 	m_pBullet.clear();
 }
 
-void Tank::initialize(Texture* texture, const Game * game)
+void Tank::initialize(Texture* texture, const Game * pGame)
 {
-	m_pTextureManger = game->getTextureManger();
-	m_pTimer = game->getTimer();
-	Object::initialize(texture, game);
+	m_pTextureManger = pGame->getTextureManger();
+	m_pTimer = pGame->getTimer();
+	Object::initialize(texture, pGame);
 }
 
 void Tank::update()

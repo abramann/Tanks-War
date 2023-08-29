@@ -19,13 +19,13 @@ Image::~Image()
 	//safeRelease(m_pStagingBuffer);
 }
 
-void Image::initialize(Texture * texture, const Game* game, int8 columns, int8 rows,
+void Image::initialize(Texture * pTexture, const Game* pGame, int8 columns, int8 rows,
 	int32 updateDelay)
 {
-	m_pTexture = texture;
-	m_pGraphics = game->getGraphics();
-	m_pDx11Wrapper = game->getDx11Wrapper();
-	m_pTimer = game->getTimer();
+	m_pTexture = pTexture;
+	m_pGraphics = pGame->getGraphics();
+	m_pDx11Wrapper = pGame->getDx11Wrapper();
+	m_pTimer = pGame->getTimer();
 	m_columns = columns;
 	m_rows = rows;
 	m_textureWidth = m_pTexture->getWidth();

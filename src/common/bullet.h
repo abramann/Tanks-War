@@ -16,7 +16,7 @@ class Bullet : public Image
 {
 public:
 
-	Bullet(const Game* game, const Tank * tank);
+	Bullet(const Game* pGame, const Tank * pTank);
 	Bullet();
 	~Bullet();
 	virtual void update();
@@ -29,9 +29,6 @@ protected:
 	virtual void executeAnimateRepeat();
 	V3 Bullet::getBulletLaunchPosition();
 	bool isCollided();
-
-private:
-
 	void executeLaunching();
 
 	const Game* m_pGame;

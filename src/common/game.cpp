@@ -40,7 +40,7 @@ Game::~Game()
 
 LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pInput != nullptr && m_pInput->m_handleInput)
+	if (m_pInput != nullptr && m_pInput->isInputHandled())
 		m_pInput->handle(msg, wParam, lParam);
 
 	return DefWindowProcA(hWnd, msg, wParam, lParam);
@@ -48,7 +48,6 @@ LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void Game::initialize(HINSTANCE hInstance, HWND hwnd)
 {
-	m_onResize = false;
 	m_hwnd = hwnd;
 	if (!m_pInput->initialize(m_hwnd))
 		throw GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize Input");
@@ -96,8 +95,7 @@ bool Game::checkGameFiles() const
 		auto orgHash = gameNS::gameFiles.at(file.first);
 		if (existHash != orgHash)
 		{
-			std::string msg = strFormat("File %s doesn't exist or is corrupted.", file.first.c_str());
-			messageBoxOk(msg, "ERROR");
+			messageBoxOk(strFormat("File %s doesn't exist or is corrupted.", file.first.c_str()), "ERROR");
 			return false;
 		}
 	}

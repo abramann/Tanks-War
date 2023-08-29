@@ -16,7 +16,7 @@ public:
 
 	Tank();
 	~Tank();
-	virtual void initialize(Texture* texture, const Game* game);
+	virtual void initialize(Texture* texture, const Game * pGame);
 	virtual void update();
 	virtual void draw();
 	virtual void executeAttack();
@@ -25,7 +25,6 @@ public:
 	virtual void executeForward();
 	virtual void executeLeft();
 	virtual void executeRight();
-
 	float getBulletSpeed() const { return m_bulletSpeed; }
 	float getBulletDamage() const { return m_bulletDamage; }
 	bool isBulletLaunching() const { return (m_pBullet.size() > 0); }

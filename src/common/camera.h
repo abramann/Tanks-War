@@ -14,7 +14,7 @@ public:
 
 	Camera();
 	~Camera();
-	void initialize(const Game* game);
+	void initialize(const Game* pGame);
 	void update(V3 lookTo);
 
 private:

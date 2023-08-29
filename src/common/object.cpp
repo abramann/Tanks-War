@@ -14,13 +14,13 @@ Object::~Object()
 {
 }
 
-void Object::initialize(Texture * texture, const Game* game)
+void Object::initialize(Texture * texture, const Game * pGame)
 {
-	m_pGame = game;
-	m_pAudio = game->getAudio();
-	m_pMap = game->getMap();
+	m_pGame = pGame;
+	m_pAudio = pGame->getAudio();
+	m_pMap = pGame->getMap();
 	m_pMap->addObject(this);
-	Image::initialize(texture, game);
+	Image::initialize(texture, pGame);
 }
 
 void Object::update()

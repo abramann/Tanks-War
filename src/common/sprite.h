@@ -12,10 +12,10 @@ class Timer;
 class Sprite
 {
 public:
+
 	Sprite();
 	Sprite(const Game* const pGame, std::string texture, V2 position = V2(0, 0), V2 scaling = V2(1, 1));
 	~Sprite();
-
 	void initialize(const Game* const pGame, std::string texture, V2 position = V2(0, 0), V2 scaling = V2(1, 1));
 	void draw();
 	bool fadeDraw(int64 time);

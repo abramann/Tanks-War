@@ -7,7 +7,7 @@
 
 using namespace sf;
 
-Audio::Audio() : m_audioPlay(true)
+Audio::Audio() : m_audioPlay(true), m_pSoundBuffer(0)
 {
 }
 
@@ -26,7 +26,6 @@ void Audio::initialize()
 		std::string soundFile = soundFiles[i];
 		std::string sFile = strFormat("%s%s%s", fileNS::AUDIO_DIR, soundFile.c_str(), ".wav");
 		bool loaded = m_pSoundBuffer[i].loadFromFile(sFile);
-
 		m_soundAssembler[soundFile].setBuffer(m_pSoundBuffer[i]);
 		if (!loaded)
 		{

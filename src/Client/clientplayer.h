@@ -13,7 +13,7 @@ public:
 
 	ClientPlayer();
 	~ClientPlayer();
-	virtual void initialize(PlayerID id, Game* game);
+	virtual void initialize(PlayerID id, Game * pGame);
 	virtual void update(int64 frameTime);
 	virtual void executeForward();
 	virtual void executeBack();

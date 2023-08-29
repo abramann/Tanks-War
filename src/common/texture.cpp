@@ -17,11 +17,9 @@ Texture::~Texture()
 
 bool Texture::initialize(std::string file, Graphics* graphics)
 {
-	bool result = false;
 	m_pGraphics = graphics;
 	m_file = file;
-	result = m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, m_lpTexture);
-	return result;
+	return m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, m_lpTexture);
 }
 
 void Texture::onLostDevice()

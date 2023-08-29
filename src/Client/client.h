@@ -28,7 +28,7 @@ public:
 	template<typename T>
 	void send();
 
-	TanksWar* m_pTK;
+	TanksWar* m_pTW;
 	Net m_net;
 	Port m_port;
 	char m_rData[networkNS::MAX_PACKET_SIZE], m_sData[networkNS::MAX_PACKET_SIZE];

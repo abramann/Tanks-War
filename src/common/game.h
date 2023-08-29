@@ -9,14 +9,6 @@
 #pragma once
 
 #include "types.h"
-/*#include "graphics.h"
-#include "input.h"
-#include "timer.h"
-#include "texture.h"
-#include "image.h"
-#include "audio.h"
-#include "interface.h"
-#include "map.h"*/
 #ifdef _CLIENT_BUILD
 #include "..\Client\client.h"
 #else ifdef _SERVER_BUILD
@@ -40,7 +32,6 @@ public:
 
 	Game();
 	~Game();
-
 	LRESULT messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	virtual void initialize(HINSTANCE hInstance, HWND hWnd);
 	virtual void run();
@@ -48,16 +39,12 @@ public:
 	virtual void updateGame();
 	virtual void update() = 0;
 	virtual void render() = 0;
-
-	bool m_onResize;
-
 	bool checkGameFiles() const;
 	void setResolution(int16 width, int16 height) const;
 	void setWindowed(bool windowed) const;
 	Resolution getResolution() const;
 	bool isWindowed() const;
 	void showLogo() const;
-
 	Graphics* getGraphics()	const { return m_pGraphics.get(); }
 	Input* getInput()	const { return m_pInput.get(); }
 	Audio* getAudio()	const { return m_pAudio.get(); }

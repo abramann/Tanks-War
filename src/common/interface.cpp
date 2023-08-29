@@ -53,19 +53,19 @@ Interface::~Interface()
 }
 
 #ifdef _SERVER_BUILD
-void Interface::initialize(TanksWarServer* pTKServer)
+void Interface::initialize(TanksWarServer* pTWServer)
 {
-	m_pTKServer = pTKServer;
-	TanksWarServer*& game = pTKServer;
+	m_pTWServer = pTWServer;
+	TanksWarServer*& game = pTWServer;
 #else ifdef _CLIENT_BUILD
-void Interface::initialize(TanksWar* pTK)
+void Interface::initialize(TanksWar* pTW)
 {
-	m_pTK = pTK;
-	TanksWar*& game = pTK;
+	m_pTW = pTW;
+	TanksWar*& pGame = pTW;
 #endif
-	m_pGraphics = game->getGraphics();;
-	m_pAudio = game->getAudio();
-	m_pTimer = game->getTimer();
+	m_pGraphics = pGame->getGraphics();;
+	m_pAudio = pGame->getAudio();
+	m_pTimer = pGame->getTimer();
 	ImGuiIO& io = GetIO();
 	m_pFont[FONTSIZE_TINY] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 10);
 	m_pFont[FONTSIZE_SMALL] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 15);
@@ -108,7 +108,7 @@ void Interface::executeSettingsActivity()
 	static GameInfo gameInfo = g_gameInfo;
 	bool cWin = Checkbox("Windowed", &gameInfo.windowed);
 	bool cVsync = Checkbox("VSync", &gameInfo.vsync);
-	bool cComputeShader = Checkbox("Compute Shader", &gameInfo.computeShader); SameLine();  
+	bool cComputeShader = Checkbox("Compute Shader", &gameInfo.computeShader); SameLine();
 	PopStyleColor();
 	HelpMarker("Use GPU for collision detection.");
 	PushStyleColor(ImGuiCol_Text, YELLOW);
@@ -139,14 +139,14 @@ void Interface::executeSettingsActivity()
 	// Multiplayer section
 	separatorText("Multiplayer", FONTSIZE_LARGE, RED);
 	ImGuiInputTextFlags configFlags = ImGuiInputTextFlags_None;
-	bool connected = m_pTK->isConnected();
+	bool connected = m_pTW->isConnected();
 	if (connected)
 		configFlags = ImGuiInputTextFlags_ReadOnly;
 
-	static char* pPlayerName = m_pTK->getClientName();
+	static char* pPlayerName = m_pTW->getClientName();
 	input = inputText("Player Name", pPlayerName, gameNS::MAX_NAME_LEN, configFlags);
 	if (input)
-		m_pTK->updateClientInfo();
+		m_pTW->updateClientInfo();
 
 #endif
 	PopStyleColor();
@@ -172,13 +172,13 @@ void Interface::render()
 		break;
 	case PLAYING_ACTIVITY:
 		executePlayingActivity();
-			break;
+		break;
 	case QUIT_ACTIVITY:
 		PostQuitMessage(0);
 	default:
 		break;
 	}
-	
+
 	showFPS();
 }
 
@@ -232,25 +232,25 @@ void Interface::executeMultiplayerActivity()
 #ifdef _CLIENT_BUILD
 	separatorText("Multiplayer Config", FONTSIZE_LARGE, RED);
 	ImGuiInputTextFlags configFlags = ImGuiInputTextFlags_None;
-	bool connected = m_pTK->isConnected();
+	bool connected = m_pTW->isConnected();
 	if (connected)
 		configFlags = ImGuiInputTextFlags_ReadOnly;
 
-	Vec4 colorChangeable = (m_pTK->isConnected()) ? SILVER : WHITE;
-	static char* serverIP = m_pTK->getServerIP();
+	Vec4 colorChangeable = (m_pTW->isConnected()) ? SILVER : WHITE;
+	static char* serverIP = m_pTW->getServerIP();
 	bool input = inputText("Server IP", serverIP, gameNS::MAX_NAME_LEN, configFlags, LIST_MAIN);
 	if (input)
-		m_pTK->updateClientInfo();
+		m_pTW->updateClientInfo();
 
-	static int32 port = m_pTK->getServerPort();
+	static int32 port = m_pTW->getServerPort();
 	input = inputInt("Port", &port, configFlags, LIST_VERTICAL);
 	if (input)
-		m_pTK->setServerPort(port);
+		m_pTW->setServerPort(port);
 
 	Text("status");
 	SameLine();
 	SetCursorPosX(m_inputFieldListPos.x);
-	auto status = m_pTK->getStatus();
+	auto status = m_pTW->getStatus();
 	PushStyleColor(ImGuiCol_Text, clientNS::CLIENT_STATUS[status].second);
 	Text(clientNS::CLIENT_STATUS[status].first);
 	PopStyleColor();
@@ -261,14 +261,14 @@ void Interface::executeMultiplayerActivity()
 		PushStyleColor(ImGuiCol_Button, GREEN);
 		input = button("Connect");
 		if (input)
-			m_pTK->connect();
+			m_pTW->connect();
 	}
 	else
 	{
 		PushStyleColor(ImGuiCol_Button, ORANGE);
 		input = button("Disconnect");
 		if (input)
-			m_pTK->disconnect();
+			m_pTW->disconnect();
 	}
 
 	PopStyleColor();
@@ -310,7 +310,7 @@ void Interface::executeMultiplayerActivity()
 #else ifdef _SERVER_BUILD
 
 	separatorText("Server Config", FONTSIZE_LARGE, RED);
-	bool srvActive = m_pTKServer->isActive();
+	bool srvActive = m_pTWServer->isActive();
 	if (srvActive)
 		PushStyleColor(ImGuiCol_Text, colorNS::GREY);
 	else
@@ -318,29 +318,29 @@ void Interface::executeMultiplayerActivity()
 
 	ImGuiInputTextFlags configFlags = (srvActive) ? ImGuiInputTextFlags_ReadOnly : 0;
 	static char pServerIP[netNS::IP_SIZE];
-	static int32 maxClients = m_pTKServer->getMaxClients();
+	static int32 maxClients = m_pTWServer->getMaxClients();
 	bool input = inputInt("Max Clients", &maxClients, configFlags, LIST_MAIN);
 	if (input)
-		m_pTKServer->setMaxClients(maxClients);
+		m_pTWServer->setMaxClients(maxClients);
 
-	m_pTKServer->getIP(pServerIP);
+	m_pTWServer->getIP(pServerIP);
 	inputText("Server IP", pServerIP, netNS::IP_SIZE, ImGuiInputTextFlags_ReadOnly, LIST_VERTICAL);
-	static int32 port = *m_pTKServer->getPort();
+	static int32 port = *m_pTWServer->getPort();
 	input = inputInt("Port", &port, configFlags, LIST_VERTICAL);
 	if (input)
-		m_pTKServer->setPort(port);
+		m_pTWServer->setPort(port);
 
 	static auto map = FileIO::getDirFileList(fileNS::MAP_DIR, 0, ".map", false);
-	int32 iCurrMap = std::find(map.begin(), map.end(), m_pTKServer->getMap()) - map.begin();
+	int32 iCurrMap = std::find(map.begin(), map.end(), m_pTWServer->getMap()) - map.begin();
 	input = ListBox("Map", &iCurrMap, vectorOfStringGetter, &map, map.size());
 	if (input && !srvActive)
-		m_pTKServer->setMap(map[iCurrMap]);
-	
+		m_pTWServer->setMap(map[iCurrMap]);
+
 	PopStyleColor();
 	Text("status");
 	SameLine();
 	SetCursorPosX(m_inputFieldListPos.x);
-	auto status = m_pTKServer->getStatus();
+	auto status = m_pTWServer->getStatus();
 	PushStyleColor(ImGuiCol_Text, serverNS::SERVER_STATUS[status].second);
 	Text(serverNS::SERVER_STATUS[status].first);
 	PopStyleColor();
@@ -351,14 +351,14 @@ void Interface::executeMultiplayerActivity()
 		PushStyleColor(ImGuiCol_Button, GREEN);
 		input = button("Start");
 		if (input)
-			m_pTKServer->serverStart();
+			m_pTWServer->serverStart();
 	}
 	else
 	{
 		PushStyleColor(ImGuiCol_Button, ORANGE);
 		input = button("Disconnect");
 		if (input)
-			m_pTKServer->serverShutdown();
+			m_pTWServer->serverShutdown();
 	}
 
 	PopStyleColor();

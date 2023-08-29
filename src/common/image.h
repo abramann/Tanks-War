@@ -19,12 +19,11 @@ public:
 
 	Image();
 	~Image();
-	virtual void initialize(Texture* texture, const Game* game, int8 columns = 1, int8 rows = 1,
+	virtual void initialize(Texture* pTexture, const Game* pGame, int8 columns = 1, int8 rows = 1,
 		int32 updateDelay = logicNS::UPDATE_DELAY_IMAGE);
 	virtual void update();
 	virtual void draw() const;
 	virtual V3 getRotateCenter() const;
-
 	int16 getHeight() const { return m_height; }
 	int16 getVertices() const { return m_vertices; }
 	int16 getWidth() const { return m_width; }
@@ -67,7 +66,7 @@ protected:
 	bool m_initialized;
 	Timer* m_pTimer;
 	Dx11Wrapper* m_pDx11Wrapper;
-	
+
 private:
 
 	virtual void updateTextureCoordinate(int64 frameTime);

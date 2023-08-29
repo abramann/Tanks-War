@@ -23,11 +23,11 @@ ClientPlayer::~ClientPlayer()
 {
 }
 
-void ClientPlayer::initialize(PlayerID id, Game * game)
+void ClientPlayer::initialize(PlayerID id, Game * pGame)
 {
-	m_pInput = game->getInput();
+	m_pInput = pGame->getInput();
 	std::string name = FileIO::readClientInfo().name;
-	Player::initialize(id, name.c_str(), PLAYER_SELF, game);
+	Player::initialize(id, name.c_str(), PLAYER_SELF, pGame);
 	m_pCamera = m_pGraphics->getCamera();
 }
 

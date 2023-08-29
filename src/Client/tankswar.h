@@ -44,7 +44,6 @@ private:
 	CpsHeartbeat* m_pCpsHeartbeat;
 	CpsJoin* m_pCpsJoin;
 	SpsJoin* m_pSpsJoin;
-
 	PacketType* m_pPacketType;
 	ClientInfo m_clientInfo;
 	std::vector<std::shared_ptr<RemoteClient>> m_pRemoteClient;

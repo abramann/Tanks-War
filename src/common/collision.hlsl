@@ -12,37 +12,37 @@ struct V3
 struct Space
 {
 	V3 v1, v2, v3, v4;
-	float getMaxX() 
+	float getMaxX()
 	{
-        float xMax = max(v1.x, v2.x);
-        xMax = max(xMax, v3.x);
-        xMax = max(xMax, v4.x);
-        return xMax;
-    }
+		float xMax = max(v1.x, v2.x);
+		xMax = max(xMax, v3.x);
+		xMax = max(xMax, v4.x);
+		return xMax;
+	}
 
 	float getMinX()
 	{
-        float xMin = min(v1.x, v2.x);
-        xMin = min(xMin, v3.x);
-        xMin = min(xMin, v4.x);
+		float xMin = min(v1.x, v2.x);
+		xMin = min(xMin, v3.x);
+		xMin = min(xMin, v4.x);
 		return xMin;
 	}
 
 	float getMaxY()
 	{
-        float yMax = max(v1.y, v2.y);
-        yMax = max(yMax, v3.y);
-        yMax = max(yMax, v4.y);
+		float yMax = max(v1.y, v2.y);
+		yMax = max(yMax, v3.y);
+		yMax = max(yMax, v4.y);
 		return yMax;
 	}
 
 	float getMinY()
 	{
-        float yMin = min(v1.y, v2.y);
-        yMin = min(yMin, v3.y);
-        yMin = min(yMin, v4.y);
-        return yMin;
-    }
+		float yMin = min(v1.y, v2.y);
+		yMin = min(yMin, v3.y);
+		yMin = min(yMin, v4.y);
+		return yMin;
+	}
 };
 
 int areSpacesCollided(Space s1, Space s2)
@@ -94,14 +94,14 @@ bool isOutOfRange(Space space)
 [numthreads(32, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
 {
-	uint id = DTid.x;	
+	uint id = DTid.x;
 	if (id == 0)
 		g_result[0] = 0;
 	if (g_result[0] == 1)
 		return;
-	
+
 	if (isOutOfRange(g_space[0]))
 		g_result[0] = 1;
-	else if(areSpacesCollided(g_noSpace[id], g_space[0]))
+	else if (areSpacesCollided(g_noSpace[id], g_space[0]))
 		g_result[0] = 1;
 }

@@ -23,7 +23,7 @@ public:
 
 	Map();
 	~Map();
-	void initialize(const Game* game);
+	void initialize(const Game* pGame);
 	bool load(const char* map);
 	void draw() const;
 	void clear();
@@ -73,5 +73,5 @@ private:
 	V2 m_tiledSize;
 	char m_loadedMap[gameNS::MAX_NAME_LEN];
 	Dx11Wrapper* m_pDx11Wrapper;
-	mutable uint32 m_threadGroups;
+	uint32 m_threadGroups;
 };

@@ -1,6 +1,5 @@
 - Fix timer
 - Apply runtime gameInfo change
-- Fix naming Adapter functions in Graphics
 - Fix const ptr* const variables
 - Replace DirecrXMath with GLM
 - Add Console class

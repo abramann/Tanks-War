@@ -27,7 +27,7 @@ public:
 
 	Graphics();
 	~Graphics();
-	bool initialize(const Game* game);
+	bool initialize(const Game* pGame);
 	bool loadTexture(const char* file, int32& width, int32& height, LPTextureD3D& texture);
 	void beginRender();
 	void drawImage(const Image* image);

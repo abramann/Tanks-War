@@ -9,14 +9,14 @@
 #include "map.h"
 #include "timer.h"
 
-Bullet::Bullet(const Game * game, const Tank * tank) : m_pTank(tank), m_hit(false), m_finish(false)
+Bullet::Bullet(const Game * pGame, const Tank * pTank) : m_pTank(pTank), m_hit(false), m_finish(false)
 {
-	m_pGame = game;
-	m_pMap = game->getMap();
-	m_pAudio = game->getAudio();
-	m_pTextureManger = game->getTextureManger();
+	m_pGame = pGame;
+	m_pMap = m_pGame->getMap();
+	m_pAudio = m_pGame->getAudio();
+	m_pTextureManger = m_pGame->getTextureManger();
 	Texture* pTexture = m_pTextureManger->getTexture("bullet");
-	Image::initialize(pTexture, game);
+	Image::initialize(pTexture, m_pGame);
 	executeLaunch();
 }
 

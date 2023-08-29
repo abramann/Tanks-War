@@ -1,15 +1,16 @@
 // winmain.cpp
 // Author: abramann
-
-// Note this file is influenced by winmain.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
+// Note this file is influenced by winmain.cpp from Chrles Kelly's Programming 2D Games
 // Note parts of this code are licensed under CC BY 3.0
 
 #include "types.h"
 #ifdef _CLIENT_BUILD
 #include "..\Client\tankswar.h"
+
 typedef TanksWar GameBuildType;
 #else ifdef _SERVER_BUILD
 #include "..\Server\tankswarServer.h"
+
 typedef TanksWarServer GameBuildType;
 #endif
 #include "fileio.h"
@@ -24,24 +25,16 @@ typedef TanksWarServer GameBuildType;
 #endif
 #pragma comment(lib,"winmm.lib")
 #pragma comment(lib,"Ws2_32.lib")
-#ifdef _BUILD_WITH_D3D9
-#pragma comment(lib,"d3d9.lib")
-#else ifdef _BUILD_WITH_D3D11
-//#pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"d3dx11.lib")
 #pragma comment(lib,"dxgi.lib")
-#endif
 
-LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-std::shared_ptr<GameBuildType> game;
-
+std::unique_ptr<GameBuildType> pGame;
 GameInfo g_gameInfo;
 
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	return game->messageHandler(hWnd, msg, wParam, lParam);
+	return pGame->messageHandler(hWnd, msg, wParam, lParam);
 }
 
 bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
@@ -90,9 +83,8 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	game = std::make_shared<GameBuildType>();
-	bool filesExist = game->checkGameFiles();
-	if (!filesExist)
+	pGame = std::make_unique<GameBuildType>();
+	if (!pGame->checkGameFiles())
 		return 1;
 
 	HWND hwnd = NULL;
@@ -106,9 +98,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG msg;
 	try
 	{
-		game->initialize(hInstance, hwnd);
+		pGame->initialize(hInstance, hwnd);
 #ifndef _DEBUG
-		game->showLogo();
+		pGameshowLogo();
 #endif
 		while (true)
 		{
@@ -124,7 +116,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				DispatchMessage(&msg);
 			}
 			else
-				game->run();
+				pGame->run();
 		}
 	}
 	catch (const GameError& err)

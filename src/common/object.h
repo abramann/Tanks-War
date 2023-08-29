@@ -14,7 +14,7 @@ public:
 
 	Object();
 	~Object();
-	virtual void initialize(Texture* texture, const Game* game);
+	virtual void initialize(Texture* texture, const Game * pGame);
 	virtual void update();
 	virtual void executeBack();
 	virtual void executeDie();
@@ -36,7 +36,6 @@ protected:
 
 	const Game* m_pGame;
 	Audio* m_pAudio;
-
 	Map* m_pMap;
 	float m_health, m_velocity;
 	Sound m_soundForward, m_soundBack, m_soundRight, m_soundLeft;

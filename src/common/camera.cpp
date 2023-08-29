@@ -15,11 +15,11 @@ Camera::~Camera()
 {
 }
 
-void Camera::initialize(const Game* game)
+void Camera::initialize(const Game* pGame)
 {
 	m_aspectRation = g_gameInfo.width*1.0f / g_gameInfo.height*1.0f;
-	m_pGraphics = game->getGraphics();
-	m_pMap = game->getMap();
+	m_pGraphics = pGame->getGraphics();
+	m_pMap = pGame->getMap();
 	gameMathNS::matrixPerspectiveFovLH(&m_proj, m_fov, m_aspectRation, m_nearPlane,
 		m_farPlane);
 #ifdef _BUILD_WITH_D3D9

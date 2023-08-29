@@ -31,13 +31,12 @@ bool Dx11Wrapper::initialize(const Game * pGame)
 #ifdef _DEBUG
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-	Result r = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags,
+	if (FAILED(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags,
 		0, 0, D3D11_SDK_VERSION, &swapChainDesc, &m_pSwapChain,
-		&m_pDevice, NULL, &m_pDeviceContext);
-	if (FAILED(r))
+		&m_pDevice, NULL, &m_pDeviceContext)))
 		return false;
 
-	if(!ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get()))
+	if (!ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get()))
 		return false;
 
 	m_initialzed = true;
@@ -165,17 +164,20 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createBuffer(D3D11_USAGE usage
 	desc.Usage = usage;
 	desc.StructureByteStride = stride;
 	D3D11_SUBRESOURCE_DATA srData = {};
-	ComPtr<ID3D11Buffer> lpBuf;
+	ComPtr<ID3D11Buffer> pBuf;
 	if (initialData == 0)
-		m_pDevice->CreateBuffer(&desc, 0, &lpBuf);
+		m_pDevice->CreateBuffer(&desc, 0, &pBuf);
 	else
 	{
 		D3D11_SUBRESOURCE_DATA srData;
 		srData.pSysMem = initialData;
-		m_pDevice->CreateBuffer(&desc, &srData, &lpBuf);
+		m_pDevice->CreateBuffer(&desc, &srData, &pBuf);
 	}
 
-	return lpBuf;
+	if (pBuf == nullptr)
+		throw GameError(gameErrorNS::FATAL_ERROR, "m_pDevice->CreateBuffer failed");
+
+	return pBuf;
 }
 
 void Dx11Wrapper::initSwapChain(DXGI_SWAP_CHAIN_DESC & swapChainDesc)
@@ -277,7 +279,7 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createStructuredBuffer(uint32 
 	else
 		bindFlag = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 
-	return createBuffer((D3D11_USAGE)usage, (D3D11_BIND_FLAG)bindFlag, cpuAccess, elementSize*count,elementSize,
+	return createBuffer((D3D11_USAGE)usage, (D3D11_BIND_FLAG)bindFlag, cpuAccess, elementSize*count, elementSize,
 		pInitData, D3D11_RESOURCE_MISC_BUFFER_STRUCTURED);
 }
 
@@ -352,18 +354,9 @@ void Dx11Wrapper::runComputeShader(ID3D11ComputeShader * lpComputeShader, uint32
 	m_pDeviceContext->CSSetShaderResources(0, srvs, ppShaderResourceView);
 	m_pDeviceContext->CSSetUnorderedAccessViews(0, uavs, ppUnorderedAccessView, 0);
 	m_pDeviceContext->Dispatch(x, y, z);
-
-	m_pDeviceContext->CSSetShader(NULL, NULL, 0);
-
-	ID3D11UnorderedAccessView* ppUAViewNULL[1] = { NULL };
-	m_pDeviceContext->CSSetUnorderedAccessViews(0, 1, ppUAViewNULL, NULL);
-
-	ID3D11ShaderResourceView* ppSRVNULL[2] = { NULL, NULL };
-	m_pDeviceContext->CSSetShaderResources(0, 2, ppSRVNULL);
-
 }
 
-void Dx11Wrapper::d3dStreamVertexBuffer(ID3D11Buffer * lpVB, uint32 strides, uint32 offset, uint32 numBuffers, uint32 startSlot)
+void Dx11Wrapper::iaSetStreamBuffer(ID3D11Buffer * pVB, uint32 strides, uint32 offset, uint32 numBuffers, uint32 startSlot)
 {
-	m_pDeviceContext->IASetVertexBuffers(startSlot, numBuffers, &lpVB, &strides, &offset);
+	m_pDeviceContext->IASetVertexBuffers(startSlot, numBuffers, &pVB, &strides, &offset);
 }

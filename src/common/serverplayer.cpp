@@ -14,33 +14,33 @@ ServerPlayer::~ServerPlayer()
 }
 
 #ifdef _SERVER_BUILD
-ServerPlayer::ServerPlayer(PlayerID id, const char* name, const char* ip, Port port,TanksWarServer* pTKServer)
+ServerPlayer::ServerPlayer(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTWServer)
 {
-	initialize(id, name, ip, port, pTKServer);
+	initialize(id, name, ip, port, pTWServer);
 }
 
-void ServerPlayer::initialize(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTKServer)
+void ServerPlayer::initialize(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTWServer)
 {
-	m_pTKServer = pTKServer;
+	m_pTWServer = pTWServer;
 	strcpy(m_ip, ip);
-	Player::initialize(id, name, PLAYER_ENEMY, pTKServer);
+	Player::initialize(id, name, PLAYER_ENEMY, pTWServer);
 }
 
 void ServerPlayer::damage(float dmg)
 {
 	Player::damage(dmg);
-	m_pTKServer->updateClientGameState(this);
+	m_pTWServer->updateClientGameState(this);
 }
 
 #else
-ServerPlayer::ServerPlayer(PlayerID id, const char * name, TanksWar * pTK)
+ServerPlayer::ServerPlayer(PlayerID id, const char * name, TanksWar * pTW)
 {
-	initialize(id, name, pTK);
+	initialize(id, name, pTW);
 }
 
-void ServerPlayer::initialize(PlayerID id, const char* name, TanksWar* pTK)
+void ServerPlayer::initialize(PlayerID id, const char* name, TanksWar* pTW)
 {
-	m_pTK = pTK;
-	Player::initialize(id, name, PLAYER_ENEMY, m_pTK);
+	m_pTW = pTW;
+	Player::initialize(id, name, PLAYER_ENEMY, m_pTW);
 }
 #endif

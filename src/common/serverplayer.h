@@ -18,9 +18,8 @@ public:
 	ServerPlayer() {};
 	~ServerPlayer();
 #ifdef _SERVER_BUILD
-	ServerPlayer(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTKServer);
-	
-	virtual void initialize(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTKServer);
+	ServerPlayer(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTWServer);
+	virtual void initialize(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTWServer);
 	virtual void damage(float dmg);
 	char* getIP() { return m_ip; }
 	Port getPort() { return m_port; }
@@ -29,18 +28,17 @@ public:
 
 private:
 
-	TanksWarServer* m_pTKServer;
+	TanksWarServer* m_pTWServer;
 	char m_ip[netNS::IP_SIZE];
 	Port  m_port;
 	int64 m_heartbeatTime;
 
 #else
-	ServerPlayer(PlayerID id, const char* name, TanksWar* pTK);
-	
-	virtual void initialize(PlayerID id, const char* name, TanksWar* pTK);
+	ServerPlayer(PlayerID id, const char* name, TanksWar* pTW);
+	virtual void initialize(PlayerID id, const char* name, TanksWar* pTW);
 
 private:
 
-	TanksWar* m_pTK;
+	TanksWar* m_pTW;
 #endif
 };

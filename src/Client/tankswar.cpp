@@ -20,7 +20,6 @@ Tank tank2;
 
 TanksWar::TanksWar() : m_status(clientNS::CLIENT_UNCONNECTED)
 {
-
 	m_pClient = std::make_shared<Client>();
 	m_pRData = m_pClient->getReceiveBuffer();
 	m_pSData = m_pClient->getSendBuffer();
@@ -104,7 +103,7 @@ bool TanksWar::connect()
 		m_status = clientNS::CLIENT_CONNECTED;
 		return true;
 	}
-	
+
 	disconnect();
 	return false;
 }
