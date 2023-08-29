@@ -6,6 +6,7 @@
 #include "types.h"
 #include <d3d11.h>
 #include <vector>
+#include <wrl\client.h>
 
 class Game;
 class Graphics;
@@ -15,11 +16,6 @@ class Image;
 class Texture;
 class Bullet;
 class Dx11Wrapper;
-
-typedef ID3D11Buffer* LPDxBuffer;
-typedef ID3D11ShaderResourceView* LPShaderResourceView;
-typedef ID3D11UnorderedAccessView* LPUnorderedAccessView;
-typedef ID3D11ComputeShader* LPComputeShader;
 
 class Map
 {
@@ -60,15 +56,15 @@ private:
 
 	TextureManger* m_pTextureManger;
 	Texture* m_pTexture[textureNS::TEXTURE_TILEDS];
-	LPDxBuffer m_lpNoSpaceBuf, m_lpResultBuf, m_lpResultStagingBuf, m_lpSpaceBuf, m_lpNoSpaceCountBuf;
-	LPShaderResourceView m_lpNoSpaceSRV, m_lpSpaceSRV, m_lpNoSpaceCountSRV;
-	LPUnorderedAccessView m_lpResultUAV;
-	LPComputeShader m_lpCollisionCS;
+	Microsoft::WRL::ComPtr<DxBuffer> m_pVertexBuf, m_pNoSpaceBuf, m_pResultBuf, m_pResultStagingBuf, m_pSpaceBuf,
+		m_pNoSpaceCountBuf, m_pMapRangeBuf;
+	Microsoft::WRL::ComPtr<DxShaderResourceView> m_pNoSpaceSRV, m_pSpaceSRV, m_pNoSpaceCountSRV, m_pMapRangeSRV;
+	Microsoft::WRL::ComPtr<DxUnorderedAccessView> m_pResultUAV;
+	Microsoft::WRL::ComPtr<DxComputeShader> m_pCollisionCS;
 	Graphics* m_pGraphics;
 	std::vector< std::vector<char>> m_map;
 	int32 m_width, m_height;
 	int8 m_usedBitmaps;
-	LPVertexBuffer m_lpVertexBuffer;
 	std::vector<Space> m_freeSpace;
 	std::vector<Space> m_noSpace;
 	std::vector<int8> m_preventedBitmap;

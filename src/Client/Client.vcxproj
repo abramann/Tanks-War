@@ -186,7 +186,6 @@
     <ClInclude Include="..\common\object.h" />
     <ClInclude Include="..\common\player.h" />
     <ClInclude Include="..\common\serverplayer.h" />
-    <ClInclude Include="..\common\shader.h" />
     <ClInclude Include="..\common\sprite.h" />
     <ClInclude Include="..\common\tank.h" />
     <ClInclude Include="..\common\texture.h" />

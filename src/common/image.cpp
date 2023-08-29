@@ -4,18 +4,19 @@
 #include "image.h"
 #include "game.h"
 #include "timer.h"
+#include "dx11wrapper.h"
 
 Image::Image() : m_animate(false), m_column(1), m_row(1), m_columns(0), m_rows(0),
 m_timeUntilLastUpdate(0), m_updateDelay(0), m_width(0), m_height(0), m_textureWidth(0),
-m_textureHeight(0), m_lpVertexBuffer(0), m_position(0, 0, 0), m_rotate(0, 0, 0), m_scalling(1, 1, 1),
-m_initialized(false)
+m_textureHeight(0), m_pVertexBuffer(0), m_pStagingBuffer(0), m_position(0, 0, 0), m_rotate(0, 0, 0),
+m_scalling(1, 1, 1), m_initialized(false), m_vertices(graphicsNS::VERTICES_IMAGE)
 {
-	m_vertices = graphicsNS::VERTICES_IMAGE;
 }
 
 Image::~Image()
 {
-	safeRelease(m_lpVertexBuffer);
+	//safeRelease(m_pVertexBuffer);
+	//safeRelease(m_pStagingBuffer);
 }
 
 void Image::initialize(Texture * texture, const Game* game, int8 columns, int8 rows,
@@ -23,6 +24,7 @@ void Image::initialize(Texture * texture, const Game* game, int8 columns, int8 r
 {
 	m_pTexture = texture;
 	m_pGraphics = game->getGraphics();
+	m_pDx11Wrapper = game->getDx11Wrapper();
 	m_pTimer = game->getTimer();
 	m_columns = columns;
 	m_rows = rows;
@@ -98,7 +100,8 @@ Space Image::getSpace(float x0, float y0) const
 
 void Image::createVertexBuffer()
 {
-	m_lpVertexBuffer = m_pGraphics->createVertexBuffer(m_vertices);
+	m_pVertexBuffer = m_pDx11Wrapper->createVertexBuffer(m_vertices, D3D11_CPU_ACCESS_WRITE, 0);
+	m_pStagingBuffer = m_pDx11Wrapper->createStagingBuffer(D3D11_CPU_ACCESS_READ, sizeof(Vertex), 6, 0);
 }
 
 void Image::setLocalCoordinate()
@@ -112,7 +115,7 @@ void Image::setLocalCoordinate()
 	vx[3] = Vertex(0, height, 0.0f, u, 0.0f);
 	vx[4] = Vertex(width, height, 0.0f, 0.0f, 0.0f);
 	vx[5] = Vertex(width, 0, 0.0f, 0.0f, v);
-	m_pGraphics->setVertexBuffer(m_lpVertexBuffer, vx, m_vertices);
+	m_pDx11Wrapper->copyToResource(m_pVertexBuffer.Get(), vx, m_vertices*sizeof(Vertex));
 }
 
 void Image::updateTextureCoordinate(int64 frameTime)
@@ -144,7 +147,15 @@ void Image::setNextImageTextureCoordinate()
 	vx[3].u = (m_row)*u, vx[3].v = (m_column - 1)*v;
 	vx[4].u = (m_row - 1)*u, vx[4].v = (m_column - 1)*v;
 	vx[5].u = (m_row - 1)*u, vx[5].v = m_column*v;
-
-	m_pGraphics->setVertexBufferUV(m_lpVertexBuffer, vx, 6);
 	m_row++, m_timeUntilLastUpdate = 0;
+	Vertex pOldData[6];
+	m_pDx11Wrapper->copyResourceToResource(m_pStagingBuffer.Get(), m_pVertexBuffer.Get());
+	m_pDx11Wrapper->copyResource(pOldData, m_pStagingBuffer.Get(), sizeof(Vertex) * m_vertices);
+	for (int i = 0; i < m_vertices; i++)
+	{
+		pOldData[i].u = vx[i].u;
+		pOldData[i].v = vx[i].v;
+	}
+
+	m_pDx11Wrapper->copyToResource(m_pVertexBuffer.Get(), pOldData, m_vertices*sizeof(Vertex));
 }

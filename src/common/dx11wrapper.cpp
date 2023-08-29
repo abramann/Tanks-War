@@ -10,10 +10,6 @@
 #include "types.h"
 #include <D3DX11.h>
 
-// Temp include for testing compute shader
-#include <d3dcompiler.h>
-#pragma comment(lib,"d3dcompiler.lib")
-
 using namespace Microsoft::WRL;
 
 Dx11Wrapper::Dx11Wrapper() : m_initialzed(false)
@@ -26,23 +22,22 @@ Dx11Wrapper::~Dx11Wrapper()
 		ImGui_ImplDX11_Shutdown();
 }
 
-bool Dx11Wrapper::initialize(const Game * game)
+bool Dx11Wrapper::initialize(const Game * pGame)
 {
-	m_hwnd = game->getHwnd();
+	m_hwnd = pGame->getHwnd();
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	initSwapChain(swapChainDesc);
-	uint32 flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
+	uint32 flags = 0;
 #ifdef _DEBUG
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-	Result hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags,
-		0, 0, D3D11_SDK_VERSION, &swapChainDesc, &m_lpSwapChain,
-		&m_lpDevice, NULL, &m_lpDeviceContext);
-	if (FAILED(hr))
+	Result r = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags,
+		0, 0, D3D11_SDK_VERSION, &swapChainDesc, &m_pSwapChain,
+		&m_pDevice, NULL, &m_pDeviceContext);
+	if (FAILED(r))
 		return false;
 
-	bool r = ImGui_ImplDX11_Init(m_lpDevice.Get(), m_lpDeviceContext.Get());
-	if (!r)
+	if(!ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get()))
 		return false;
 
 	m_initialzed = true;
@@ -52,66 +47,60 @@ bool Dx11Wrapper::initialize(const Game * game)
 bool Dx11Wrapper::d3dInitialize()
 {
 	Result hr;
-	ComPtr<ID3D11Texture2D> lpBackBuffer;
-	hr = m_lpSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)lpBackBuffer.GetAddressOf());
-	hr = m_lpDevice->CreateRenderTargetView(lpBackBuffer.Get(), NULL, &m_lpRenderTargetView);
+	ComPtr<ID3D11Texture2D> pBackBuffer;
+	hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)pBackBuffer.GetAddressOf());
+	hr = m_pDevice->CreateRenderTargetView(pBackBuffer.Get(), NULL, &m_pRenderTargetView);
 	if (FAILED(hr))
 		return false;
 
-	m_lpDeviceContext->OMSetRenderTargets(1, m_lpRenderTargetView.GetAddressOf(), NULL);
+	m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), NULL);
 	D3D11_TEXTURE2D_DESC depthStencilDesc = {};
 	initDepthStencil(depthStencilDesc);
-	m_lpDevice->CreateTexture2D(&depthStencilDesc, NULL, &m_lpDepthBuffer);
-	hr = m_lpDevice->CreateDepthStencilView(m_lpDepthBuffer.Get(), NULL, &m_lpDepthStencilView);
+	m_pDevice->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthBuffer);
+	hr = m_pDevice->CreateDepthStencilView(m_pDepthBuffer.Get(), NULL, &m_pDepthStencilView);
 	if (FAILED(hr))
 		return false;
 
 	D3D11_VIEWPORT viewport;
 	initViewport(viewport);
-	m_lpDeviceContext->RSSetViewports(1, &viewport);
-	hr = m_lpDevice->CreateVertexShader(g_pVertexShader,
+	m_pDeviceContext->RSSetViewports(1, &viewport);
+	hr = m_pDevice->CreateVertexShader(g_pVertexShader,
 		ARRAYSIZE(g_pVertexShader),
-		0, &m_lpVShader);
+		0, &m_pVShader);
 	if (FAILED(hr))
 		return false;
 
-	m_lpDeviceContext->VSSetShader(m_lpVShader.Get(), 0, 0);
+	m_pDeviceContext->VSSetShader(m_pVShader.Get(), 0, 0);
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	m_lpDevice->CreateInputLayout(layout, 2, g_pVertexShader,
-		ARRAYSIZE(g_pVertexShader), &m_lpInputLayout);
-	m_lpDeviceContext->IASetInputLayout(m_lpInputLayout.Get());
-	m_lpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	hr = m_lpDevice->CreatePixelShader(g_pPixelShader,
+	m_pDevice->CreateInputLayout(layout, 2, g_pVertexShader,
+		ARRAYSIZE(g_pVertexShader), &m_pInputLayout);
+	m_pDeviceContext->IASetInputLayout(m_pInputLayout.Get());
+	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	hr = m_pDevice->CreatePixelShader(g_pPixelShader,
 		ARRAYSIZE(g_pPixelShader),
-		0, &m_lpPShader);
+		0, &m_pPShader);
 	if (FAILED(hr))
 		return false;
 
-	m_lpDeviceContext->PSSetShader(m_lpPShader.Get(), 0, 0);
-	D3D11_BUFFER_DESC desc = {};
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.ByteWidth = sizeof(Matrix);
-	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	desc.CPUAccessFlags = 0;
-	desc.MiscFlags = 0;
-	hr = m_lpDevice->CreateBuffer(&desc, NULL, &m_lpVSConstBuffer);
+	m_pDeviceContext->PSSetShader(m_pPShader.Get(), 0, 0);
+	m_pVSConstBuffer = createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(Matrix));
 	D3D11_SAMPLER_DESC sampDesc = {};
 	initSampleState(sampDesc);
-	m_lpDevice->CreateSamplerState(&sampDesc, &m_lpSampleState);
-	m_lpDeviceContext->PSSetSamplers(0, 1, m_lpSampleState.GetAddressOf());
-	m_lpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pDevice->CreateSamplerState(&sampDesc, &m_pSampleState);
+	m_pDeviceContext->PSSetSamplers(0, 1, m_pSampleState.GetAddressOf());
+	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	D3D11_RENDER_TARGET_BLEND_DESC rtbd = {};
 	initBlend(rtbd);
 	D3D11_BLEND_DESC blendDesc = {};
 	blendDesc.AlphaToCoverageEnable = false;
 	blendDesc.RenderTarget[0] = rtbd;
 	float blendFactor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	m_lpDevice->CreateBlendState(&blendDesc, &m_lpBlendState);
-	m_lpDeviceContext->OMSetBlendState(m_lpBlendState.Get(), blendFactor, 0xffffffff);
+	m_pDevice->CreateBlendState(&blendDesc, &m_pBlendState);
+	m_pDeviceContext->OMSetBlendState(m_pBlendState.Get(), blendFactor, 0xffffffff);
 	return true;
 }
 
@@ -119,7 +108,7 @@ void Dx11Wrapper::d3dBegin()
 {
 	ImGui_ImplDX11_NewFrame();
 	float bgColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	m_lpDeviceContext->ClearRenderTargetView(m_lpRenderTargetView.Get(), bgColor);
+	m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), bgColor);
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 }
@@ -133,22 +122,22 @@ void Dx11Wrapper::d3dEnd()
 
 void Dx11Wrapper::d3dPresent()
 {
-	Result r = m_lpSwapChain->Present(g_gameInfo.vsync, 0);
+	Result r = m_pSwapChain->Present(g_gameInfo.vsync, 0);
 	if (SUCCEEDED(r))
 		::g_frameCounter++;
 }
 
 void Dx11Wrapper::d3dDraw(uint32 vertexCount, uint32 startVertex)
 {
-	m_lpDeviceContext->Draw(vertexCount, startVertex);
+	m_pDeviceContext->Draw(vertexCount, startVertex);
 }
 
-void Dx11Wrapper::d3dSetSRV(ID3D11ShaderResourceView * pSrv, uint32 numViews, uint32 startSlot)
+void Dx11Wrapper::psSetSRV(ID3D11ShaderResourceView * pSrv, uint32 numViews, uint32 startSlot)
 {
-	m_lpDeviceContext->PSSetShaderResources(startSlot, numViews, &pSrv);
+	m_pDeviceContext->PSSetShaderResources(startSlot, numViews, &pSrv);
 }
 
-bool Dx11Wrapper::loadSRVFromFile(const std::string & file, ID3D11ShaderResourceView *& pSrv, int32& width, int32& height)
+bool Dx11Wrapper::createSRVFromFile(const std::string & file, ID3D11ShaderResourceView *& pSrv, int32& width, int32& height)
 {
 	Result r;
 	D3DX11_IMAGE_INFO info;
@@ -159,11 +148,34 @@ bool Dx11Wrapper::loadSRVFromFile(const std::string & file, ID3D11ShaderResource
 	width = info.Width;
 	height = info.Height;
 
-	D3DX11CreateShaderResourceViewFromFileA(m_lpDevice.Get(), file.c_str(), 0, 0, &pSrv, &r);
+	D3DX11CreateShaderResourceViewFromFileA(m_pDevice.Get(), file.c_str(), 0, 0, &pSrv, &r);
 	if (FAILED(r))
 		return false;
 
 	return true;
+}
+
+Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createBuffer(D3D11_USAGE usage, D3D11_BIND_FLAG bindFlag, uint32 cpuAccess, uint32 byteWidth, uint32 stride, void * initialData, uint32 miscFlag) const
+{
+	D3D11_BUFFER_DESC desc = {};
+	desc.BindFlags = bindFlag;
+	desc.MiscFlags = miscFlag; usage;
+	desc.CPUAccessFlags = cpuAccess;
+	desc.ByteWidth = byteWidth;
+	desc.Usage = usage;
+	desc.StructureByteStride = stride;
+	D3D11_SUBRESOURCE_DATA srData = {};
+	ComPtr<ID3D11Buffer> lpBuf;
+	if (initialData == 0)
+		m_pDevice->CreateBuffer(&desc, 0, &lpBuf);
+	else
+	{
+		D3D11_SUBRESOURCE_DATA srData;
+		srData.pSysMem = initialData;
+		m_pDevice->CreateBuffer(&desc, &srData, &lpBuf);
+	}
+
+	return lpBuf;
 }
 
 void Dx11Wrapper::initSwapChain(DXGI_SWAP_CHAIN_DESC & swapChainDesc)
@@ -235,150 +247,67 @@ void Dx11Wrapper::initBlend(D3D11_RENDER_TARGET_BLEND_DESC & rtbd)
 	rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 }
 
-void Dx11Wrapper::setVSConstBuffer(const void * data)
+void Dx11Wrapper::vsSetConstBuffer(const void * data)
 {
-	m_lpDeviceContext->UpdateSubresource(m_lpVSConstBuffer.Get(), 0, 0, data, 0,
+	m_pDeviceContext->UpdateSubresource(m_pVSConstBuffer.Get(), 0, 0, data, 0,
 		0);
-	m_lpDeviceContext->VSSetConstantBuffers(0, 1, m_lpVSConstBuffer.GetAddressOf());
+	m_pDeviceContext->VSSetConstantBuffers(0, 1, m_pVSConstBuffer.GetAddressOf());
 }
 
-void Dx11Wrapper::streamVertexBuffer(LPVertexBuffer vb)
+void Dx11Wrapper::streamVertexBuffer(ID3D11Buffer* lpVB)
 {
 	uint32 stride = sizeof(Vertex), offset = 0;
-	m_lpDeviceContext->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+	m_pDeviceContext->IASetVertexBuffers(0, 1, &lpVB, &stride, &offset);
 }
 
-ID3D11Buffer * Dx11Wrapper::createBuffer(uint32 size, D3D11_USAGE usage, D3D11_BIND_FLAG bindFlag, uint32 cpuAccess, void* initialData,
-	uint32 miscFlag, uint32 stride) const
+Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createVertexBuffer(uint32 vertices, uint32 cpuAccess, Vertex * data)
 {
-	D3D11_BUFFER_DESC desc = {};
-	desc.BindFlags = bindFlag;
-	desc.MiscFlags = miscFlag; usage;
-	desc.CPUAccessFlags = cpuAccess;
-	desc.ByteWidth = size;
-	desc.Usage = usage;
-	D3D11_SUBRESOURCE_DATA srData = {};
-	ID3D11Buffer* buf;
-	if (initialData == 0)
-		m_lpDevice->CreateBuffer(&desc, 0, &buf);
-	else
-	{
-		D3D11_SUBRESOURCE_DATA srData;
-		srData.pSysMem = initialData;
-		m_lpDevice->CreateBuffer(&desc, &srData, &buf);
-	}
-
-	return buf;
-}
-
-ID3D11Buffer * Dx11Wrapper::createVertexBuffer(uint32 vertices, Vertex * data)
-{
-	uint32 size = vertices*sizeof(Vertex);
 	D3D11_USAGE usage = (data) ? D3D11_USAGE_IMMUTABLE : D3D11_USAGE_DYNAMIC;
-
-	uint32 cpuAccess = (data) ? 0 : D3D11_CPU_ACCESS_WRITE;
-
-	ID3D11Buffer* buf = createBuffer(size, usage, D3D11_BIND_VERTEX_BUFFER, cpuAccess, data);
-	return buf;
+	return createBuffer(usage, D3D11_BIND_VERTEX_BUFFER, cpuAccess, vertices*sizeof(Vertex), sizeof(Vertex), data);
 }
 
-ID3D11Buffer * Dx11Wrapper::createStructuredBuffer(uint32 elementSize, uint32 count, void * pInitData, int32 cpuAccess)
+Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createStructuredBuffer(uint32 elementSize, uint32 count, void * pInitData, int32 cpuAccess)
 {
-	D3D11_BUFFER_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	desc.ByteWidth = elementSize * count;
-	desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	desc.StructureByteStride = elementSize;
-	desc.CPUAccessFlags = cpuAccess;
+	uint32 bindFlag = 0, usage = 0;
 	if (cpuAccess == D3D11_CPU_ACCESS_WRITE)
 	{
-		desc.Usage = D3D11_USAGE_DYNAMIC;
-		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		usage = D3D11_USAGE_DYNAMIC;
+		bindFlag = D3D11_BIND_SHADER_RESOURCE;
 	}
 	else
-		desc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+		bindFlag = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 
-	ID3D11Buffer* pStructuredBuffer = 0;
-	if (pInitData)
-	{
-		D3D11_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = pInitData;
-		m_lpDevice->CreateBuffer(&desc, &InitData, &pStructuredBuffer);
-	}
-	else
-		m_lpDevice->CreateBuffer(&desc, nullptr, &pStructuredBuffer);
-
-	return pStructuredBuffer;
+	return createBuffer((D3D11_USAGE)usage, (D3D11_BIND_FLAG)bindFlag, cpuAccess, elementSize*count,elementSize,
+		pInitData, D3D11_RESOURCE_MISC_BUFFER_STRUCTURED);
 }
 
-ID3D11Buffer * Dx11Wrapper::createConstantBuffer(D3D11_CPU_ACCESS_FLAG cpuAccess, uint32 elementSize, uint32 counts, void * pInitData)
+Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createStagingBuffer(D3D11_CPU_ACCESS_FLAG cpuAccess, uint32 elementSize, uint32 count, void * pInitData)
 {
-	D3D11_BUFFER_DESC desc;
-	desc.Usage = D3D11_USAGE_DYNAMIC;
-	desc.ByteWidth = elementSize * counts;
-	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	desc.CPUAccessFlags = cpuAccess;
-	desc.MiscFlags = 0;
-	ID3D11Buffer* pConstantBuf = 0;
-	if (pInitData)
-	{
-		D3D11_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = pInitData;
-		m_lpDevice->CreateBuffer(&desc, &InitData, &pConstantBuf);
-	}
-	else
-		m_lpDevice->CreateBuffer(&desc, nullptr, &pConstantBuf);
-
-	return pConstantBuf;
-}
-
-ID3D11Buffer * Dx11Wrapper::createStagingBuffer(D3D11_CPU_ACCESS_FLAG cpuAccess, uint32 elementSize, uint32 count, void * pInitData)
-{
-	D3D11_BUFFER_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	desc.StructureByteStride = elementSize;
-	desc.ByteWidth = elementSize*count;
-	desc.CPUAccessFlags = cpuAccess;
-	desc.Usage = D3D11_USAGE_STAGING;
-	desc.BindFlags = 0;
-	desc.MiscFlags = 0;
-	ID3D11Buffer* pStagingBuf = 0;
-	if (pInitData)
-	{
-		D3D11_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = pInitData;
-		m_lpDevice->CreateBuffer(&desc, &InitData, &pStagingBuf);
-	}
-	else
-		m_lpDevice->CreateBuffer(&desc, nullptr, &pStagingBuf);
-
-	return pStagingBuf;
+	return createBuffer(D3D11_USAGE_STAGING, (D3D11_BIND_FLAG)0, cpuAccess, elementSize*count, elementSize, pInitData, 0);
 }
 
 void Dx11Wrapper::copyResourceToResource(ID3D11Resource * lpDest, ID3D11Resource * lpSource)
 {
-	m_lpDeviceContext->CopyResource(lpDest, lpSource);
+	m_pDeviceContext->CopyResource(lpDest, lpSource);
 }
 
 void Dx11Wrapper::copyResource(void * pDest, ID3D11Resource * lpSource, uint32 size)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	m_lpDeviceContext->Map(lpSource, 0, D3D11_MAP_READ, 0, &mappedResource);
+	m_pDeviceContext->Map(lpSource, 0, D3D11_MAP_READ, 0, &mappedResource);
 	memcpy(pDest, mappedResource.pData, size);
-	m_lpDeviceContext->Unmap(lpSource, 0);
+	m_pDeviceContext->Unmap(lpSource, 0);
 }
 
 void Dx11Wrapper::copyToResource(ID3D11Resource * lpDest, void * pSource, uint32 size)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	m_lpDeviceContext->Map(lpDest, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	//mappedResource.pData = pSource;
+	m_pDeviceContext->Map(lpDest, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	memcpy(mappedResource.pData, pSource, size);
-	m_lpDeviceContext->Unmap(lpDest, 0);
-	//m_lpDeviceContext->UpdateSubresource(lpDest, 0, 0, data, 0,	0);
+	m_pDeviceContext->Unmap(lpDest, 0);
 }
 
-ID3D11ShaderResourceView * Dx11Wrapper::createBufferSRV(ID3D11Buffer * pBuffer)
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Dx11Wrapper::createBufferSRV(ID3D11Buffer * pBuffer)
 {
 	D3D11_BUFFER_DESC descBuf;
 	ZeroMemory(&descBuf, sizeof(descBuf));
@@ -389,12 +318,12 @@ ID3D11ShaderResourceView * Dx11Wrapper::createBufferSRV(ID3D11Buffer * pBuffer)
 	desc.BufferEx.FirstElement = 0;
 	desc.Format = DXGI_FORMAT_UNKNOWN;
 	desc.BufferEx.NumElements = descBuf.ByteWidth / descBuf.StructureByteStride;
-	ID3D11ShaderResourceView* pSRV = 0;
-	m_lpDevice->CreateShaderResourceView(pBuffer, &desc, &pSRV);
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pSRV;
+	m_pDevice->CreateShaderResourceView(pBuffer, &desc, &pSRV);
 	return pSRV;
 }
 
-ID3D11UnorderedAccessView * Dx11Wrapper::createBufferUAV(ID3D11Buffer * pBuffer)
+Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> Dx11Wrapper::createBufferUAV(ID3D11Buffer * pBuffer)
 {
 	D3D11_BUFFER_DESC descBuf;
 	ZeroMemory(&descBuf, sizeof(descBuf));
@@ -405,83 +334,36 @@ ID3D11UnorderedAccessView * Dx11Wrapper::createBufferUAV(ID3D11Buffer * pBuffer)
 	desc.Buffer.FirstElement = 0;
 	desc.Format = DXGI_FORMAT_UNKNOWN;
 	desc.Buffer.NumElements = descBuf.ByteWidth / descBuf.StructureByteStride;
-	ID3D11UnorderedAccessView* pUAV = 0;
-	m_lpDevice->CreateUnorderedAccessView(pBuffer, &desc, &pUAV);
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV;
+	m_pDevice->CreateUnorderedAccessView(pBuffer, &desc, &pUAV);
 	return pUAV;
 }
 
-ID3D11ComputeShader * Dx11Wrapper::createComputeShader(const BYTE* pByteCode, size_t byteCodeSize)
+Microsoft::WRL::ComPtr<ID3D11ComputeShader> Dx11Wrapper::createComputeShader(const BYTE* pByteCode, size_t byteCodeSize)
 {
-	ID3D11ComputeShader* pComputeShader = 0;
-	m_lpDevice->CreateComputeShader(pByteCode, byteCodeSize, NULL, &pComputeShader);
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader> pComputeShader;
+	m_pDevice->CreateComputeShader(pByteCode, byteCodeSize, NULL, &pComputeShader);
 	return pComputeShader;
 }
 
 void Dx11Wrapper::runComputeShader(ID3D11ComputeShader * lpComputeShader, uint32 srvs, ID3D11ShaderResourceView ** ppShaderResourceView, uint32 uavs, ID3D11UnorderedAccessView ** ppUnorderedAccessView, uint32 x, uint32 y, uint32 z)
 {
-	m_lpDeviceContext->CSSetShader(lpComputeShader, 0, 0);
-	m_lpDeviceContext->CSSetShaderResources(0, srvs, ppShaderResourceView);
-	m_lpDeviceContext->CSSetUnorderedAccessViews(0, uavs, ppUnorderedAccessView, 0);
-	m_lpDeviceContext->Dispatch(x, y, z);
+	m_pDeviceContext->CSSetShader(lpComputeShader, 0, 0);
+	m_pDeviceContext->CSSetShaderResources(0, srvs, ppShaderResourceView);
+	m_pDeviceContext->CSSetUnorderedAccessViews(0, uavs, ppUnorderedAccessView, 0);
+	m_pDeviceContext->Dispatch(x, y, z);
 
-	m_lpDeviceContext->CSSetShader(NULL, NULL, 0);
+	m_pDeviceContext->CSSetShader(NULL, NULL, 0);
 
 	ID3D11UnorderedAccessView* ppUAViewNULL[1] = { NULL };
-	m_lpDeviceContext->CSSetUnorderedAccessViews(0, 1, ppUAViewNULL, NULL);
+	m_pDeviceContext->CSSetUnorderedAccessViews(0, 1, ppUAViewNULL, NULL);
 
 	ID3D11ShaderResourceView* ppSRVNULL[2] = { NULL, NULL };
-	m_lpDeviceContext->CSSetShaderResources(0, 2, ppSRVNULL);
+	m_pDeviceContext->CSSetShaderResources(0, 2, ppSRVNULL);
 
 }
 
-void Dx11Wrapper::d3dStreamVertexBuffer(ID3D11Buffer * vb, uint32 strides, uint32 offset, uint32 numBuffers, uint32 startSlot)
+void Dx11Wrapper::d3dStreamVertexBuffer(ID3D11Buffer * lpVB, uint32 strides, uint32 offset, uint32 numBuffers, uint32 startSlot)
 {
-	m_lpDeviceContext->IASetVertexBuffers(startSlot, numBuffers, &vb, &strides, &offset);
-}
-
-void Dx11Wrapper::setVertexBuffer(ID3D11Buffer* vb, Vertex * vertex, uint32 vertices)
-{
-	D3D11_MAPPED_SUBRESOURCE data;
-	m_lpDeviceContext->Map(vb, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
-	memcpy(data.pData, vertex, sizeof(Vertex)*vertices);
-	m_lpDeviceContext->Unmap(vb, 0);
-}
-
-void Dx11Wrapper::setVertexBufferUV(LPVertexBuffer vb, Vertex * vertex, int8_t len)
-{
-	D3D11_MAPPED_SUBRESOURCE data;
-	uint32 size;
-	Vertex* oldData = getVertexBufferData(vb, size);
-	m_lpDeviceContext->Map(vb, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
-	Vertex* v = (Vertex*)data.pData;
-	memcpy(v, oldData, size);
-	for (int i = 0; i < len; i++)
-	{
-		v[i].u = vertex[i].u;
-		v[i].v = vertex[i].v;
-	}
-
-	m_lpDeviceContext->Unmap(vb, 0);
-}
-
-Vertex* Dx11Wrapper::getVertexBufferData(ID3D11Buffer* vb, uint32& size) const
-{
-	D3D11_BUFFER_DESC stagingBufferDesc;
-	D3D11_BUFFER_DESC desc;
-	vb->GetDesc(&desc);
-	size = desc.ByteWidth;
-	stagingBufferDesc.ByteWidth = size;
-	stagingBufferDesc.Usage = D3D11_USAGE_STAGING;
-	stagingBufferDesc.BindFlags = 0;
-	stagingBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	stagingBufferDesc.MiscFlags = 0;
-	ID3D11Buffer* stagingBuffer;
-	m_lpDevice->CreateBuffer(&stagingBufferDesc, 0, &stagingBuffer);
-	m_lpDeviceContext->CopyResource(stagingBuffer, vb);
-	D3D11_MAPPED_SUBRESOURCE data;
-	Result HR = m_lpDeviceContext->Map(stagingBuffer, 0, D3D11_MAP_READ, 0, &data);
-	Vertex* v = (Vertex*)data.pData;
-	m_lpDeviceContext->Unmap(stagingBuffer, 0);
-	stagingBuffer->Release();
-	return v;
+	m_pDeviceContext->IASetVertexBuffers(startSlot, numBuffers, &lpVB, &strides, &offset);
 }

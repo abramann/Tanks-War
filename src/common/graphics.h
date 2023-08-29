@@ -43,10 +43,6 @@ public:
 	void setWorldMatrix(Matrix* worldMatrix);
 	bool checkFullscreenSupport() const;
 	Camera* getCamera() const { return m_pCamera.get(); }
-	LPVertexBuffer createVertexBuffer(uint32 vertices, Vertex* data = 0);
-	void Graphics::setVertexBuffer(LPVertexBuffer vb, Vertex * vertex, int32_t vertices);
-	void streamVertexBuffer(LPVertexBuffer vb);
-	void Graphics::setVertexBufferUV(LPVertexBuffer vb, Vertex * vertex, int8 len);
 
 private:
 

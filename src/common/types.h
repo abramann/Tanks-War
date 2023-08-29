@@ -53,7 +53,10 @@ typedef DirectX::XMMATRIX Matrix;
 typedef DirectX::XMFLOAT2 V2;
 
 typedef ID3D11ShaderResourceView* LPTextureD3D;
-typedef ID3D11Buffer* LPVertexBuffer;
+typedef ID3D11Buffer DxBuffer;
+typedef ID3D11ShaderResourceView DxShaderResourceView;
+typedef ID3D11UnorderedAccessView DxUnorderedAccessView;
+typedef ID3D11ComputeShader DxComputeShader;
 
 #define IN_RANGE(n, a, b) (bool)( (n > a && n < b) || (n > b && n < a))
 #define IN_RANGE_OR_EQUAL(n, a, b) (bool)( (n >= a && n <= b) || (n >= b && n <= a))

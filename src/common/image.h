@@ -5,11 +5,13 @@
 
 #include "types.h"
 #include "texture.h"
+#include <wrl\client.h>
 
 class Game;
 class TextureManger;
 class Graphics;
 class Timer;
+class Dx11Wrapper;
 
 class Image
 {
@@ -27,7 +29,7 @@ public:
 	int16 getVertices() const { return m_vertices; }
 	int16 getWidth() const { return m_width; }
 	LPTextureD3D getTexture() const { return m_pTexture->getTexture(); }
-	LPVertexBuffer getVertexBuffer() const { return m_lpVertexBuffer; }
+	DxBuffer* getVertexBuffer() const { return m_pVertexBuffer.Get(); }
 	inline V3 getPosition() const { return m_position; }
 	V3 getRotate() const { return m_rotate; }
 	V3 getScalling() const { return m_scalling; }
@@ -58,13 +60,14 @@ protected:
 	int32 m_textureWidth, m_textureHeight;
 	int32 m_updateDelay;
 	int64 m_timeUntilLastUpdate;
-	LPVertexBuffer m_lpVertexBuffer;
+	Microsoft::WRL::ComPtr<DxBuffer> m_pVertexBuffer, m_pStagingBuffer;
 	V3 m_position, m_scalling, m_rotate;
 	int16 m_vertices, m_width, m_height;
 	int8_t m_columns, m_rows, m_column, m_row;
 	bool m_initialized;
 	Timer* m_pTimer;
-
+	Dx11Wrapper* m_pDx11Wrapper;
+	
 private:
 
 	virtual void updateTextureCoordinate(int64 frameTime);

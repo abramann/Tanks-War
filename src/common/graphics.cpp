@@ -33,11 +33,6 @@ bool Graphics::initialize(const Game* game)
 	return result;
 }
 
-LPVertexBuffer Graphics::createVertexBuffer(uint32 vertices, Vertex* data)
-{
-	return m_pDx11Wrapper->createVertexBuffer(vertices, data);
-}
-
 void Graphics::beginRender()
 {
 	m_pDx11Wrapper->d3dBegin();
@@ -46,7 +41,7 @@ void Graphics::beginRender()
 void Graphics::drawImage(const Image* image)
 {
 	int16 vertices = image->getVertices();
-	LPVertexBuffer vb = image->getVertexBuffer();
+	DxBuffer* lpVB = image->getVertexBuffer();
 	LPTextureD3D texture = image->getTexture();
 	V3 position = image->getPosition(),
 		&scalling = image->getScalling(),
@@ -58,7 +53,7 @@ void Graphics::drawImage(const Image* image)
 	setTexture(texture);
 	m_lpDevice3d->DrawPrimitive(D3DPT_TRIANGLELIST, 0, vertices / 3);
 #else ifdef _BUILD_WITH_D3D11
-	m_pDx11Wrapper->d3dStreamVertexBuffer(vb, sizeof(Vertex), 0);
+	m_pDx11Wrapper->d3dStreamVertexBuffer(lpVB, sizeof(Vertex), 0);
 	setTexture(texture);
 	m_pDx11Wrapper->d3dDraw(vertices, 0);
 
@@ -102,23 +97,8 @@ void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCent
 
 bool Graphics::loadTexture(const char* file, int32& width, int32& height, LPTextureD3D& texture)
 {
-	bool result = m_pDx11Wrapper->loadSRVFromFile(file, texture, width, height);
+	bool result = m_pDx11Wrapper->createSRVFromFile(file, texture, width, height);
 	return result;
-}
-
-void Graphics::setVertexBuffer(LPVertexBuffer vb, Vertex * vertex, int32_t vertices)
-{
-	m_pDx11Wrapper->setVertexBuffer(vb, vertex, vertices);
-}
-
-void Graphics::streamVertexBuffer(LPVertexBuffer vb)
-{
-	m_pDx11Wrapper->streamVertexBuffer(vb);
-}
-
-void Graphics::setVertexBufferUV(LPVertexBuffer vb, Vertex * vertex, int8 len)
-{
-	m_pDx11Wrapper->setVertexBufferUV(vb, vertex, len);
 }
 
 void Graphics::setWorldMatrix(Matrix* worldMatrix)
@@ -126,7 +106,7 @@ void Graphics::setWorldMatrix(Matrix* worldMatrix)
 #ifdef _BUILD_WITH_D3D9
 	m_lpDevice3d->SetTransform(D3DTS_WORLD, &worldMatrix);
 #else ifdef _BUILD_WITH_D3D11
-	m_pDx11Wrapper->setVSConstBuffer(worldMatrix);
+	m_pDx11Wrapper->vsSetConstBuffer(worldMatrix);
 #endif
 }
 
@@ -188,7 +168,7 @@ void Graphics::setTexture(LPTextureD3D texture)
 #ifdef  _BUILD_WITH_D3D9
 	m_lpDevice3d->SetTexture(0, texture);
 #else ifdef _BUILD_WITH_D3D11
-	m_pDx11Wrapper->d3dSetSRV(texture);
+	m_pDx11Wrapper->psSetSRV(texture);
 #endif
 }
 
