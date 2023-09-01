@@ -38,12 +38,12 @@ Game::~Game()
 	m_pGraphics.reset(); // for release ImGui_d3d implemet before imgui_win implement
 }
 
-LRESULT Game::messageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT Game::messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pInput != nullptr && m_pInput->isInputHandled())
 		m_pInput->handle(msg, wParam, lParam);
 
-	return DefWindowProcA(hWnd, msg, wParam, lParam);
+	return DefWindowProcA(hwnd, msg, wParam, lParam);
 }
 
 void Game::initialize(HINSTANCE hInstance, HWND hwnd)
@@ -66,14 +66,18 @@ void Game::run()
 	if (m_pInput->isKeyDown(inputNS::ESCAPE_KEY))
 		PostQuitMessage(0);
 
-	updateGame();
+	if (isOnline())
+	{
+		updateGame();
+		communicate();
+	}
+
 	renderGame();
 }
 
 void Game::renderGame()
 {
 	m_pGraphics->beginRender();
-	//	 if (m_logo.drawRapidly())
 	render();
 	ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 	m_pGraphics->endRender();

@@ -18,16 +18,13 @@ void Player::initialize(PlayerID id, const char* name, PlayerType playerType, co
 {
 	m_id = id;
 	strcpy_s(m_name, name);
-	Texture* pTexture = 0;
-	TextureManger* pTextureManger = pGame->getTextureManger();
 	std::string tex;
 	if (playerType == PLAYER_SELF)
 		tex = "player-tank";
 	else if (playerType == PLAYER_ENEMY)
 		tex = "enemy-tank";
 
-	pTexture = pTextureManger->getTexture(tex);
-	Tank::initialize(pTexture, pGame);
+	Tank::initialize(tex, pGame);
 }
 
 void Player::applyPlayerUpdate(const PlayerUpdate playerUpdate)
@@ -48,3 +45,12 @@ PlayerUpdate Player::getPlayerUpdate() const
 	pu.id = m_id;
 	return pu;
 }
+
+#ifdef _CLIENT_BUILD
+void Player::setClientGameState(ClientGameState clientGameState)
+{
+	m_id = clientGameState.id;
+	m_position = clientGameState.position;
+	m_rotate = clientGameState.rotate;
+}
+#endif

@@ -21,10 +21,13 @@ public:
 	ServerPlayer(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTWServer);
 	virtual void initialize(PlayerID id, const char* name, const char* ip, Port port, TanksWarServer* pTWServer);
 	virtual void damage(float dmg);
+	virtual void executeDie();
+	virtual void executeAnimateRepeat();
 	char* getIP() { return m_ip; }
 	Port getPort() { return m_port; }
 	int64 getHeartbeatTime() { return m_heartbeatTime; }
 	void setHeartbeatTime(int64 heartbeatTime) { m_heartbeatTime = heartbeatTime; }
+	ClientGameState getClientGameState() const;
 
 private:
 

@@ -33,12 +33,15 @@ public:
 	Game();
 	~Game();
 	LRESULT messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	virtual void initialize(HINSTANCE hInstance, HWND hWnd);
+	virtual void initialize(HINSTANCE hInstance, HWND hwnd);
 	virtual void run();
 	virtual void renderGame();
 	virtual void updateGame();
 	virtual void update() = 0;
 	virtual void render() = 0;
+	virtual void communicate() = 0;
+	virtual bool isOnline() const = 0;
+
 	bool checkGameFiles() const;
 	void setResolution(int16 width, int16 height) const;
 	void setWindowed(bool windowed) const;

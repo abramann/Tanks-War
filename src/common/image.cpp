@@ -5,6 +5,7 @@
 #include "game.h"
 #include "timer.h"
 #include "dx11wrapper.h"
+#include "texturemanger.h"
 
 Image::Image() : m_animate(false), m_column(1), m_row(1), m_columns(0), m_rows(0),
 m_timeUntilLastUpdate(0), m_updateDelay(0), m_width(0), m_height(0), m_textureWidth(0),
@@ -19,13 +20,18 @@ Image::~Image()
 	//safeRelease(m_pStagingBuffer);
 }
 
-void Image::initialize(Texture * pTexture, const Game* pGame, int8 columns, int8 rows,
+void Image::initialize(std::string texture, const Game* pGame, int8 columns, int8 rows,
 	int32 updateDelay)
 {
-	m_pTexture = pTexture;
-	m_pGraphics = pGame->getGraphics();
-	m_pDx11Wrapper = pGame->getDx11Wrapper();
-	m_pTimer = pGame->getTimer();
+	if (pGame)
+	{
+		m_pGraphics = pGame->getGraphics();
+		m_pDx11Wrapper = pGame->getDx11Wrapper();
+		m_pTimer = pGame->getTimer();
+		m_pTextureManger = pGame->getTextureManger();
+	}
+	
+	m_pTexture = m_pTextureManger->getTexture(texture);;
 	m_columns = columns;
 	m_rows = rows;
 	m_textureWidth = m_pTexture->getWidth();
@@ -33,6 +39,7 @@ void Image::initialize(Texture * pTexture, const Game* pGame, int8 columns, int8
 	if (m_columns != 1 && m_rows != 1)
 	{
 		m_animate = true;
+		m_updateDelay = updateDelay;
 		m_width = m_textureWidth / m_rows;
 		m_height = m_textureHeight / m_columns;
 	}
@@ -43,12 +50,13 @@ void Image::initialize(Texture * pTexture, const Game* pGame, int8 columns, int8
 		m_height = m_textureHeight;
 	}
 
-	m_updateDelay = updateDelay;
 	if (!m_initialized)
+	{
 		createVertexBuffer();
+		m_initialized = true;
+	}
 
 	setLocalCoordinate();
-	m_initialized = true;
 }
 
 void Image::update()
@@ -132,7 +140,10 @@ void Image::setNextImageTextureCoordinate()
 	if (m_row == m_rows + 1)
 	{
 		if (m_column == m_columns)
+		{
 			executeAnimateRepeat();
+			return;
+		}
 		else
 		{
 			m_column++;

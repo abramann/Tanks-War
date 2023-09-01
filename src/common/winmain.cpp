@@ -32,9 +32,9 @@ typedef TanksWarServer GameBuildType;
 std::unique_ptr<GameBuildType> pGame;
 GameInfo g_gameInfo;
 
-LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	return pGame->messageHandler(hWnd, msg, wParam, lParam);
+	return pGame->messageHandler(hwnd, msg, wParam, lParam);
 }
 
 bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
@@ -100,7 +100,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		pGame->initialize(hInstance, hwnd);
 #ifndef _DEBUG
-		pGameshowLogo();
+		pGame->showLogo();
 #endif
 		while (true)
 		{

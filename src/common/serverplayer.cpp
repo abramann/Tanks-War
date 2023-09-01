@@ -23,13 +23,35 @@ void ServerPlayer::initialize(PlayerID id, const char* name, const char* ip, Por
 {
 	m_pTWServer = pTWServer;
 	strcpy(m_ip, ip);
+	m_port = port;
 	Player::initialize(id, name, PLAYER_ENEMY, pTWServer);
 }
 
 void ServerPlayer::damage(float dmg)
 {
 	Player::damage(dmg);
-	m_pTWServer->updateClientGameState(this);
+}
+
+void ServerPlayer::executeDie()
+{
+	Player::executeDie();
+	m_pTWServer->executeClientPlayerDie(this);
+}
+
+void ServerPlayer::executeAnimateRepeat()
+{
+	m_pTWServer->resetClientGameState(this);
+	m_pTWServer->postClientGameState(this);
+	Player::executeAnimateRepeat();
+}
+
+ClientGameState ServerPlayer::getClientGameState() const
+{
+	ClientGameState clientGameState;
+	clientGameState.id = m_id;
+	clientGameState.position = m_position;
+	clientGameState.rotate = m_rotate;
+	return clientGameState;
 }
 
 #else

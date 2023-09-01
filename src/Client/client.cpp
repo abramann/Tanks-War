@@ -3,6 +3,7 @@
 
 #include "client.h"
 #include "tankswar.h"
+#include "..\common\timer.h"
 #include "..\common\net.h"
 
 Client::Client()
@@ -17,12 +18,13 @@ Client::~Client()
 void Client::initialize(TanksWar* pTW)
 {
 	m_pTW = pTW;
+	m_pTimer = m_pTW->getTimer();
 	m_pServerIP = pTW->getServerIP();
 }
 
 bool Client::connect(char* ip, Port port)
 {
-	m_serverPort = m_serverPort = port;
+	m_serverPort = port;
 	m_pServerIP = ip;
 	auto create = m_net.createClient(m_pServerIP, m_serverPort, netNS::UDP);
 	return (create == netNS::NET_OK);
@@ -49,13 +51,14 @@ bool Client::recv()
 
 bool Client::recv(int64 waitTime)
 {
+	int64 end = m_pTimer->getCurrentTime() + waitTime;
 	do
 	{
 		if (recv())
 			return true;
 		else
-			Sleep(waitTime--);
-	} while (waitTime > 0);
+			Sleep(1);
+	} while (end > m_pTimer->getCurrentTime());
 
 	return false;
 }

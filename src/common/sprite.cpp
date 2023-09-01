@@ -8,6 +8,8 @@
 #include "texturemanger.h"
 #include "texture.h"
 
+#pragma warning(disable : 4244)
+
 using namespace ImGui;
 
 constexpr float FADE_AMOUNT = 0.0005f;
@@ -39,8 +41,6 @@ void Sprite::initialize(const Game* const pGame, std::string texture, V2 positio
 	m_position = position,
 		m_scaling = scaling;
 }
-
-#pragma warning(disable : 4244)
 
 void Sprite::draw()
 {

@@ -16,6 +16,7 @@ class TanksWarServer;
 class Graphics;
 class Audio;
 class Timer;
+class Input;
 
 class Interface
 {
@@ -36,6 +37,7 @@ public:
 	void render();
 	void beginActivity(bool blankActivity, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED);
 	void endActivity(bool backButton = false, interfaceNS::Activity backActivity = interfaceNS::NO_ACITVITY);
+	void setActivity(interfaceNS::Activity activity) { m_activity = activity; }
 
 private:
 
@@ -53,6 +55,7 @@ private:
 	Graphics* m_pGraphics;
 	Audio* m_pAudio;
 	Timer* m_pTimer;
+	Input* m_pInput;
 	ImFont* m_pFont[interfaceNS::FONTSIZES];
 	bool m_blankActivity;
 	int8 m_activity;

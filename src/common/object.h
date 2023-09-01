@@ -14,7 +14,7 @@ public:
 
 	Object();
 	~Object();
-	virtual void initialize(Texture* texture, const Game * pGame);
+	virtual void initialize(std::string texture, const Game * pGame);
 	virtual void update();
 	virtual void executeBack();
 	virtual void executeDie();

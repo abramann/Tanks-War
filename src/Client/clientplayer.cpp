@@ -2,13 +2,13 @@
 // Author: abramann
 
 #ifdef _CLIENT_BUILD
-#include "clientplayer.h"
-#include "..\common\game.h"
 #include "..\common\fileio.h"
 #include "..\common\camera.h"
 #include "..\common\texturemanger.h"
 #include "..\common\texture.h"
 #include "..\common\input.h"
+#include "clientplayer.h"
+#include "tankswar.h"
 
 ClientPlayer::ClientPlayer() : m_handleInput(true)
 {
@@ -23,19 +23,23 @@ ClientPlayer::~ClientPlayer()
 {
 }
 
-void ClientPlayer::initialize(PlayerID id, Game * pGame)
+void ClientPlayer::initialize(PlayerID id, TanksWar * pTW)
 {
-	m_pInput = pGame->getInput();
+	m_pTW = pTW;
+	m_pInput = m_pTW->getInput();
 	std::string name = FileIO::readClientInfo().name;
-	Player::initialize(id, name.c_str(), PLAYER_SELF, pGame);
+	Player::initialize(id, name.c_str(), PLAYER_SELF, pTW);
 	m_pCamera = m_pGraphics->getCamera();
 }
 
-void ClientPlayer::update(int64 frameTime)
+void ClientPlayer::update()
 {
 	m_act = PLAYER_ACT_NONE;
 	if (m_handleInput)
 		handleInput();
+
+	if (m_act != PLAYER_ACT_NONE)
+		m_pTW->dispatchPlayerAct();
 
 	m_pCamera->update(m_position);
 	Player::update();
@@ -87,15 +91,28 @@ void ClientPlayer::executeLeft()
 	}
 }
 
-void ClientPlayer::executeAttack()
+bool ClientPlayer::executeAttack()
 {
-	m_act += PLAYER_ACT_ATTACK;
+	m_act |= PLAYER_ACT_ATTACK;
+	return true;
+}
+
+void ClientPlayer::executeAnimateRepeat()
+{
+	m_handleInput = true;
+	Player::executeAnimateRepeat();
 }
 
 void ClientPlayer::implementAttack()
 {
 	Player::playSoundAttack();
 	Player::executeAttack();
+}
+
+void ClientPlayer::executeDie()
+{
+	m_handleInput = false;
+	Player::executeDie();
 }
 
 void ClientPlayer::handleInput()

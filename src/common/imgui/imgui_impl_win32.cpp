@@ -58,7 +58,7 @@ typedef DWORD(WINAPI *PFN_XInputGetState)(DWORD, XINPUT_STATE*);
 //  2021-01-25: Inputs: Dynamically loading XInput DLL.
 //  2020-12-04: Misc: Fixed setting of io.DisplaySize to invalid/uninitialized data when after hwnd has been closed.
 //  2020-03-03: Inputs: Calling AddInputCharacterUTF16() to support surrogate pairs leading to codepoint >= 0x10000 (for more complete CJK inputs)
-//  2020-02-17: Added ImGui_ImplWin32_EnableDpiAwareness(), ImGui_ImplWin32_GetDpiScaleForHwnd(), ImGui_ImplWin32_GetDpiScaleForMonitor() helper functions.
+//  2020-02-17: Added ImGui_ImplWin32_EnableDpiAwareness(), ImGui_ImplWin32_GetDpiScaleForhwnd(), ImGui_ImplWin32_GetDpiScaleForMonitor() helper functions.
 //  2020-01-14: Inputs: Added support for #define IMGUI_IMPL_WIN32_DISABLE_GAMEPAD/IMGUI_IMPL_WIN32_DISABLE_LINKING_XINPUT.
 //  2019-12-05: Inputs: Added support for ImGuiMouseCursor_NotAllowed mouse cursor.
 //  2019-05-11: Inputs: Don't filter value from WM_CHAR before calling AddInputCharacter().
@@ -83,8 +83,8 @@ typedef DWORD(WINAPI *PFN_XInputGetState)(DWORD, XINPUT_STATE*);
 
 struct ImGui_ImplWin32_Data
 {
-	HWND                        hWnd;
-	HWND                        MouseHwnd;
+	HWND                        hwnd;
+	HWND                        Mousehwnd;
 	int                         MouseTrackedArea;   // 0: not tracked, 1: client are, 2: non-client area
 	int                         MouseButtonsDown;
 	INT64                       Time;
@@ -130,7 +130,7 @@ bool    ImGui_ImplWin32_Init(void* hwnd)
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;          // We can honor io.WantSetMousePos requests (optional, rarely used)
 
-	bd->hWnd = (HWND)hwnd;
+	bd->hwnd = (HWND)hwnd;
 	bd->TicksPerSecond = perf_frequency;
 	bd->Time = perf_counter;
 	bd->LastMouseCursor = ImGuiMouseCursor_COUNT;
@@ -253,17 +253,17 @@ static void ImGui_ImplWin32_UpdateMouseData()
 {
 	ImGui_ImplWin32_Data* bd = ImGui_ImplWin32_GetBackendData();
 	ImGuiIO& io = ImGui::GetIO();
-	IM_ASSERT(bd->hWnd != 0);
+	IM_ASSERT(bd->hwnd != 0);
 
 	HWND focused_window = ::GetForegroundWindow();
-	const bool is_app_focused = (focused_window == bd->hWnd);
+	const bool is_app_focused = (focused_window == bd->hwnd);
 	if (is_app_focused)
 	{
 		// (Optional) Set OS mouse position from Dear ImGui if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
 		if (io.WantSetMousePos)
 		{
 			POINT pos = { (int)io.MousePos.x, (int)io.MousePos.y };
-			if (::ClientToScreen(bd->hWnd, &pos))
+			if (::ClientToScreen(bd->hwnd, &pos))
 				::SetCursorPos(pos.x, pos.y);
 		}
 
@@ -272,7 +272,7 @@ static void ImGui_ImplWin32_UpdateMouseData()
 		if (!io.WantSetMousePos && bd->MouseTrackedArea == 0)
 		{
 			POINT pos;
-			if (::GetCursorPos(&pos) && ::ScreenToClient(bd->hWnd, &pos))
+			if (::GetCursorPos(&pos) && ::ScreenToClient(bd->hwnd, &pos))
 				io.AddMousePosEvent((float)pos.x, (float)pos.y);
 		}
 	}
@@ -343,7 +343,7 @@ void    ImGui_ImplWin32_NewFrame()
 
 	// Setup display size (every frame to accommodate for window resizing)
 	RECT rect = { 0, 0, 0, 0 };
-	::GetClientRect(bd->hWnd, &rect);
+	::GetClientRect(bd->hwnd, &rect);
 	io.DisplaySize = ImVec2((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
 
 	// Setup time step
@@ -504,7 +504,7 @@ static ImGuiKey ImGui_ImplWin32_VirtualKeyToImGuiKey(WPARAM wParam)
 // PS: We treat DBLCLK messages as regular mouse down messages, so this code will work on windows classes that have the CS_DBLCLKS flag set. Our own example app code doesn't set this flag.
 #if 0
 // Copy this line into your .cpp file to forward declare the function.
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -521,7 +521,7 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
 	{
 		// We need to call TrackMouseEvent in order to receive WM_MOUSELEAVE events
 		const int area = (msg == WM_MOUSEMOVE) ? 1 : 2;
-		bd->MouseHwnd = hwnd;
+		bd->Mousehwnd = hwnd;
 		if (bd->MouseTrackedArea != area)
 		{
 			TRACKMOUSEEVENT tme_cancel = { sizeof(tme_cancel), TME_CANCEL, hwnd, 0 };
@@ -543,8 +543,8 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
 		const int area = (msg == WM_MOUSELEAVE) ? 1 : 2;
 		if (bd->MouseTrackedArea == area)
 		{
-			if (bd->MouseHwnd == hwnd)
-				bd->MouseHwnd = nullptr;
+			if (bd->Mousehwnd == hwnd)
+				bd->Mousehwnd = nullptr;
 			bd->MouseTrackedArea = 0;
 			io.AddMousePosEvent(-FLT_MAX, -FLT_MAX);
 		}
@@ -776,7 +776,7 @@ float ImGui_ImplWin32_GetDpiScaleForMonitor(void* monitor)
 	return xdpi / 96.0f;
 }
 
-float ImGui_ImplWin32_GetDpiScaleForHwnd(void* hwnd)
+float ImGui_ImplWin32_GetDpiScaleForhwnd(void* hwnd)
 {
 	HMONITOR monitor = ::MonitorFromWindow((HWND)hwnd, MONITOR_DEFAULTTONEAREST);
 	return ImGui_ImplWin32_GetDpiScaleForMonitor(monitor);

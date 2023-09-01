@@ -18,6 +18,7 @@ Dx11Wrapper::Dx11Wrapper() : m_initialzed(false)
 
 Dx11Wrapper::~Dx11Wrapper()
 {
+	m_pSwapChain->SetFullscreenState(false, nullptr);
 	if (m_initialzed)
 		ImGui_ImplDX11_Shutdown();
 }
@@ -45,46 +46,31 @@ bool Dx11Wrapper::initialize(const Game * pGame)
 
 bool Dx11Wrapper::d3dInitialize()
 {
-	Result hr;
 	ComPtr<ID3D11Texture2D> pBackBuffer;
-	hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)pBackBuffer.GetAddressOf());
-	hr = m_pDevice->CreateRenderTargetView(pBackBuffer.Get(), NULL, &m_pRenderTargetView);
-	if (FAILED(hr))
-		return false;
-
+	m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)pBackBuffer.GetAddressOf());
+	m_pDevice->CreateRenderTargetView(pBackBuffer.Get(), NULL, &m_pRenderTargetView);
 	m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), NULL);
 	D3D11_TEXTURE2D_DESC depthStencilDesc = {};
 	initDepthStencil(depthStencilDesc);
 	m_pDevice->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthBuffer);
-	hr = m_pDevice->CreateDepthStencilView(m_pDepthBuffer.Get(), NULL, &m_pDepthStencilView);
-	if (FAILED(hr))
+	if (FAILED(m_pDevice->CreateDepthStencilView(m_pDepthBuffer.Get(), NULL, &m_pDepthStencilView)))
 		return false;
 
 	D3D11_VIEWPORT viewport;
 	initViewport(viewport);
 	m_pDeviceContext->RSSetViewports(1, &viewport);
-	hr = m_pDevice->CreateVertexShader(g_pVertexShader,
-		ARRAYSIZE(g_pVertexShader),
-		0, &m_pVShader);
-	if (FAILED(hr))
-		return false;
-
+	m_pDevice->CreateVertexShader(g_pVertexShader, ARRAYSIZE(g_pVertexShader), 0, &m_pVShader);
 	m_pDeviceContext->VSSetShader(m_pVShader.Get(), 0, 0);
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	m_pDevice->CreateInputLayout(layout, 2, g_pVertexShader,
-		ARRAYSIZE(g_pVertexShader), &m_pInputLayout);
+
+	m_pDevice->CreateInputLayout(layout, 2, g_pVertexShader, ARRAYSIZE(g_pVertexShader), &m_pInputLayout);
 	m_pDeviceContext->IASetInputLayout(m_pInputLayout.Get());
 	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	hr = m_pDevice->CreatePixelShader(g_pPixelShader,
-		ARRAYSIZE(g_pPixelShader),
-		0, &m_pPShader);
-	if (FAILED(hr))
-		return false;
-
+	m_pDevice->CreatePixelShader(g_pPixelShader, ARRAYSIZE(g_pPixelShader), 0, &m_pPShader);
 	m_pDeviceContext->PSSetShader(m_pPShader.Get(), 0, 0);
 	m_pVSConstBuffer = createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(Matrix));
 	D3D11_SAMPLER_DESC sampDesc = {};
@@ -121,8 +107,7 @@ void Dx11Wrapper::d3dEnd()
 
 void Dx11Wrapper::d3dPresent()
 {
-	Result r = m_pSwapChain->Present(g_gameInfo.vsync, 0);
-	if (SUCCEEDED(r))
+	if (SUCCEEDED(m_pSwapChain->Present(g_gameInfo.vsync, 0)))
 		::g_frameCounter++;
 }
 
@@ -138,17 +123,13 @@ void Dx11Wrapper::psSetSRV(ID3D11ShaderResourceView * pSrv, uint32 numViews, uin
 
 bool Dx11Wrapper::createSRVFromFile(const std::string & file, ID3D11ShaderResourceView *& pSrv, int32& width, int32& height)
 {
-	Result r;
 	D3DX11_IMAGE_INFO info;
-	r = D3DX11GetImageInfoFromFileA(file.c_str(), 0, &info, &r);
-	if (FAILED(r))
+	if (FAILED(D3DX11GetImageInfoFromFileA(file.c_str(), 0, &info, 0)))
 		return false;
 
 	width = info.Width;
 	height = info.Height;
-
-	D3DX11CreateShaderResourceViewFromFileA(m_pDevice.Get(), file.c_str(), 0, 0, &pSrv, &r);
-	if (FAILED(r))
+	if (FAILED(D3DX11CreateShaderResourceViewFromFileA(m_pDevice.Get(), file.c_str(), 0, 0, &pSrv, 0)))
 		return false;
 
 	return true;

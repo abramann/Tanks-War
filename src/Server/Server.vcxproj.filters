@@ -63,9 +63,6 @@
     <ClInclude Include="..\common\serverplayer.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\shader.h">
-      <Filter>Common\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\tank.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>

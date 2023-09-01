@@ -7,6 +7,7 @@
 #include "texturemanger.h"
 #include "sprite.h"
 #include "timer.h"
+#include "input.h"
 #ifdef _CLIENT_BUILD
 #include "..\..\Client\tankswar.h"
 #else
@@ -56,7 +57,7 @@ Interface::~Interface()
 void Interface::initialize(TanksWarServer* pTWServer)
 {
 	m_pTWServer = pTWServer;
-	TanksWarServer*& game = pTWServer;
+	TanksWarServer*& pGame = pTWServer;
 #else ifdef _CLIENT_BUILD
 void Interface::initialize(TanksWar* pTW)
 {
@@ -66,6 +67,7 @@ void Interface::initialize(TanksWar* pTW)
 	m_pGraphics = pGame->getGraphics();;
 	m_pAudio = pGame->getAudio();
 	m_pTimer = pGame->getTimer();
+	m_pInput = pGame->getInput();
 	ImGuiIO& io = GetIO();
 	m_pFont[FONTSIZE_TINY] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 10);
 	m_pFont[FONTSIZE_SMALL] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 15);
@@ -139,7 +141,7 @@ void Interface::executeSettingsActivity()
 	// Multiplayer section
 	separatorText("Multiplayer", FONTSIZE_LARGE, RED);
 	ImGuiInputTextFlags configFlags = ImGuiInputTextFlags_None;
-	bool connected = m_pTW->isConnected();
+	bool connected = m_pTW->isOnline();
 	if (connected)
 		configFlags = ImGuiInputTextFlags_ReadOnly;
 
@@ -155,6 +157,12 @@ void Interface::executeSettingsActivity()
 
 void Interface::executePlayingActivity()
 {
+#ifdef _CLIENT_BUILD
+	m_pTW->updateScene();
+	m_pTW->renderScene();
+	if (m_pInput->isKeyDown(inputNS::TAB_KEY))
+		m_activity = MULTIPLAYER_ACTIVITY;
+#endif
 }
 
 void Interface::render()
@@ -232,11 +240,11 @@ void Interface::executeMultiplayerActivity()
 #ifdef _CLIENT_BUILD
 	separatorText("Multiplayer Config", FONTSIZE_LARGE, RED);
 	ImGuiInputTextFlags configFlags = ImGuiInputTextFlags_None;
-	bool connected = m_pTW->isConnected();
+	bool connected = m_pTW->isOnline();
 	if (connected)
 		configFlags = ImGuiInputTextFlags_ReadOnly;
 
-	Vec4 colorChangeable = (m_pTW->isConnected()) ? SILVER : WHITE;
+	Vec4 colorChangeable = (connected) ? SILVER : WHITE;
 	static char* serverIP = m_pTW->getServerIP();
 	bool input = inputText("Server IP", serverIP, gameNS::MAX_NAME_LEN, configFlags, LIST_MAIN);
 	if (input)
@@ -265,10 +273,15 @@ void Interface::executeMultiplayerActivity()
 	}
 	else
 	{
-		PushStyleColor(ImGuiCol_Button, ORANGE);
+		PushStyleColor(ImGuiCol_Button, RED);
 		input = button("Disconnect");
 		if (input)
 			m_pTW->disconnect();
+
+		SameLine();
+		input = button("Join");
+		if (input)
+			m_activity = PLAYING_ACTIVITY;
 	}
 
 	PopStyleColor();
@@ -291,26 +304,27 @@ void Interface::executeMultiplayerActivity()
 	gamePlayers = m_pClient->getGamePlayers();
 	inputInt("Game Players", NOOPTIONS_COLOR, "##GamePlayers", &gamePlayers, NOOPTIONS_COLOR, 3);
 	inputInt("Connected", NOOPTIONS_COLOR, "##Players", &connectedPlayers, NOOPTIONS_COLOR, 3);
+	bool connected = m_pClient->isOnline();
 
-	if (!m_pClient->isConnected())
+	if (!connected)
 	{
 		if (button("Connect", Vec2(0, 0), Vec4(0, 1, 1, 1)))
 			m_pClient->connect();
 	}
-	else if (m_pClient->isConnected())
+	else if (connected)
 	{
 		if (button("Disconnect", Vec2(0, 0), Vec4(0, 1, 1, 1)))
 			m_pClient->disconnect();
 
 		SameLine();
 
-		//if (button("Join game", Vec2(0, 0), Vec4(0.1f, 1, 0.6f, 1)));
+		if (button("Join game", Vec2(0, 0), Vec4(0.1f, 1, 0.6f, 1
 	}
 	*/
 #else ifdef _SERVER_BUILD
 
 	separatorText("Server Config", FONTSIZE_LARGE, RED);
-	bool srvActive = m_pTWServer->isActive();
+	bool srvActive = m_pTWServer->isOnline();
 	if (srvActive)
 		PushStyleColor(ImGuiCol_Text, colorNS::GREY);
 	else
@@ -355,7 +369,7 @@ void Interface::executeMultiplayerActivity()
 	}
 	else
 	{
-		PushStyleColor(ImGuiCol_Button, ORANGE);
+		PushStyleColor(ImGuiCol_Button, RED);
 		input = button("Disconnect");
 		if (input)
 			m_pTWServer->serverShutdown();
@@ -363,6 +377,8 @@ void Interface::executeMultiplayerActivity()
 
 	PopStyleColor();
 	PopStyleVar();
+	int32 clients = m_pTWServer->getConnectedClients();
+	Text(strFormat("Connected clients %d", clients).c_str());
 #endif
 	endActivity(true, MAIN_ACTIVITY);
 }

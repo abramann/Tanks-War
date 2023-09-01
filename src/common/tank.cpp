@@ -4,9 +4,9 @@
 #include "tank.h"
 #include "game.h"
 #include "bullet.h"
+#include "map.h"
 #include "texturemanger.h"
 #include "texture.h"
-#include "map.h"
 #include "timer.h"
 
 Tank::Tank() : m_bulletSpeed(logicNS::BULLET_SPEED), m_bulletDamage(logicNS::BULLET_DAMAGE), m_rotateAmount(logicNS::TANK_ROTATE_AMOUNT)
@@ -20,11 +20,12 @@ Tank::~Tank()
 	m_pBullet.clear();
 }
 
-void Tank::initialize(Texture* texture, const Game * pGame)
+void Tank::initialize(std::string texture, const Game * pGame)
 {
-	m_pTextureManger = pGame->getTextureManger();
 	m_pTimer = pGame->getTimer();
 	Object::initialize(texture, pGame);
+	if (m_tankTexture.empty())
+		m_tankTexture = texture;
 }
 
 void Tank::update()
@@ -47,13 +48,14 @@ void Tank::draw()
 		m_pBullet[i]->draw();
 }
 
-void Tank::executeAttack()
+bool Tank::executeAttack()
 {
 	if (m_pBullet.size() == 0)
 	{
 		std::shared_ptr<Bullet> pBullet = std::make_shared<Bullet>(m_pGame, this);
 		m_pBullet.push_back(pBullet);
 		m_pAudio->play("tank-attack");
+		return true;
 	}
 }
 
@@ -69,9 +71,9 @@ void Tank::executeBack()
 
 void Tank::executeDie()
 {
-	m_pTexture = m_pTextureManger->getTexture("tank-destroy");
-	Image::initialize(m_pTexture, m_pGame, textureNS::TEXTURE_TANK_DESTROY_ROWS_COLUMNS, textureNS::TEXTURE_TANK_DESTROY_ROWS_COLUMNS,
+	Image::initialize("tank-destroy", nullptr, textureNS::TEXTURE_TANK_DESTROY_ROWS_COLUMNS, textureNS::TEXTURE_TANK_DESTROY_ROWS_COLUMNS,
 		logicNS::UPDATE_DELAY_TANK_DESTORY);
+	m_row = 1, m_column = 1;
 	Object::executeDie();
 }
 
@@ -108,6 +110,12 @@ void Tank::executeRight()
 	if (m_pMap->isCollided(this))
 		m_rotate.z += m_rotateAmount * timeFactor;
 	Object::executeRight();
+}
+
+void Tank::executeAnimateRepeat()
+{
+	Image::initialize(m_tankTexture, 0);
+	Image::executeAnimateRepeat();
 }
 
 void Tank::playSoundForward()

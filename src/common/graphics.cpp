@@ -84,7 +84,6 @@ void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCent
 		rotCentN = gameMathNS::V3ToMatrix(rotateCenter * -1, MATRIX_TYPE_TRANSLATE),
 		scal = gameMathNS::V3ToMatrix(scall, MATRIX_TYPE_SCALL),
 		pos = gameMathNS::V3ToMatrix(position, MATRIX_TYPE_TRANSLATE);
-	static int i = 0;
 	Matrix prop;
 	prop = scal*rot*pos;
 	//prop = scal*rotCentN*rot*rotCent*pos;

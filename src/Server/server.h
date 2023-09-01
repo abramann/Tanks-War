@@ -24,17 +24,17 @@ public:
 	void initialize(TanksWarServer* pTKServer);
 	bool start();
 	void close();
-	void send(const std::string ip, Port port, int size = networkNS::MAX_PACKET_SIZE);
+	void send(const std::string ip, Port port, int32 size = networkNS::MAX_PACKET_SIZE, bool bufferClear = true);
 	bool recv();
 	void getIP(char* ip) { m_net.getLocalIP(ip); }
 	char* getReceiveBuffer() { return m_rData; }
 	char* getSendBuffer() { return m_sData; }
 	char* const getReceiverIP() { return m_rIP; }
 	Port* const getReceiverPort() { return &m_rPort; }
+	void sbClear() { memset(m_sData, 0, networkNS::MAX_PACKET_SIZE); }
 
 private:
 
-	void sbClear() { memset(m_sData, 0, networkNS::MAX_PACKET_SIZE); }
 	void rbClear() { memset(m_rData, 0, networkNS::MAX_PACKET_SIZE); }
 
 	TanksWarServer* m_pTKServer;

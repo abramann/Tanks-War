@@ -14,9 +14,7 @@ Bullet::Bullet(const Game * pGame, const Tank * pTank) : m_pTank(pTank), m_hit(f
 	m_pGame = pGame;
 	m_pMap = m_pGame->getMap();
 	m_pAudio = m_pGame->getAudio();
-	m_pTextureManger = m_pGame->getTextureManger();
-	Texture* pTexture = m_pTextureManger->getTexture("bullet");
-	Image::initialize(pTexture, m_pGame);
+	Image::initialize("bullet", m_pGame);
 	executeLaunch();
 }
 
@@ -70,8 +68,7 @@ void Bullet::executeLaunch()
 void Bullet::executeHit()
 {
 	m_hit = true;
-	Texture* pTexture = m_pTextureManger->getTexture("bullet-destroy");
-	Image::initialize(pTexture, m_pGame, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, logicNS::UPDATE_DELAY_BULLET);
+	Image::initialize("bullet-destroy", m_pGame, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, logicNS::UPDATE_DELAY_BULLET);
 	Space s = getSpace();
 	Object* pObject = m_pMap->getObject(s);
 	m_pAudio->play("bullet-explosion");

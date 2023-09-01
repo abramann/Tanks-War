@@ -1,5 +1,6 @@
-- Fix timer
-- Apply runtime gameInfo change
+- Fix TanksWarServer::alreadyClient function
+- Fix timer not limit fps
+- Runtime gameInfo change
 - Fix const ptr* const variables
 - Replace DirecrXMath with GLM
 - Add Console class

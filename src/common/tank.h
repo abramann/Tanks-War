@@ -16,15 +16,16 @@ public:
 
 	Tank();
 	~Tank();
-	virtual void initialize(Texture* texture, const Game * pGame);
+	virtual void initialize(std::string texture, const Game * pGame);
 	virtual void update();
 	virtual void draw();
-	virtual void executeAttack();
+	virtual bool executeAttack();
 	virtual void executeBack();
 	virtual void executeDie();
 	virtual void executeForward();
 	virtual void executeLeft();
 	virtual void executeRight();
+	virtual void executeAnimateRepeat();
 	float getBulletSpeed() const { return m_bulletSpeed; }
 	float getBulletDamage() const { return m_bulletDamage; }
 	bool isBulletLaunching() const { return (m_pBullet.size() > 0); }
@@ -39,9 +40,8 @@ protected:
 	virtual void playSoundAttack();
 
 	Sound m_soundAttack;
-	float m_bulletSpeed, m_bulletDamage;
-	float m_rotateAmount;
+	float m_bulletSpeed, m_bulletDamage, m_rotateAmount;
+	std::string m_tankTexture;
 	std::vector<std::shared_ptr<Bullet>> m_pBullet;
-	TextureManger* m_pTextureManger;
 	Timer* m_pTimer;
 };

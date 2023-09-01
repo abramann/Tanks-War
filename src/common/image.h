@@ -19,7 +19,7 @@ public:
 
 	Image();
 	~Image();
-	virtual void initialize(Texture* pTexture, const Game* pGame, int8 columns = 1, int8 rows = 1,
+	virtual void initialize(std::string texture, const Game* pGame, int8 columns = 1, int8 rows = 1,
 		int32 updateDelay = logicNS::UPDATE_DELAY_IMAGE);
 	virtual void update();
 	virtual void draw() const;
@@ -56,6 +56,9 @@ protected:
 
 	Graphics* m_pGraphics;
 	Texture* m_pTexture;
+	TextureManger* m_pTextureManger;
+	Timer* m_pTimer;
+	Dx11Wrapper* m_pDx11Wrapper;
 	int32 m_textureWidth, m_textureHeight;
 	int32 m_updateDelay;
 	int64 m_timeUntilLastUpdate;
@@ -64,8 +67,6 @@ protected:
 	int16 m_vertices, m_width, m_height;
 	int8_t m_columns, m_rows, m_column, m_row;
 	bool m_initialized;
-	Timer* m_pTimer;
-	Dx11Wrapper* m_pDx11Wrapper;
 
 private:
 

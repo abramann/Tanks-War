@@ -14,7 +14,7 @@ Object::~Object()
 {
 }
 
-void Object::initialize(Texture * texture, const Game * pGame)
+void Object::initialize(std::string texture, const Game * pGame)
 {
 	m_pGame = pGame;
 	m_pAudio = pGame->getAudio();

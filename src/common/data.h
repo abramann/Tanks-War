@@ -117,7 +117,7 @@ namespace logicNS
 
 namespace networkNS
 {
-	constexpr auto CLIENT_PRESENT_TIME = 5000;
+	constexpr auto HEARTBEAT_DELAY = 60000;
 	constexpr auto MAX_PACKET_SIZE = 256;
 	constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
 	constexpr int MAX_PORT = 4861;
@@ -156,6 +156,8 @@ namespace inputNS
 	constexpr Key Z_KEY = ImGuiKey_Z;
 	constexpr Key ENTER_KEY = ImGuiKey_Enter;
 	constexpr Key ESCAPE_KEY = ImGuiKey_Escape;
+	constexpr Key TAB_KEY = ImGuiKey_Tab;
+	constexpr Key COMMA_KEY = ImGuiKey_Comma;
 	constexpr Key SPACE_KEY = ImGuiKey_Space;
 	constexpr Key BACKSPACE_KEY = ImGuiKey_Backspace;
 	constexpr Key RSHIFT_KEY = ImGuiKey_RightShift;
@@ -261,15 +263,17 @@ enum PacketType_
 {
 	PACKET_START_SEASSON = 100,
 	PACKET_DISCONNECT,
+	PACKET_SERVER_SHUTDOWN,
 	PACKET_CLIENT_DISCONNECTED,
 	PACKET_CLIENT_HEARTBEAT,
 	PACKET_CLIENT_JOIN,
+	PACKET_CLIENT_INITIAL_DATA,
 	PACKET_CLIENTS_UPDATE,
 	PACKET_CLIENT_GAME_STATE,
 	PACKET_CLIENT_UPDATE,
-	PACKET_CLIENT_ACT
+	PACKET_CLIENT_ACT,
 };
-typedef int8_t PacketType;
+typedef char PacketType;
 
 enum gameTexure
 {
@@ -295,5 +299,6 @@ enum PlayerAct_
 	PLAYER_ACT_LEFT,
 	PLAYER_ACT_FORWARD_LEFT,
 	PLAYER_ACT_BACK_LEFT,
+	PLAYER_ACT_DIE,
 	PLAYER_ACT_ATTACK = 100
 };

@@ -36,6 +36,9 @@ void Map::initialize(const Game * pGame)
 	m_pSpaceSRV = m_pDx11Wrapper->createBufferSRV(m_pSpaceBuf.Get());
 }
 
+#ifdef _DEBUG
+#pragma optimize("",on)
+#endif
 bool Map::load(const char * map)
 {
 	strcpy_s(m_loadedMap, map);
@@ -145,6 +148,86 @@ bool Map::load(const char * map)
 	return true;
 }
 
+void Map::clearUnnecessaryNospace()
+{
+	for (size_t i = 0; i < m_noSpace.size(); i++)
+	{
+		bool isUseless = isNospaceUseless(m_noSpace[i]);
+		if (isUseless)
+		{
+			m_noSpace.erase(std::next(m_noSpace.begin(), i));
+			i--;
+		}
+	}
+
+	// For X axis
+	for (size_t i = 0; i < m_noSpace.size(); i++)
+	{
+		Space& ns = m_noSpace[i];
+		for (size_t j = 0; j < m_noSpace.size(); j++)
+		{
+			if (i == j)
+				continue;
+
+			Space& ns2 = m_noSpace[j];
+			if (ns.getMinX() == ns2.getMinX() &&
+				ns.getMaxX() == ns2.getMaxX())
+			{
+				if (ns.getMaxY() == ns2.getMinY() || ns.getMaxY() == ns2.getMaxY() ||
+					ns.getMinY() == ns2.getMinY() || ns.getMinY() == ns2.getMaxY())
+				{
+					//ns.v1.x = min(ns.getMinX(), ns2.getMinX());
+					ns.v1.y = min(ns.getMinY(), ns2.getMinY());
+
+					//	ns.v2.x = max(ns.getMaxX(), ns2.getMaxX());
+					ns.v2.y = ns.v1.y;
+
+					//ns.v3.x = ns.v2.x;
+					ns.v3.y = max(ns.getMaxY(), ns2.getMaxY());
+
+					//ns.v4.x = ns.v1.x;
+					ns.v4.y = ns.v3.y;
+
+					m_noSpace.erase(std::next(m_noSpace.begin(), j));
+					i = -1;
+					break;
+				}
+			}
+		}
+	}
+
+	// For Y axis
+	for (size_t i = 0; i < m_noSpace.size(); i++)
+	{
+		Space& ns = m_noSpace[i];
+		for (size_t j = 0; j < m_noSpace.size(); j++)
+		{
+			if (i == j)
+				continue;
+
+			Space& ns2 = m_noSpace[j];
+			if (ns.getMinY() == ns2.getMinY() &&
+				ns.getMaxY() == ns2.getMaxY())
+			{
+				if (ns.getMaxX() == ns2.getMinX() || ns.getMaxX() == ns2.getMaxX() ||
+					ns.getMinX() == ns2.getMinX() || ns.getMinX() == ns2.getMaxX())
+				{
+					ns.v1.x = min(ns.getMinX(), ns2.getMinX());
+					ns.v2.x = max(ns.getMaxX(), ns2.getMaxX());
+					ns.v3.x = ns.v2.x;
+					ns.v4.x = ns.v1.x;
+					m_noSpace.erase(std::next(m_noSpace.begin(), j));
+					i = -1;
+					break;
+				}
+			}
+		}
+	}
+}
+#ifdef _DEBUG
+#pragma optimize("",off)
+#endif
+
 void Map::draw() const
 {
 	m_pGraphics->setDrawProperties();
@@ -161,6 +244,7 @@ void Map::clear()
 	m_freeSpace.clear();
 	m_noSpace.clear();
 	m_lenVertex.clear();
+	m_pObject.clear();
 }
 
 float Map::passX(const Object * object, float x) const
@@ -335,91 +419,6 @@ bool Map::areSpacesCollided(const Space s1, const Space s2) const
 			return true;
 
 	return false;
-}
-
-void Map::clearUnnecessaryNospace()
-{
-	for (size_t i = 0; i < m_noSpace.size(); i++)
-	{
-		bool isUseless = isNospaceUseless(m_noSpace[i]);
-		if (isUseless)
-		{
-			m_noSpace.erase(std::next(m_noSpace.begin(), i));
-			i--;
-		}
-	}
-
-	// For X axis
-	for (size_t i = 0; i < m_noSpace.size(); i++)
-	{
-		Space& ns = m_noSpace[i];
-		for (size_t j = 0; j < m_noSpace.size(); j++)
-		{
-			if (i == j)
-				continue;
-
-			Space& ns2 = m_noSpace[j];
-			if (ns.getMinX() == ns2.getMinX() &&
-				ns.getMaxX() == ns2.getMaxX())
-			{
-				if (ns.getMaxY() == ns2.getMinY() || ns.getMaxY() == ns2.getMaxY() ||
-					ns.getMinY() == ns2.getMinY() || ns.getMinY() == ns2.getMaxY())
-				{
-					//ns.v1.x = min(ns.getMinX(), ns2.getMinX());
-					ns.v1.y = min(ns.getMinY(), ns2.getMinY());
-
-					//	ns.v2.x = max(ns.getMaxX(), ns2.getMaxX());
-					ns.v2.y = ns.v1.y;
-
-					//ns.v3.x = ns.v2.x;
-					ns.v3.y = max(ns.getMaxY(), ns2.getMaxY());
-
-					//ns.v4.x = ns.v1.x;
-					ns.v4.y = ns.v3.y;
-
-					m_noSpace.erase(std::next(m_noSpace.begin(), j));
-					i = -1;
-					break;
-				}
-			}
-		}
-	}
-
-	// For Y axis
-	for (size_t i = 0; i < m_noSpace.size(); i++)
-	{
-		Space& ns = m_noSpace[i];
-		for (size_t j = 0; j < m_noSpace.size(); j++)
-		{
-			if (i == j)
-				continue;
-
-			Space& ns2 = m_noSpace[j];
-			if (ns.getMinY() == ns2.getMinY() &&
-				ns.getMaxY() == ns2.getMaxY())
-			{
-				if (ns.getMaxX() == ns2.getMinX() || ns.getMaxX() == ns2.getMaxX() ||
-					ns.getMinX() == ns2.getMinX() || ns.getMinX() == ns2.getMaxX())
-				{
-					ns.v1.x = min(ns.getMinX(), ns2.getMinX());
-					//ns.v1.y = min(ns.getMinY(), ns2.getMinY());
-
-					ns.v2.x = max(ns.getMaxX(), ns2.getMaxX());
-					//ns.v2.y = ns.v1.y;
-
-					ns.v3.x = ns.v2.x;
-					//ns.v3.y = max(ns.getMaxY(), ns2.getMaxY());
-
-					ns.v4.x = ns.v1.x;
-					//ns.v4.y = ns.v3.y;
-
-					m_noSpace.erase(std::next(m_noSpace.begin(), j));
-					i = -1;
-					break;
-				}
-			}
-		}
-	}
 }
 
 Space Map::getRightSpace(Space s) const

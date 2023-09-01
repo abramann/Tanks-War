@@ -8,6 +8,7 @@
 
 class TanksWar;
 class Net;
+class Timer;
 
 class Client
 {
@@ -29,6 +30,7 @@ public:
 	void send();
 
 	TanksWar* m_pTW;
+	Timer* m_pTimer;
 	Net m_net;
 	Port m_port;
 	char m_rData[networkNS::MAX_PACKET_SIZE], m_sData[networkNS::MAX_PACKET_SIZE];

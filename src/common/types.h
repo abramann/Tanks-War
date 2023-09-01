@@ -234,12 +234,6 @@ struct CpsPlayerAct
 struct CpsJoin
 {
 	PacketType packetType = PACKET_CLIENT_JOIN;
-	char name[];
-};
-
-struct ClientGameState
-{
-	PlayerID id;
 	char name[gameNS::MAX_NAME_LEN];
 };
 
@@ -249,8 +243,7 @@ struct SpsJoin
 	PlayerID id;
 	char name[gameNS::MAX_NAME_LEN];
 	char map[gameNS::MAX_NAME_LEN];
-	int16 clients;
-	ClientGameState clientGameState[];
+	uint32 clients;
 };
 
 struct SpsPlayerAct
@@ -302,6 +295,30 @@ struct SpsDisconnect
 {
 	PacketType packetType = PACKET_DISCONNECT;
 	PlayerID id;
+};
+
+struct ClientGameState
+{
+	PlayerID id;
+	V3 position, rotate;
+};
+
+struct SpsClientGameState
+{
+	PacketType packetType = PACKET_CLIENT_GAME_STATE;
+	ClientGameState clientGameState;
+};
+
+struct SpsClientInitialData
+{
+	PacketType packetType = PACKET_CLIENT_INITIAL_DATA;
+	char name[gameNS::MAX_NAME_LEN];
+	ClientGameState clientGameState;
+};
+
+struct SpsServerShutdown
+{
+	PacketType packetType = PACKET_SERVER_SHUTDOWN;
 };
 
 extern GameInfo g_gameInfo;

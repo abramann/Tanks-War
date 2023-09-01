@@ -18,22 +18,32 @@ public:
 
 	TanksWar();
 	~TanksWar();
-	void initialize(HINSTANCE hInstance, HWND hWnd);
-	void update();
-	void render();
-	void communicate();
+	virtual void initialize(HINSTANCE hInstance, HWND hwnd);
+	virtual void update();
+	virtual void render();
+	virtual void communicate();
+	virtual bool isOnline() const { return (m_status == clientNS::CLIENT_CONNECTED); }
+	virtual void renderScene();
+	virtual void updateScene();
+
 	bool connect();
 	void disconnect();
 	char* getServerIP() { return m_clientInfo.serverIP; }
 	char* getClientName() { return m_clientInfo.name; }
+	std::shared_ptr<RemoteClient> findRemoteClientByID(PlayerID id);
 	clientNS::ClientStatus getStatus() const { return m_status; }
 	void setServerPort(Port port);
 	Port getServerPort() const { return m_clientInfo.serverPort; }
-	bool isConnected() { return false; }
 	void updateClientInfo();
-	void recvGameProperties();
+	bool applyReceivedGameProperties();
+	void dispatchPlayerAct();
+	void executeClientAct();
 
 private:
+
+	void heartbeat();
+	void applyUpdateClientGameState();
+	void applyDisconnect();
 
 	clientNS::ClientStatus m_status;
 	PlayerID m_id;
@@ -44,7 +54,13 @@ private:
 	CpsHeartbeat* m_pCpsHeartbeat;
 	CpsJoin* m_pCpsJoin;
 	SpsJoin* m_pSpsJoin;
+	SpsClientGameState* m_pSpsClientGameState;
+	SpsClientInitialData* m_pSpsClientInitialData;
+	SpsDisconnect* m_pSpsDisconnect;
+	SpsPlayerAct* m_pSpsPlayerAct;
+	CpsPlayerAct* m_pCpsPlayerAct;
 	PacketType* m_pPacketType;
 	ClientInfo m_clientInfo;
 	std::vector<std::shared_ptr<RemoteClient>> m_pRemoteClient;
+	ClientPlayer m_local;
 };
