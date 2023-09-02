@@ -36,6 +36,4 @@ To build the game, you will need the Visual Studio 2015 (MSVC v140) or above. Th
 
 Charles Kelly for the net library and the useful information in his book [Programming 2D Games](http://www.programming2dgames.com).
 
-Ocuntu for [ImGui](https://github.com/ocornut/imgui).
-
 Daniel Robbins for [Dirent](https://github.com/tronkko/dirent).
