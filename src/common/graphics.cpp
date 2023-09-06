@@ -132,6 +132,11 @@ int32 Graphics::getIndexCurrentResolution() const
 
 }
 
+void Graphics::onResize()
+{
+	m_pCamera->updatePerspectiveMatrix();
+}
+
 void Graphics::setTexture(LPTextureD3D texture)
 {
 #ifdef  _BUILD_WITH_D3D9

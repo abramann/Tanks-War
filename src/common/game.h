@@ -41,7 +41,7 @@ public:
 	virtual void render() = 0;
 	virtual void communicate() = 0;
 	virtual bool isOnline() const = 0;
-	void updateGameDisplay() const;
+	void onUpdateDisplay() const;
 	void updateGameSettings() const;
 	bool checkGameFiles() const;
 	Resolution getResolution() const;
@@ -76,6 +76,5 @@ protected:
 	std::shared_ptr<Server> m_pServer;
 #endif
 	HWND m_hwnd;
-	int64 m_timeDeltaMillsec;
 	float m_fps;
 };

@@ -24,20 +24,7 @@ extern void HelpMarker(const char* desc);
 using namespace colorNS;
 using namespace ImGui;
 using namespace interfaceNS;
-
-namespace interfaceNS
-{
-	constexpr float MAINACTIVITY_BUTTON_PADDING_Y = 0.05f;
-}
-
-namespace serverNS
-{
-	static std::map<ServerStatus, std::pair<const char*, ImVec4>>  SERVER_STATUS = {
-		{ SERVER_NOT_RUNNING,{ "Not Started", colorNS::BROWN } },
-		{ SERVER_RUNNING_HANDLING,{ "Handling Requests...", colorNS::ORANGE }},
-		{ SERVER_DISCONNECTED,{ "Disconnected", colorNS::RED } }
-	};
-}
+using namespace fileNS;
 
 bool vectorOfStringGetter(void* data, int n, const char** out_text)
 {
@@ -71,13 +58,13 @@ void Interface::initialize(TanksWar* pTW)
 	m_pTimer = pGame->getTimer();
 	m_pInput = pGame->getInput();
 	ImGuiIO& io = GetIO();
-	m_pFont[FONTSIZE_TINY] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 10);
-	m_pFont[FONTSIZE_SMALL] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 15);
-	m_pFont[FONTSIZE_SMALL2] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 18);
-	m_pFont[FONTSIZE_MED] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 22);
-	m_pFont[FONTSIZE_MED2] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 24);
-	m_pFont[FONTSIZE_LARGE] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 26);
-	m_pFont[FONTSIZE_LARGE2] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT, 32);
+	m_pFont[FONTSIZE_TINY] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT_PATH, 10);
+	m_pFont[FONTSIZE_SMALL] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT_PATH, 15);
+	m_pFont[FONTSIZE_SMALL2] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT_PATH, 18);
+	m_pFont[FONTSIZE_MED] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT_PATH, 22);
+	m_pFont[FONTSIZE_MED2] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT_PATH, 24);
+	m_pFont[FONTSIZE_LARGE] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT_PATH, 26);
+	m_pFont[FONTSIZE_LARGE2] = io.Fonts->AddFontFromFileTTF(TAHOMA_FONT_PATH, 32);
 }
 
 void Interface::executeMainActivity()
@@ -127,7 +114,12 @@ void Interface::executeSettingsActivity()
 	HelpMarker("Use GPU for collision detection.");
 	PushStyleColor(ImGuiCol_Text, YELLOW);
 	if (cWin)
-		pGame->updateGameDisplay();
+	{
+		pGame->onUpdateDisplay();
+		PopStyleColor();
+		endActivity(1, 1);
+		return;
+	}
 	if (cVsync || cComputeShader)
 		pGame->updateGameSettings();
 
@@ -140,7 +132,7 @@ void Interface::executeSettingsActivity()
 		auto x = resol.find('x');
 		g_pGameSettings->width = std::stoi(resol.substr(0, x)),
 			g_pGameSettings->height = std::stoi(resol.substr(x + 1, resol.length()));
-		pGame->updateGameDisplay();
+		pGame->onUpdateDisplay();
 	}
 
 	/////////////////////////////////////////////////
@@ -175,11 +167,20 @@ void Interface::executePlayingActivity()
 	m_pTW->updateScene();
 	m_pTW->renderScene();
 	
+	SetNextWindowPos(Vec2(0, 0));
+	ImGui::Begin("Status", 0, 0);
+	auto pThisClient = m_pTW->getThisClient();
+	text(strFormat("Health %f", pThisClient->getHealth()), YELLOW, FONTSIZE_SMALL);
+	text(strFormat("Killed %d", 0), YELLOW, FONTSIZE_SMALL);
+	text(strFormat("Players %d", m_pTW->getExistClients()), YELLOW, FONTSIZE_SMALL);
+
+	End();
+	/*
 	auto draw_list = ImGui::GetForegroundDrawList();
 	PushFont(m_pFont[FONTSIZE_MED]);
 	draw_list->AddText(ImVec2(0, 0), ImColor(255.0f, 255.0f, 255.0f, 255.0f),
 		strFormat("Health %f", m_pThisClient->getHealth()).c_str());
-	PopFont();
+	PopFont();*/
 	if (m_pInput->isKeyDown(inputNS::ESCAPE_KEY))
 		m_activity = MULTIPLAYER_ACTIVITY;
 
@@ -231,13 +232,8 @@ void Interface::render()
 
 void Interface::showFPS()
 {
-	RECT re{};
-	GetClientRect(m_pTW->getHwnd(), &re);
-	auto draw_list = ImGui::GetForegroundDrawList();
-	//draw_list->AddText(ImVec2(g_pGameSettings->width - 50, 0), ImColor(255.0f, 255.0f, 255.0f, 255.0f),
-		//strFormat("FPS %d", m_pTimer->getFPS()).c_str());
-	draw_list->AddText(ImVec2(0, 0), ImColor(255.0f, 255.0f, 255.0f, 255.0f),
-		strFormat("%dx%dx%dx%d", re.right,re.bottom,re.top,re.left).c_str());
+	ImGui::GetForegroundDrawList()->AddText(ImVec2(0, 0), ImColor(255.0f, 255.0f, 255.0f, 255.0f),
+		strFormat("FPS %d", m_pTimer->getFPS()).c_str(), nullptr);
 }
 
 void Interface::beginActivity(bool blankActivity, interfaceNS::FontSize fontSize)

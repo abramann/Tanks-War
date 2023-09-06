@@ -12,7 +12,7 @@ using namespace std;
 using namespace chrono;
 #endif
 
-Timer::Timer() : m_fpsUpdateDelay(0)
+Timer::Timer() : m_fpsUpdateDelay(0), m_fps(0)
 {
 #ifdef WIN32
 	LARGE_INTEGER frequency;

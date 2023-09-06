@@ -23,7 +23,7 @@
 #include "imgui\imgui_impl_dx11.h"
 #include "imgui\imgui.h"
 
-Game::Game() : m_timeDeltaMillsec(0)
+Game::Game()
 {
 	m_pGraphics = std::make_shared<Graphics>();
 	m_pInput = std::make_shared<Input>();
@@ -44,6 +44,8 @@ LRESULT Game::messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pInput != nullptr && m_pInput->isInputHandled())
 		m_pInput->handle(msg, wParam, lParam);
+	if (msg == WM_DESTROY)
+		PostQuitMessage(0);
 
 	return DefWindowProcA(hwnd, msg, wParam, lParam);
 }
@@ -71,6 +73,7 @@ void Game::run()
 		communicate();
 	}
 
+	m_pTimer->update();
 	renderGame();
 }
 
@@ -85,12 +88,10 @@ void Game::renderGame()
 
 void Game::updateGame()
 {
-	m_pTimer->update();
-	m_timeDeltaMillsec = m_pTimer->getTimeDelta();
 	update();
 }
 
-void Game::updateGameDisplay() const
+void Game::onUpdateDisplay() const
 {
 	m_pDx11Wrapper->setFullScreen(false);
 	RECT rect = { 0 };
@@ -107,8 +108,8 @@ void Game::updateGameDisplay() const
 	SetWindowPos(m_hwnd, 0, 0, 0, 
 		rect.right - rect.left,
 		rect.bottom - rect.top, 0);
-	m_pDx11Wrapper->setFullScreen(!g_pGameSettings->windowed);
-	m_pDx11Wrapper->resize(g_pGameSettings->width, g_pGameSettings->height);
+	m_pDx11Wrapper->onResize(g_pGameSettings->width, g_pGameSettings->height);
+	m_pGraphics->onResize();
 	updateGameSettings();
 }
 

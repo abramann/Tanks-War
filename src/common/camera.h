@@ -16,6 +16,7 @@ public:
 	~Camera();
 	void initialize(const Game* pGame);
 	void update(V3 lookTo);
+	void updatePerspectiveMatrix();
 
 private:
 

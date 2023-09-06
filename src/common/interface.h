@@ -40,7 +40,7 @@ public:
 	void beginActivity(bool blankActivity, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED);
 	void endActivity(bool backButton = false, interfaceNS::Activity backActivity = interfaceNS::NO_ACITVITY);
 	void setActivity(interfaceNS::Activity activity) { m_activity = activity; }
-
+	
 private:
 
 	void showFPS();

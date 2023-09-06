@@ -10,6 +10,7 @@
 #include "..\common\timer.h"
 
 using namespace serverNS;
+
 namespace tanksWarServerNS
 {
 	auto CLIENT_TIMEOUT = 60000;
@@ -59,7 +60,7 @@ void TanksWarServer::update()
 
 void TanksWarServer::updateScene()
 {
-	for (auto pClient : m_pClient)
+	for (auto& pClient : m_pClient)
 		pClient->update();
 }
 
@@ -70,7 +71,7 @@ void TanksWarServer::render()
 
 void TanksWarServer::communicate()
 {
-	//disonnectInactiveClient();
+	disonnectInactiveClient();
 	if (!recv())
 		return;
 
@@ -81,7 +82,7 @@ void TanksWarServer::communicate()
 		break;
 
 	case PACKET_DISCONNECT:
-		disconnectClient(m_pReceiverClient);
+		disconnectClient(m_ppReceiverClient);
 		break;
 
 	case PACKET_CLIENT_HEARTBEAT:
@@ -109,23 +110,22 @@ void TanksWarServer::handleNewClient()
 void TanksWarServer::createClient()
 {
 	PlayerID uniqueID = generateClientID();
-	auto pClient = make_shared<Client>(uniqueID, m_pCpsJoin->name, m_pReceiverIP, *m_pReceiverPort, this);
 	replyClientsInitialData();
-	m_pClient.push_back(pClient);
+	m_pClient.push_back(make_unique<Client>(uniqueID, m_pCpsJoin->name, m_pReceiverIP, *m_pReceiverPort, this));
 	m_pSpsJoin->packetType = PACKET_CLIENT_JOIN;
 	m_pSpsJoin->id = uniqueID;
 	m_pSpsJoin->clients = m_pClient.size();
 	strcpy(m_pSpsJoin->name, m_pCpsJoin->name);
 	strcpy(m_pSpsJoin->map, m_map.c_str());
-	resetClientGameState(pClient.get());
+	resetClientGameState(m_pClient.back().get());
 	post<SpsJoin>();
-	postClientGameState(pClient.get());
-	pClient->setHeartbeatTime(m_pTimer->getCurrentTime());
+	postClientGameState(m_pClient.back().get());
+	m_pClient.back()->setHeartbeatTime(m_pTimer->getCurrentTime());
 }
 
 bool TanksWarServer::clientExist()
 {
-	for (auto pClient : m_pClient)
+	for (auto& pClient : m_pClient)
 		if (strcmp(m_pReceiverIP, pClient->getIP()) == 0 && *m_pReceiverPort == pClient->getPort())
 			return true;
 
@@ -135,7 +135,7 @@ bool TanksWarServer::clientExist()
 void TanksWarServer::applyClientHeartbeat()
 {
 	int64 currTime = m_pTimer->getCurrentTime();
-	m_pReceiverClient->setHeartbeatTime(currTime);
+	m_ppReceiverClient->get()->setHeartbeatTime(currTime);
 }
 
 void TanksWarServer::applyClientPlayerAct()
@@ -143,45 +143,45 @@ void TanksWarServer::applyClientPlayerAct()
 	switch (m_pCpsPlayerAct->act)
 	{
 	case PLAYER_ACT_FORWRAD:
-		m_pReceiverClient->executeForward();
+		m_ppReceiverClient->get()->executeForward();
 		break;
 
 	case PLAYER_ACT_BACK:
-		m_pReceiverClient->executeBack();
+		m_ppReceiverClient->get()->executeBack();
 		break;
 	case PLAYER_ACT_RIGHT:
-		m_pReceiverClient->executeRight();
+		m_ppReceiverClient->get()->executeRight();
 		break;
 
 	case PLAYER_ACT_LEFT:
-		m_pReceiverClient->executeLeft();
+		m_ppReceiverClient->get()->executeLeft();
 		break;
 
 	case PLAYER_ACT_FORWARD_RIGHT:
-		m_pReceiverClient->executeForward();
-		m_pReceiverClient->executeRight();
+		m_ppReceiverClient->get()->executeForward();
+		m_ppReceiverClient->get()->executeRight();
 		break;
 
 	case PLAYER_ACT_FORWARD_LEFT:
-		m_pReceiverClient->executeForward();
-		m_pReceiverClient->executeLeft();
+		m_ppReceiverClient->get()->executeForward();
+		m_ppReceiverClient->get()->executeLeft();
 		break;
 
 	case PLAYER_ACT_BACK_RIGHT:
-		m_pReceiverClient->executeBack();
-		m_pReceiverClient->executeRight();
+		m_ppReceiverClient->get()->executeBack();
+		m_ppReceiverClient->get()->executeRight();
 		break;
 
 	case PLAYER_ACT_BACK_LEFT:
-		m_pReceiverClient->executeBack();
-		m_pReceiverClient->executeLeft();
+		m_ppReceiverClient->get()->executeBack();
+		m_ppReceiverClient->get()->executeLeft();
 		break;
 
 	case PLAYER_ACT_ATTACK:
-		if (m_pReceiverClient->executeAttack())
+		if (m_ppReceiverClient->get()->executeAttack())
 		{
 			m_pSpsPlayerAct->packetType = PACKET_CLIENT_ACT;
-			m_pSpsPlayerAct->id = m_pReceiverClient->getID();
+			m_pSpsPlayerAct->id = m_ppReceiverClient->get()->getID();
 			m_pSpsPlayerAct->act = PLAYER_ACT_ATTACK;
 			post<SpsPlayerAct>();
 		}
@@ -193,18 +193,18 @@ void TanksWarServer::applyClientPlayerAct()
 	}
 
 	m_pSpsClientGameState->packetType = PACKET_CLIENT_GAME_STATE;
-	m_pSpsClientGameState->clientGameState = m_pReceiverClient->getClientGameState();
+	m_pSpsClientGameState->clientGameState = m_ppReceiverClient->get()->getClientGameState();
 	post<SpsClientGameState>();
 }
 
-void TanksWarServer::disconnectClient(std::shared_ptr<Client> pClient)
+void TanksWarServer::disconnectClient(std::unique_ptr<Client>* ppClient)
 {
 	if (m_pClient.size() == 0)
-		throw GameError(0, "Error disconnicting client with empty vector");
+		throw GameError(0, "Error disconnecting client with empty vector");
 
-	auto disconnectedClient = std::find(m_pClient.begin(), m_pClient.end(), pClient);
+	auto disconnectedClient = std::find(m_pClient.begin(), m_pClient.end(), *ppClient);
 	m_pSpsDisconnect->packetType = PACKET_DISCONNECT;
-	m_pSpsDisconnect->id = pClient->getID();
+	m_pSpsDisconnect->id = ppClient->get()->getID();
 	post<SpsDisconnect>();
 	m_pClient.erase(disconnectedClient);
 }
@@ -216,7 +216,7 @@ void TanksWarServer::disonnectInactiveClient()
 	{
 		int64 delta = currTime - m_pClient[i]->getHeartbeatTime();
 		if (delta > networkNS::HEARTBEAT_DELAY)
-			disconnectClient(m_pClient[i]);
+			disconnectClient(&m_pClient[i]);
 	}
 }
 
@@ -312,7 +312,7 @@ void TanksWarServer::applyPlayerMove()
 
 void TanksWarServer::post(int32 size)
 {
-	for (auto pClient : m_pClient)
+	for (auto& pClient : m_pClient)
 		send(pClient.get(), size, false);
 	
 	m_pServer->sbClear();
@@ -355,7 +355,7 @@ void TanksWarServer::setPort(Port port)
 
 void TanksWarServer::replyClientsInitialData()
 {
-	for (auto pClient : m_pClient)
+	for (auto& pClient : m_pClient)
 	{
 		m_pSpsClientInitialData->packetType = PACKET_CLIENT_INITIAL_DATA;
 		strcpy(m_pSpsClientInitialData->name, pClient->getName());
@@ -397,9 +397,9 @@ bool TanksWarServer::recv()
 {
 	if (m_pServer->recv())
 	{
-		for (auto pClient : m_pClient)
+		for (auto& pClient : m_pClient)
 			if (pClient->getPort() == *m_pReceiverPort && strcmp(pClient->getIP(), m_pReceiverIP) == 0)
-				m_pReceiverClient = pClient;
+				m_ppReceiverClient = &pClient;
 
 		return true;
 	}

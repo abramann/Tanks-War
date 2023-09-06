@@ -180,7 +180,7 @@ inline std::string strFormat(const std::string& format, Args ... args)
 
 inline void messageBoxOk(std::string msg, std::string title)
 {
-	MessageBoxA(NULL, msg.c_str(), "Title", MB_OK);
+	MessageBoxA(NULL, msg.c_str(), title.c_str(), MB_OK);
 }
 
 struct Space

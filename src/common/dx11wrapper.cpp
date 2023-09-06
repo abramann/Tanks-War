@@ -37,9 +37,10 @@ bool Dx11Wrapper::initialize(const Game * pGame)
 		0, 0, D3D11_SDK_VERSION, &swapChainDesc, &m_pSwapChain,
 		&m_pDevice, NULL, &m_pDeviceContext)))
 		return false;
-
-	if (!ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get()))
-		return false;
+	
+	if (!m_initialzed)
+		if (!ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get()))
+			return false;
 
 	m_initialzed = true;
 	return true;
@@ -56,7 +57,7 @@ bool Dx11Wrapper::d3dInitialize()
 	m_pDevice->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthBuffer);
 	if (FAILED(m_pDevice->CreateDepthStencilView(m_pDepthBuffer.Get(), NULL, &m_pDepthStencilView)))
 		return false;
-
+	
 	D3D11_VIEWPORT viewport;
 	initViewport(viewport);
 	m_pDeviceContext->RSSetViewports(1, &viewport);
@@ -234,7 +235,7 @@ void Dx11Wrapper::initViewport(D3D11_VIEWPORT & viewport)
 
 void Dx11Wrapper::initSampleState(D3D11_SAMPLER_DESC & sampDesc)
 {
-	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;//D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC; //D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -262,41 +263,39 @@ void Dx11Wrapper::vsSetConstBuffer(const void * data)
 	m_pDeviceContext->VSSetConstantBuffers(0, 1, m_pVSConstBuffer.GetAddressOf());
 }
 
-void Dx11Wrapper::resize(int32 width, int32 height)
+void Dx11Wrapper::onResize(int32 width, int32 height)
 {
-		if (m_pSwapChain)
+	setFullScreen(!g_pGameSettings->windowed);
+	if (m_pSwapChain)
+	{
+		m_pDeviceContext->OMSetRenderTargets(0, 0, 0);
+		m_pRenderTargetView.Reset();
+		DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
+		if (!g_pGameSettings->windowed)
 		{
-			m_pDeviceContext->OMSetRenderTargets(0, 0, 0);
-			m_pRenderTargetView.Reset();
-			DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
-			if (!g_pGameSettings->windowed)
-			{
-				auto mode = enurmerateAdapterMode();
-				for (auto m : mode)
-					if (m.Width == g_pGameSettings->width && m.Height == g_pGameSettings->height)
-					{
-						format = m.Format;
-						break;
-					}
-			}
-
-			m_pSwapChain->ResizeBuffers(1, 0, 0, format, 0);
-			ComPtr<ID3D11Texture2D> pBuffer;
-			m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-				(void**)pBuffer.GetAddressOf());
-			m_pDevice->CreateRenderTargetView(pBuffer.Get(), NULL,
-				&m_pRenderTargetView);
-			m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), NULL);
-			// Set up the viewport.
-			D3D11_VIEWPORT vp;
-			vp.Width = width;
-			vp.Height = height;
-			vp.MinDepth = 0.0f;
-			vp.MaxDepth = 1.0f;
-			vp.TopLeftX = 0;
-			vp.TopLeftY = 0;
-			m_pDeviceContext->RSSetViewports(1, &vp);
+			auto mode = enurmerateAdapterMode();
+			for (auto m : mode)
+				if (m.Width == g_pGameSettings->width && m.Height == g_pGameSettings->height)
+				{
+					format = m.Format;
+					break;
+				}
 		}
+
+		m_pRenderTargetView.Reset();
+		m_pSwapChain->ResizeBuffers(1, 0, 0, format, 0);
+		ComPtr<ID3D11Texture2D> pBuffer;
+		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+			(void**)pBuffer.GetAddressOf());
+		m_pDevice->CreateRenderTargetView(pBuffer.Get(), NULL,
+			&m_pRenderTargetView);
+		m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), NULL);
+		D3D11_VIEWPORT vp;
+		vp.Width = width, vp.Height = height;
+		vp.MinDepth = 0.0f,	vp.MaxDepth = 1.0f;
+		vp.TopLeftX = 0, vp.TopLeftY = 0;
+		m_pDeviceContext->RSSetViewports(1, &vp);
+	}
 }
 
 std::vector<DXGI_MODE_DESC> Dx11Wrapper::enurmerateAdapterMode()

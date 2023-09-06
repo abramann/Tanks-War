@@ -490,8 +490,7 @@ Crc32 Map::getCrc32() const
 
 Space Map::getRandomEmptySpace() const
 {
-	Space freeSpace = m_freeSpace[_rand(m_freeSpace.size())];
-	return freeSpace;
+	return m_freeSpace[_rand(m_freeSpace.size())];
 }
 
 void Map::addObject(Object* object)
@@ -501,6 +500,11 @@ void Map::addObject(Object* object)
 
 void Map::removeObject(Object* pObject)
 {
+#ifdef _SERVER_BUILD
+	if (m_pObject.size() == 0)
+		__debugbreak();
+#endif
 	auto pObj = std::find(m_pObject.begin(), m_pObject.end(), pObject);
-	m_pObject.erase(pObj);
+	if (pObj != m_pObject.end())
+		m_pObject.erase(pObj);
 }

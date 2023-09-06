@@ -1,7 +1,7 @@
 - Fix TanksWarServer::alreadyClient function
 - Fix timer not limit fps
-- Runtime gameInfo change
-- Fix const ptr* const variables
+- Correct const ptr*  functions / variables
 - Replace DirecrXMath with GLM
 - Add Console class
 - Improve element search in std::vector in server / client (e.g binary_search)
+- Fix _rand function

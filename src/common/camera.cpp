@@ -17,16 +17,9 @@ Camera::~Camera()
 
 void Camera::initialize(const Game* pGame)
 {
-	m_aspectRation = g_pGameSettings->width*1.0f / g_pGameSettings->height*1.0f;
 	m_pGraphics = pGame->getGraphics();
 	m_pMap = pGame->getMap();
-	gameMathNS::matrixPerspectiveFovLH(&m_proj, m_fov, m_aspectRation, m_nearPlane,
-		m_farPlane);
-#ifdef _BUILD_WITH_D3D9
-	LPDevice lpDevice3d = m_pGraphics->getDevice();
-	lpDevice3d->SetTransform(D3DTS_PROJECTION, &m_proj);
-#else ifdef _BUILD_WITH_D3D11
-#endif
+	updatePerspectiveMatrix();
 }
 
 void Camera::update(V3 lookTo)
@@ -57,4 +50,15 @@ void Camera::update(V3 lookTo)
 	viewMatrix = viewMatrix*eye*m_proj;
 #endif
 	m_pGraphics->setViewMatrix(&viewMatrix);
+}
+
+void Camera::updatePerspectiveMatrix()
+{
+	m_aspectRation = g_pGameSettings->width*1.0f / g_pGameSettings->height*1.0f;
+	gameMathNS::matrixPerspectiveFovLH(&m_proj, m_fov, m_aspectRation, m_nearPlane,
+		m_farPlane);
+#ifdef _BUILD_WITH_D3D9
+	LPDevice lpDevice3d = m_pGraphics->getDevice();
+	lpDevice3d->SetTransform(D3DTS_PROJECTION, &m_proj);
+#endif
 }

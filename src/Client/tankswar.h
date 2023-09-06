@@ -25,7 +25,7 @@ public:
 	virtual bool isOnline() const { return (m_status == clientNS::CLIENT_CONNECTED); }
 	virtual void renderScene();
 	virtual void updateScene();
-
+	
 	bool connect();
 	void disconnect();
 	char* getServerIP() { return m_clientInfo.serverIP; }
@@ -39,7 +39,8 @@ public:
 	bool applyReceivedGameProperties();
 	void dispatchPlayerAct();
 	void executeClientAct();
-	
+	int32 getExistClients() const { return m_pRemoteClient.size() + 1; }
+
 private:
 
 	void heartbeat();

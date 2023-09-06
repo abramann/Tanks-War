@@ -16,6 +16,7 @@ namespace fileNS
 {
 	constexpr auto CLIENT_INFO_PATH = "Assets\\ini\\client-info.txt";
 	constexpr auto GAME_INFO_PATH = "Assets\\ini\\game-info.txt";
+	constexpr auto TAHOMA_FONT_PATH = "Assets\\Fonts\\tahoma.ttf";
 	constexpr auto ASSETS_DIR = "Assets\\";
 	constexpr auto MAP_DIR = "Assets\\maps\\";
 	constexpr auto AUDIO_DIR = "Assets\\audio\\";
@@ -125,8 +126,6 @@ namespace networkNS
 	constexpr auto HEARTBEAT_DELAY = 60000;
 	constexpr auto MAX_PACKET_SIZE = 256;
 	constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
-	constexpr int MAX_PORT = 4861;
-	constexpr int MIN_PORT = 10; // already in netNS
 	constexpr int INVALID_ID = -1;
 	constexpr unsigned short UNSPECIFIED_PORT = 0xCCCC;
 }
@@ -171,8 +170,7 @@ namespace inputNS
 
 namespace interfaceNS
 {
-	constexpr auto TAHOMA_FONT = "Assets\\Fonts\\tahoma.ttf";
-
+	constexpr float MAINACTIVITY_BUTTON_PADDING_Y = 0.05f;
 	enum _FontSize
 	{
 		FONTSIZE_TINY,
@@ -219,6 +217,12 @@ namespace serverNS
 		SERVER_DISCONNECTED
 	};
 	typedef int8_t ServerStatus;
+
+	static std::map<ServerStatus, std::pair<const char*, ImVec4>>  SERVER_STATUS = {
+		{ SERVER_NOT_RUNNING,{ "Not Started", colorNS::BROWN } },
+		{ SERVER_RUNNING_HANDLING,{ "Handling Requests...", colorNS::ORANGE } },
+		{ SERVER_DISCONNECTED,{ "Disconnected", colorNS::RED } }
+	};
 }
 
 namespace clientNS

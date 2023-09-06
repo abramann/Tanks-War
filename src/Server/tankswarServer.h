@@ -27,7 +27,7 @@ public:
 	bool clientExist();
 	void applyClientHeartbeat();
 	void applyClientPlayerAct();
-	void disconnectClient(std::shared_ptr<Client> pClient);
+	void disconnectClient(std::unique_ptr<Client>* ppClient);
 	void disonnectInactiveClient();
 	void serverStart();
 	void serverShutdown();
@@ -60,10 +60,10 @@ private:
 	bool recv();
 
 	Port m_port, * m_pReceiverPort;
-	std::shared_ptr<Client> m_pReceiverClient;
+	std::unique_ptr<Client>* m_ppReceiverClient;
+	std::vector<std::unique_ptr<Client>> m_pClient;
 	int32 m_maxClients;
 	serverNS::ServerStatus m_status;
-	std::vector<std::shared_ptr<ServerPlayer> > m_pClient;
 	const char* m_pSData, * m_pRData, * m_pReceiverIP;
 	std::string m_map;
 	CpsJoin* m_pCpsJoin;

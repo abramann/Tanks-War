@@ -75,8 +75,7 @@ void TanksWar::update()
 		tank2.damage(100);
 	if (GetAsyncKeyState('Y'))
 		tank2.executeAnimateRepeat();
-	if (m_pInput->isKeyDown(inputNS::ENTER_KEY))
-		m_pDx11Wrapper->resize(800, 600);
+
 	tank2.update();
 	m_pGraphics->getCamera()->update(tank2.getPosition());
 
@@ -100,14 +99,14 @@ void TanksWar::renderScene()
 {
 	m_pMap->draw();
 	m_thisClient.draw();
-	for (auto pRClient : m_pRemoteClient)
+	for (auto& pRClient : m_pRemoteClient)
 		pRClient->draw();
 }
 
 void TanksWar::updateScene()
 {
 	m_thisClient.update();
-	for (auto pRClient : m_pRemoteClient)
+	for (auto& pRClient : m_pRemoteClient)
 		pRClient->update();
 }
 
@@ -183,8 +182,8 @@ void TanksWar::disconnect()
 		m_status = clientNS::CLIENT_UNCONNECTED;
 
 	m_pClient->disconnect();
-	m_pMap->clear();
 	m_pRemoteClient.clear();
+	m_pMap->clear();
 	m_pInterface->setActivity(interfaceNS::MULTIPLAYER_ACTIVITY);
 }
 
@@ -267,7 +266,7 @@ void TanksWar::applyUpdateClientGameState()
 	if (m_id == updateClientID)
 		m_thisClient.setClientGameState(m_pSpsClientGameState->clientGameState);
 	else
-		for (auto pRClient : m_pRemoteClient)
+		for (auto& pRClient : m_pRemoteClient)
 			if (pRClient->getID() == updateClientID)
 			{
 				pRClient->setClientGameState(m_pSpsClientGameState->clientGameState);
@@ -289,7 +288,7 @@ void TanksWar::applyDisconnect()
 
 std::shared_ptr<RemoteClient> TanksWar::findRemoteClientByID(PlayerID id)
 {
-	for (auto pRClient : m_pRemoteClient)
+	for (auto& pRClient : m_pRemoteClient)
 		if (pRClient->getID() == id)
 			return pRClient;
 

@@ -64,8 +64,8 @@ void Bullet::executeHit()
 	m_hit = true;
 	Image::initialize("bullet-destroy", m_pGame, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, logicNS::UPDATE_DELAY_BULLET);
 	Space s = getSpace();
-	Object* pObject = m_pMap->getObject(s);
 	m_pAudio->play("bullet-explosion");
+	Object* pObject = m_pMap->getObject(s);
 	if (pObject)
 		pObject->damage(m_damage);
 }

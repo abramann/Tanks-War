@@ -37,6 +37,7 @@ public:
 	Resolution getResolution();
 	std::vector<std::string> getSupportedResolutionAsString() const;
 	int32 getIndexCurrentResolution() const;
+	void onResize();
 
 	void setDrawProperties(V3 position = V3(0, 0, 0), V3 scall = V3(1, 1, 1), V3 rotate = V3(0, 0, 0), V3 rotateCenter = V3(0, 0, 0));
 	void setTexture(LPTextureD3D texture);
