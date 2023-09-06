@@ -1,5 +1,9 @@
-textures:
+Audio:
 bullet from https://opengameart.org/content/bullet-symbol
+bullet-explosion https://opengameart.org/content/rumbleexplosion
+tank-explosion1-2-3 https://opengameart.org/content/3-background-crash-explosion-bang-sounds
+
+Texture:
 explosion https://opengameart.org/content/sophisticated-explosion
 tank textures from github user https://github.com/dev-dtech
 map textures from opengameart.org

@@ -194,7 +194,7 @@
     <ClInclude Include="..\common\types.h" />
     <ClInclude Include="..\common\v3.h" />
     <ClInclude Include="client.h" />
-    <ClInclude Include="clientplayer.h" />
+    <ClInclude Include="thisclient.h" />
     <ClInclude Include="tankswar.h" />
   </ItemGroup>
   <ItemGroup>
@@ -229,7 +229,7 @@
     <ClCompile Include="..\common\v3.cpp" />
     <ClCompile Include="..\common\winmain.cpp" />
     <ClCompile Include="client.cpp" />
-    <ClCompile Include="clientplayer.cpp" />
+    <ClCompile Include="thisclient.cpp" />
     <ClCompile Include="tankswar.cpp" />
   </ItemGroup>
   <ItemGroup>

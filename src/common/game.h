@@ -41,12 +41,10 @@ public:
 	virtual void render() = 0;
 	virtual void communicate() = 0;
 	virtual bool isOnline() const = 0;
-
+	void updateGameDisplay() const;
+	void updateGameSettings() const;
 	bool checkGameFiles() const;
-	void setResolution(int16 width, int16 height) const;
-	void setWindowed(bool windowed) const;
 	Resolution getResolution() const;
-	bool isWindowed() const;
 	void showLogo() const;
 	Graphics* getGraphics()	const { return m_pGraphics.get(); }
 	Input* getInput()	const { return m_pInput.get(); }

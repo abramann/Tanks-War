@@ -70,17 +70,17 @@ std::vector<std::string> FileIO::getDirFileList(const char * directory, const ch
 	return list;
 }
 
-GameInfo FileIO::readGameInfo()
+GameSettings FileIO::readGameSettings()
 {
-	GameInfo gameInfo = { 0 };
+	GameSettings gameSettings = { 0 };
 	std::ifstream file(fileNS::GAME_INFO_PATH);
 	if (!file.is_open())
-		createGameInfo();
+		createGameSettings();
 
 	std::string line;
-	readValues<int16>(file, { &gameInfo.width, &gameInfo.height });
-	readValues<bool>(file, { &gameInfo.windowed, &gameInfo.vsync , &gameInfo.audio, &gameInfo.computeShader });
-	return gameInfo;
+	readValues<int32>(file, { &gameSettings.width, &gameSettings.height });
+	readValues<bool>(file, { &gameSettings.windowed, &gameSettings.vsync , &gameSettings.audio, &gameSettings.computeShader });
+	return gameSettings;
 }
 
 MapData FileIO::readMapInfo(std::ifstream& ifs)
@@ -156,7 +156,7 @@ ServerInfo FileIO::readServerInfo()
 }
 #endif
 
-void FileIO::createGameInfo(const GameInfo* info)
+void FileIO::createGameSettings(const GameSettings* info)
 {
 	int16 width, height;
 	bool windowed, vsync, audio, computeShader;
@@ -196,7 +196,7 @@ inline std::string getTargetEqualStringValue(std::string str)
 
 char* FileIO::loadInMemory(const std::string name, uint32& size)
 {
-	std::ifstream file(name, std::ifstream::ate);
+	/*std::ifstream file(name, std::ifstream::ate);
 	if (!file.is_open())
 		return 0;
 
@@ -205,7 +205,8 @@ char* FileIO::loadInMemory(const std::string name, uint32& size)
 	file.open(name, std::ifstream::binary);
 	char* buffer = new char[size];
 	file.read(buffer, size);
-	return buffer;
+	return buffer;*/
+	return 0;
 }
 
 template<typename T>

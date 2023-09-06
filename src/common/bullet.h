@@ -28,7 +28,6 @@ protected:
 
 	virtual void executeAnimateRepeat();
 	V3 Bullet::getBulletLaunchPosition();
-	bool isCollided();
 	void executeLaunching();
 
 	const Game* m_pGame;

@@ -120,6 +120,7 @@ void TanksWarServer::createClient()
 	resetClientGameState(pClient.get());
 	post<SpsJoin>();
 	postClientGameState(pClient.get());
+	pClient->setHeartbeatTime(m_pTimer->getCurrentTime());
 }
 
 bool TanksWarServer::clientExist()
@@ -327,7 +328,8 @@ void TanksWarServer::resetClientGameState(Client* pClient)
 	Space space = m_pMap->getRandomEmptySpace();
 	V3 position = V3(space.v1.x, space.v1.y, 0);
 	pClient->setPosition(position);
-	pClient->setHeartbeatTime(m_pTimer->getCurrentTime());
+	pClient->setRotate(V3(0, 0, 0));
+	pClient->getHealth();
 }
 
 void TanksWarServer::reply(int32 size)
@@ -405,7 +407,7 @@ bool TanksWarServer::recv()
 	return false;
 }
 
-void TanksWarServer::executeClientPlayerDie(Client* pClient)
+void TanksWarServer::executeServerPlayerDie(Client* pClient)
 {
 	m_pSpsPlayerAct->id = pClient->getID();
 	m_pSpsPlayerAct->packetType = PACKET_CLIENT_ACT;

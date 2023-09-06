@@ -17,6 +17,7 @@ class Graphics;
 class Audio;
 class Timer;
 class Input;
+class ThisPlayer;
 
 class Interface
 {
@@ -34,6 +35,7 @@ public:
 	void executeMultiplayerActivity();
 	void executeSettingsActivity();
 	void executePlayingActivity();
+	void executeCreditsActivity();
 	void render();
 	void beginActivity(bool blankActivity, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED);
 	void endActivity(bool backButton = false, interfaceNS::Activity backActivity = interfaceNS::NO_ACITVITY);
@@ -46,9 +48,10 @@ private:
 	bool inputInt(std::string desc, int32* pValue, ImGuiInputTextFlags flags, interfaceNS::ListType listType = interfaceNS::LIST_NONE);
 	bool button(std::string text, Vec2 size = Vec2(0, 0));
 	void separatorText(std::string text, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED, Vec4 color = Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-
+	void text(std::string text, Vec4 color, interfaceNS::FontSize fontSize = 0);
 #ifdef _CLIENT_BUILD
 	TanksWar* m_pTW;
+	ThisClient* m_pThisClient;
 #else
 	TanksWarServer* m_pTWServer;
 #endif

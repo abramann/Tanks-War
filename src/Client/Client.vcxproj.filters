@@ -104,9 +104,6 @@
     <ClInclude Include="..\common\dx11wrapper.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="clientplayer.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="tankswar.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -115,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="..\common\sprite.h">
       <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="thisclient.h">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -205,9 +205,6 @@
     <ClCompile Include="..\common\imgui\imgui.cpp">
       <Filter>Common\Sources\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="clientplayer.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="tankswar.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -216,6 +213,9 @@
     </ClCompile>
     <ClCompile Include="..\common\sprite.cpp">
       <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="thisclient.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

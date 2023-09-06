@@ -18,7 +18,8 @@ Dx11Wrapper::Dx11Wrapper() : m_initialzed(false)
 
 Dx11Wrapper::~Dx11Wrapper()
 {
-	m_pSwapChain->SetFullscreenState(false, nullptr);
+	if (m_pSwapChain)
+		m_pSwapChain->SetFullscreenState(false, nullptr);
 	if (m_initialzed)
 		ImGui_ImplDX11_Shutdown();
 }
@@ -107,7 +108,7 @@ void Dx11Wrapper::d3dEnd()
 
 void Dx11Wrapper::d3dPresent()
 {
-	if (SUCCEEDED(m_pSwapChain->Present(g_gameInfo.vsync, 0)))
+	if (SUCCEEDED(m_pSwapChain->Present(g_pGameSettings->vsync, 0)))
 		::g_frameCounter++;
 }
 
@@ -163,29 +164,53 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createBuffer(D3D11_USAGE usage
 
 void Dx11Wrapper::initSwapChain(DXGI_SWAP_CHAIN_DESC & swapChainDesc)
 {
+a:
 	DXGI_MODE_DESC bufferDesc = {};
-	bufferDesc.Width = g_gameInfo.width;
-	bufferDesc.Height = g_gameInfo.height;
-	bufferDesc.RefreshRate.Numerator = 60;
-	bufferDesc.RefreshRate.Denominator = 1;
-	bufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	bufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	bufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	swapChainDesc.BufferDesc = bufferDesc;
+	if (g_pGameSettings->windowed)
+	{
+		bufferDesc.Width = g_pGameSettings->width;
+		bufferDesc.Height = g_pGameSettings->height;
+		bufferDesc.RefreshRate.Numerator = 60;
+		bufferDesc.RefreshRate.Denominator = 1;
+		bufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapChainDesc.Windowed = true;
+		bufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		bufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		swapChainDesc.BufferDesc = bufferDesc;
+	}
+	else
+	{
+		auto mode = enurmerateAdapterMode();
+		for (uint32 i = 0; i < mode.size(); i++)
+		{
+			DXGI_MODE_DESC m = mode[i];
+			if (m.Width == g_pGameSettings->width && m.Height == g_pGameSettings->height)
+			{
+				swapChainDesc.BufferDesc = m;
+				break;
+			}
+			else if (i == mode.size() - 1)
+			{
+				messageBoxOk(strFormat("Graphics adapter does not support fullscreen %dx%d mode\n Switching to windowed mode", g_pGameSettings->width, g_pGameSettings->height), "WARNING");
+				g_pGameSettings->windowed = true;
+				goto a;
+			}
+		}
+	}
+	
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 1;
 	swapChainDesc.OutputWindow = m_hwnd;
-	swapChainDesc.Windowed = g_gameInfo.windowed;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 }
 
 void Dx11Wrapper::initDepthStencil(D3D11_TEXTURE2D_DESC& depthStencilDesc)
 {
-	depthStencilDesc.Width = g_gameInfo.width;
-	depthStencilDesc.Height = g_gameInfo.height;
+	depthStencilDesc.Width = g_pGameSettings->width;
+	depthStencilDesc.Height = g_pGameSettings->height;
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -201,8 +226,8 @@ void Dx11Wrapper::initViewport(D3D11_VIEWPORT & viewport)
 {
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
-	viewport.Width = g_gameInfo.width;
-	viewport.Height = g_gameInfo.height;
+	viewport.Width = g_pGameSettings->width;
+	viewport.Height = g_pGameSettings->height;
 	viewport.MinDepth = 0;
 	viewport.MaxDepth = 1.0f;
 }
@@ -235,6 +260,77 @@ void Dx11Wrapper::vsSetConstBuffer(const void * data)
 	m_pDeviceContext->UpdateSubresource(m_pVSConstBuffer.Get(), 0, 0, data, 0,
 		0);
 	m_pDeviceContext->VSSetConstantBuffers(0, 1, m_pVSConstBuffer.GetAddressOf());
+}
+
+void Dx11Wrapper::resize(int32 width, int32 height)
+{
+		if (m_pSwapChain)
+		{
+			m_pDeviceContext->OMSetRenderTargets(0, 0, 0);
+			m_pRenderTargetView.Reset();
+			DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
+			if (!g_pGameSettings->windowed)
+			{
+				auto mode = enurmerateAdapterMode();
+				for (auto m : mode)
+					if (m.Width == g_pGameSettings->width && m.Height == g_pGameSettings->height)
+					{
+						format = m.Format;
+						break;
+					}
+			}
+
+			m_pSwapChain->ResizeBuffers(1, 0, 0, format, 0);
+			ComPtr<ID3D11Texture2D> pBuffer;
+			m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+				(void**)pBuffer.GetAddressOf());
+			m_pDevice->CreateRenderTargetView(pBuffer.Get(), NULL,
+				&m_pRenderTargetView);
+			m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), NULL);
+			// Set up the viewport.
+			D3D11_VIEWPORT vp;
+			vp.Width = width;
+			vp.Height = height;
+			vp.MinDepth = 0.0f;
+			vp.MaxDepth = 1.0f;
+			vp.TopLeftX = 0;
+			vp.TopLeftY = 0;
+			m_pDeviceContext->RSSetViewports(1, &vp);
+		}
+}
+
+std::vector<DXGI_MODE_DESC> Dx11Wrapper::enurmerateAdapterMode()
+{
+	static std::vector<DXGI_MODE_DESC> enurmAdapter;
+	if (enurmAdapter.empty())
+	{
+		ComPtr<IDXGIFactory> pFactory;
+		CreateDXGIFactory(IID_PPV_ARGS(&pFactory));
+		ComPtr<IDXGIAdapter> pAdapter;
+		pFactory->EnumAdapters(0, &pAdapter);
+		ComPtr<IDXGIOutput> pAdapterOutput;
+		pAdapter->EnumOutputs(0, &pAdapterOutput);
+		uint32 numModes;
+		pAdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM,
+			DXGI_ENUM_MODES_INTERLACED,
+			&numModes, NULL);
+		DXGI_MODE_DESC* pDisplayModeList = new DXGI_MODE_DESC[numModes];
+		pAdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM,
+			DXGI_ENUM_MODES_INTERLACED,
+			&numModes, pDisplayModeList);
+		for (uint32 i = 0;  i< numModes; i += 2)
+			if (pDisplayModeList[i].Width >= gameNS::MIN_RESOLUTION_WIDTH && pDisplayModeList[i].Height >= gameNS::MIN_RESOLUTION_HEIGHT)
+				enurmAdapter.push_back(pDisplayModeList[i]);
+
+		safeDeleteArray(pDisplayModeList);
+	}
+
+	return enurmAdapter;
+}
+
+void Dx11Wrapper::setFullScreen(bool fullscreen) const
+{
+	m_pSwapChain->SetFullscreenState(fullscreen, nullptr);
 }
 
 void Dx11Wrapper::streamVertexBuffer(ID3D11Buffer* lpVB)

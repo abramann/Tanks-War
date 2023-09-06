@@ -3,7 +3,7 @@
 
 #pragma once
 #include "..\common\types.h"
-#include "clientplayer.h"
+#include "thisclient.h"
 #include <memory>
 
 class TanksWar;

@@ -110,57 +110,26 @@ void Graphics::setWorldMatrix(Matrix* worldMatrix)
 #endif
 }
 
-std::vector<Resolution> Graphics::getSupportedAdapterMode() const
+std::vector<std::string> Graphics::getSupportedResolutionAsString() const
 {
-	if (!m_suppModes.empty())
-		return m_suppModes;
+	static std::vector<std::string> resolution;
+	if (resolution.empty())
+	{
+		std::vector<DXGI_MODE_DESC> mode = m_pDx11Wrapper->enurmerateAdapterMode();
+		for (auto m : mode)
+			resolution.push_back(strFormat("%dx%d", m.Width, m.Height));
+	}
 
-	IDXGIFactory* factory;
-	CreateDXGIFactory(IID_PPV_ARGS(&factory));
-	IDXGIAdapter* adapter;
-	factory->EnumAdapters(0, &adapter);
-	IDXGIOutput* adapterOutput;
-	adapter->EnumOutputs(0, &adapterOutput);
-	uint32 numModes;
-	DXGI_MODE_DESC* displayModeList;
-	adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM,
-		DXGI_ENUM_MODES_INTERLACED,
-		&numModes, NULL);
-	displayModeList = new DXGI_MODE_DESC[numModes];
-	adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM,
-		DXGI_ENUM_MODES_INTERLACED,
-		&numModes, displayModeList);
-
-	for (uint32 i = 0; i < numModes; i += 2)
-		if (displayModeList[i].Width >= gameNS::MIN_RESOLUTION_WIDTH && displayModeList[i].Height >= gameNS::MIN_RESOLUTION_HEIGHT)
-		{
-			Resolution resol;
-			resol.width = displayModeList[i].Width,
-				resol.height = displayModeList[i].Height;
-			m_suppModes.push_back(resol);
-		}
-
-	safeDeleteArray(displayModeList);
-	safeRelease(factory);
-	safeRelease(adapter);
-	safeRelease(adapterOutput);
-	return m_suppModes;
+	return resolution;
 }
 
-std::vector<std::string> Graphics::getSupportedAdapterModesAsString() const
+int32 Graphics::getIndexCurrentResolution() const
 {
-	auto mode = getSupportedAdapterMode();
-	std::vector<std::string> strMode;
-	for (auto m : mode)
-		strMode.push_back(strFormat("%dx%d", m.width, m.height));
+	auto suppResol = getSupportedResolutionAsString();
+	int32 index = std::find(suppResol.begin(), suppResol.end(),
+		strFormat("%dx%d", g_pGameSettings->width, g_pGameSettings->height)) - suppResol.begin();
+	return index;
 
-	return strMode;
-}
-
-std::string Graphics::getCurrentAdapterModeAsString() const
-{
-	std::string currMode = strFormat("%dx%d", g_gameInfo.width, g_gameInfo.height);
-	return currMode;
 }
 
 void Graphics::setTexture(LPTextureD3D texture)
@@ -170,16 +139,6 @@ void Graphics::setTexture(LPTextureD3D texture)
 #else ifdef _BUILD_WITH_D3D11
 	m_pDx11Wrapper->psSetSRV(texture);
 #endif
-}
-
-bool Graphics::checkFullscreenSupport() const
-{
-	std::vector<Resolution> resolution = getSupportedAdapterMode();
-	for (auto resol : resolution)
-		if (g_gameInfo.width == resol.width && g_gameInfo.height == g_gameInfo.height)
-			return true;
-
-	return false;
 }
 
 void Graphics::setViewMatrix(Matrix* viewMatrix)

@@ -34,11 +34,12 @@ public:
 	clientNS::ClientStatus getStatus() const { return m_status; }
 	void setServerPort(Port port);
 	Port getServerPort() const { return m_clientInfo.serverPort; }
+	ThisClient* getThisClient() { return &m_thisClient; }
 	void updateClientInfo();
 	bool applyReceivedGameProperties();
 	void dispatchPlayerAct();
 	void executeClientAct();
-
+	
 private:
 
 	void heartbeat();
@@ -62,5 +63,5 @@ private:
 	PacketType* m_pPacketType;
 	ClientInfo m_clientInfo;
 	std::vector<std::shared_ptr<RemoteClient>> m_pRemoteClient;
-	ClientPlayer m_local;
+	ThisClient m_thisClient;
 };

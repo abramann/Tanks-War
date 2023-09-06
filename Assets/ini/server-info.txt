@@ -1,2 +1,2 @@
 Port =922
-Players =6
+Max Clients =8

@@ -15,6 +15,7 @@
 #include "..\common\camera.h"
 #include "..\common\tank.h"
 #include "..\common\texturemanger.h"
+#include "dx11wrapper.h"
 Image image2;
 Tank tank2;
 #endif
@@ -53,7 +54,7 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hwnd)
 	m_pClient->initialize(this);
 	m_pInterface->initialize(this);
 	m_clientInfo = FileIO::readClientInfo();
-	m_local.initialize(0, this);
+	m_thisClient.initialize(0, this);
 #endif
 }
 
@@ -74,6 +75,8 @@ void TanksWar::update()
 		tank2.damage(100);
 	if (GetAsyncKeyState('Y'))
 		tank2.executeAnimateRepeat();
+	if (m_pInput->isKeyDown(inputNS::ENTER_KEY))
+		m_pDx11Wrapper->resize(800, 600);
 	tank2.update();
 	m_pGraphics->getCamera()->update(tank2.getPosition());
 
@@ -96,17 +99,16 @@ void TanksWar::render()
 void TanksWar::renderScene()
 {
 	m_pMap->draw();
-	m_local.draw();
+	m_thisClient.draw();
 	for (auto pRClient : m_pRemoteClient)
 		pRClient->draw();
 }
 
 void TanksWar::updateScene()
 {
-	m_local.update();
+	m_thisClient.update();
 	for (auto pRClient : m_pRemoteClient)
 		pRClient->update();
-
 }
 
 void TanksWar::communicate()
@@ -159,7 +161,7 @@ bool TanksWar::connect()
 		if (applyReceivedGameProperties())
 		{
 			m_status = clientNS::CLIENT_CONNECTED;
-			m_local.setID(m_id);
+			m_thisClient.setID(m_id);
 			return m_pMap->load(m_map);
 		}
 	}
@@ -220,7 +222,7 @@ void TanksWar::dispatchPlayerAct()
 {
 	m_pCpsPlayerAct->packetType = PACKET_CLIENT_ACT;
 	m_pCpsPlayerAct->id = m_id;
-	m_pCpsPlayerAct->act = m_local.getAct();
+	m_pCpsPlayerAct->act = m_thisClient.getAct();
 	m_pClient->send<CpsPlayerAct>();
 }
 
@@ -234,14 +236,14 @@ void TanksWar::executeClientAct()
 		if (pClient)
 			pClient->executeAttack();
 		else
-			m_local.implementAttack();
+			m_thisClient.implementAttack();
 		break;
 
 	case PLAYER_ACT_DIE:
 		if (pClient)
 			pClient->executeDie();
 		else
-			m_local.executeDie();
+			m_thisClient.executeDie();
 		break;
 	}
 }
@@ -263,7 +265,7 @@ void TanksWar::applyUpdateClientGameState()
 {
 	auto& updateClientID = m_pSpsClientGameState->clientGameState.id;
 	if (m_id == updateClientID)
-		m_local.setClientGameState(m_pSpsClientGameState->clientGameState);
+		m_thisClient.setClientGameState(m_pSpsClientGameState->clientGameState);
 	else
 		for (auto pRClient : m_pRemoteClient)
 			if (pRClient->getID() == updateClientID)

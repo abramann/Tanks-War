@@ -3,4 +3,4 @@ Height=600
 Windowed=1
 VSync=1
 Audio=1
-Compute Shader=0
+Compute Shader=1

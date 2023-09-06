@@ -40,7 +40,8 @@ public:
 	const char* getMap() const { return m_loadedMap; }
 	Crc32 getCrc32() const;
 	Space getRandomEmptySpace() const;
-	void addObject(Object* object);
+	void addObject(Object* pObject);
+	void removeObject(Object* pObject);
 
 private:
 

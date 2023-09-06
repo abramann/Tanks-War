@@ -17,9 +17,9 @@ typedef TanksWarServer GameBuildType;
 #include <memory>
 
 #ifdef _DEBUG
-#include "vld\vld.h" // For detect memory leaks
+#include "vld\vld.h" // To detect memory leaks
 
-#pragma comment(lib,"sfml-audio-d.lib")
+#pragma comment(lib, "sfml-audio-d.lib")
 #else
 #pragma comment(lib,"sfml-audio.lib")
 #endif
@@ -30,7 +30,7 @@ typedef TanksWarServer GameBuildType;
 #pragma comment(lib,"dxgi.lib")
 
 std::unique_ptr<GameBuildType> pGame;
-GameInfo g_gameInfo;
+GameSettings* g_pGameSettings;
 
 LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -39,23 +39,33 @@ LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 {
-	const char CLASS_NAME[] = "GameClass";
+	const char CLASS_NAME[] = "Game Class";
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
+	//wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.style = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
 	wc.lpfnWndProc = WinProc;
 	wc.hInstance = hInstance;
 	//wc.hCursor = LoadCursorA(NULL, IDC_ARROW);
 	wc.hCursor = LoadCursorFromFileA("Assets\\cursor.cur");
 	wc.lpszClassName = CLASS_NAME;
 	RegisterClassEx(&wc);
-	DWORD style = (g_gameInfo.windowed) ? WS_OVERLAPPED : WS_EX_TOPMOST | WS_POPUP;
+	RECT rect = { 0 };
+	rect.right = g_pGameSettings->width, rect.bottom = g_pGameSettings->height;
+	DWORD style = WS_POPUP | WS_VISIBLE | WS_EX_LAYERED;
+	if (g_pGameSettings->windowed)
+		style |= WS_BORDER | WS_EX_LAYOUTRTL;
+	else
+		style |= WS_EX_TOPMOST;
+
+	AdjustWindowRect(&rect, style, false);
 	hwnd = CreateWindowEx(NULL,
 		CLASS_NAME,
-		"Tanks War",
-		style,    // fullscreen values
-		0, 0,    // the starting x and y positions should be 0
-		g_gameInfo.width, g_gameInfo.height,    // set the window to 640 x 480
+		gameNS::WINDOW_TITLE,
+		style,
+		0, 0,
+		rect.right - rect.left,
+		rect.bottom - rect.top,
 		NULL,
 		NULL,
 		hInstance,
@@ -64,17 +74,10 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 		return false;
 
 	RegisterClassEx(&wc);
-	if (g_gameInfo.windowed)
-	{
-		RECT clientRect;
-		GetClientRect(hwnd, &clientRect);   // get size of client area of window
-		MoveWindow(hwnd,
-			0,                                           // Left
-			0,                                           // Top
-			g_gameInfo.width + (g_gameInfo.width - clientRect.right),    // Right
-			g_gameInfo.height + (g_gameInfo.height - clientRect.bottom), // Bottom
-			TRUE);
-	}
+	RECT clientRect;
+	GetClientRect(hwnd, &clientRect);
+	if (g_pGameSettings->width != clientRect.right || g_pGameSettings->height != clientRect.bottom)
+		messageBoxOk("Window client size don't match backbuffer size", "WARNING");
 
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
@@ -88,8 +91,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 1;
 
 	HWND hwnd = NULL;
-	g_gameInfo = FileIO::readGameInfo();
-	if (!createGameWindow(hwnd, hInstance, nCmdShow))
+	GameSettings gameSettings = FileIO::readGameSettings();
+	g_pGameSettings = &gameSettings;
+	if (!createGameWindow(hwnd, hInstance, SW_SHOW))
 	{
 		messageBoxOk("CreateGameWindow() failed !", "ERROR");
 		return 1;
@@ -107,11 +111,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// PeekMessage,non-blocking method for checking for Windows messages.
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
-				// look for quit message
 				if (msg.message == WM_QUIT)
 					break;
 
-				// decode and pass messages on to WinProc
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}

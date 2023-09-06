@@ -16,7 +16,7 @@ public:
 	static bool isFileExist(const char* file);
 	static uint8_t getDirFiles(std::string dir);
 	static std::vector<std::string> getDirFileList(const char* dir, const char* start = 0, const char* end = 0, bool extension = true);
-	static 	GameInfo readGameInfo();
+	static 	GameSettings readGameSettings();
 	static MapData readMapInfo(std::ifstream& ifs);
 	static Crc32 getCRC32(const std::string& file);
 	static char* loadInMemory(const std::string name, uint32& size);
@@ -28,7 +28,7 @@ public:
 	static ServerInfo readServerInfo();
 	static void createServerInfo(const ServerInfo& serverInfo);
 #endif
-	static void createGameInfo(const GameInfo* info = nullptr);
+	static void createGameSettings(const GameSettings* info = nullptr);
 
 private:
 

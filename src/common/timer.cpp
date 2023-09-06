@@ -46,7 +46,7 @@ void Timer::update()
 	int64 currentTime = getCurrentTime();
 	m_timeDeltaMillsec = currentTime - m_prevTime;
 	m_prevTime = currentTime;
-	if (!g_gameInfo.vsync && m_timeDeltaMillsec < m_expectedFrameTimeMillsec)
+	if (!g_pGameSettings->vsync && m_timeDeltaMillsec < m_expectedFrameTimeMillsec)
 	{
 		auto sleepTime = m_expectedFrameTimeMillsec - m_timeDeltaMillsec;
 		auto before = getCurrentTime();

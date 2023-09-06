@@ -41,7 +41,11 @@ public:
 	void iaSetStreamBuffer(ID3D11Buffer * pVB, uint32 strides, uint32 offset, uint32 numBuffers = 1, uint32 startSlot = 0);
 	void streamVertexBuffer(ID3D11Buffer* lpVB);
 	void vsSetConstBuffer(const void* data);
-
+	void resize(int32 width, int32 height);
+	std::vector<DXGI_MODE_DESC> enurmerateAdapterMode();
+	void setFullScreen(bool fullscreen) const;
+	ID3D11Device* getDevice() { return m_pDevice.Get(); }
+	ID3D11DeviceContext* getC() { return m_pDeviceContext.Get(); }
 private:
 
 	void initSwapChain(DXGI_SWAP_CHAIN_DESC& swapChainDesc);

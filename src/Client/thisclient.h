@@ -1,4 +1,4 @@
-// clientplayer.h
+// thisclient.h
 // Author: abramann
 
 #pragma once
@@ -8,12 +8,12 @@ class Input;
 class Camera;
 class TanksWar;
 
-class ClientPlayer : public Player
+class ThisClient : public Player
 {
 public:
 
-	ClientPlayer();
-	~ClientPlayer();
+	ThisClient();
+	~ThisClient();
 	virtual void initialize(PlayerID id, TanksWar * pTW);
 	virtual void update();
 	virtual void executeForward();

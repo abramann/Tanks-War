@@ -285,7 +285,7 @@ bool Map::isCollided(const Object * object) const
 
 bool Map::isCollided(const Space is, const Object* object) const
 {
-	if (g_gameInfo.computeShader)
+	if (g_pGameSettings->computeShader)
 	{
 		m_pDx11Wrapper->copyToResource(m_pSpaceBuf.Get(), (void*)&is, sizeof(Space));
 		DxShaderResourceView* ppSRV[] = { m_pNoSpaceSRV.Get(),m_pNoSpaceCountSRV.Get(), m_pSpaceSRV.Get(), m_pMapRangeSRV.Get() };
@@ -497,4 +497,10 @@ Space Map::getRandomEmptySpace() const
 void Map::addObject(Object* object)
 {
 	m_pObject.push_back(object);
+}
+
+void Map::removeObject(Object* pObject)
+{
+	auto pObj = std::find(m_pObject.begin(), m_pObject.end(), pObject);
+	m_pObject.erase(pObj);
 }

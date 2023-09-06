@@ -3,6 +3,7 @@
 
 #include "serverplayer.h"
 #include "game.h"
+#include "map.h"
 #ifdef _SERVER_BUILD
 #include "..\Server\tankswarServer.h"
 #else
@@ -35,7 +36,8 @@ void ServerPlayer::damage(float dmg)
 void ServerPlayer::executeDie()
 {
 	Player::executeDie();
-	m_pTWServer->executeClientPlayerDie(this);
+	m_pTWServer->executeServerPlayerDie(this);
+	m_pMap->removeObject(this);
 }
 
 void ServerPlayer::executeAnimateRepeat()
@@ -43,6 +45,7 @@ void ServerPlayer::executeAnimateRepeat()
 	m_pTWServer->resetClientGameState(this);
 	m_pTWServer->postClientGameState(this);
 	Player::executeAnimateRepeat();
+	m_pMap->addObject(this);
 }
 
 ClientGameState ServerPlayer::getClientGameState() const

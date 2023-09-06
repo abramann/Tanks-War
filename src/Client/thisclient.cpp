@@ -1,4 +1,4 @@
-// clientplayer.cpp
+// thisclient.cpp
 // Author: abramann
 
 #ifdef _CLIENT_BUILD
@@ -7,10 +7,10 @@
 #include "..\common\texturemanger.h"
 #include "..\common\texture.h"
 #include "..\common\input.h"
-#include "clientplayer.h"
+#include "thisclient.h"
 #include "tankswar.h"
 
-ClientPlayer::ClientPlayer() : m_handleInput(true)
+ThisClient::ThisClient() : m_handleInput(true)
 {
 	m_forward = inputNS::W_KEY,
 		m_back = inputNS::S_KEY,
@@ -19,11 +19,11 @@ ClientPlayer::ClientPlayer() : m_handleInput(true)
 		m_attack = inputNS::F_KEY;
 }
 
-ClientPlayer::~ClientPlayer()
+ThisClient::~ThisClient()
 {
 }
 
-void ClientPlayer::initialize(PlayerID id, TanksWar * pTW)
+void ThisClient::initialize(PlayerID id, TanksWar * pTW)
 {
 	m_pTW = pTW;
 	m_pInput = m_pTW->getInput();
@@ -32,7 +32,7 @@ void ClientPlayer::initialize(PlayerID id, TanksWar * pTW)
 	m_pCamera = m_pGraphics->getCamera();
 }
 
-void ClientPlayer::update()
+void ThisClient::update()
 {
 	m_act = PLAYER_ACT_NONE;
 	if (m_handleInput)
@@ -45,19 +45,19 @@ void ClientPlayer::update()
 	Player::update();
 }
 
-void ClientPlayer::executeForward()
+void ThisClient::executeForward()
 {
 	m_act = PLAYER_ACT_FORWRAD;
 	Object::executeForward();
 }
 
-void ClientPlayer::executeBack()
+void ThisClient::executeBack()
 {
 	m_act = PLAYER_ACT_BACK;
 	Object::executeBack();
 }
 
-void ClientPlayer::executeRight()
+void ThisClient::executeRight()
 {
 	Object::executeRight();
 	switch (m_act)
@@ -74,7 +74,7 @@ void ClientPlayer::executeRight()
 	}
 }
 
-void ClientPlayer::executeLeft()
+void ThisClient::executeLeft()
 {
 	Object::executeLeft();
 	switch (m_act)
@@ -91,31 +91,31 @@ void ClientPlayer::executeLeft()
 	}
 }
 
-bool ClientPlayer::executeAttack()
+bool ThisClient::executeAttack()
 {
 	m_act |= PLAYER_ACT_ATTACK;
 	return true;
 }
 
-void ClientPlayer::executeAnimateRepeat()
+void ThisClient::executeAnimateRepeat()
 {
 	m_handleInput = true;
+	m_health = 100;
 	Player::executeAnimateRepeat();
 }
 
-void ClientPlayer::implementAttack()
+void ThisClient::implementAttack()
 {
-	Player::playSoundAttack();
 	Player::executeAttack();
 }
 
-void ClientPlayer::executeDie()
+void ThisClient::executeDie()
 {
 	m_handleInput = false;
 	Player::executeDie();
 }
 
-void ClientPlayer::handleInput()
+void ThisClient::handleInput()
 {
 	if (m_pInput->isKeyDown(m_forward))
 		executeForward();

@@ -85,6 +85,11 @@ namespace gameNS
 	constexpr auto AUDIO_DEFAULT = 1;
 	constexpr auto COMPUTESHADER_DEFAULT = 0;
 	constexpr auto LOGO_VIEW_TIME = 4000;
+#ifdef _SRVER_BUILD
+	constexpr auto WINDOW_TITLE = "Tanks War Server";
+#else
+	constexpr auto WINDOW_TITLE = "Tanks War";
+#endif
 	const std::map<std::string, uint32_t> gameFiles =
 	{ { "Assets\\cursor.cur", 0x02d949be },
 	  { "Assets\\Fonts\\tahoma.ttf", 0x44845b79 },
@@ -177,7 +182,8 @@ namespace interfaceNS
 		FONTSIZE_MED2,
 		FONTSIZE_LARGE,
 		FONTSIZE_LARGE2,
-		FONTSIZES
+		FONTSIZES,
+		FONTSIZE_DEFAULT
 	};
 	typedef int8_t FontSize;
 
@@ -187,6 +193,7 @@ namespace interfaceNS
 		MULTIPLAYER_ACTIVITY,
 		SETTINGS_ACTIVITY,
 		PLAYING_ACTIVITY,
+		CREDITS_ACTIVITY,
 		QUIT_ACTIVITY,
 		ACTIVITIES,
 		NO_ACITVITY

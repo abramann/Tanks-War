@@ -51,7 +51,7 @@ public:
 	void getIP(char* pIP) { m_pServer->getIP(pIP); }
 	std::string getMap() const { return m_map; }
 	serverNS::ServerStatus getStatus() const { return m_status; }
-	void executeClientPlayerDie(Client* pClient);
+	void executeServerPlayerDie(Client* pClient);
 
 private:
 

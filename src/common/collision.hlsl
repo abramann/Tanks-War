@@ -100,8 +100,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	if (g_result[0] == 1)
 		return;
 
-	if (isOutOfRange(g_space[0]))
-		g_result[0] = 1;
-	else if (areSpacesCollided(g_noSpace[id], g_space[0]))
+	if (isOutOfRange(g_space[0]) || areSpacesCollided(g_noSpace[id], g_space[0]))
 		g_result[0] = 1;
 }

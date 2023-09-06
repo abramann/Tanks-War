@@ -34,7 +34,7 @@ void Bullet::update()
 	if (!m_hit)
 	{
 		executeLaunching();
-		if (isCollided())
+		if (m_pMap->isCollided(this))
 			executeHit();
 	}
 }
@@ -46,12 +46,6 @@ V3 Bullet::getBulletLaunchPosition()
 	position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2);
 	position.y = (s.v4.y + (s.v3.y - s.v4.y) / 2);
 	return position;
-}
-
-bool Bullet::isCollided()
-{
-	bool collided = m_pMap->isCollided(this);
-	return collided;
 }
 
 void Bullet::executeLaunch()
@@ -72,10 +66,8 @@ void Bullet::executeHit()
 	Space s = getSpace();
 	Object* pObject = m_pMap->getObject(s);
 	m_pAudio->play("bullet-explosion");
-#ifdef _SERVER_BUILD
 	if (pObject)
 		pObject->damage(m_damage);
-#endif
 }
 
 void Bullet::executeAnimateRepeat()

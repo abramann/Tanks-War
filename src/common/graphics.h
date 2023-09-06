@@ -35,13 +35,12 @@ public:
 	void endRender();
 	void showBackbuffer();
 	Resolution getResolution();
-	std::vector<Resolution> getSupportedAdapterMode() const;
-	std::vector<std::string> getSupportedAdapterModesAsString() const;
-	std::string getCurrentAdapterModeAsString() const;
+	std::vector<std::string> getSupportedResolutionAsString() const;
+	int32 getIndexCurrentResolution() const;
+
 	void setDrawProperties(V3 position = V3(0, 0, 0), V3 scall = V3(1, 1, 1), V3 rotate = V3(0, 0, 0), V3 rotateCenter = V3(0, 0, 0));
 	void setTexture(LPTextureD3D texture);
 	void setWorldMatrix(Matrix* worldMatrix);
-	bool checkFullscreenSupport() const;
 	Camera* getCamera() const { return m_pCamera.get(); }
 
 private:

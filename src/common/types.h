@@ -21,8 +21,6 @@
 
 #pragma warning(disable : 4200)
 
-extern uint64_t g_frameCounter;
-
 struct Color
 {
 	float x, y, z;
@@ -113,9 +111,9 @@ struct TextureVertices
 	Vertex v4, v5, v6;
 };
 
-struct GameInfo
+struct GameSettings
 {
-	int16 width, height;
+	int32 width, height;
 	bool windowed, vsync, audio, computeShader;
 };
 
@@ -321,4 +319,5 @@ struct SpsServerShutdown
 	PacketType packetType = PACKET_SERVER_SHUTDOWN;
 };
 
-extern GameInfo g_gameInfo;
+extern uint64_t g_frameCounter;
+extern GameSettings* g_pGameSettings;

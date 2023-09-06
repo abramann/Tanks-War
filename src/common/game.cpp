@@ -20,6 +20,8 @@
 #include "dx11wrapper.h"
 #include "sprite.h"
 #include <fileio.h>
+#include "imgui\imgui_impl_dx11.h"
+#include "imgui\imgui.h"
 
 Game::Game() : m_timeDeltaMillsec(0)
 {
@@ -63,9 +65,6 @@ void Game::initialize(HINSTANCE hInstance, HWND hwnd)
 
 void Game::run()
 {
-	if (m_pInput->isKeyDown(inputNS::ESCAPE_KEY))
-		PostQuitMessage(0);
-
 	if (isOnline())
 	{
 		updateGame();
@@ -91,6 +90,33 @@ void Game::updateGame()
 	update();
 }
 
+void Game::updateGameDisplay() const
+{
+	m_pDx11Wrapper->setFullScreen(false);
+	RECT rect = { 0 };
+	rect.right = g_pGameSettings->width,
+		rect.bottom = g_pGameSettings->height;
+	DWORD style = WS_POPUP | WS_VISIBLE | WS_EX_LAYERED;
+	if (g_pGameSettings->windowed)
+		style |= WS_BORDER | WS_EX_LAYOUTRTL;
+	else
+		style |= WS_EX_TOPMOST;
+
+	SetWindowLongPtr(m_hwnd, GWL_STYLE, style);
+	AdjustWindowRect(&rect, style, false);
+	SetWindowPos(m_hwnd, 0, 0, 0, 
+		rect.right - rect.left,
+		rect.bottom - rect.top, 0);
+	m_pDx11Wrapper->setFullScreen(!g_pGameSettings->windowed);
+	m_pDx11Wrapper->resize(g_pGameSettings->width, g_pGameSettings->height);
+	updateGameSettings();
+}
+
+void Game::updateGameSettings() const
+{
+	FileIO::createGameSettings(g_pGameSettings);
+}
+
 bool Game::checkGameFiles() const
 {
 	for (auto file : gameNS::gameFiles)
@@ -107,41 +133,11 @@ bool Game::checkGameFiles() const
 	return true;
 }
 
-void Game::setResolution(int16 width, int16 height) const
-{
-	GameInfo info = FileIO::readGameInfo();
-	info.width = width;
-	info.height = height;
-	FileIO::createGameInfo(&info);
-}
-
-void Game::setWindowed(bool windowed) const
-{
-	GameInfo info = FileIO::readGameInfo();
-	info.windowed = windowed;
-	FileIO::createGameInfo(&info);
-}
-
-Resolution Game::getResolution() const
-{
-	auto gameInfo = FileIO::readGameInfo();
-	Resolution resol;
-	resol.width = gameInfo.width;
-	resol.height = gameInfo.height;
-	return resol;
-}
-
-bool Game::isWindowed() const
-{
-	auto gameInfo = FileIO::readGameInfo();
-	return gameInfo.windowed;
-}
-
 void Game::showLogo() const
 {
 	Sprite logo = Sprite(this, "logo");
-	V2 scal = V2(g_gameInfo.width*1.0f / logo.getWidth(),
-		g_gameInfo.height*1.0f / logo.getHeight());
+	V2 scal = V2(g_pGameSettings->width*1.0f / logo.getWidth(),
+		g_pGameSettings->height*1.0f / logo.getHeight());
 	logo.setScaling(scal);
 	bool end = false;
 	do

@@ -25,6 +25,7 @@ public:
 	void addVeclocity(float addV) { m_velocity += addV; }
 	float getHealth() const { return m_health; }
 	float getVelocity() const { return m_velocity; }
+	void setHealth(float health) { m_health = health; }
 
 protected:
 
