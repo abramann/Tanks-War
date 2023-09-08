@@ -7,7 +7,7 @@ Simple multiplayer 2D tank game currently under development.
 ## How to play
 
 
-The player controls a tank and destroys other player's tanks. The play style will be improved after the basic game functions (audio, interface, server, and client) are implemented.
+The player controls a tank and destroys other players tanks. The play style will be improved after basic game functions(audio, interface, server and client) are implemented.
 
 
 ### Controls
@@ -24,16 +24,28 @@ D - Move right
 F - Shoot
 
 
-
 ## How to build
 
 
-To build the game, you will need the Visual Studio 2015 (MSVC v140) or above. The needed libraries are included in common folder. 
+To build the game, you will need Visual Studio 2015(MSVC v140) or above. The needed libraries are included in common folder. 
+
+
+
+## Imported Libraries
+
+
+D3D11 (rendering and collision detection)
+
+ImGui (UI and input handling)
+
+SFML (audio)
+
+Dirent (get directory files)
+
+Charles Kelly's Net library. 
 
 
 ## Credits
 
 
 Charles Kelly for the net library and the useful information in his book [Programming 2D Games](http://www.programming2dgames.com).
-
-Daniel Robbins for [Dirent](https://github.com/tronkko/dirent).
