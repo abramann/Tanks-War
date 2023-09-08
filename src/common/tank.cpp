@@ -9,7 +9,8 @@
 #include "texture.h"
 #include "timer.h"
 
-Tank::Tank() : m_bulletSpeed(logicNS::BULLET_SPEED), m_bulletDamage(logicNS::BULLET_DAMAGE), m_rotateAmount(logicNS::TANK_ROTATE_AMOUNT)
+Tank::Tank() : m_bulletSpeed(logicNS::BULLET_SPEED), m_bulletDamage(logicNS::BULLET_DAMAGE), m_rotateAmount(logicNS::TANK_ROTATE_AMOUNT),
+m_inflictedDamage(0)
 {
 	m_health = logicNS::HEALTH_TANK;
 	m_velocity = logicNS::VELOCITY_TANK;
@@ -57,6 +58,8 @@ bool Tank::executeAttack()
 		m_pAudio->play("tank-attack");
 		return true;
 	}
+
+	return false;
 }
 
 void Tank::executeBack()

@@ -6,6 +6,8 @@
 #include <fstream>
 #include <dirent.h>
 
+#pragma warning(disable : 4800)	// no warn to convert double to bool when read file by std::atof
+
 FileIO::FileIO()
 {
 }
@@ -14,14 +16,14 @@ FileIO::~FileIO()
 {
 }
 
-bool FileIO::isFileExist(const char* file)
+bool FileIO::isFileExist(const std::string& file)
 {
 	std::ifstream f(file);
 	bool exist = f.is_open();
 	return exist;
 }
 
-uint8 FileIO::getDirFiles(std::string directory)
+uint8 FileIO::getDirFiles(const std::string& directory)
 {
 	uint8 files = 0;
 	DIR* dir = opendir(directory.c_str());
@@ -194,7 +196,7 @@ inline std::string getTargetEqualStringValue(std::string str)
 	return str;
 }
 
-char* FileIO::loadInMemory(const std::string name, uint32& size)
+char* FileIO::loadInMemory(const std::string& name, uint32& size)
 {
 	/*std::ifstream file(name, std::ifstream::ate);
 	if (!file.is_open())

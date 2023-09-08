@@ -43,15 +43,13 @@ public:
 	Audio();
 	~Audio();
 	void initialize();
-	void play(std::string sound);
-	void stop(std::string  sound);
+	void play(const std::string& sound);
+	void stop(const std::string&  sound);
 	void stopAll();
 	void release();
-	bool isAudioPlaying() const { return m_audioPlay; }
 
 private:
 
-	bool m_audioPlay;
 	sf::SoundBuffer* m_pSoundBuffer;
 	std::map<std::string, sf::Sound> m_soundAssembler;
 };

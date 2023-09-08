@@ -27,7 +27,8 @@ public:
 	Port getPort() { return m_port; }
 	int64 getHeartbeatTime() { return m_heartbeatTime; }
 	void setHeartbeatTime(int64 heartbeatTime) { m_heartbeatTime = heartbeatTime; }
-	ClientGameState getClientGameState() const;
+	ClientGameStatus getClientGameStatus() const;
+	ClientGameAttribute getClientGameAttribute() const;
 
 private:
 

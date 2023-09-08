@@ -9,17 +9,13 @@
 #include "map.h"
 #include "timer.h"
 
-Bullet::Bullet(const Game * pGame, const Tank * pTank) : m_pTank(pTank), m_hit(false), m_finish(false)
+Bullet::Bullet(const Game * pGame, Tank * pTank) : m_pTank(pTank), m_hit(false), m_finish(false)
 {
 	m_pGame = pGame;
 	m_pMap = m_pGame->getMap();
 	m_pAudio = m_pGame->getAudio();
 	Image::initialize("bullet", m_pGame);
 	executeLaunch();
-}
-
-Bullet::Bullet()
-{
 }
 
 Bullet::~Bullet()
@@ -62,12 +58,14 @@ void Bullet::executeLaunch()
 void Bullet::executeHit()
 {
 	m_hit = true;
-	Image::initialize("bullet-destroy", m_pGame, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, logicNS::UPDATE_DELAY_BULLET);
-	Space s = getSpace();
-	m_pAudio->play("bullet-explosion");
-	Object* pObject = m_pMap->getObject(s);
+	Object* pObject = m_pMap->getObject(getSpace());
 	if (pObject)
+	{
+		m_pTank->addInflictedDamage(m_damage);
 		pObject->damage(m_damage);
+	}
+	Image::initialize("bullet-destroy", m_pGame, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, logicNS::UPDATE_DELAY_BULLET);
+	m_pAudio->play("bullet-explosion");
 }
 
 void Bullet::executeAnimateRepeat()

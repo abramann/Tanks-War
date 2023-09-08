@@ -13,9 +13,9 @@ public:
 	~Input();
 	bool initialize(HWND hwnd);
 	void handle(UINT msg, WPARAM wParam, LPARAM lParam);
-	bool isKeyDown(Key k);
-	bool isKeyPressed(Key k);
-	bool isAnyKeyPressed();
+	bool isKeyDown(Key key);
+	bool isKeyPressed(Key key);
+	bool isKeyReleased(Key key);
 	bool isInputHandled() const { return m_handleInput; }
 
 private:

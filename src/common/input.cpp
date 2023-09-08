@@ -44,14 +44,10 @@ bool Input::isKeyDown(Key key)
 
 bool Input::isKeyPressed(Key key)
 {
-	return (ImGui::IsKeyPressed(key)) ? true : false;
+	return ImGui::IsKeyPressed(key, false);
 }
 
-bool Input::isAnyKeyPressed()
+bool Input::isKeyReleased(Key key)
 {
-	for (size_t k = ImGuiKey_Tab; k <= ImGuiKey_Pause; k++)
-		if (ImGui::IsKeyPressed((Key)k))
-			return true;
-
-	return false;
+	return ImGui::IsKeyReleased(key);
 }

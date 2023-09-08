@@ -8,6 +8,7 @@
 #include "vertexshader.h"
 #include "fileio.h"
 #include "types.h"
+#include "inlined.inl"
 #include <D3DX11.h>
 
 using namespace Microsoft::WRL;
@@ -227,8 +228,8 @@ void Dx11Wrapper::initViewport(D3D11_VIEWPORT & viewport)
 {
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
-	viewport.Width = g_pGameSettings->width;
-	viewport.Height = g_pGameSettings->height;
+	viewport.Width = static_cast<float>(g_pGameSettings->width);
+	viewport.Height = static_cast<float>(g_pGameSettings->height);
 	viewport.MinDepth = 0;
 	viewport.MaxDepth = 1.0f;
 }
@@ -240,7 +241,7 @@ void Dx11Wrapper::initSampleState(D3D11_SAMPLER_DESC & sampDesc)
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
+	sampDesc.MinLOD = 0.0f;	// use full resolution of the texture
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 }
 
@@ -291,7 +292,8 @@ void Dx11Wrapper::onResize(int32 width, int32 height)
 			&m_pRenderTargetView);
 		m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), NULL);
 		D3D11_VIEWPORT vp;
-		vp.Width = width, vp.Height = height;
+		vp.Width = static_cast<float>(width);
+		vp.Height = static_cast<float>(height);
 		vp.MinDepth = 0.0f,	vp.MaxDepth = 1.0f;
 		vp.TopLeftX = 0, vp.TopLeftY = 0;
 		m_pDeviceContext->RSSetViewports(1, &vp);

@@ -73,6 +73,11 @@ namespace mapNS
 	constexpr float UNDEFINED_POSITION = 0xFFFF;
 }
 
+namespace dxNS
+{
+	constexpr auto THREADS_PER_GROUP = 32;
+}
+
 namespace gameNS
 {
 	constexpr auto MAX_PLAYERS = 12;
@@ -123,9 +128,11 @@ namespace logicNS
 
 namespace networkNS
 {
-	constexpr auto HEARTBEAT_DELAY = 60000;
+	constexpr auto HEARTBEAT_DELAY = 40000;
 	constexpr auto MAX_PACKET_SIZE = 256;
-	constexpr auto SERVER_RECIEVE_PRESENT_TIME = 10000;
+	constexpr auto SERVER_TIME_OUT = 60000;
+	constexpr unsigned short START_CLIENT_PORT = 10;
+	constexpr unsigned short END_CLIENT_PORT = 3000;
 	constexpr int INVALID_ID = -1;
 	constexpr unsigned short UNSPECIFIED_PORT = 0xCCCC;
 }
@@ -283,6 +290,7 @@ enum PacketType_
 	PACKET_CLIENT_GAME_STATE,
 	PACKET_CLIENT_UPDATE,
 	PACKET_CLIENT_ACT,
+	PACKET_CLIENT_GAME_ATTRIBUTE
 };
 typedef char PacketType;
 

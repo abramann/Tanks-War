@@ -44,8 +44,7 @@ public:
 	void onResize(int32 width, int32 height);
 	std::vector<DXGI_MODE_DESC> enurmerateAdapterMode();
 	void setFullScreen(bool fullscreen) const;
-	ID3D11Device* getDevice() { return m_pDevice.Get(); }
-	ID3D11DeviceContext* getC() { return m_pDeviceContext.Get(); }
+
 private:
 
 	void initSwapChain(DXGI_SWAP_CHAIN_DESC& swapChainDesc);

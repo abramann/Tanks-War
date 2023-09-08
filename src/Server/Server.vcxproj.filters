@@ -108,6 +108,9 @@
     <ClInclude Include="tankswarServer.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\inlined.inl">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\texturemanger.cpp">

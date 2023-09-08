@@ -8,6 +8,7 @@
 #include "sprite.h"
 #include "timer.h"
 #include "input.h"
+#include "inlined.inl"
 #ifdef _CLIENT_BUILD
 #include "..\..\Client\tankswar.h"
 #include "..\Client\thisclient.h"
@@ -166,24 +167,21 @@ void Interface::executePlayingActivity()
 #ifdef _CLIENT_BUILD
 	m_pTW->updateScene();
 	m_pTW->renderScene();
-	
+
 	SetNextWindowPos(Vec2(0, 0));
-	ImGui::Begin("Status", 0, 0);
+	ImGui::Begin("Status", 0, ImGuiWindowFlags_NoTitleBar);
+	PushStyleColor(ImGuiCol_Text, YELLOW); 
+	PushFont(m_pFont[FONTSIZE_SMALL2]);
 	auto pThisClient = m_pTW->getThisClient();
-	text(strFormat("Health %f", pThisClient->getHealth()), YELLOW, FONTSIZE_SMALL);
-	text(strFormat("Killed %d", 0), YELLOW, FONTSIZE_SMALL);
-	text(strFormat("Players %d", m_pTW->getExistClients()), YELLOW, FONTSIZE_SMALL);
-
+	text(strFormat("Health %d", static_cast<int32>(pThisClient->getHealth())));
+	text(strFormat("Kills %d", 0, 0), YELLOW);
+	text(strFormat("Score %d", static_cast<int32>(pThisClient->getInflictedDamage())));
+	text(strFormat("Players %d", m_pTW->getExistClients()));
+	PopFont();
+	PopStyleColor();
 	End();
-	/*
-	auto draw_list = ImGui::GetForegroundDrawList();
-	PushFont(m_pFont[FONTSIZE_MED]);
-	draw_list->AddText(ImVec2(0, 0), ImColor(255.0f, 255.0f, 255.0f, 255.0f),
-		strFormat("Health %f", m_pThisClient->getHealth()).c_str());
-	PopFont();*/
-	if (m_pInput->isKeyDown(inputNS::ESCAPE_KEY))
+	if (m_pInput->isKeyPressed(inputNS::ESCAPE_KEY))
 		m_activity = MULTIPLAYER_ACTIVITY;
-
 #endif
 }
 
@@ -264,7 +262,7 @@ void Interface::endActivity(bool backButton, Activity backActivity)
 		Vec2 m_backButSize = Vec2(g_pGameSettings->width / 10, g_pGameSettings->height / 12);
 		PushFont(m_pFont[FONTSIZE_LARGE]);
 		SetCursorPos(m_backButPos);
-		if (button("Back", m_backButSize) || m_pInput->isKeyDown(inputNS::ESCAPE_KEY))
+		if (button("Back", m_backButSize) || m_pInput->isKeyPressed(inputNS::ESCAPE_KEY))
 			m_activity = backActivity;
 
 		PopFont();
@@ -462,12 +460,14 @@ void Interface::separatorText(std::string text, FontSize fontSize, Vec4 color)
 
 void Interface::text(std::string text, Vec4 color, FontSize fontSize)
 {
-	PushStyleColor(ImGuiCol_Text, color);
+	if (!color.isEmpty())
+		PushStyleColor(ImGuiCol_Text, color);
 	if (fontSize)
 		PushFont(m_pFont[fontSize]);
 
 	Text(text.c_str());
+	if (!color.isEmpty())
+		PopStyleColor(); 
 	if (fontSize)
 		PopFont();
-	PopStyleColor();
 }

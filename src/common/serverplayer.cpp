@@ -31,6 +31,7 @@ void ServerPlayer::initialize(PlayerID id, const char* name, const char* ip, Por
 void ServerPlayer::damage(float dmg)
 {
 	Player::damage(dmg);
+	m_pTWServer->postClientGameAttribute(this);
 }
 
 void ServerPlayer::executeDie()
@@ -42,19 +43,31 @@ void ServerPlayer::executeDie()
 
 void ServerPlayer::executeAnimateRepeat()
 {
-	m_pTWServer->resetClientGameState(this);
-	m_pTWServer->postClientGameState(this);
+	m_pTWServer->resetClientGameStatus(this);
+	m_pTWServer->postClientGameStatus(this);
 	Player::executeAnimateRepeat();
 	m_pMap->addObject(this);
 }
 
-ClientGameState ServerPlayer::getClientGameState() const
+ClientGameStatus ServerPlayer::getClientGameStatus() const
 {
-	ClientGameState clientGameState;
-	clientGameState.id = m_id;
-	clientGameState.position = m_position;
-	clientGameState.rotate = m_rotate;
-	return clientGameState;
+	ClientGameStatus clientGameStatus;
+	clientGameStatus.id = m_id;
+	clientGameStatus.position = m_position;
+	clientGameStatus.rotate = m_rotate;
+	return clientGameStatus;
+}
+
+ClientGameAttribute ServerPlayer::getClientGameAttribute() const
+{
+	ClientGameAttribute cga;
+	cga.id = m_id;
+	cga.health = m_health;
+	cga.velocity = m_velocity;
+	cga.bulletDamage = m_bulletDamage;
+	cga.bulletSpeed = m_bulletSpeed;
+	cga.inflictedDamage = m_inflictedDamage;
+	return cga;
 }
 
 #else

@@ -27,30 +27,20 @@ void Player::initialize(PlayerID id, const char* name, PlayerType playerType, co
 	Tank::initialize(tex, pGame);
 }
 
-void Player::applyPlayerUpdate(const PlayerUpdate playerUpdate)
-{
-	m_position = playerUpdate.position;
-	m_rotate = playerUpdate.rotate;
-	m_health = playerUpdate.health;
-	if (m_health < 0)
-		executeDie();
-}
-
-PlayerUpdate Player::getPlayerUpdate() const
-{
-	PlayerUpdate pu;
-	pu.position = m_position;
-	pu.rotate = m_rotate;
-	pu.health = m_health;
-	pu.id = m_id;
-	return pu;
-}
-
 #ifdef _CLIENT_BUILD
-void Player::setClientGameState(ClientGameState clientGameState)
+void Player::setClientGameStatus(const ClientGameStatus& clientGameStatus)
 {
-	m_id = clientGameState.id;
-	m_position = clientGameState.position;
-	m_rotate = clientGameState.rotate;
+	m_id = clientGameStatus.id;
+	m_position = clientGameStatus.position;
+	m_rotate = clientGameStatus.rotate;
+}
+
+void Player::setClientGameAttribute(const ClientGameAttribute& clientGameAttribute)
+{
+	m_health = clientGameAttribute.health;
+	m_velocity = clientGameAttribute.velocity;
+	m_bulletDamage = clientGameAttribute.bulletDamage;
+	m_bulletSpeed = clientGameAttribute.bulletSpeed;
+	m_inflictedDamage = clientGameAttribute.inflictedDamage;
 }
 #endif

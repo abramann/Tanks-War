@@ -43,8 +43,8 @@ public:
 	template<typename T>
 	void reply();
 	void replyClientsInitialData();
-	void resetClientGameState(Client* pClient);
-	void postClientGameState(Client* pClient);
+	void resetClientGameStatus(Client* pClient);
+	void postClientGameStatus(Client* pClient);
 	void setPort(Port port);
 	void setMaxClients(int32 maxClients);
 	void setMap(std::string map) { m_map = map; }
@@ -52,6 +52,7 @@ public:
 	std::string getMap() const { return m_map; }
 	serverNS::ServerStatus getStatus() const { return m_status; }
 	void executeServerPlayerDie(Client* pClient);
+	void postClientGameAttribute(Client* pClient);
 
 private:
 
@@ -72,7 +73,8 @@ private:
 	CpsPlayerAct* m_pCpsPlayerAct;
 	SpsJoin* m_pSpsJoin;
 	SpsDisconnect* m_pSpsDisconnect;
-	SpsClientGameState* m_pSpsClientGameState;
+	SpsClientGameStatus* m_pSpsClientGameStatus;
+	SpsClientGameAttribute* m_pSpsClientGameAttribute;
 	SpsClientInitialData* m_pSpsClientInitialData;
 	SpsPlayerAct* m_pSpsPlayerAct;
 	PacketType* m_pPacketType;

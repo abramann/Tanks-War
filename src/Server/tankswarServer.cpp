@@ -8,13 +8,9 @@
 #include "..\common\map.h"
 #include "..\common\serverplayer.h"
 #include "..\common\timer.h"
+#include "..\common\inlined.inl"
 
 using namespace serverNS;
-
-namespace tanksWarServerNS
-{
-	auto CLIENT_TIMEOUT = 60000;
-}
 
 TanksWarServer::TanksWarServer() : m_status(SERVER_NOT_RUNNING)
 {
@@ -34,8 +30,9 @@ TanksWarServer::TanksWarServer() : m_status(SERVER_NOT_RUNNING)
 	m_pSpsDisconnect = (SpsDisconnect*)m_pSData;
 	m_pSpsJoin = (SpsJoin*)m_pSData;
 	m_pSpsClientInitialData = (SpsClientInitialData*)m_pSData;
-	m_pSpsClientGameState = (SpsClientGameState*)m_pSData;
+	m_pSpsClientGameStatus = (SpsClientGameStatus*)m_pSData;
 	m_pSpsPlayerAct = (SpsPlayerAct*)m_pSData;
+	m_pSpsClientGameAttribute = (SpsClientGameAttribute*)m_pSData;
 }
 
 TanksWarServer::~TanksWarServer()
@@ -71,7 +68,9 @@ void TanksWarServer::render()
 
 void TanksWarServer::communicate()
 {
+#ifndef _DEBUG
 	disonnectInactiveClient();
+#endif
 	if (!recv())
 		return;
 
@@ -117,10 +116,11 @@ void TanksWarServer::createClient()
 	m_pSpsJoin->clients = m_pClient.size();
 	strcpy(m_pSpsJoin->name, m_pCpsJoin->name);
 	strcpy(m_pSpsJoin->map, m_map.c_str());
-	resetClientGameState(m_pClient.back().get());
+	resetClientGameStatus(m_pClient.back().get());
 	post<SpsJoin>();
-	postClientGameState(m_pClient.back().get());
+	postClientGameStatus(m_pClient.back().get());
 	m_pClient.back()->setHeartbeatTime(m_pTimer->getCurrentTime());
+	postClientGameAttribute(nullptr);
 }
 
 bool TanksWarServer::clientExist()
@@ -192,9 +192,9 @@ void TanksWarServer::applyClientPlayerAct()
 		break;
 	}
 
-	m_pSpsClientGameState->packetType = PACKET_CLIENT_GAME_STATE;
-	m_pSpsClientGameState->clientGameState = m_ppReceiverClient->get()->getClientGameState();
-	post<SpsClientGameState>();
+	m_pSpsClientGameStatus->packetType = PACKET_CLIENT_GAME_STATE;
+	m_pSpsClientGameStatus->clientGameStatus = m_ppReceiverClient->get()->getClientGameStatus();
+	post<SpsClientGameStatus>();
 }
 
 void TanksWarServer::disconnectClient(std::unique_ptr<Client>* ppClient)
@@ -215,7 +215,7 @@ void TanksWarServer::disonnectInactiveClient()
 	for (size_t i = 0; i < m_pClient.size(); i++)
 	{
 		int64 delta = currTime - m_pClient[i]->getHeartbeatTime();
-		if (delta > networkNS::HEARTBEAT_DELAY)
+		if (delta > networkNS::SERVER_TIME_OUT)
 			disconnectClient(&m_pClient[i]);
 	}
 }
@@ -323,13 +323,13 @@ void TanksWarServer::send(Client* pClient, int32 size, bool sbClear)
 	m_pServer->send(pClient->getIP(), pClient->getPort(), size, sbClear);
 }
 
-void TanksWarServer::resetClientGameState(Client* pClient)
+void TanksWarServer::resetClientGameStatus(Client* pClient)
 {
 	Space space = m_pMap->getRandomEmptySpace();
 	V3 position = V3(space.v1.x, space.v1.y, 0);
 	pClient->setPosition(position);
 	pClient->setRotate(V3(0, 0, 0));
-	pClient->getHealth();
+	pClient->setHealth(logicNS::HEALTH_TANK);
 }
 
 void TanksWarServer::reply(int32 size)
@@ -337,11 +337,11 @@ void TanksWarServer::reply(int32 size)
 	m_pServer->send(m_pReceiverIP, *m_pReceiverPort, size);
 }
 
-void TanksWarServer::postClientGameState(Client* pClient)
+void TanksWarServer::postClientGameStatus(Client* pClient)
 {
-	m_pSpsClientGameState->packetType = PACKET_CLIENT_GAME_STATE;
-	m_pSpsClientGameState->clientGameState = pClient->getClientGameState();
-	post<SpsClientGameState>();
+	m_pSpsClientGameStatus->packetType = PACKET_CLIENT_GAME_STATE;
+	m_pSpsClientGameStatus->clientGameStatus = pClient->getClientGameStatus();
+	post<SpsClientGameStatus>();
 }
 
 void TanksWarServer::setPort(Port port)
@@ -359,7 +359,7 @@ void TanksWarServer::replyClientsInitialData()
 	{
 		m_pSpsClientInitialData->packetType = PACKET_CLIENT_INITIAL_DATA;
 		strcpy(m_pSpsClientInitialData->name, pClient->getName());
-		m_pSpsClientInitialData->clientGameState = pClient->getClientGameState();
+		m_pSpsClientInitialData->clientGameStatus = pClient->getClientGameStatus();
 		reply<SpsClientInitialData>();
 	}
 }
@@ -378,7 +378,7 @@ PlayerID TanksWarServer::generateClientID() const
 	static std::vector<PlayerID> clientID;
 	PlayerID id = 0;
 	do
-		id = _rand(255);
+		id = random(1, 255);
 	while (std::binary_search(clientID.begin(),clientID.end(), id) || id == 0);
 
 	clientID.push_back(id);
@@ -388,7 +388,7 @@ PlayerID TanksWarServer::generateClientID() const
 std::string TanksWarServer::getRandomMap() const
 {
 	std::vector<std::string> mapList = FileIO::getDirFileList(fileNS::MAP_DIR);
-	std::string map = mapList[_rand(mapList.size() - 1)];
+	std::string map = mapList[random(0, mapList.size() - 1)];
 	map = map.substr(0, map.size() - 4);
 	return map;
 }
@@ -413,4 +413,25 @@ void TanksWarServer::executeServerPlayerDie(Client* pClient)
 	m_pSpsPlayerAct->packetType = PACKET_CLIENT_ACT;
 	m_pSpsPlayerAct->act = PLAYER_ACT_DIE;
 	post<SpsPlayerAct>();
+}
+
+void TanksWarServer::postClientGameAttribute(Client * pClient)
+{
+	if (pClient)
+	{
+		m_pSpsClientGameAttribute->packetType = PACKET_CLIENT_GAME_ATTRIBUTE;
+		m_pSpsClientGameAttribute->clientGameAttribute[0] = pClient->getClientGameAttribute();
+		m_pSpsClientGameAttribute->clients = 1;
+		post(sizeof(SpsClientGameAttribute) + sizeof(ClientGameAttribute));
+	}
+	else	// update all
+	{
+		m_pSpsClientGameAttribute->packetType = PACKET_CLIENT_GAME_ATTRIBUTE;
+		m_pSpsClientGameAttribute->clients = m_pClient.size();
+		for (size_t i = 0; i < m_pClient.size(); i++)
+			m_pSpsClientGameAttribute->clientGameAttribute[i] = m_pClient[i]->getClientGameAttribute();
+	
+		post(sizeof(SpsClientGameAttribute) + sizeof(ClientGameAttribute) * m_pClient.size());
+
+	}
 }

@@ -19,7 +19,7 @@ public:
 
 	Image();
 	~Image();
-	virtual void initialize(std::string texture, const Game* pGame, int8 columns = 1, int8 rows = 1,
+	virtual void initialize(const std::string& texture, const Game* pGame, int8 columns = 1, int8 rows = 1,
 		int32 updateDelay = logicNS::UPDATE_DELAY_IMAGE);
 	virtual void update();
 	virtual void draw() const;
@@ -29,7 +29,7 @@ public:
 	int16 getWidth() const { return m_width; }
 	LPTextureD3D getTexture() const { return m_pTexture->getTexture(); }
 	DxBuffer* getVertexBuffer() const { return m_pVertexBuffer.Get(); }
-	inline V3 getPosition() const { return m_position; }
+	V3 getPosition() const { return m_position; }
 	V3 getRotate() const { return m_rotate; }
 	V3 getScalling() const { return m_scalling; }
 	void addRotateX(float addRX) { m_rotate.x += addRX; }

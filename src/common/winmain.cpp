@@ -3,7 +3,9 @@
 // Note this file is influenced by winmain.cpp from Chrles Kelly's Programming 2D Games
 // Note parts of this code are licensed under CC BY 3.0
 
-#include "types.h"
+#include "inlined.inl"
+#include "fileio.h"
+#include <memory>
 #ifdef _CLIENT_BUILD
 #include "..\Client\tankswar.h"
 
@@ -13,8 +15,6 @@ typedef TanksWar GameBuildType;
 
 typedef TanksWarServer GameBuildType;
 #endif
-#include "fileio.h"
-#include <memory>
 
 #ifdef _DEBUG
 #include "vld\vld.h" // To detect memory leaks
@@ -74,11 +74,6 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 		return false;
 
 	RegisterClassEx(&wc);
-	RECT clientRect;
-	GetClientRect(hwnd, &clientRect);
-	if (g_pGameSettings->width != clientRect.right || g_pGameSettings->height != clientRect.bottom)
-		messageBoxOk("Window client size don't match backbuffer size", "WARNING");
-
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
 	return true;

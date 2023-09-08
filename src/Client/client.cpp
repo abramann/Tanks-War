@@ -5,10 +5,11 @@
 #include "tankswar.h"
 #include "..\common\timer.h"
 #include "..\common\net.h"
+#include "..\common\inlined.inl"
 
 Client::Client()
 {
-	m_port = _rand(3000);
+	m_port = ::random(networkNS::START_CLIENT_PORT, networkNS::END_CLIENT_PORT);
 }
 
 Client::~Client()

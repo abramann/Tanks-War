@@ -44,8 +44,9 @@ public:
 private:
 
 	void heartbeat();
-	void applyUpdateClientGameState();
+	void applyUpdateClientGameStatus();
 	void applyDisconnect();
+	void applyClientGameAttribute();
 
 	clientNS::ClientStatus m_status;
 	PlayerID m_id;
@@ -56,10 +57,11 @@ private:
 	CpsHeartbeat* m_pCpsHeartbeat;
 	CpsJoin* m_pCpsJoin;
 	SpsJoin* m_pSpsJoin;
-	SpsClientGameState* m_pSpsClientGameState;
+	SpsClientGameStatus* m_pSpsClientGameStatus;
 	SpsClientInitialData* m_pSpsClientInitialData;
 	SpsDisconnect* m_pSpsDisconnect;
 	SpsPlayerAct* m_pSpsPlayerAct;
+	SpsClientGameAttribute* m_pSpsClientGameAttribute;
 	CpsPlayerAct* m_pCpsPlayerAct;
 	PacketType* m_pPacketType;
 	ClientInfo m_clientInfo;

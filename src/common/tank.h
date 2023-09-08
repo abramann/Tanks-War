@@ -28,7 +28,9 @@ public:
 	virtual void executeAnimateRepeat();
 	float getBulletSpeed() const { return m_bulletSpeed; }
 	float getBulletDamage() const { return m_bulletDamage; }
+	float getInflictedDamage() const { return m_inflictedDamage; }
 	bool isBulletLaunching() const { return (m_pBullet.size() > 0); }
+	void addInflictedDamage(const float& infDmg) { m_inflictedDamage += infDmg; }
 
 protected:
 
@@ -41,6 +43,7 @@ protected:
 
 	Sound m_soundAttack;
 	float m_bulletSpeed, m_bulletDamage, m_rotateAmount;
+	float m_inflictedDamage;
 	std::string m_tankTexture;
 	std::vector<std::shared_ptr<Bullet>> m_pBullet;
 	Timer* m_pTimer;

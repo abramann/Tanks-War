@@ -10,8 +10,10 @@
 #include "dx11wrapper.h"
 #include "fileio.h"
 #include "collisionshader.h"
+#include "inlined.inl"
 #include <fstream>
 #include <string>
+
 
 Map::Map() : m_pVertexBuf(0), m_pNoSpaceBuf(0), m_pNoSpaceSRV(0), m_pNoSpaceCountBuf(0),
 m_pNoSpaceCountSRV(0), m_pCollisionCS(0), m_pSpaceBuf(0), m_pSpaceSRV(0),
@@ -94,7 +96,7 @@ bool Map::load(const char * map)
 
 			if (prevented)
 				continue;
-
+			
 			space.v1.x = w*m_tiledSize.x;
 			space.v1.y = h*m_tiledSize.y;
 			space.v2.x = space.v1.x + m_tiledSize.x;
@@ -137,11 +139,11 @@ bool Map::load(const char * map)
 	uint32 noSpaceCount = m_noSpace.size();
 	m_pNoSpaceCountBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(uint32), 1, (void*)&noSpaceCount, 0);
 	m_pNoSpaceCountSRV = m_pDx11Wrapper->createBufferSRV(m_pNoSpaceCountBuf.Get());
-	int32 mapRange[] = { m_tiledSize.x*m_width, m_tiledSize.y*m_height };
+	int32 mapRange[] = { static_cast<int32>(m_tiledSize.x*m_width), static_cast<int32>(m_tiledSize.y*m_height) };
 	m_pMapRangeBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(int32), 2, mapRange, 0);
 	m_pMapRangeSRV = m_pDx11Wrapper->createBufferSRV(m_pMapRangeBuf.Get());
-	m_threadGroups = (m_noSpace.size() / 32);
-	float f = (m_noSpace.size()*1.0f / 32.0f) - m_threadGroups;
+	m_threadGroups = (m_noSpace.size() / dxNS::THREADS_PER_GROUP);
+	float f = ((m_noSpace.size()*1.0f) / (dxNS::THREADS_PER_GROUP*1.0f) ) - m_threadGroups;
 	if (f > 0.001f)
 		m_threadGroups++;
 
@@ -151,14 +153,11 @@ bool Map::load(const char * map)
 void Map::clearUnnecessaryNospace()
 {
 	for (size_t i = 0; i < m_noSpace.size(); i++)
-	{
-		bool isUseless = isNospaceUseless(m_noSpace[i]);
-		if (isUseless)
+		if (isNospaceUseless(m_noSpace[i]))
 		{
 			m_noSpace.erase(std::next(m_noSpace.begin(), i));
 			i--;
 		}
-	}
 
 	// For X axis
 	for (size_t i = 0; i < m_noSpace.size(); i++)
@@ -225,7 +224,7 @@ void Map::clearUnnecessaryNospace()
 	}
 }
 #ifdef _DEBUG
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
 
 void Map::draw() const
@@ -271,9 +270,7 @@ float Map::passY(const Object * object, float y) const
 
 bool Map::isCollided(const Image* image) const
 {
-	Space s = image->getSpace();
-	bool collided = isCollided(s);
-	return collided;
+	return isCollided(image->getSpace());
 }
 
 bool Map::isCollided(const Object * object) const
@@ -283,7 +280,7 @@ bool Map::isCollided(const Object * object) const
 	return collided;
 }
 
-bool Map::isCollided(const Space is, const Object* object) const
+bool Map::isCollided(const Space& is, const Object* object) const
 {
 	if (g_pGameSettings->computeShader)
 	{
@@ -293,15 +290,14 @@ bool Map::isCollided(const Space is, const Object* object) const
 		m_pDx11Wrapper->runComputeShader(m_pCollisionCS.Get(), ARRAYSIZE(ppSRV), ppSRV, ARRAYSIZE(ppUAV), ppUAV,
 			m_threadGroups, 1, 1);
 		m_pDx11Wrapper->copyResourceToResource(m_pResultStagingBuf.Get(), m_pResultBuf.Get());
-		int32 result = 0;
-		m_pDx11Wrapper->copyResource(&result, m_pResultStagingBuf.Get(), 4);
-		if (result == 1)
+		int32 collided = 0;
+		m_pDx11Wrapper->copyResource(&collided, m_pResultStagingBuf.Get(), 4);
+		if (collided)
 			return true;
 	}
 	else
 	{
-		bool outOfRange = isOutOfRange(is);
-		if (outOfRange)
+		if (isOutOfRange(is))
 			return true;
 
 		for (auto space : m_noSpace)
@@ -312,16 +308,14 @@ bool Map::isCollided(const Space is, const Object* object) const
 	{
 		if (object == pObj)
 			continue;
-
-		Space space = pObj->getSpace();
-		if (areSpacesCollided(space, is))
+		if (areSpacesCollided(pObj->getSpace(), is))
 			return true;
 	}
 
 	return false;
 }
 
-bool Map::isOutOfRange(const Space space) const
+bool Map::isOutOfRange(const Space& space) const
 {
 	const auto x = m_width*m_tiledSize.x,
 		y = m_height*m_tiledSize.y;
@@ -340,33 +334,28 @@ bool Map::isOutOfRange(const Space space) const
 	return true;
 }
 
-Object * Map::getObject(const Space space) const
+Object * Map::getObject(const Space& space) const
 {
-	Object* pObject = 0;
-	for (auto _pObject : m_pObject)
+	for (auto pObj : m_pObject)
 	{
-		Space is = _pObject->getSpace();
-		bool collided = areSpacesCollided(space, is);
+		Space is = pObj->getSpace();
+		bool collided = areSpacesCollided(is, space);
 		if (collided)
 		{
-			pObject = _pObject;
-			break;
+			return pObj;
 		}
 	}
 
-	return pObject;
+	return nullptr;
 }
 
 bool Map::read()
 {
-	std::string path = fileNS::MAP_DIR;
-	path.operator+=(m_loadedMap);
-	path.operator+=(".map");
-	std::ifstream file(path);
-	if (!file.is_open())
+	std::ifstream mapFileHandle(strFormat("%s%s.map", fileNS::MAP_DIR, m_loadedMap));
+	if (!mapFileHandle.is_open())
 		return false;
 
-	MapData mapData = FileIO::readMapInfo(file);
+	MapData mapData = FileIO::readMapInfo(mapFileHandle);
 	m_width = mapData.width;
 	m_height = mapData.height;
 	m_usedBitmaps = mapData.bitmaps;
@@ -376,7 +365,7 @@ bool Map::read()
 		element.resize(m_width);
 
 	std::string line;
-	for (int32 i = 0; std::getline(file, line); i++)
+	for (int32 i = 0; std::getline(mapFileHandle, line); i++)
 	{
 		for (int32 j = 0; j < m_width; j++)
 		{
@@ -384,7 +373,7 @@ bool Map::read()
 			cell[0] = line[j * 2];
 			m_map[i][j] = static_cast<char>(std::atof(cell));
 			bool exist = false;
-			for (int k = 0; k < m_usedBitmaps; k++) // check if the map element exist if used map elements
+			for (int8 k = 0; k < m_usedBitmaps; k++) // check if the map element exist if used map elements
 			{
 				if (m_map[i][j] == k)
 				{
@@ -398,27 +387,6 @@ bool Map::read()
 	}
 
 	return true;
-}
-
-bool Map::areSpacesCollided(const Space s1, const Space s2) const
-{
-	float maxX1 = s1.getMaxX(),
-		minX1 = s1.getMinX(),
-		maxY1 = s1.getMaxY(),
-		minY1 = s1.getMinY();
-	if (IN_RANGE(s2.v1.x, minX1, maxX1) ||
-		IN_RANGE(s2.v2.x, minX1, maxX1) ||
-		IN_RANGE(s2.v3.x, minX1, maxX1) ||
-		IN_RANGE(s2.v4.x, minX1, maxX1)
-		)
-		if (IN_RANGE(s2.v1.y, minY1, maxY1) ||
-			IN_RANGE(s2.v2.y, minY1, maxY1) ||
-			IN_RANGE(s2.v3.y, minY1, maxY1) ||
-			IN_RANGE(s2.v4.y, minY1, maxY1)
-			)
-			return true;
-
-	return false;
 }
 
 Space Map::getRightSpace(Space s) const
@@ -480,17 +448,17 @@ bool Map::isFreeSpace(Space s) const
 
 Crc32 Map::getCrc32() const
 {
-	std::string path(fileNS::MAP_DIR);
-	path.operator+=(m_loadedMap);
-	path.operator+=(".map");
-	const char* cPath = path.c_str();
-	Crc32 crc32 = FileIO::getCRC32(cPath);
-	return crc32;
+	return FileIO::getCRC32(strFormat("%s%s.map", fileNS::MAP_DIR, m_loadedMap).c_str());
 }
 
 Space Map::getRandomEmptySpace() const
 {
-	return m_freeSpace[_rand(m_freeSpace.size())];
+	Space emptySpace;
+	do
+		emptySpace = m_freeSpace[random(0, m_freeSpace.size())];
+	while (getObject(emptySpace) != nullptr);
+
+	return emptySpace;
 }
 
 void Map::addObject(Object* object)

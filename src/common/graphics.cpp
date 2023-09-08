@@ -9,6 +9,7 @@
 #include "camera.h"
 #include "game.h"
 #include "gamemath.h"
+#include "inlined.inl"
 #include "dx11wrapper.h"
 
 using Microsoft::WRL::ComPtr;
@@ -86,7 +87,7 @@ void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCent
 		pos = gameMathNS::V3ToMatrix(position, MATRIX_TYPE_TRANSLATE);
 	Matrix prop;
 	prop = scal*rot*pos;
-	//prop = scal*rotCentN*rot*rotCent*pos;
+	//prop = scal*rotCentN*rot*rotCent*pos; // to center rotate
 #ifdef _BUILD_WITH_D3D9
 	setWorldMatrix(prop);
 #else ifdef _BUILD_WITH_D3D11
@@ -96,7 +97,7 @@ void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCent
 #endif
 }
 
-bool Graphics::loadTexture(const char* file, int32& width, int32& height, LPTextureD3D& texture)
+bool Graphics::loadTexture(const std::string& file, int32& width, int32& height, LPTextureD3D& texture)
 {
 	return m_pDx11Wrapper->createSRVFromFile(file, texture, width, height);
 }

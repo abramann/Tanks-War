@@ -4,4 +4,4 @@
 - Replace DirecrXMath with GLM
 - Add Console class
 - Improve element search in std::vector in server / client (e.g binary_search)
-- Fix _rand function
+- Fix reconnect reload map client issue (blank map)

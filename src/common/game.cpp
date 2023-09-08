@@ -19,9 +19,8 @@
 #include "map.h"
 #include "dx11wrapper.h"
 #include "sprite.h"
+#include "inlined.inl"
 #include <fileio.h>
-#include "imgui\imgui_impl_dx11.h"
-#include "imgui\imgui.h"
 
 Game::Game()
 {
@@ -126,7 +125,8 @@ bool Game::checkGameFiles() const
 		auto orgHash = gameNS::gameFiles.at(file.first);
 		if (existHash != orgHash)
 		{
-			messageBoxOk(strFormat("File %s doesn't exist or is corrupted.", file.first.c_str()), "ERROR");
+			messageBoxOk(
+				("File %s doesn't exist or is corrupted.", file.first.c_str()), "ERROR");
 			return false;
 		}
 	}

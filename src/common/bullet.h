@@ -16,25 +16,24 @@ class Bullet : public Image
 {
 public:
 
-	Bullet(const Game* pGame, const Tank * pTank);
-	Bullet();
+	Bullet(const Game* pGame, Tank * pTank);
 	~Bullet();
 	virtual void update();
 	void executeLaunch();
-	void executeHit();
 	bool isFinished() const { return m_finish; }
 
 protected:
 
 	virtual void executeAnimateRepeat();
-	V3 Bullet::getBulletLaunchPosition();
+	void executeHit();
 	void executeLaunching();
+	V3 Bullet::getBulletLaunchPosition();
 
 	const Game* m_pGame;
 	Map* m_pMap;
 	Audio* m_pAudio;
 	TextureManger* m_pTextureManger;
-	const Tank* m_pTank;
+	Tank* m_pTank;
 	float m_speed, m_damage;
 	bool m_hit, m_finish;
 };

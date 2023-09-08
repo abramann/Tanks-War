@@ -13,13 +13,13 @@ public:
 
 	FileIO();
 	~FileIO();
-	static bool isFileExist(const char* file);
-	static uint8_t getDirFiles(std::string dir);
+	static bool isFileExist(const std::string& file);
+	static uint8_t getDirFiles(const std::string& dir);
 	static std::vector<std::string> getDirFileList(const char* dir, const char* start = 0, const char* end = 0, bool extension = true);
 	static 	GameSettings readGameSettings();
 	static MapData readMapInfo(std::ifstream& ifs);
 	static Crc32 getCRC32(const std::string& file);
-	static char* loadInMemory(const std::string name, uint32& size);
+	static char* loadInMemory(const std::string& name, uint32& size);
 
 #ifdef _CLIENT_BUILD
 	static ClientInfo readClientInfo();

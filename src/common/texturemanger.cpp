@@ -5,6 +5,7 @@
 #include "fileio.h"
 #include "graphics.h"
 #include "texture.h"
+#include "inlined.inl"
 
 TextureManger::TextureManger()
 {

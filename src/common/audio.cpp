@@ -4,10 +4,11 @@
 
 #include "audio.h"
 #include "fileio.h"
+#include "inlined.inl"
 
 using namespace sf;
 
-Audio::Audio() : m_audioPlay(true), m_pSoundBuffer(0)
+Audio::Audio() : m_pSoundBuffer(0)
 {
 }
 
@@ -41,13 +42,13 @@ void Audio::initialize()
 	}
 }
 
-void Audio::play(std::string  sound)
+void Audio::play(const std::string& sound)
 {
-	if (m_audioPlay)
+	if (g_pGameSettings->audio)
 		m_soundAssembler[sound].play();
 }
 
-void Audio::stop(std::string  sound)
+void Audio::stop(const std::string& sound)
 {
 	m_soundAssembler[sound].stop();
 }

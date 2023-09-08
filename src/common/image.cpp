@@ -20,7 +20,7 @@ Image::~Image()
 	//safeRelease(m_pStagingBuffer);
 }
 
-void Image::initialize(std::string texture, const Game* pGame, int8 columns, int8 rows,
+void Image::initialize(const std::string& texture, const Game* pGame, int8 columns, int8 rows,
 	int32 updateDelay)
 {
 	if (pGame)

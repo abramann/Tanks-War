@@ -62,41 +62,6 @@ typedef ID3D11ComputeShader DxComputeShader;
 constexpr const char* strSERVER_STATE[] = { "Not started" , "Waiting for players...", "Preparibg game..." , "Handlubg" };
 constexpr Vec4 colSERVER_STATE[] = { Vec4(0.7f,0.7f,0.7f,0.5f), Vec4(0.87f,0.77f,0,1), Vec4(0,1,0,1) };
 
-template <typename T>
-void safeRelease(T ptr)
-{
-	if (ptr)
-	{
-		ptr->Release();
-		ptr = 0;
-	}
-}
-
-template <typename T>
-inline void safeDelete(T ptr)
-{
-	if (ptr)
-	{
-		delete ptr;
-		ptr = 0;
-	}
-}
-
-template <typename T>
-inline void safeDeleteArray(T ptr)
-{
-	if (ptr)
-	{
-		delete[] ptr;
-		ptr = NULL;
-	}
-}
-
-inline uint32_t _rand(uint32_t max)
-{
-	return ::GetTickCount() % max;
-}
-
 struct Vertex
 {
 	Vertex() : x(0), y(0), z(0), u(0), v(0) {};
@@ -137,6 +102,7 @@ struct MapData
 	std::vector<int8> preventedBM;
 };
 
+//	inlined functions used by Space struct
 template<typename T>
 inline T getMax(std::vector<T> val)
 {
@@ -166,23 +132,6 @@ inline void add4(const T amount, T& v1, T& v2, T& v3, T& v4)
 		v4 += amount;
 }
 
-//	https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
-template<typename ... Args>
-inline std::string strFormat(const std::string& format, Args ... args)
-{
-	int size_s = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
-	if (size_s <= 0) { throw std::runtime_error("Error during formatting."); }
-	auto size = static_cast<size_t>(size_s);
-	std::unique_ptr<char[]> buf = std::make_unique<char[]>(size);
-	std::snprintf(buf.get(), size, format.c_str(), args ...);
-	return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
-}
-
-inline void messageBoxOk(std::string msg, std::string title)
-{
-	MessageBoxA(NULL, msg.c_str(), title.c_str(), MB_OK);
-}
-
 struct Space
 {
 	V3 v1, v2, v3, v4;
@@ -195,6 +144,27 @@ struct Space
 	void addX(float val) { add4(val, v1.x, v2.x, v3.x, v4.x); }
 	void addY(float val) { add4(val, v1.y, v2.y, v3.y, v4.y); }
 };
+
+inline bool areSpacesCollided(const Space& s1, const Space& s2)
+{
+	float maxX1 = s1.getMaxX(),
+		minX1 = s1.getMinX(),
+		maxY1 = s1.getMaxY(),
+		minY1 = s1.getMinY();
+	if (IN_RANGE(s2.v1.x, minX1, maxX1) ||
+		IN_RANGE(s2.v2.x, minX1, maxX1) ||
+		IN_RANGE(s2.v3.x, minX1, maxX1) ||
+		IN_RANGE(s2.v4.x, minX1, maxX1)
+		)
+		if (IN_RANGE(s2.v1.y, minY1, maxY1) ||
+			IN_RANGE(s2.v2.y, minY1, maxY1) ||
+			IN_RANGE(s2.v3.y, minY1, maxY1) ||
+			IN_RANGE(s2.v4.y, minY1, maxY1)
+			)
+			return true;
+
+	return false;
+}
 
 struct ServerInfo
 {
@@ -214,12 +184,17 @@ struct PlayerIniData
 	PlayerID id;
 };
 
-struct PlayerUpdate
+struct ClientGameAttribute
 {
-	V3 position;
-	V3 rotate;
-	float health;
 	PlayerID id;
+	float health, inflictedDamage, velocity, bulletSpeed, bulletDamage;
+};
+
+struct SpsClientGameAttribute
+{
+	PacketType packetType = PACKET_CLIENT_GAME_ATTRIBUTE;
+	int8 clients;
+	ClientGameAttribute clientGameAttribute[];
 };
 
 struct CpsPlayerAct
@@ -249,12 +224,6 @@ struct SpsPlayerAct
 	PacketType packetType = PACKET_CLIENT_UPDATE;
 	PlayerAct act;
 	PlayerID id;
-};
-
-struct SpsPlayerUpdate
-{
-	PacketType packetType = PACKET_CLIENT_UPDATE;
-	PlayerUpdate playerUpdate[];
 };
 
 struct CpsIni
@@ -295,23 +264,23 @@ struct SpsDisconnect
 	PlayerID id;
 };
 
-struct ClientGameState
+struct ClientGameStatus
 {
 	PlayerID id;
 	V3 position, rotate;
 };
 
-struct SpsClientGameState
+struct SpsClientGameStatus
 {
 	PacketType packetType = PACKET_CLIENT_GAME_STATE;
-	ClientGameState clientGameState;
+	ClientGameStatus clientGameStatus;
 };
 
 struct SpsClientInitialData
 {
 	PacketType packetType = PACKET_CLIENT_INITIAL_DATA;
 	char name[gameNS::MAX_NAME_LEN];
-	ClientGameState clientGameState;
+	ClientGameStatus clientGameStatus;
 };
 
 struct SpsServerShutdown

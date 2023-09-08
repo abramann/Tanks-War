@@ -32,10 +32,9 @@ public:
 	float passY(const Object* object, float y) const;
 	bool isCollided(const Image* image) const;
 	bool isCollided(const Object* object) const;
-	bool isCollided(const Space space, const Object* object = 0) const;
-	bool isOutOfRange(const Space space) const;
-	Object* getObject(const Space space) const;
-	//static Space getImageSpace(const Image* image, float x0 = 0, float y0 = 0);
+	bool isCollided(const Space& space, const Object* object = 0) const;
+	bool isOutOfRange(const Space& space) const;
+	Object* getObject(const Space& space) const;
 	bool isMapExist(const char* name, Crc32 crc32) const { return true; }
 	const char* getMap() const { return m_loadedMap; }
 	Crc32 getCrc32() const;
@@ -46,7 +45,6 @@ public:
 private:
 
 	bool read();
-	bool areSpacesCollided(const Space space1, const Space space2) const;
 	void clearUnnecessaryNospace();
 	Space getRightSpace(Space s) const;
 	Space getLeftSpace(Space s) const;

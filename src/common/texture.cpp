@@ -3,8 +3,8 @@
 // Note this file is influenced by texture.cpp from Chrles Kelly's Programming 2D Games Copyright (c) CC BY 3.0
 
 #include "texture.h"
-#include <fstream>
 #include "fileio.h"
+#include "inlined.inl"
 
 Texture::Texture() : m_width(0), m_height(0), m_lpTexture(NULL)
 {

@@ -32,9 +32,10 @@ TanksWar::TanksWar() : m_status(clientNS::CLIENT_UNCONNECTED)
 	m_pCpsPlayerAct = (CpsPlayerAct*)m_pSData;
 	m_pSpsJoin = (SpsJoin*)m_pRData;
 	m_pSpsClientInitialData = (SpsClientInitialData*)m_pRData;
-	m_pSpsClientGameState = (SpsClientGameState*)m_pRData;
+	m_pSpsClientGameStatus = (SpsClientGameStatus*)m_pRData;
 	m_pSpsDisconnect = (SpsDisconnect*)m_pRData;
 	m_pSpsPlayerAct = (SpsPlayerAct*)m_pRData;
+	m_pSpsClientGameAttribute = (SpsClientGameAttribute*)m_pRData;
 }
 
 TanksWar::~TanksWar()
@@ -54,8 +55,8 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hwnd)
 	m_pClient->initialize(this);
 	m_pInterface->initialize(this);
 	m_clientInfo = FileIO::readClientInfo();
-	m_thisClient.initialize(0, this);
 #endif
+	m_thisClient.initialize(0, this);
 }
 
 void TanksWar::update()
@@ -112,14 +113,16 @@ void TanksWar::updateScene()
 
 void TanksWar::communicate()
 {
+#ifndef _DEBUG
 	heartbeat();
+#endif
 	if (!m_pClient->recv())
 		return;
 
 	switch (*m_pPacketType)
 	{
 	case PACKET_CLIENT_GAME_STATE:
-		applyUpdateClientGameState();
+		applyUpdateClientGameStatus();
 		break;
 
 	case PACKET_DISCONNECT:
@@ -136,7 +139,12 @@ void TanksWar::communicate()
 
 	case PACKET_CLIENT_ACT:
 		executeClientAct();
-	
+		break;
+
+	case PACKET_CLIENT_GAME_ATTRIBUTE:
+		applyClientGameAttribute();
+		break;
+
 	default:
 		break;
 	}
@@ -196,8 +204,8 @@ bool TanksWar::applyReceivedGameProperties()
 {
 	while (*m_pPacketType == PACKET_CLIENT_INITIAL_DATA)
 	{
-		auto pRemoteClient = std::make_shared<RemoteClient>(m_pSpsClientInitialData->clientGameState.id, m_pSpsClientInitialData->name, this);
-		pRemoteClient->setClientGameState(m_pSpsClientInitialData->clientGameState);
+		auto pRemoteClient = std::make_shared<RemoteClient>(m_pSpsClientInitialData->clientGameStatus.id, m_pSpsClientInitialData->name, this);
+		pRemoteClient->setClientGameStatus(m_pSpsClientInitialData->clientGameStatus);
 		m_pRemoteClient.push_back(pRemoteClient);
 		m_pClient->recv(2000);
 	}
@@ -260,16 +268,16 @@ void TanksWar::heartbeat()
 	}
 }
 
-void TanksWar::applyUpdateClientGameState()
+void TanksWar::applyUpdateClientGameStatus()
 {
-	auto& updateClientID = m_pSpsClientGameState->clientGameState.id;
+	auto& updateClientID = m_pSpsClientGameStatus->clientGameStatus.id;
 	if (m_id == updateClientID)
-		m_thisClient.setClientGameState(m_pSpsClientGameState->clientGameState);
+		m_thisClient.setClientGameStatus(m_pSpsClientGameStatus->clientGameStatus);
 	else
 		for (auto& pRClient : m_pRemoteClient)
 			if (pRClient->getID() == updateClientID)
 			{
-				pRClient->setClientGameState(m_pSpsClientGameState->clientGameState);
+				pRClient->setClientGameStatus(m_pSpsClientGameStatus->clientGameStatus);
 				break;
 			}
 }
@@ -283,6 +291,26 @@ void TanksWar::applyDisconnect()
 		auto pRClient = std::find(m_pRemoteClient.begin(), m_pRemoteClient.end(),
 			findRemoteClientByID(m_pSpsDisconnect->id));
 		m_pRemoteClient.erase(pRClient);
+	}
+}
+
+void TanksWar::applyClientGameAttribute()
+{
+	for (int8 i = 0; i < m_pSpsClientGameAttribute->clients; i++)
+	{
+		ClientGameAttribute& cga = m_pSpsClientGameAttribute->clientGameAttribute[i];
+		if (cga.id == m_id)
+		{
+			m_thisClient.setClientGameAttribute(cga);
+		}
+		else
+		{
+			auto remoteClient = findRemoteClientByID(cga.id);
+#ifdef _DEBUG
+			if (remoteClient == nullptr) __debugbreak();
+#endif
+			remoteClient->setClientGameAttribute(cga);
+		}
 	}
 }
 

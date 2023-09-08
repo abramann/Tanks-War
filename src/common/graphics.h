@@ -28,17 +28,15 @@ public:
 	Graphics();
 	~Graphics();
 	bool initialize(const Game* pGame);
-	bool loadTexture(const char* file, int32& width, int32& height, LPTextureD3D& texture);
+	bool loadTexture(const std::string& file, int32& width, int32& height, LPTextureD3D& texture);
 	void beginRender();
 	void drawImage(const Image* image);
 	void drawPrimitive(uint32 startVertex, uint32 count);
 	void endRender();
 	void showBackbuffer();
-	Resolution getResolution();
 	std::vector<std::string> getSupportedResolutionAsString() const;
 	int32 getIndexCurrentResolution() const;
 	void onResize();
-
 	void setDrawProperties(V3 position = V3(0, 0, 0), V3 scall = V3(1, 1, 1), V3 rotate = V3(0, 0, 0), V3 rotateCenter = V3(0, 0, 0));
 	void setTexture(LPTextureD3D texture);
 	void setWorldMatrix(Matrix* worldMatrix);

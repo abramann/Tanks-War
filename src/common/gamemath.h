@@ -63,7 +63,7 @@ namespace gameMathNS
 		*mat = XMMatrixIdentity();
 	}
 
-	inline Matrix V3ToMatrix(const V3 v3, MatrixType type)
+	inline Matrix V3ToMatrix(V3 v3, MatrixType type)
 	{
 		Matrix mat;
 		const float &x = v3.x, &y = v3.y, &z = v3.z;

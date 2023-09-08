@@ -138,6 +138,11 @@
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\common\\vertexshader.h</HeaderFileOutput>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\inlined.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{39559228-4481-4741-B881-E27975877C86}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
