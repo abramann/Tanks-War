@@ -75,10 +75,9 @@ void Bullet::executeAnimateRepeat()
 
 void Bullet::executeLaunching()
 {
-	auto timeFactor = m_pTimer->getTimeFactor();
-	float incX = m_speed*sin(m_rotate.z)*timeFactor,
-		incY = m_speed*cos(m_rotate.z)*timeFactor;
-	m_position;
+	float factors = m_pTimer->getTimeFactor() * m_pMap->getVelocityFactor(getSpace());
+	float incX = m_speed*sin(m_rotate.z)*factors,
+		incY = m_speed*cos(m_rotate.z)*factors;
 	addX(-incX);
 	addY(incY);
 }

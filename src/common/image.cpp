@@ -16,8 +16,6 @@ m_scalling(1, 1, 1), m_initialized(false), m_vertices(graphicsNS::VERTICES_IMAGE
 
 Image::~Image()
 {
-	//safeRelease(m_pVertexBuffer);
-	//safeRelease(m_pStagingBuffer);
 }
 
 void Image::initialize(const std::string& texture, const Game* pGame, int8 columns, int8 rows,

@@ -85,20 +85,31 @@ GameSettings FileIO::readGameSettings()
 	return gameSettings;
 }
 
-MapData FileIO::readMapInfo(std::ifstream& ifs)
+MapInfo FileIO::readMapInfo(std::ifstream& ifs)
 {
-	MapData mapData;
-	readValues<int16>(ifs, { &mapData.width,&mapData.height });
-	int8 preventedBMs = 0;
-	readValues<int8>(ifs, { &mapData.bitmaps,&preventedBMs });
-	for (auto i = 0; i < preventedBMs; i++)
+	MapInfo mapInfo;
+	readValues<int16>(ifs, { &mapInfo.width,&mapInfo.height });
+	readValues<int8>(ifs, { &mapInfo.bitmaps });
+	for (int8 i = 0; i < mapInfo.bitmaps; i++)
 	{
-		int8 bm = 0;
-		readValues<int8>(ifs, { &bm });
-		mapData.preventedBM.push_back(bm);
+		BitmapAttribute bmAttribute = { 0 };
+		int8 attribute = 0;
+		readValues<int8>(ifs, { &attribute });
+		if (attribute)
+		{
+			readValues<bool>(ifs, { &bmAttribute.obstructed });
+			readValues<float>(ifs, { &bmAttribute.damageFactor,&bmAttribute.velocityFactor });
+		}
+		else
+		{
+			bmAttribute.damageFactor = logicNS::DEFAULT_BITMAP_DAMAGEFACTOR;
+			bmAttribute.velocityFactor = logicNS::DEFAULT_BITMAP_VELOCITYFACTOR;
+		}
+
+		mapInfo.bitmapAttribute.push_back(bmAttribute);
 	}
 
-	return mapData;
+	return mapInfo;
 }
 
 Crc32 FileIO::getCRC32(const std::string& file)

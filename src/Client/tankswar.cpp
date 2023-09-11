@@ -9,7 +9,7 @@
 #include "..\common\serverplayer.h"
 #include "..\common\timer.h"
 
-//#define TEST_NO_SERVER_INTERFACE
+#define TEST_NO_SERVER_INTERFACE
 #ifdef TEST_NO_SERVER_INTERFACE
 #include "..\common\input.h"
 #include "..\common\camera.h"
@@ -48,9 +48,9 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hwnd)
 {
 	Game::initialize(hInstance, hwnd);
 #ifdef TEST_NO_SERVER_INTERFACE
-	m_pMap->load("Nova");
+	m_pMap->load("Battle Ground");
 	tank2.initialize("player-tank", this);
-	tank2.setPosition(V3(330, 300, 0));
+	tank2.setPosition(m_pMap->getRandomEmptySpace().v1);
 #else
 	m_pClient->initialize(this);
 	m_pInterface->initialize(this);
@@ -66,9 +66,9 @@ void TanksWar::update()
 		tank2.executeForward();
 	if (m_pInput->isKeyDown(inputNS::S_KEY))
 		tank2.executeBack();
-	if (m_pInput->isKeyPressed(inputNS::D_KEY))
+	if (m_pInput->isKeyDown(inputNS::D_KEY))
 		tank2.executeRight();
-	if (m_pInput->isKeyPressed(inputNS::A_KEY))
+	if (m_pInput->isKeyDown(inputNS::A_KEY))
 		tank2.executeLeft();
 	if (m_pInput->isKeyDown(inputNS::E_KEY))
 		tank2.executeAttack();

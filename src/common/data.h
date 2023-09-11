@@ -30,7 +30,6 @@ namespace graphicsNS
 	//constexpr auto  VERTEX_FVF = D3DFVF_XYZ | D3DFVF_TEX1;
 	constexpr auto CAMERA_FARPLANE = 1000.0f;
 	constexpr auto CAMERA_FOV = 1.5707963f;
-	constexpr auto CAMERA_HEIGHT = -300.0f;
 	constexpr auto CAMERA_NEARPLANE = 1.0f;
 	constexpr auto PROJECT_FAR_PLANE = 1000.0f;
 	constexpr auto PROJECT_FOV = PI / 2;
@@ -64,7 +63,7 @@ namespace textureNS
 {
 	constexpr auto TEXTURE_BULLET_ROWS_COLUMNS = 3;
 	constexpr auto TEXTURE_TANK_DESTROY_ROWS_COLUMNS = 8;
-	constexpr auto 	TEXTURE_TILEDS = 3;
+	constexpr auto 	TEXTURE_TILEDS = 9;
 }
 
 namespace mapNS
@@ -114,6 +113,7 @@ namespace gameNS
 
 namespace logicNS
 {
+	constexpr auto CAMERA_HEIGHT = -300.0f;
 	constexpr auto BULLET_DAMAGE = 40.0f;
 	constexpr auto BULLET_SPEED = 8.0f;
 	constexpr auto HEALTH_TANK = 100.0f;
@@ -124,6 +124,9 @@ namespace logicNS
 	constexpr auto UPDATE_DELAY_TANK_DESTORY = 100;
 	constexpr auto UPDATE_DELAY_TANK_DESTROY = 100;
 	constexpr auto VELOCITY_TANK = 3.0f;
+	constexpr auto DEFAULT_BITMAP_DAMAGEFACTOR = 1.0f;
+	constexpr auto DEFAULT_BITMAP_VELOCITYFACTOR = 1.0f;
+
 }
 
 namespace networkNS
@@ -173,6 +176,10 @@ namespace inputNS
 	constexpr Key BACKSPACE_KEY = ImGuiKey_Backspace;
 	constexpr Key RSHIFT_KEY = ImGuiKey_RightShift;
 	constexpr Key LSHIFT_KEY = ImGuiKey_LeftShift;
+	constexpr Key F1_KEY = ImGuiKey_F1;
+	constexpr Key F2_KEY = ImGuiKey_F2;
+	constexpr Key F3_KEY = ImGuiKey_F3;
+
 };
 
 namespace interfaceNS

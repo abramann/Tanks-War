@@ -64,10 +64,10 @@ bool Tank::executeAttack()
 
 void Tank::executeBack()
 {
-	auto timeFactor = m_pTimer->getTimeFactor();
-	float x = m_position.x + (m_velocity * sin(m_rotate.z)*timeFactor);
+	float factors = m_pTimer->getTimeFactor() * m_pMap->getVelocityFactor(getSpace());;
+	float x = m_position.x + (m_velocity * sin(m_rotate.z)*factors);
 	m_position.x = m_pMap->passX(this, x);
-	float y = m_position.y - (m_velocity * cos(m_rotate.z))*timeFactor;
+	float y = m_position.y - (m_velocity * cos(m_rotate.z))*factors;
 	m_position.y = m_pMap->passY(this, y);
 	Object::executeForward();
 }
@@ -82,36 +82,36 @@ void Tank::executeDie()
 
 void Tank::executeForward()
 {
-	auto timeFactor = m_pTimer->getTimeFactor();
-	float x = m_position.x - (m_velocity * sin(m_rotate.z))*timeFactor;
+	float factors = m_pTimer->getTimeFactor() * m_pMap->getVelocityFactor(getSpace());;
+	float x = m_position.x - (m_velocity * sin(m_rotate.z))*factors;
 	m_position.x = m_pMap->passX(this, x);
-	float y = m_position.y + (m_velocity * cos(m_rotate.z))*timeFactor;
+	float y = m_position.y + (m_velocity * cos(m_rotate.z))*factors;
 	m_position.y = m_pMap->passY(this, y);
 	Object::executeForward();
 }
 
 void Tank::executeLeft()
 {
-	auto timeFactor = m_pTimer->getTimeFactor();
+	float factors = m_pTimer->getTimeFactor();
 	if (m_rotate.z >= (logicNS::TANK_MAX_ANGLE - 0.01f))
 		m_rotate.z *= -1;
 
-	m_rotate.z += m_rotateAmount* timeFactor;
+	m_rotate.z += m_rotateAmount* factors;
 	if (m_pMap->isCollided(this))
-		m_rotate.z -= m_rotateAmount * timeFactor;
+		m_rotate.z -= m_rotateAmount * factors;
 
 	Object::executeLeft();
 }
 
 void Tank::executeRight()
 {
-	auto timeFactor = m_pTimer->getTimeFactor();
+	auto factors = m_pTimer->getTimeFactor();
 	if (m_rotate.z <= -logicNS::TANK_MAX_ANGLE)
 		m_rotate.z *= -1;
 
-	m_rotate.z -= m_rotateAmount * timeFactor;
+	m_rotate.z -= m_rotateAmount * factors;
 	if (m_pMap->isCollided(this))
-		m_rotate.z += m_rotateAmount * timeFactor;
+		m_rotate.z += m_rotateAmount * factors;
 	Object::executeRight();
 }
 

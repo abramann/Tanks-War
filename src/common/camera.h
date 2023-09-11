@@ -7,6 +7,7 @@
 class Game;
 class Graphics;
 class Map;
+class Input;
 
 class Camera
 {
@@ -21,9 +22,10 @@ public:
 private:
 
 	Graphics* m_pGraphics;
+	Input* m_pInput;
 	Map* m_pMap;
 	Matrix m_proj, m_camera;
-	float m_fov, m_aspectRation,
+	float m_fov, m_aspectRatio,
 		m_nearPlane, m_farPlane,
 		m_z;
 };

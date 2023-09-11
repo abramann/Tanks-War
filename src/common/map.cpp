@@ -36,24 +36,20 @@ void Map::initialize(const Game * pGame)
 	m_pResultStagingBuf = m_pDx11Wrapper->createStagingBuffer(D3D11_CPU_ACCESS_READ, sizeof(int), 1, 0);
 	m_pSpaceBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(Space), 1, 0, D3D11_CPU_ACCESS_WRITE);
 	m_pSpaceSRV = m_pDx11Wrapper->createBufferSRV(m_pSpaceBuf.Get());
+	for (int i = 0; i < textureNS::TEXTURE_TILEDS; i++)
+		m_pTexture[i] = m_pTextureManger->getTexture(strFormat("tiled-%d", i));
 }
 
 #ifdef _DEBUG
 #pragma optimize("",on)
 #endif
-bool Map::load(const char * map)
+bool Map::load(const std::string& map)
 {
-	strcpy_s(m_loadedMap, map);
+	m_loadedMap = map;
 	if (!read())
 		return false;
 
 	int32 totalBitmaps = m_width*m_height;
-	for (int i = 0; i < textureNS::TEXTURE_TILEDS; i++)
-	{
-		std::string tex = strFormat("tiled-%d", i);
-		m_pTexture[i] = m_pTextureManger->getTexture(tex);
-	}
-
 	m_tiledSize.x = static_cast<float>(m_pTexture[0]->getWidth());;
 	m_tiledSize.y = static_cast<float>(m_pTexture[0]->getHeight());
 	std::vector<std::vector< std::vector<TextureVertices>>> vertices(m_usedBitmaps);
@@ -79,11 +75,11 @@ bool Map::load(const char * map)
 			vertices[m_map[h][w]][h][w].v5 = { (w + 1)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,0.0f,0.0f };
 			vertices[m_map[h][w]][h][w].v6 = { (w + 1)*m_tiledSize.x,(h)*m_tiledSize.y,0.0f,0.0f,1.0f };
 			Space space;
-			bool prevented = false;
-			for (auto preventedBM : m_preventedBitmap)
-				if (m_map[h][w] == preventedBM)
+			bool noSpace = false;
+			for (auto noSpaceBitmap : m_noSpaceBitmap)
+				if (m_map[h][w] == noSpaceBitmap)
 				{
-					prevented = true;
+					noSpace = true;
 					space.v1.x = w*m_tiledSize.x,
 						space.v1.y = h*m_tiledSize.y;
 					space.v2.x = space.v1.x + m_tiledSize.x,
@@ -94,9 +90,9 @@ bool Map::load(const char * map)
 					break;
 				}
 
-			if (prevented)
+			if (noSpace)
 				continue;
-			
+
 			space.v1.x = w*m_tiledSize.x;
 			space.v1.y = h*m_tiledSize.y;
 			space.v2.x = space.v1.x + m_tiledSize.x;
@@ -143,7 +139,7 @@ bool Map::load(const char * map)
 	m_pMapRangeBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(int32), 2, mapRange, 0);
 	m_pMapRangeSRV = m_pDx11Wrapper->createBufferSRV(m_pMapRangeBuf.Get());
 	m_threadGroups = (m_noSpace.size() / dxNS::THREADS_PER_GROUP);
-	float f = ((m_noSpace.size()*1.0f) / (dxNS::THREADS_PER_GROUP*1.0f) ) - m_threadGroups;
+	float f = ((m_noSpace.size()*1.0f) / (dxNS::THREADS_PER_GROUP*1.0f)) - m_threadGroups;
 	if (f > 0.001f)
 		m_threadGroups++;
 
@@ -231,7 +227,7 @@ void Map::draw() const
 {
 	m_pGraphics->setDrawProperties();
 	m_pDx11Wrapper->streamVertexBuffer(m_pVertexBuf.Get());
-	for (auto i = 0; i < m_usedBitmaps; i++)
+	for (int8 i = 0; i < m_usedBitmaps; i++)
 	{
 		m_pGraphics->setTexture(m_pTexture[i]->getTexture());
 		m_pGraphics->drawPrimitive(m_startVertex[i], m_lenVertex[i] / 3);
@@ -250,8 +246,7 @@ float Map::passX(const Object * object, float x) const
 {
 	Space is = object->getSpace(x, 0);
 	float x0 = object->getPosition().x;
-	bool collided = isCollided(is, object);
-	if (collided)
+	if (isCollided(is, object))
 		return x0;
 
 	return x;
@@ -261,8 +256,7 @@ float Map::passY(const Object * object, float y) const
 {
 	Space is = object->getSpace(0, y);
 	float y0 = object->getPosition().y;
-	bool collided = isCollided(is, object);
-	if (collided)
+	if (isCollided(is, object))
 		return y0;
 
 	return y;
@@ -275,9 +269,7 @@ bool Map::isCollided(const Image* image) const
 
 bool Map::isCollided(const Object * object) const
 {
-	Space is = object->getSpace();
-	bool collided = isCollided(is, object);
-	return collided;
+	return isCollided(object->getSpace(), object);
 }
 
 bool Map::isCollided(const Space& is, const Object* object) const
@@ -306,7 +298,7 @@ bool Map::isCollided(const Space& is, const Object* object) const
 	}
 	for (auto pObj : m_pObject)
 	{
-		if (object == pObj)
+		if (object == pObj)	// is object apply same
 			continue;
 		if (areSpacesCollided(pObj->getSpace(), is))
 			return true;
@@ -351,23 +343,27 @@ Object * Map::getObject(const Space& space) const
 
 bool Map::read()
 {
-	std::ifstream mapFileHandle(strFormat("%s%s.map", fileNS::MAP_DIR, m_loadedMap));
+	std::ifstream mapFileHandle(strFormat("%s%s.map", fileNS::MAP_DIR, m_loadedMap.c_str()));
 	if (!mapFileHandle.is_open())
 		return false;
 
-	MapData mapData = FileIO::readMapInfo(mapFileHandle);
-	m_width = mapData.width;
-	m_height = mapData.height;
-	m_usedBitmaps = mapData.bitmaps;
-	m_preventedBitmap = mapData.preventedBM;
+	MapInfo mapInfo = FileIO::readMapInfo(mapFileHandle);
+	m_width = mapInfo.width;
+	m_height = mapInfo.height;
+	m_usedBitmaps = mapInfo.bitmaps;
+	m_bitmapAttribute = mapInfo.bitmapAttribute;
+	for (size_t i = 0; i < m_bitmapAttribute.size(); i++)
+		if (m_bitmapAttribute[i].obstructed)
+			m_noSpaceBitmap.push_back(i);
+
 	m_map.resize(m_height);
 	for (auto& element : m_map)
 		element.resize(m_width);
 
 	std::string line;
-	for (int32 i = 0; std::getline(mapFileHandle, line); i++)
+	for (int32 i = m_height - 1; std::getline(mapFileHandle, line); i--)	// x0 and y0 is left down in map file, read first map cells in last array elements
 	{
-		for (int32 j = 0; j < m_width; j++)
+		for (int32 j = m_width - 1; j >= 0; j--)
 		{
 			char cell[2] = { 0 }; // 2 elements for avoid multi-byte mismatch happens when call std::atof
 			cell[0] = line[j * 2];
@@ -425,7 +421,7 @@ Space Map::getDownSpace(Space s) const
 	return s;
 }
 
-bool Map::isNospaceUseless(Space s) const
+bool Map::isNospaceUseless(const Space& s) const
 {
 	Space space[] = { getUpSpace(s),getDownSpace(s),getRightSpace(s),getLeftSpace(s) };
 	for (int i = 0; i < mapNS::SPACE_VERTICES; i++)
@@ -437,10 +433,10 @@ bool Map::isNospaceUseless(Space s) const
 	return true;
 }
 
-bool Map::isFreeSpace(Space s) const
+bool Map::isFreeSpace(const Space& space) const
 {
 	for (Space freeSpace : m_freeSpace)
-		if (s.isSame(freeSpace))
+		if (space.isSame(freeSpace))
 			return true;
 
 	return false;
@@ -475,4 +471,12 @@ void Map::removeObject(Object* pObject)
 	auto pObj = std::find(m_pObject.begin(), m_pObject.end(), pObject);
 	if (pObj != m_pObject.end())
 		m_pObject.erase(pObj);
+}
+
+float Map::getVelocityFactor(V3 vertex) const
+{
+	vertex.x = floor(vertex.x / m_tiledSize.x);
+	vertex.y = floor(vertex.y / m_tiledSize.y);
+	auto r = m_map[vertex.y][vertex.x];
+	return m_bitmapAttribute[r].velocityFactor;
 }

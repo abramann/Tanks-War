@@ -82,24 +82,17 @@ struct GameSettings
 	bool windowed, vsync, audio, computeShader;
 };
 
-struct ImageInfo
+struct BitmapAttribute
 {
-	uint16_t width, height;
-	uint8_t columns, rows;
-	bool animate;
-	float animateSpeed, scalling;
+	bool obstructed; // barrier
+	float velocityFactor, damageFactor;
 };
 
-struct BitmapData
-{
-	uint16_t width, height;
-};
-
-struct MapData
+struct MapInfo
 {
 	int16 width, height;
 	int8 bitmaps;
-	std::vector<int8> preventedBM;
+	std::vector<BitmapAttribute> bitmapAttribute;
 };
 
 //	inlined functions used by Space struct
@@ -141,6 +134,9 @@ struct Space
 	float getMinX() const { return getMin<float>({ v1.x,v2.x,v3.x,v4.x }); }
 	float getMaxY() const { return getMax<float>({ v1.y, v2.y, v3.y, v4.y }); }
 	float getMinY() const { return getMin<float>({ v1.y, v2.y, v3.y, v4.y }); }
+	float getWidth() const { return getMaxX() - getMinX(); }
+	float getHeight() const { return getMaxY() - getMinY(); }
+	V3 getCenter() const { return V3(getMinX() + getWidth() / 2, getMinY() + getHeight() / 2, 0); }
 	void addX(float val) { add4(val, v1.x, v2.x, v3.x, v4.x); }
 	void addY(float val) { add4(val, v1.y, v2.y, v3.y, v4.y); }
 };
