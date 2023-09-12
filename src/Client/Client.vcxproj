@@ -184,6 +184,7 @@
     <ClInclude Include="..\common\map.h" />
     <ClInclude Include="..\common\net.h" />
     <ClInclude Include="..\common\object.h" />
+    <ClInclude Include="..\common\pixelshader.h" />
     <ClInclude Include="..\common\player.h" />
     <ClInclude Include="..\common\serverplayer.h" />
     <ClInclude Include="..\common\sprite.h" />

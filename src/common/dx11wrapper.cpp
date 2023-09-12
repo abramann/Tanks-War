@@ -4,10 +4,10 @@
 #include "dx11wrapper.h"
 #include "game.h"
 #include "imgui\imgui_impl_dx11.h"
-#include "pixelshader.h"
-#include "vertexshader.h"
 #include "fileio.h"
 #include "types.h"
+#include "vertexshader.h"
+#include "pixelshader.h"
 #include "inlined.inl"
 #include <D3DX11.h>
 
@@ -75,7 +75,6 @@ bool Dx11Wrapper::d3dInitialize()
 	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_pDevice->CreatePixelShader(g_pPixelShader, ARRAYSIZE(g_pPixelShader), 0, &m_pPShader);
 	m_pDeviceContext->PSSetShader(m_pPShader.Get(), 0, 0);
-	m_pVSConstBuffer = createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(Matrix));
 	D3D11_SAMPLER_DESC sampDesc = {};
 	initSampleState(sampDesc);
 	m_pDevice->CreateSamplerState(&sampDesc, &m_pSampleState);
@@ -159,7 +158,12 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createBuffer(D3D11_USAGE usage
 	}
 
 	if (pBuf == nullptr)
+	{
+#ifdef _DEUBG
+		DebugBreak();
+#endif
 		throw GameError(gameErrorNS::FATAL_ERROR, "m_pDevice->CreateBuffer failed");
+	}
 
 	return pBuf;
 }
@@ -257,11 +261,11 @@ void Dx11Wrapper::initBlend(D3D11_RENDER_TARGET_BLEND_DESC & rtbd)
 	rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 }
 
-void Dx11Wrapper::vsSetConstBuffer(const void * data)
+void Dx11Wrapper::vsSetConstBuffer(ID3D11Buffer* pVSConstBuffer, const void * data, uint32 slot)
 {
-	m_pDeviceContext->UpdateSubresource(m_pVSConstBuffer.Get(), 0, 0, data, 0,
+	m_pDeviceContext->VSSetConstantBuffers(slot, 1, &pVSConstBuffer);
+	m_pDeviceContext->UpdateSubresource(pVSConstBuffer, 0, 0, data, 0,
 		0);
-	m_pDeviceContext->VSSetConstantBuffers(0, 1, m_pVSConstBuffer.GetAddressOf());
 }
 
 void Dx11Wrapper::onResize(int32 width, int32 height)

@@ -63,7 +63,7 @@ void Camera::update(V3 lookTo)
 #else ifdef _BUILD_WITH_D3D11
 	viewMatrix = viewMatrix*eye*m_proj;
 #endif
-	m_pGraphics->setViewMatrix(&viewMatrix);
+	m_pGraphics->setWorldViewMatrix(&viewMatrix);
 }
 
 void Camera::updatePerspectiveMatrix()

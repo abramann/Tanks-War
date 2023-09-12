@@ -27,7 +27,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createVertexBuffer(uint32 vertices, uint32 cpuAccess, Vertex* data = 0);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createStructuredBuffer(uint32 elementSize, uint32 count, void* pInitData, int32 cpuAccess);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createStagingBuffer(D3D11_CPU_ACCESS_FLAG cpuAccess, uint32 elementSize, uint32 count, void* pInitData);
-	void setComputeShader(ID3D11ComputeShader* lpComputeShader);
+	void setComputeShader(ID3D11ComputeShader* pComputeShader);
 	//void setComputeShaderSRV(uint32 srvs, ID3D11ShaderResourceView** ppShaderResourceView);
 	//void setComputeShaderUAV(uint32 uavs, ID3D11UnorderedAccessView** ppUnorderedAccessView);
 	void copyResourceToResource(ID3D11Resource* lpDest, ID3D11Resource* lpSource);
@@ -40,7 +40,7 @@ public:
 		uint32 uavs, ID3D11UnorderedAccessView** ppUnorderedAccessView, uint32 x, uint32 y, uint32 z);
 	void iaSetStreamBuffer(ID3D11Buffer * pVB, uint32 strides, uint32 offset, uint32 numBuffers = 1, uint32 startSlot = 0);
 	void streamVertexBuffer(ID3D11Buffer* lpVB);
-	void vsSetConstBuffer(const void* data);
+	void vsSetConstBuffer(ID3D11Buffer* pVSConstBuffer, const void* data, uint32 slot);
 	void onResize(int32 width, int32 height);
 	std::vector<DXGI_MODE_DESC> enurmerateAdapterMode();
 	void setFullScreen(bool fullscreen) const;
@@ -59,11 +59,10 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_pDepthBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVSConstBuffer;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_pSampleState;
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> m_pVShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_pPShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pInputLayout;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_pSampleState;
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_pBlendState;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pStagingBuffer;
 

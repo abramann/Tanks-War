@@ -119,6 +119,7 @@ void Game::updateGameSettings() const
 
 bool Game::checkGameFiles() const
 {
+	return true;
 	for (auto file : gameNS::gameFiles)
 	{
 		auto existHash = FileIO::getCRC32(file.first);

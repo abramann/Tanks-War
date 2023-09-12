@@ -6,6 +6,7 @@
 
 #include "types.h"
 #include <memory>
+#include <wrl\client.h>
 
 class Game;
 class Image;
@@ -39,16 +40,16 @@ public:
 	void onResize();
 	void setDrawProperties(V3 position = V3(0, 0, 0), V3 scall = V3(1, 1, 1), V3 rotate = V3(0, 0, 0), V3 rotateCenter = V3(0, 0, 0));
 	void setTexture(LPTextureD3D texture);
-	void setWorldMatrix(Matrix* worldMatrix);
+	void setObjectConstBuffer(void* pData);
+	void setWorldViewMatrix(Matrix* worldViewMatrix);
 	Camera* getCamera() const { return m_pCamera.get(); }
 
 private:
-
-	void setViewMatrix(Matrix* wvp);
 
 	HWND m_hwnd;
 	Matrix m_wvp;
 	std::shared_ptr<Camera> m_pCamera;
 	mutable std::vector<Resolution> m_suppModes;
 	Dx11Wrapper* m_pDx11Wrapper;
+	Microsoft::WRL::ComPtr<DxBuffer> m_pWVMBuffer, m_pObjectMatrixBuffer, m_pViewport;
 };

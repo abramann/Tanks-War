@@ -1,4 +1,6 @@
 #include "v3.h"
+#include <math.h>
+#include <assert.h>
 
 V3::V3(const V3 &vec)
 {

@@ -82,8 +82,8 @@ bool createGameWindow(HWND& hwnd, HINSTANCE hInstance, int nCmdShow)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	pGame = std::make_unique<GameBuildType>();
-	//if (!pGame->checkGameFiles())
-	//	return 1;
+	if (!pGame->checkGameFiles())
+		return 1;
 
 	HWND hwnd = NULL;
 	GameSettings gameSettings = FileIO::readGameSettings();

@@ -33,6 +33,8 @@ bool Graphics::initialize(const Game* pGame)
 		return false;
 
 	m_pCamera->initialize(pGame);
+	m_pWVMBuffer = m_pDx11Wrapper->createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(Matrix));
+	m_pObjectMatrixBuffer = m_pDx11Wrapper->createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(float[3]) * 3 + 12); // 36 + 12 = 48 size should be of twice 16
 	return true;
 }
 
@@ -59,7 +61,6 @@ void Graphics::drawImage(const Image* image)
 	m_pDx11Wrapper->streamVertexBuffer(pVB);
 	setTexture(texture);
 	m_pDx11Wrapper->d3dDraw(vertices, 0);
-
 #endif
 }
 
@@ -80,7 +81,7 @@ void Graphics::drawPrimitive(uint32 startVertex, uint32 count)
 
 void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCenter)
 {
-	Matrix rot = gameMathNS::V3ToMatrix(rotate, MATRIX_TYPE_ROTATE),
+	/*Matrix rot = gameMathNS::V3ToMatrix(rotate, MATRIX_TYPE_ROTATE),
 		rotCent = gameMathNS::V3ToMatrix(rotateCenter, MATRIX_TYPE_TRANSLATE),
 		rotCentN = gameMathNS::V3ToMatrix(rotateCenter * -1, MATRIX_TYPE_TRANSLATE),
 		scal = gameMathNS::V3ToMatrix(scall, MATRIX_TYPE_SCALL),
@@ -88,13 +89,13 @@ void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCent
 	Matrix prop;
 	prop = scal*rot*pos;
 	//prop = scal*rotCentN*rot*rotCent*pos; // to center rotate
-#ifdef _BUILD_WITH_D3D9
-	setWorldMatrix(prop);
-#else ifdef _BUILD_WITH_D3D11
-	prop *= m_wvp;
-	gameMathNS::matrixTranspose(&prop, &prop);
-	setWorldMatrix(&prop);
-#endif
+	//prop *= m_wvp;
+	prop.m[0][0];
+	setObjectMatrix(&prop);*/
+	float v[] = { position.x, position.y, position.z
+		, scall.x, scall.y, scall.z,
+		rotate.x, rotate.y, rotate.z, 0.0f, 0.0f, 0.0f };
+	setObjectConstBuffer(v);
 }
 
 bool Graphics::loadTexture(const std::string& file, int32& width, int32& height, LPTextureD3D& texture)
@@ -102,13 +103,20 @@ bool Graphics::loadTexture(const std::string& file, int32& width, int32& height,
 	return m_pDx11Wrapper->createSRVFromFile(file, texture, width, height);
 }
 
-void Graphics::setWorldMatrix(Matrix* worldMatrix)
+void Graphics::setObjectConstBuffer(void* pData)
 {
 #ifdef _BUILD_WITH_D3D9
 	m_lpDevice3d->SetTransform(D3DTS_WORLD, &worldMatrix);
 #else ifdef _BUILD_WITH_D3D11
-	m_pDx11Wrapper->vsSetConstBuffer(worldMatrix);
+	//gameMathNS::matrixTranspose(pObjectMatrix, pObjectMatrix);
+	m_pDx11Wrapper->vsSetConstBuffer(m_pObjectMatrixBuffer.Get(), pData, 1);
 #endif
+}
+
+void Graphics::setWorldViewMatrix(Matrix * pWorldViewMatrix)
+{
+	//gameMathNS::matrixTranspose(pWorldViewMatrix, pWorldViewMatrix);
+	m_pDx11Wrapper->vsSetConstBuffer(m_pWVMBuffer.Get(), pWorldViewMatrix, 0);
 }
 
 std::vector<std::string> Graphics::getSupportedResolutionAsString() const
@@ -144,14 +152,5 @@ void Graphics::setTexture(LPTextureD3D texture)
 	m_lpDevice3d->SetTexture(0, texture);
 #else ifdef _BUILD_WITH_D3D11
 	m_pDx11Wrapper->psSetSRV(texture);
-#endif
-}
-
-void Graphics::setViewMatrix(Matrix* viewMatrix)
-{
-#ifdef _BUILD_WITH_D3D9
-	m_lpDevice3d->SetTransform(D3DTS_VIEW, &viewMatrix);
-#else ifdef _BUILD_WITH_D3D11
-	m_wvp = *viewMatrix;
 #endif
 }

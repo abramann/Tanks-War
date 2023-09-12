@@ -1,6 +1,6 @@
 Width=800
 Height=600
 Windowed=1
-VSync=1
+VSync=0
 Audio=0
 Compute Shader=1

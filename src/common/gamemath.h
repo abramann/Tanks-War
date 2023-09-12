@@ -15,9 +15,9 @@ namespace gameMathNS
 		return XMVectorSet(vec.x, vec.y, vec.z, 0);
 	}
 
-	inline void matrixTranspose(Matrix* mat1, Matrix* mat2)
+	inline void matrixTranspose(Matrix* pOut, Matrix* pMat)
 	{
-		*mat1 = XMMatrixTranspose(*mat2);
+		*pOut = XMMatrixTranspose(*pMat);
 	}
 	inline void matrixTranslation(Matrix* mat, float x, float y, float z)
 	{

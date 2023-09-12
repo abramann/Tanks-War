@@ -119,6 +119,9 @@
     <ClInclude Include="..\common\inlined.inl">
       <Filter>Common\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\pixelshader.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\texturemanger.cpp">
