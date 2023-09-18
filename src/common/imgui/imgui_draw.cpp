@@ -727,7 +727,7 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
 		const float fractional_thickness = thickness - integer_thickness;
 
 		// Do we want to draw this line using a texture?
-		// - For now, only draw integer-width lines using textures to avoid issues with the way scaling occurs, could be improved.
+		// - For now, only draw integer-width lines using textures to avoid issues with the way scalling occurs, could be improved.
 		// - If AA_SIZE is not 1.0f we cannot use the texture path.
 		const bool use_texture = (Flags & ImDrawListFlags_AntiAliasedLinesUseTex) && (integer_thickness < IM_DRAWLIST_TEX_LINES_WIDTH_MAX) && (fractional_thickness <= 0.00001f) && (AA_SIZE == 1.0f);
 
@@ -767,7 +767,7 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
 			// - In the texture-based path, we don't use AA_SIZE here because the +1 is tied to the generated texture
 			//   (see ImFontAtlasBuildRenderLinesTexData() function), and so alternate values won't work without changes to that code.
 			// - In the non texture-based paths, we would allow AA_SIZE to potentially be != 1.0f with a patch (e.g. fringe_scale patch to
-			//   allow scaling geometry while preserving one-screen-pixel AA fringe).
+			//   allow scalling geometry while preserving one-screen-pixel AA fringe).
 			const float half_draw_size = use_texture ? ((thickness * 0.5f) + 1) : AA_SIZE;
 
 			// If line is not closed, the first and last points need to be generated differently as there are no normals to blend
@@ -3380,7 +3380,7 @@ const char* ImFont::CalcWordWrapPositionA(float scale, const char* text, const c
 	float line_width = 0.0f;
 	float word_width = 0.0f;
 	float blank_width = 0.0f;
-	wrap_width /= scale; // We work with unscaled widths to avoid scaling every characters
+	wrap_width /= scale; // We work with unscaled widths to avoid scalling every characters
 
 	const char* word_end = text;
 	const char* prev_word_end = NULL;

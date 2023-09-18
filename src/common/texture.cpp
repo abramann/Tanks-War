@@ -15,20 +15,11 @@ Texture::~Texture()
 	release();
 }
 
-bool Texture::initialize(std::string file, Graphics* graphics)
+bool Texture::initialize(const std::string& file, Graphics* pGraphics)
 {
-	m_pGraphics = graphics;
+	m_pGraphics = pGraphics;
 	m_file = file;
 	return m_pGraphics->loadTexture(m_file.c_str(), m_width, m_height, m_lpTexture);
-}
-
-void Texture::onLostDevice()
-{
-	release();
-}
-
-void Texture::onResetDevice()
-{
 }
 
 void Texture::release()

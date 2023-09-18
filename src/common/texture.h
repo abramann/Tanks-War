@@ -13,7 +13,7 @@ public:
 
 	Texture();
 	~Texture();
-	bool initialize(std::string file, Graphics* graphics);
+	bool initialize(const std::string& file, Graphics* graphics);
 	void onLostDevice();
 	void onResetDevice();
 	void release();

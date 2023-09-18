@@ -207,21 +207,6 @@ inline std::string getTargetEqualStringValue(std::string str)
 	return str;
 }
 
-char* FileIO::loadInMemory(const std::string& name, uint32& size)
-{
-	/*std::ifstream file(name, std::ifstream::ate);
-	if (!file.is_open())
-		return 0;
-
-	size = file.tellg().seekpos();
-	file.close();
-	file.open(name, std::ifstream::binary);
-	char* buffer = new char[size];
-	file.read(buffer, size);
-	return buffer;*/
-	return 0;
-}
-
 template<typename T>
 void FileIO::readValues(std::ifstream & file, std::initializer_list<T*> values)
 {

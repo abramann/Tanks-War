@@ -81,26 +81,17 @@ void Graphics::drawPrimitive(uint32 startVertex, uint32 count)
 
 void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCenter)
 {
-	/*Matrix rot = gameMathNS::V3ToMatrix(rotate, MATRIX_TYPE_ROTATE),
-		rotCent = gameMathNS::V3ToMatrix(rotateCenter, MATRIX_TYPE_TRANSLATE),
-		rotCentN = gameMathNS::V3ToMatrix(rotateCenter * -1, MATRIX_TYPE_TRANSLATE),
-		scal = gameMathNS::V3ToMatrix(scall, MATRIX_TYPE_SCALL),
-		pos = gameMathNS::V3ToMatrix(position, MATRIX_TYPE_TRANSLATE);
-	Matrix prop;
-	prop = scal*rot*pos;
-	//prop = scal*rotCentN*rot*rotCent*pos; // to center rotate
-	//prop *= m_wvp;
-	prop.m[0][0];
-	setObjectMatrix(&prop);*/
-	float v[] = { position.x, position.y, position.z
-		, scall.x, scall.y, scall.z,
-		rotate.x, rotate.y, rotate.z, 0.0f, 0.0f, 0.0f };
+	float v[] = {
+		position.x, position.y, position.z, 0,
+		scall.x, scall.y, scall.z, 0,
+		rotate.x, rotate.y, rotate.z, 0,
+		0, 0, 0, 0 };
 	setObjectConstBuffer(v);
 }
 
 bool Graphics::loadTexture(const std::string& file, int32& width, int32& height, LPTextureD3D& texture)
 {
-	return m_pDx11Wrapper->createSRVFromFile(file, texture, width, height);
+	return m_pDx11Wrapper->createSRVFromFile(file, &texture, width, height);
 }
 
 void Graphics::setObjectConstBuffer(void* pData)
@@ -115,7 +106,6 @@ void Graphics::setObjectConstBuffer(void* pData)
 
 void Graphics::setWorldViewMatrix(Matrix * pWorldViewMatrix)
 {
-	//gameMathNS::matrixTranspose(pWorldViewMatrix, pWorldViewMatrix);
 	m_pDx11Wrapper->vsSetConstBuffer(m_pWVMBuffer.Get(), pWorldViewMatrix, 0);
 }
 
@@ -151,6 +141,6 @@ void Graphics::setTexture(LPTextureD3D texture)
 #ifdef  _BUILD_WITH_D3D9
 	m_lpDevice3d->SetTexture(0, texture);
 #else ifdef _BUILD_WITH_D3D11
-	m_pDx11Wrapper->psSetSRV(texture);
+	m_pDx11Wrapper->psSetSRV(&texture);
 #endif
 }

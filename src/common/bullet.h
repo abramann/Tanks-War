@@ -27,7 +27,7 @@ protected:
 	virtual void executeAnimateRepeat();
 	void executeHit();
 	void executeLaunching();
-	V3 Bullet::getBulletLaunchPosition();
+	V3 getBulletLaunchPosition();
 
 	const Game* m_pGame;
 	Map* m_pMap;

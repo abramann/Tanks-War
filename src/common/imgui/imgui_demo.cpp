@@ -6213,7 +6213,7 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
 			ImGui::SliderFloat("LogSliderDeadzone", &style.LogSliderDeadzone, 0.0f, 12.0f, "%.0f");
 
 			ImGui::SeparatorText("Misc");
-			ImGui::SliderFloat2("DisplaySafeAreaPadding", (float*)&style.DisplaySafeAreaPadding, 0.0f, 30.0f, "%.0f"); ImGui::SameLine(); HelpMarker("Adjust if you cannot see the edges of your screen (e.g. on a TV where scaling has not been configured).");
+			ImGui::SliderFloat2("DisplaySafeAreaPadding", (float*)&style.DisplaySafeAreaPadding, 0.0f, 30.0f, "%.0f"); ImGui::SameLine(); HelpMarker("Adjust if you cannot see the edges of your screen (e.g. on a TV where scalling has not been configured).");
 			ImGui::EndTabItem();
 		}
 
@@ -6287,13 +6287,13 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
 			HelpMarker("Read FAQ and docs/FONTS.md for details on font loading.");
 			ImGui::ShowFontAtlas(atlas);
 
-			// Post-baking font scaling. Note that this is NOT the nice way of scaling fonts, read below.
+			// Post-baking font scalling. Note that this is NOT the nice way of scalling fonts, read below.
 			// (we enforce hard clamping manually as by default DragFloat/SliderFloat allows CTRL+Click text to get out of bounds).
 			const float MIN_SCALE = 0.3f;
 			const float MAX_SCALE = 2.0f;
 			HelpMarker(
 				"Those are old settings provided for convenience.\n"
-				"However, the _correct_ way of scaling your UI is currently to reload your font at the designed size, "
+				"However, the _correct_ way of scalling your UI is currently to reload your font at the designed size, "
 				"rebuild the font atlas, and call style.ScaleAllSizes() on a reference ImGuiStyle structure.\n"
 				"Using those settings here will give you poor quality results.");
 			static float window_scale = 1.0f;

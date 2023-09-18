@@ -1,4 +1,5 @@
 #include "types.h"
+#include <memory>
 
 #pragma once
 
@@ -32,9 +33,16 @@ inline void safeDeleteArray(T ptr)
 	}
 }
 
-inline int32 random(int32 a, int32 b) {
+inline int32 random(int32 a, int32 b) 
+{
 	srand(GetTickCount());
 	return (a + (rand() % (b - a + 1)));
+}
+
+inline void debuggerBreak()
+{
+	if (IsDebuggerPresent())
+		DebugBreak();
 }
 
 //	https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
@@ -52,4 +60,10 @@ inline std::string strFormat(const std::string& format, Args ... args)
 inline void messageBoxOk(std::string msg, std::string title)
 {
 	MessageBoxA(NULL, msg.c_str(), title.c_str(), MB_OK);
+}
+
+inline V3 getSpaceCenter(Space space)
+{
+	V3 center;
+	center.x = space.getMaxX() - space.getMinX();
 }

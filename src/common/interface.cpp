@@ -90,7 +90,7 @@ void Interface::executeMainActivity()
 	PushFont(m_pFont[FONTSIZE_MED]);
 	SetCursorPos(Vec2(0, g_pGameSettings->height * 0.9));
 	if (button("About", Vec2(butSize.x / 4, butSize.y / 4)))
-		m_activity = CREDITS_ACTIVITY;
+		m_activity = ABOUT_ACTIVITY;
 
 	PopFont();
 	endActivity();
@@ -185,7 +185,7 @@ void Interface::executePlayingActivity()
 #endif
 }
 
-void Interface::executeCreditsActivity()
+void Interface::executeAboutActivity()
 {
 	beginActivity(true, FONTSIZE_SMALL2);
 	separatorText("Tanks War", FONTSIZE_LARGE, RED);
@@ -193,10 +193,9 @@ void Interface::executeCreditsActivity()
 	text("Credits to", WHITE, FONTSIZE_MED2);
 	PushStyleColor(ImGuiCol_Text, YELLOW);
 	BulletText("Charles Kelly for the net library and the useful information in his books (programming2dgames.net)");
-	BulletText("Danial  Robbin for Dirent.");
 	PopStyleColor();
-	text("Assets sources:", WHITE, FONTSIZE_MED2);
-	BulletText("adwad\nawld");
+	//text("Assets sources:", WHITE, FONTSIZE_MED2);
+	//BulletText("");
 	endActivity(true, MAIN_ACTIVITY);
 }
 
@@ -216,8 +215,8 @@ void Interface::render()
 	case PLAYING_ACTIVITY:
 		executePlayingActivity();
 		break;
-	case CREDITS_ACTIVITY:
-		executeCreditsActivity();
+	case ABOUT_ACTIVITY:
+		executeAboutActivity();
 		break;
 	case QUIT_ACTIVITY:
 		PostQuitMessage(0);

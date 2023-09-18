@@ -85,12 +85,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (!pGame->checkGameFiles())
 		return 1;
 
-	HWND hwnd = NULL;
 	GameSettings gameSettings = FileIO::readGameSettings();
 	g_pGameSettings = &gameSettings;
+	HWND hwnd = NULL;
 	if (!createGameWindow(hwnd, hInstance, SW_SHOW))
 	{
-		messageBoxOk("CreateGameWindow() failed !", "ERROR");
+		messageBoxOk("CreateGameWindow() failed", "ERROR");
 		return 1;
 	}
 
@@ -123,7 +123,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	catch (...)
 	{
-		messageBoxOk("Unknown error occurded !", "ERROR");
+		messageBoxOk("Unknown error occurded", "ERROR");
 		DestroyWindow(hwnd);
 	}
 

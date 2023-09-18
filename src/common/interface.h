@@ -35,7 +35,7 @@ public:
 	void executeMultiplayerActivity();
 	void executeSettingsActivity();
 	void executePlayingActivity();
-	void executeCreditsActivity();
+	void executeAboutActivity();
 	void render();
 	void beginActivity(bool blankActivity, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED);
 	void endActivity(bool backButton = false, interfaceNS::Activity backActivity = interfaceNS::NO_ACITVITY);

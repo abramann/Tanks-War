@@ -19,17 +19,17 @@ Sprite::Sprite() : m_fade(graphicsNS::FADE_INC), m_fadeInc(graphicsNS::FADE_INC)
 	m_windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
 }
 
-Sprite::Sprite(const Game * const pGame, std::string texture, V2 position, V2 scaling) : m_fade(graphicsNS::FADE_INC), m_fadeInc(graphicsNS::FADE_INC)
+Sprite::Sprite(const Game * const pGame, std::string texture, V2 position, V2 scalling) : m_fade(graphicsNS::FADE_INC), m_fadeInc(graphicsNS::FADE_INC)
 {
 	m_windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-	initialize(pGame, texture, position, scaling);
+	initialize(pGame, texture, position, scalling);
 }
 
 Sprite::~Sprite()
 {
 }
 
-void Sprite::initialize(const Game* const pGame, std::string texture, V2 position, V2 scaling)
+void Sprite::initialize(const Game* const pGame, std::string texture, V2 position, V2 scalling)
 {
 	m_pGraphics = pGame->getGraphics();
 	m_pTimer = pGame->getTimer();
@@ -39,12 +39,12 @@ void Sprite::initialize(const Game* const pGame, std::string texture, V2 positio
 		m_height = tex->getHeight();
 	m_spriteTexture = tex->getTexture();
 	m_position = position,
-		m_scaling = scaling;
+		m_scalling = scalling;
 }
 
 void Sprite::draw()
 {
-	Vec2 size = Vec2(m_width, m_height),
+	Vec2 size = Vec2(m_width*m_scalling.x, m_height*m_scalling.y),
 		position = Vec2(m_position.x, m_position.y);
 	SetNextWindowSize(size);
 	SetNextWindowPos(position);
@@ -57,7 +57,7 @@ void Sprite::draw()
 
 bool Sprite::fadeDraw(int64 time)
 {
-	Vec2 size = Vec2(m_width*m_scaling.x, m_height*m_scaling.y),
+	Vec2 size = Vec2(m_width*m_scalling.x, m_height*m_scalling.y),
 		position = Vec2(m_position.x, m_position.y);
 	static float alpha = 0.0f;
 	SetNextWindowSize(size);

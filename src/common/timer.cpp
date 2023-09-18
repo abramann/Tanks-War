@@ -18,10 +18,12 @@ Timer::Timer() : m_fpsUpdateDelay(0), m_fps(0)
 	LARGE_INTEGER frequency;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 	m_countsPerMillisecond = frequency.QuadPart / 1000;
-#else
-
 #endif
-	m_expectedFrameTimeMillsec = (1000 / gameNS::FRAME_RATE) * 2;
+#ifdef _DEBUG
+	m_expectedFrameTimeMillsec = 60;
+#else
+	m_expectedFrameTimeMillsec = 1000 / gameNS::FRAME_RATE;
+#endif
 	m_prevTime = getCurrentTime();
 }
 

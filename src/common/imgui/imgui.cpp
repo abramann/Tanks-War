@@ -161,7 +161,7 @@ CODE
    - Download controller mapping PNG/PSD at http://dearimgui.org/controls_sheets
    - Backend support: backend needs to:
 	  - Set 'io.BackendFlags |= ImGuiBackendFlags_HasGamepad' + call io.AddKeyEvent/AddKeyAnalogEvent() with ImGuiKey_Gamepad_XXX keys.
-	  - For analog values (0.0f to 1.0f), backend is responsible to handling a dead-zone and rescaling inputs accordingly.
+	  - For analog values (0.0f to 1.0f), backend is responsible to handling a dead-zone and rescalling inputs accordingly.
 		Backend code will probably need to transform your raw inputs (such as e.g. remapping your 0.2..0.9 raw input range to 0.0..1.0 imgui range, etc.).
 	  - BEFORE 1.87, BACKENDS USED TO WRITE TO io.NavInputs[]. This is now obsolete. Please call io functions instead!
    - If you need to share inputs between your game and the Dear ImGui interface, the easiest approach is to go all-or-nothing,
@@ -535,7 +535,7 @@ CODE
  - 2020/09/25 (1.79) - renamed style.TabMinWidthForUnselectedCloseButton to style.TabMinWidthForCloseButton.
  - 2020/09/21 (1.79) - renamed OpenPopupContextItem() back to OpenPopupOnItemClick(), reverting the change from 1.77. For varieties of reason this is more self-explanatory.
  - 2020/09/21 (1.79) - removed return value from OpenPopupOnItemClick() - returned true on mouse release on an item - because it is inconsistent with other popup APIs and makes others misleading. It's also and unnecessary: you can use IsWindowAppearing() after BeginPopup() for a similar result.
- - 2020/09/17 (1.79) - removed ImFont::DisplayOffset in favor of ImFontConfig::GlyphOffset. DisplayOffset was applied after scaling and not very meaningful/useful outside of being needed by the default ProggyClean font. If you scaled this value after calling AddFontDefault(), this is now done automatically. It was also getting in the way of better font scaling, so let's get rid of it now!
+ - 2020/09/17 (1.79) - removed ImFont::DisplayOffset in favor of ImFontConfig::GlyphOffset. DisplayOffset was applied after scalling and not very meaningful/useful outside of being needed by the default ProggyClean font. If you scaled this value after calling AddFontDefault(), this is now done automatically. It was also getting in the way of better font scalling, so let's get rid of it now!
  - 2020/08/17 (1.78) - obsoleted use of the trailing 'float power=1.0f' parameter for DragFloat(), DragFloat2(), DragFloat3(), DragFloat4(), DragFloatRange2(), DragScalar(), DragScalarN(), SliderFloat(), SliderFloat2(), SliderFloat3(), SliderFloat4(), SliderScalar(), SliderScalarN(), VSliderFloat() and VSliderScalar().
 					   replaced the 'float power=1.0f' argument with integer-based flags defaulting to 0 (as with all our flags).
 					   worked out a backward-compatibility scheme so hopefully most C++ codebase should not be affected. in short, when calling those functions:
@@ -1151,7 +1151,7 @@ ImGuiStyle::ImGuiStyle()
 }
 
 // To scale your entire UI (e.g. if you want your app to use High DPI or generally be DPI aware) you may use this helper function. Scaling the fonts is done separately and is up to you.
-// Important: This operation is lossy because we round all sizes to integer. If you need to change your scale multiples, call this over a freshly initialized ImGuiStyle structure rather than scaling multiple times.
+// Important: This operation is lossy because we round all sizes to integer. If you need to change your scale multiples, call this over a freshly initialized ImGuiStyle structure rather than scalling multiple times.
 void ImGuiStyle::ScaleAllSizes(float scale_factor)
 {
 	WindowPadding = ImFloor(WindowPadding * scale_factor);
@@ -13882,7 +13882,7 @@ void ImGui::DebugNodeDrawList(ImGuiWindow* window, const ImDrawList* draw_list, 
 			continue;
 
 		// Calculate approximate coverage area (touched pixel count)
-		// This will be in pixels squared as long there's no post-scaling happening to the renderer output.
+		// This will be in pixels squared as long there's no post-scalling happening to the renderer output.
 		const ImDrawIdx* idx_buffer = (draw_list->IdxBuffer.Size > 0) ? draw_list->IdxBuffer.Data : NULL;
 		const ImDrawVert* vtx_buffer = draw_list->VtxBuffer.Data + pcmd->VtxOffset;
 		float total_area = 0.0f;
@@ -13982,9 +13982,9 @@ void ImGui::DebugNodeFont(ImFont* font)
 	SameLine(); MetricsHelpMarker(
 		"Note than the default embedded font is NOT meant to be scaled.\n\n"
 		"Font are currently rendered into bitmaps at a given size at the time of building the atlas. "
-		"You may oversample them to get some flexibility with scaling. "
+		"You may oversample them to get some flexibility with scalling. "
 		"You can also render at multiple sizes and select which one to use at runtime.\n\n"
-		"(Glimmer of hope: the atlas system will be rewritten in the future to make scaling more flexible.)");
+		"(Glimmer of hope: the atlas system will be rewritten in the future to make scalling more flexible.)");
 	Text("Ascent: %f, Descent: %f, Height: %f", font->Ascent, font->Descent, font->Ascent - font->Descent);
 	char c_str[5];
 	Text("Fallback character: '%s' (U+%04X)", ImTextCharToUtf8(c_str, font->FallbackChar), font->FallbackChar);

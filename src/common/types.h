@@ -174,12 +174,6 @@ struct ClientInfo
 	Port serverPort;
 };
 
-struct PlayerIniData
-{
-	char name[gameNS::MAX_NAME_LEN];
-	PlayerID id;
-};
-
 struct ClientGameAttribute
 {
 	PlayerID id;
@@ -222,11 +216,6 @@ struct SpsPlayerAct
 	PlayerID id;
 };
 
-struct CpsIni
-{
-	char name[gameNS::MAX_NAME_LEN];
-};
-
 struct CpsDisconnect
 {
 	PacketType packetType = PACKET_DISCONNECT;
@@ -237,21 +226,6 @@ struct CpsHeartbeat
 {
 	PacketType packet = PACKET_CLIENT_HEARTBEAT;
 	PlayerID id;
-};
-
-struct CpsSeasson
-{
-	PacketType packetType;
-	PlayerID id;
-};
-
-struct SpsIni
-{
-	PacketType packetType = PACKET_CLIENT_JOIN;
-	PlayerID id;
-	int gamePlayers;
-	char  map[gameNS::MAX_NAME_LEN];
-	Crc32 checksum;
 };
 
 struct SpsDisconnect

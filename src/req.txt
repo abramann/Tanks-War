@@ -4,5 +4,6 @@
 - Replace DirecrXMath with GLM
 - Add Console class
 - Improve element search in std::vector in server / client (e.g binary_search)
-- Fix reconnect reload map client issue (blank map)
 - Fix Game::checkGameFiles
+- Process map using compute shader
+- Fix scalling textures

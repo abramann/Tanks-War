@@ -14,6 +14,8 @@
 #include <fstream>
 #include <string>
 
+#pragma warning(disable : 4267) // conversion from size_t to uint32
+
 Map::Map() : m_pVertexBuf(0), m_pNoSpaceBuf(0), m_pNoSpaceSRV(0), m_pNoSpaceCountBuf(0),
 m_pNoSpaceCountSRV(0), m_pCollisionCS(0), m_pSpaceBuf(0), m_pSpaceSRV(0),
 m_pResultBuf(0), m_pResultUAV(0), m_pResultStagingBuf(0), m_threadGroups(1)
@@ -465,7 +467,7 @@ void Map::removeObject(Object* pObject)
 {
 #ifdef _SERVER_BUILD
 	if (m_pObject.size() == 0)
-		__debugbreak();
+		debuggerBreak();
 #endif
 	auto pObj = std::find(m_pObject.begin(), m_pObject.end(), pObject);
 	if (pObj != m_pObject.end())
@@ -476,6 +478,6 @@ float Map::getVelocityFactor(V3 vertex) const
 {
 	vertex.x = floor(vertex.x / m_tiledSize.x);
 	vertex.y = floor(vertex.y / m_tiledSize.y);
-	auto r = m_map[vertex.y][vertex.x];
-	return m_bitmapAttribute[r].velocityFactor;
+	int8 n = m_map[vertex.y][vertex.x];
+	return m_bitmapAttribute[n].velocityFactor;
 }

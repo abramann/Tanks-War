@@ -56,13 +56,10 @@ void Camera::update(V3 lookTo)
 		m_z = logicNS::CAMERA_HEIGHT;
 
 	float maxZ = max(mapSize.x, mapSize.y) / 2;
-	if (-m_z *m_aspectRatio> maxZ)
-		m_z = -maxZ/m_aspectRatio;
-#ifdef _BUILD_WITH_D3D9
-	viewMatrix = eye;
-#else ifdef _BUILD_WITH_D3D11
-	viewMatrix = viewMatrix*eye*m_proj;
-#endif
+	if (-m_z *m_aspectRatio > maxZ)
+		m_z = -maxZ / m_aspectRatio;
+
+	viewMatrix = eye*m_proj;
 	m_pGraphics->setWorldViewMatrix(&viewMatrix);
 }
 
@@ -71,8 +68,4 @@ void Camera::updatePerspectiveMatrix()
 	m_aspectRatio = g_pGameSettings->width*1.0f / g_pGameSettings->height*1.0f;
 	gameMathNS::matrixPerspectiveFovLH(&m_proj, m_fov, m_aspectRatio, m_nearPlane,
 		m_farPlane);
-#ifdef _BUILD_WITH_D3D9
-	LPDevice lpDevice3d = m_pGraphics->getDevice();
-	lpDevice3d->SetTransform(D3DTS_PROJECTION, &m_proj);
-#endif
 }

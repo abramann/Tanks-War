@@ -15,11 +15,6 @@ class Image;
 class Texture;
 class Dx11Wrapper;
 
-inline V3 getSpaceCenter(Space space)
-{
-	V3 center;
-	center.x = space.getMaxX() - space.getMinX();
-}
 class Map
 {
 public:

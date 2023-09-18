@@ -431,7 +431,7 @@ void TanksWarServer::postClientGameAttribute(Client * pClient)
 		for (size_t i = 0; i < m_pClient.size(); i++)
 			m_pSpsClientGameAttribute->clientGameAttribute[i] = m_pClient[i]->getClientGameAttribute();
 	
-		post(sizeof(SpsClientGameAttribute) + sizeof(ClientGameAttribute) * m_pClient.size());
+		post(static_cast<int32>(sizeof(SpsClientGameAttribute) + sizeof(ClientGameAttribute) * m_pClient.size()));
 
 	}
 }

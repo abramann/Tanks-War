@@ -3,7 +3,6 @@
 
 #include "imgui\imgui_impl_win32.h"
 #include "imgui\imgui.h"
-//#include <D3D11.h>
 #include <map>
 
 #pragma once
@@ -179,7 +178,6 @@ namespace inputNS
 	constexpr Key F1_KEY = ImGuiKey_F1;
 	constexpr Key F2_KEY = ImGuiKey_F2;
 	constexpr Key F3_KEY = ImGuiKey_F3;
-
 };
 
 namespace interfaceNS
@@ -205,7 +203,7 @@ namespace interfaceNS
 		MULTIPLAYER_ACTIVITY,
 		SETTINGS_ACTIVITY,
 		PLAYING_ACTIVITY,
-		CREDITS_ACTIVITY,
+		ABOUT_ACTIVITY,
 		QUIT_ACTIVITY,
 		ACTIVITIES,
 		NO_ACITVITY

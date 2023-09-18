@@ -20,7 +20,7 @@
 #include "dx11wrapper.h"
 #include "sprite.h"
 #include "inlined.inl"
-#include <fileio.h>
+#include "fileio.h"
 
 Game::Game()
 {
@@ -138,9 +138,9 @@ bool Game::checkGameFiles() const
 void Game::showLogo() const
 {
 	Sprite logo = Sprite(this, "logo");
-	V2 scal = V2(g_pGameSettings->width*1.0f / logo.getWidth(),
+	V2 scall = V2(g_pGameSettings->width*1.0f / logo.getWidth(),
 		g_pGameSettings->height*1.0f / logo.getHeight());
-	logo.setScaling(scal);
+	logo.setScaling(scall);
 	bool end = false;
 	do
 	{

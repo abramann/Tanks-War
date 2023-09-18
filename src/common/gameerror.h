@@ -1,6 +1,6 @@
 // Note this code is licensed under CC BY 3.0
 
-// Programming 2D Games
+// Programming 2D Games www.programming2dgames.com
 // Copyright (c) 2011 by:
 // Charles Kelly
 // gameError.h v1.2

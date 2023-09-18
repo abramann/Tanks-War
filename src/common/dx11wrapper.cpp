@@ -34,8 +34,9 @@ bool Dx11Wrapper::initialize(const Game * pGame)
 #ifdef _DEBUG
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
+	D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
 	if (FAILED(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags,
-		0, 0, D3D11_SDK_VERSION, &swapChainDesc, &m_pSwapChain,
+		&featureLevel, 1, D3D11_SDK_VERSION, &swapChainDesc, &m_pSwapChain,
 		&m_pDevice, NULL, &m_pDeviceContext)))
 		return false;
 	
@@ -118,12 +119,12 @@ void Dx11Wrapper::d3dDraw(uint32 vertexCount, uint32 startVertex)
 	m_pDeviceContext->Draw(vertexCount, startVertex);
 }
 
-void Dx11Wrapper::psSetSRV(ID3D11ShaderResourceView * pSrv, uint32 numViews, uint32 startSlot)
+void Dx11Wrapper::psSetSRV(ID3D11ShaderResourceView ** ppSRV, uint32 numViews, uint32 startSlot)
 {
-	m_pDeviceContext->PSSetShaderResources(startSlot, numViews, &pSrv);
+	m_pDeviceContext->PSSetShaderResources(startSlot, numViews, ppSRV);
 }
 
-bool Dx11Wrapper::createSRVFromFile(const std::string & file, ID3D11ShaderResourceView *& pSrv, int32& width, int32& height)
+bool Dx11Wrapper::createSRVFromFile(const std::string & file, ID3D11ShaderResourceView ** ppSRV, int32& width, int32& height)
 {
 	D3DX11_IMAGE_INFO info;
 	if (FAILED(D3DX11GetImageInfoFromFileA(file.c_str(), 0, &info, 0)))
@@ -131,7 +132,7 @@ bool Dx11Wrapper::createSRVFromFile(const std::string & file, ID3D11ShaderResour
 
 	width = info.Width;
 	height = info.Height;
-	if (FAILED(D3DX11CreateShaderResourceViewFromFileA(m_pDevice.Get(), file.c_str(), 0, 0, &pSrv, 0)))
+	if (FAILED(D3DX11CreateShaderResourceViewFromFileA(m_pDevice.Get(), file.c_str(), 0, 0, ppSRV, 0)))
 		return false;
 
 	return true;
@@ -159,9 +160,7 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createBuffer(D3D11_USAGE usage
 
 	if (pBuf == nullptr)
 	{
-#ifdef _DEUBG
-		DebugBreak();
-#endif
+		debuggerBreak();
 		throw GameError(gameErrorNS::FATAL_ERROR, "m_pDevice->CreateBuffer failed");
 	}
 
@@ -338,10 +337,10 @@ void Dx11Wrapper::setFullScreen(bool fullscreen) const
 	m_pSwapChain->SetFullscreenState(fullscreen, nullptr);
 }
 
-void Dx11Wrapper::streamVertexBuffer(ID3D11Buffer* lpVB)
+void Dx11Wrapper::streamVertexBuffer(ID3D11Buffer* pVB)
 {
 	uint32 stride = sizeof(Vertex), offset = 0;
-	m_pDeviceContext->IASetVertexBuffers(0, 1, &lpVB, &stride, &offset);
+	m_pDeviceContext->IASetVertexBuffers(0, 1, &pVB, &stride, &offset);
 }
 
 Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createVertexBuffer(uint32 vertices, uint32 cpuAccess, Vertex * data)
@@ -370,25 +369,25 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createStagingBuffer(D3D11_CPU_
 	return createBuffer(D3D11_USAGE_STAGING, (D3D11_BIND_FLAG)0, cpuAccess, elementSize*count, elementSize, pInitData, 0);
 }
 
-void Dx11Wrapper::copyResourceToResource(ID3D11Resource * lpDest, ID3D11Resource * lpSource)
+void Dx11Wrapper::copyResourceToResource(ID3D11Resource * pDest, ID3D11Resource * pSource)
 {
-	m_pDeviceContext->CopyResource(lpDest, lpSource);
+	m_pDeviceContext->CopyResource(pDest, pSource);
 }
 
-void Dx11Wrapper::copyResource(void * pDest, ID3D11Resource * lpSource, uint32 size)
+void Dx11Wrapper::copyResource(void * pDest, ID3D11Resource * pSource, uint32 size)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	m_pDeviceContext->Map(lpSource, 0, D3D11_MAP_READ, 0, &mappedResource);
+	m_pDeviceContext->Map(pSource, 0, D3D11_MAP_READ, 0, &mappedResource);
 	memcpy(pDest, mappedResource.pData, size);
-	m_pDeviceContext->Unmap(lpSource, 0);
+	m_pDeviceContext->Unmap(pSource, 0);
 }
 
-void Dx11Wrapper::copyToResource(ID3D11Resource * lpDest, void * pSource, uint32 size)
+void Dx11Wrapper::copyToResource(ID3D11Resource * pDest, void * pSource, uint32 size)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	m_pDeviceContext->Map(lpDest, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	m_pDeviceContext->Map(pDest, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	memcpy(mappedResource.pData, pSource, size);
-	m_pDeviceContext->Unmap(lpDest, 0);
+	m_pDeviceContext->Unmap(pDest, 0);
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Dx11Wrapper::createBufferSRV(ID3D11Buffer * pBuffer)
@@ -430,10 +429,10 @@ Microsoft::WRL::ComPtr<ID3D11ComputeShader> Dx11Wrapper::createComputeShader(con
 	return pComputeShader;
 }
 
-void Dx11Wrapper::runComputeShader(ID3D11ComputeShader * lpComputeShader, uint32 srvs, ID3D11ShaderResourceView ** ppShaderResourceView, uint32 uavs, ID3D11UnorderedAccessView ** ppUnorderedAccessView, uint32 x, uint32 y, uint32 z)
+void Dx11Wrapper::runComputeShader(ID3D11ComputeShader * pComputeShader, uint32 SRVs, ID3D11ShaderResourceView ** ppSRV, uint32 uavs, ID3D11UnorderedAccessView ** ppUnorderedAccessView, uint32 x, uint32 y, uint32 z)
 {
-	m_pDeviceContext->CSSetShader(lpComputeShader, 0, 0);
-	m_pDeviceContext->CSSetShaderResources(0, srvs, ppShaderResourceView);
+	m_pDeviceContext->CSSetShader(pComputeShader, 0, 0);
+	m_pDeviceContext->CSSetShaderResources(0, SRVs, ppSRV);
 	m_pDeviceContext->CSSetUnorderedAccessViews(0, uavs, ppUnorderedAccessView, 0);
 	m_pDeviceContext->Dispatch(x, y, z);
 }

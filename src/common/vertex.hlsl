@@ -23,7 +23,7 @@ float4x4 translateMatrix(float3 translation)
 		);
 }
 
-float4x4 scallMatrix(float3 scalling)
+float4x4 scallingMatrix(float3 scalling)
 {
 	return float4x4(
 		float4(scalling[0], 0.0f, 0.0f, 0.0f),
@@ -43,13 +43,36 @@ float4x4 identityMatrix4x4()
 		);
 }
 
-float4x4 rotateZMatrix(float rotateZ)
-{
-	float sinAngle = sin(rotateZ);
-	float cosAngle = cos(rotateZ);
+float4x4 rotateXMatrix(float angle) {
+	float s = sin(angle);
+	float c = cos(angle);
 	return float4x4(
-		cosAngle, sinAngle, 0.0f, 0.0f,
-		-sinAngle, cosAngle, 0.0f, 0.0f,
+		1, 0, 0, 0,
+		0, c, -s, 0,
+		0, s, c, 0,
+		0, 0, 0, 1
+		);
+}
+
+float4x4 rotateYMatrix(float angle)
+{
+	float s = sin(angle);
+	float c = cos(angle);
+	return float4x4(
+		c, 0, -s, 0,
+		0, 1, 0, 0,
+		s, 0, c, 0,
+		0, 0, 0, 1
+		);
+}
+
+float4x4 rotateZMatrix(float angle)
+{
+	float s = sin(angle);
+	float c = cos(angle);
+	return float4x4(
+		c, s, 0.0f, 0.0f,
+		-s, c, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0, 0.0,
 		0.0f, 0.0, 0.0, 1.0
 		);
@@ -68,14 +91,15 @@ cbuffer cbPerObject : register(b1)
 PS_Input main(VS_Input input)
 {
 	float4x4 objectMatrix = identityMatrix4x4();
-	objectMatrix = mul(objectMatrix, scallMatrix(g_scalling));
-	objectMatrix = mul(objectMatrix, rotateZMatrix(g_rotate[0]));
+	objectMatrix = mul(objectMatrix, scallingMatrix(g_scalling));
+	for (int i = 2; i >= 0; i--)
+		objectMatrix = mul(objectMatrix, rotateZMatrix(g_rotate[i]));
+
 	objectMatrix = mul(objectMatrix,translateMatrix(g_position));
 	objectMatrix = mul(objectMatrix, transpose(g_worldViewMatrix));
 
 	PS_Input output;
 	output.position = mul(input.position, objectMatrix);
 	output.uv = input.uv;
-
 	return output;
 }

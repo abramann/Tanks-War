@@ -31,7 +31,7 @@ void TextureManger::load()
 		bool result = m_pTexture[texture].initialize(texFile, m_pGraphics);
 		if (!result)
 		{
-			std::string err = strFormat("Failed to load texture %s", texFile);
+			std::string err = strFormat("Failed to load texture %s", texFile.c_str());
 			messageBoxOk(err, "WARNING");
 			notLoaded++;
 		}

@@ -12,7 +12,8 @@ Object::Object()
 
 Object::~Object()
 {
-	m_pMap->removeObject(this);
+	if (m_pMap)
+		m_pMap->removeObject(this);
 }
 
 void Object::initialize(std::string texture, const Game * pGame)

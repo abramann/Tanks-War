@@ -72,14 +72,17 @@ namespace gameMathNS
 		case MATRIX_TYPE_TRANSLATE:
 			gameMathNS::matrixTranslation(&mat, x, y, z);
 			break;
+
 		case MATRIX_TYPE_SCALL:
 			gameMathNS::matrixScaling(&mat, x, y, z);
 			break;
+
 		case MATRIX_TYPE_ROTATE:
 			gameMathNS::matrixRotationX(&mat, x);
 			gameMathNS::matrixRotationY(&mat, y);
 			gameMathNS::matrixRotationZ(&mat, z);
 			break;
+
 		default:
 			break;
 		}
