@@ -51,7 +51,7 @@ bool Map::load(const std::string& map)
 		return false;
 
 	int32 totalBitmaps = m_width*m_height;
-	m_tiledSize.x = static_cast<float>(m_pTexture[0]->getWidth());;
+	m_tiledSize.x = static_cast<float>(m_pTexture[0]->getWidth());
 	m_tiledSize.y = static_cast<float>(m_pTexture[0]->getHeight());
 	std::vector<std::vector< std::vector<TextureVertices>>> vertices(m_usedBitmaps);
 	for (auto& element : vertices)
@@ -65,28 +65,23 @@ bool Map::load(const std::string& map)
 		}
 	}
 
+	// create the grid
 	for (auto h = 0; h < m_height; h++)
 	{
 		for (auto w = 0; w < m_width; w++)
 		{
-			vertices[m_map[h][w]][h][w].v1 = { (w + 1)*m_tiledSize.x ,(h)*m_tiledSize.y,0.0f,0.0f,1.0f };
-			vertices[m_map[h][w]][h][w].v2 = { (w)*m_tiledSize.x,(h)*m_tiledSize.y,0.0f,1.0f,1.0f };
-			vertices[m_map[h][w]][h][w].v3 = { (w)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,1.0f,0.0f };
-			vertices[m_map[h][w]][h][w].v4 = { (w)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,-1.0f,0.0f };
-			vertices[m_map[h][w]][h][w].v5 = { (w + 1)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,0.0f,0.0f };
-			vertices[m_map[h][w]][h][w].v6 = { (w + 1)*m_tiledSize.x,(h)*m_tiledSize.y,0.0f,0.0f,1.0f };
+			vertices[m_map[h][w]][h][w].v1 = { (w + 1)*m_tiledSize.x ,(h+1)*m_tiledSize.y,0.0f,-1.0f,-1.0f };
+			vertices[m_map[h][w]][h][w].v2 = { (w+1)*m_tiledSize.x,(h)*m_tiledSize.y,0.0f,-1.0f,0.0f };
+			vertices[m_map[h][w]][h][w].v3 = { (w)*m_tiledSize.x ,(h)*m_tiledSize.y,0.0f,0.0f,0.0f };
+			vertices[m_map[h][w]][h][w].v4 = { (w)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,0.0f,-1.0f };
+
 			Space space;
 			bool noSpace = false;
 			for (auto noSpaceBitmap : m_noSpaceBitmap)
 				if (m_map[h][w] == noSpaceBitmap)
 				{
 					noSpace = true;
-					space.v1.x = w*m_tiledSize.x,
-						space.v1.y = h*m_tiledSize.y;
-					space.v2.x = space.v1.x + m_tiledSize.x,
-						space.v2.y = space.v1.y,
-						space.v3.x = space.v1.x + m_tiledSize.x, space.v3.y = space.v1.y + m_tiledSize.y,
-						space.v4.x = space.v1.x, space.v4.y = space.v1.y + m_tiledSize.y;
+					space = vertices[m_map[h][w]][h][w].getSpace();
 					m_noSpace.push_back(space);
 					break;
 				}
@@ -94,43 +89,52 @@ bool Map::load(const std::string& map)
 			if (noSpace)
 				continue;
 
-			space.v1.x = w*m_tiledSize.x;
-			space.v1.y = h*m_tiledSize.y;
-			space.v2.x = space.v1.x + m_tiledSize.x;
-			space.v2.y = space.v1.y;
-			space.v3.x = space.v2.x;
-			space.v3.y = space.v1.y + m_tiledSize.y;
-			space.v4.x = space.v1.x;
-			space.v4.y = space.v3.y;
+			space = vertices[m_map[h][w]][h][w].getSpace();
 			m_freeSpace.push_back(space);
 		}
 	}
 
 	clearUnnecessaryNospace();
-	std::vector<Vertex> pData;
-	for (auto i = 0; i < m_usedBitmaps; i++)
+
+	// organize vertices in a 2d vector waith sort each bitmap as series
+	std::vector<Vertex> vertexData;
+	
+	struct TextureIndex
 	{
-		m_startVertex.push_back(pData.size());
+		uint32 i[6];	// each 2 triangles requires 6 index
+	};
+
+	std::vector<TextureIndex> index(totalBitmaps, { 0 });
+	for (auto n = 0, i = 0; i < m_usedBitmaps; i++)
+	{
+		m_startVertex.push_back(vertexData.size());
 		for (auto j = 0; j < m_height; j++)
 		{
 			for (auto k = 0; k < m_width; k++)
 			{
 				if (vertices[i][j][k].v1.x == mapNS::UNDEFINED_POSITION)
-					continue;
+					continue;	// vertices are allocated by another bitmap type
 
-				pData.push_back(vertices[i][j][k].v1);
-				pData.push_back(vertices[i][j][k].v2);
-				pData.push_back(vertices[i][j][k].v3);
-				pData.push_back(vertices[i][j][k].v4);
-				pData.push_back(vertices[i][j][k].v5);
-				pData.push_back(vertices[i][j][k].v6);
+				vertexData.push_back(vertices[i][j][k].v1);
+				vertexData.push_back(vertices[i][j][k].v2);
+				vertexData.push_back(vertices[i][j][k].v3);
+				vertexData.push_back(vertices[i][j][k].v4);
+
+				// as vertices in vertex buffer organized, no need to organize index
+				if (n != totalBitmaps)
+				{
+					index[n].i[0] = 0 + n * 4, index[n].i[1] = 1 + n * 4, index[n].i[2] = 2 + n * 4;
+					index[n].i[3] = 0 + n * 4, index[n].i[4] = 2 + n * 4, index[n].i[5] = 3 + n * 4;
+					n++;
+				}
 			}
 		}
-
-		m_lenVertex.push_back(pData.size() - m_startVertex[i]);
+		
+		m_lenVertex.push_back(vertexData.size() - m_startVertex[i]);
 	}
 
-	m_pVertexBuf = m_pDx11Wrapper->createVertexBuffer(totalBitmaps * 6, 0, &pData[0]);
+	m_pVertexBuf = m_pDx11Wrapper->createVertexBuffer(totalBitmaps * 4, 0, &vertexData[0]);
+	m_pIndexBuf = m_pDx11Wrapper->createIndexBuffer(totalBitmaps * sizeof(uint32) * 6, 0, &index[0]);
 	m_pNoSpaceBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(Space), m_noSpace.size(), &m_noSpace[0], 0);
 	m_pNoSpaceSRV = m_pDx11Wrapper->createBufferSRV(m_pNoSpaceBuf.Get());
 	uint32 noSpaceCount = m_noSpace.size();
@@ -172,16 +176,9 @@ void Map::clearUnnecessaryNospace()
 				if (ns.getMaxY() == ns2.getMinY() || ns.getMaxY() == ns2.getMaxY() ||
 					ns.getMinY() == ns2.getMinY() || ns.getMinY() == ns2.getMaxY())
 				{
-					//ns.v1.x = min(ns.getMinX(), ns2.getMinX());
 					ns.v1.y = min(ns.getMinY(), ns2.getMinY());
-
-					//	ns.v2.x = max(ns.getMaxX(), ns2.getMaxX());
 					ns.v2.y = ns.v1.y;
-
-					//ns.v3.x = ns.v2.x;
 					ns.v3.y = max(ns.getMaxY(), ns2.getMaxY());
-
-					//ns.v4.x = ns.v1.x;
 					ns.v4.y = ns.v3.y;
 
 					m_noSpace.erase(std::next(m_noSpace.begin(), j));
@@ -227,11 +224,12 @@ void Map::clearUnnecessaryNospace()
 void Map::draw() const
 {
 	m_pGraphics->setDrawProperties();
+	m_pDx11Wrapper->iaSetIndexBuffer(m_pIndexBuf.Get(), DXGI_FORMAT_R32_UINT, 0);
 	m_pDx11Wrapper->streamVertexBuffer(m_pVertexBuf.Get());
 	for (int8 i = 0; i < m_usedBitmaps; i++)
 	{
 		m_pGraphics->setTexture(m_pTexture[i]->getTexture());
-		m_pGraphics->drawPrimitive(m_startVertex[i], m_lenVertex[i] / 3);
+		m_pDx11Wrapper->d3dDrawIndexed(m_lenVertex[i] *1.5f, m_startVertex[i] * 1.5, 0); // index per teture vertex = 6 / 4 =  1.5
 	}
 }
 

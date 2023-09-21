@@ -18,7 +18,6 @@ m_inflictedDamage(0)
 
 Tank::~Tank()
 {
-	m_pBullet.clear();
 }
 
 void Tank::initialize(std::string texture, const Game * pGame)

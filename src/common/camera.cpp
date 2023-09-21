@@ -49,9 +49,9 @@ void Camera::update(V3 lookTo)
 	
 	// zoom control
 	if (m_pInput->isKeyDown(inputNS::F1_KEY))
-		m_z++;
+		m_z+=5;
 	else if (m_pInput->isKeyDown(inputNS::F2_KEY))
-		m_z--;
+		m_z-=5;
 	else if (m_pInput->isKeyDown(inputNS::F3_KEY))
 		m_z = logicNS::CAMERA_HEIGHT;
 

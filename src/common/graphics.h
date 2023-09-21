@@ -51,5 +51,5 @@ private:
 	std::shared_ptr<Camera> m_pCamera;
 	mutable std::vector<Resolution> m_suppModes;
 	Dx11Wrapper* m_pDx11Wrapper;
-	Microsoft::WRL::ComPtr<DxBuffer> m_pWVMBuffer, m_pObjectMatrixBuffer, m_pViewport;
+	Microsoft::WRL::ComPtr<DxBuffer> m_pWVMBuf, m_pImageMatrixBuf, m_pImageIndexBuf, m_pViewport;
 };

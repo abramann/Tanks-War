@@ -56,7 +56,7 @@ private:
 	Texture* m_pTexture[textureNS::TEXTURE_TILEDS];
 	Graphics* m_pGraphics;
 	Dx11Wrapper* m_pDx11Wrapper;
-	Microsoft::WRL::ComPtr<DxBuffer> m_pVertexBuf, m_pNoSpaceBuf, m_pResultBuf, m_pResultStagingBuf, m_pSpaceBuf,
+	Microsoft::WRL::ComPtr<DxBuffer> m_pVertexBuf, m_pIndexBuf, m_pNoSpaceBuf, m_pResultBuf, m_pResultStagingBuf, m_pSpaceBuf,
 		m_pNoSpaceCountBuf, m_pMapRangeBuf;
 	Microsoft::WRL::ComPtr<DxShaderResourceView> m_pNoSpaceSRV, m_pSpaceSRV, m_pNoSpaceCountSRV, m_pMapRangeSRV;
 	Microsoft::WRL::ComPtr<DxUnorderedAccessView> m_pResultUAV;

@@ -33,8 +33,10 @@ bool Graphics::initialize(const Game* pGame)
 		return false;
 
 	m_pCamera->initialize(pGame);
-	m_pWVMBuffer = m_pDx11Wrapper->createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(Matrix));
-	m_pObjectMatrixBuffer = m_pDx11Wrapper->createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(float[3]) * 3 + 12); // 36 + 12 = 48 size should be of twice 16
+	m_pWVMBuf = m_pDx11Wrapper->createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(Matrix));
+	m_pImageMatrixBuf = m_pDx11Wrapper->createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(float[3]) * 3 + 12); // 36 + 12 = 48 size should be of twice 16
+	uint32 imageIndex[] = {0, 1, 2, 2, 1, 3};
+	m_pImageIndexBuf = m_pDx11Wrapper->createIndexBuffer(sizeof(uint32) * 6, 0, imageIndex);
 	return true;
 }
 
@@ -53,15 +55,10 @@ void Graphics::drawImage(const Image* image)
 		rotate = image->getRotate(),
 		rotateCenter = image->getRotateCenter();
 	setDrawProperties(position, scalling, rotate, rotateCenter);
-#ifdef _BUILD_WITH_D3D9
-	m_lpDevice3d->SetStreamSource(0, vb, 0, sizeof(Vertex));
-	setTexture(texture);
-	m_lpDevice3d->DrawPrimitive(D3DPT_TRIANGLELIST, 0, vertices / 3);
-#else ifdef _BUILD_WITH_D3D11
 	m_pDx11Wrapper->streamVertexBuffer(pVB);
+	m_pDx11Wrapper->iaSetIndexBuffer(m_pImageIndexBuf.Get(), DXGI_FORMAT_R32_UINT, 0);
 	setTexture(texture);
-	m_pDx11Wrapper->d3dDraw(vertices, 0);
-#endif
+	m_pDx11Wrapper->d3dDrawIndexed(6, 0, 0);
 }
 
 void Graphics::endRender()
@@ -100,13 +97,13 @@ void Graphics::setObjectConstBuffer(void* pData)
 	m_lpDevice3d->SetTransform(D3DTS_WORLD, &worldMatrix);
 #else ifdef _BUILD_WITH_D3D11
 	//gameMathNS::matrixTranspose(pObjectMatrix, pObjectMatrix);
-	m_pDx11Wrapper->vsSetConstBuffer(m_pObjectMatrixBuffer.Get(), pData, 1);
+	m_pDx11Wrapper->vsSetConstBuffer(m_pImageMatrixBuf.Get(), pData, 1);
 #endif
 }
 
 void Graphics::setWorldViewMatrix(Matrix * pWorldViewMatrix)
 {
-	m_pDx11Wrapper->vsSetConstBuffer(m_pWVMBuffer.Get(), pWorldViewMatrix, 0);
+	m_pDx11Wrapper->vsSetConstBuffer(m_pWVMBuf.Get(), pWorldViewMatrix, 0);
 }
 
 std::vector<std::string> Graphics::getSupportedResolutionAsString() const

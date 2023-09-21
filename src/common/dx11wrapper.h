@@ -20,11 +20,13 @@ public:
 	void d3dEnd();
 	void d3dPresent();
 	void d3dDraw(uint32 vertexCount, uint32 startVertex);
+	void d3dDrawIndexed(uint32 indexCount, uint32 startIndex, uint32 baseVertex);
 	void psSetSRV(ID3D11ShaderResourceView** ppSRV, uint32 numViews = 1, uint32 startSlot = 0);
 	bool createSRVFromFile(const std::string& file, ID3D11ShaderResourceView ** ppSRV, int32& width, int32& height);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createBuffer(D3D11_USAGE usage, D3D11_BIND_FLAG bindFlag, uint32 cpuAccess, uint32 byteWidth, uint32 stride = 0,
 		void* initialData = 0, uint32 miscFlag = 0) const;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createVertexBuffer(uint32 vertices, uint32 cpuAccess, Vertex* data = 0);
+	Microsoft::WRL::ComPtr<ID3D11Buffer> createIndexBuffer(uint32 byteSize, uint32 cpuAccess, void* data = 0);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createStructuredBuffer(uint32 elementSize, uint32 count, void* pInitData, int32 cpuAccess);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createStagingBuffer(D3D11_CPU_ACCESS_FLAG cpuAccess, uint32 elementSize, uint32 count, void* pInitData);
 	void setComputeShader(ID3D11ComputeShader* pComputeShader);
@@ -36,7 +38,8 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader> createComputeShader(const BYTE* pByteCode, size_t byteCodeSize);
 	void runComputeShader(ID3D11ComputeShader* pComputeShader, uint32 SRVs, ID3D11ShaderResourceView** ppSRV,
 		uint32 uavs, ID3D11UnorderedAccessView** ppUnorderedAccessView, uint32 x, uint32 y, uint32 z);
-	void iaSetStreamBuffer(ID3D11Buffer * pVB, uint32 strides, uint32 offset, uint32 numBuffers = 1, uint32 startSlot = 0);
+	void iaSetStreamBuffer(ID3D11Buffer ** ppVB, uint32 strides, uint32 offset, uint32 numBuffers = 1, uint32 startSlot = 0);
+	void iaSetIndexBuffer(ID3D11Buffer * pIB, DXGI_FORMAT format, uint32 offset);
 	void streamVertexBuffer(ID3D11Buffer* pVB);
 	void vsSetConstBuffer(ID3D11Buffer* pVSConstBuffer, const void* data, uint32 slot);
 	void onResize(int32 width, int32 height);

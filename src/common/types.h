@@ -70,12 +70,6 @@ struct Vertex
 	float u, v;
 };
 
-struct TextureVertices
-{
-	Vertex v1, v2, v3;
-	Vertex v4, v5, v6;
-};
-
 struct GameSettings
 {
 	int32 width, height;
@@ -139,6 +133,25 @@ struct Space
 	V3 getCenter() const { return V3(getMinX() + getWidth() / 2, getMinY() + getHeight() / 2, 0); }
 	void addX(float val) { add4(val, v1.x, v2.x, v3.x, v4.x); }
 	void addY(float val) { add4(val, v1.y, v2.y, v3.y, v4.y); }
+};
+
+struct TextureVertices
+{
+	Vertex v1, v2, v3, v4;
+	//v5, v6;
+	float getMaxX() const { return getMax<float>({ v1.x, v2.x, v3.x, v4.x }); }
+	float getMinX() const { return getMin<float>({ v1.x, v2.x, v3.x, v4.x }); }
+	float getMaxY() const { return getMax<float>({ v1.y, v2.y, v3.y, v4.y }); }
+	float getMinY() const { return getMin<float>({ v1.y, v2.y, v3.y, v4.y }); }
+	Space getSpace() const
+	{
+		Space space;
+		space.v1 = V3(getMinX(), getMinY());
+		space.v2 = V3(getMaxX(), getMinY());
+		space.v3 = V3(getMaxX(), getMaxY());
+		space.v4 = V3(getMinX(), getMaxY());
+		return space;
+	}
 };
 
 inline bool areSpacesCollided(const Space& s1, const Space& s2)

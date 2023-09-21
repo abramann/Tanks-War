@@ -119,6 +119,11 @@ void Dx11Wrapper::d3dDraw(uint32 vertexCount, uint32 startVertex)
 	m_pDeviceContext->Draw(vertexCount, startVertex);
 }
 
+void Dx11Wrapper::d3dDrawIndexed(uint32 indexCount, uint32 startIndex, uint32 baseVertex)
+{
+	m_pDeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
+}
+
 void Dx11Wrapper::psSetSRV(ID3D11ShaderResourceView ** ppSRV, uint32 numViews, uint32 startSlot)
 {
 	m_pDeviceContext->PSSetShaderResources(startSlot, numViews, ppSRV);
@@ -260,10 +265,10 @@ void Dx11Wrapper::initBlend(D3D11_RENDER_TARGET_BLEND_DESC & rtbd)
 	rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 }
 
-void Dx11Wrapper::vsSetConstBuffer(ID3D11Buffer* pVSConstBuffer, const void * data, uint32 slot)
+void Dx11Wrapper::vsSetConstBuffer(ID3D11Buffer* pVSConstBuffer, const void * pData, uint32 slot)
 {
 	m_pDeviceContext->VSSetConstantBuffers(slot, 1, &pVSConstBuffer);
-	m_pDeviceContext->UpdateSubresource(pVSConstBuffer, 0, 0, data, 0,
+	m_pDeviceContext->UpdateSubresource(pVSConstBuffer, 0, 0, pData, 0,
 		0);
 }
 
@@ -343,10 +348,16 @@ void Dx11Wrapper::streamVertexBuffer(ID3D11Buffer* pVB)
 	m_pDeviceContext->IASetVertexBuffers(0, 1, &pVB, &stride, &offset);
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createVertexBuffer(uint32 vertices, uint32 cpuAccess, Vertex * data)
+Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createVertexBuffer(uint32 vertices, uint32 cpuAccess, Vertex * pData)
 {
-	D3D11_USAGE usage = (data) ? D3D11_USAGE_IMMUTABLE : D3D11_USAGE_DYNAMIC;
-	return createBuffer(usage, D3D11_BIND_VERTEX_BUFFER, cpuAccess, vertices*sizeof(Vertex), sizeof(Vertex), data);
+	D3D11_USAGE usage = (pData) ? D3D11_USAGE_IMMUTABLE : D3D11_USAGE_DYNAMIC;
+	return createBuffer(usage, D3D11_BIND_VERTEX_BUFFER, cpuAccess, vertices*sizeof(Vertex), sizeof(Vertex), pData);
+}
+
+Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createIndexBuffer(uint32 byteSize, uint32 cpuAccess, void * pData)
+{
+	return createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, cpuAccess, byteSize,
+		0, pData);
 }
 
 Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createStructuredBuffer(uint32 elementSize, uint32 count, void * pInitData, int32 cpuAccess)
@@ -437,7 +448,12 @@ void Dx11Wrapper::runComputeShader(ID3D11ComputeShader * pComputeShader, uint32 
 	m_pDeviceContext->Dispatch(x, y, z);
 }
 
-void Dx11Wrapper::iaSetStreamBuffer(ID3D11Buffer * pVB, uint32 strides, uint32 offset, uint32 numBuffers, uint32 startSlot)
+void Dx11Wrapper::iaSetStreamBuffer(ID3D11Buffer ** ppVB, uint32 strides, uint32 offset, uint32 numBuffers, uint32 startSlot)
 {
-	m_pDeviceContext->IASetVertexBuffers(startSlot, numBuffers, &pVB, &strides, &offset);
+	m_pDeviceContext->IASetVertexBuffers(startSlot, numBuffers, ppVB, &strides, &offset);
+}
+
+void Dx11Wrapper::iaSetIndexBuffer(ID3D11Buffer * pIB, DXGI_FORMAT format, uint32 offset)
+{
+	m_pDeviceContext->IASetIndexBuffer(pIB, format, offset);
 }
