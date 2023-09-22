@@ -36,11 +36,11 @@ To build the game, you will need Visual Studio 2015(MSVC v140) or above. The nee
 
 - D3D11 (rendering and collision detection)
 
-- ImGui (UI and input handling)
+- [ImGui](https://github.com/ocornut/imgui) (UI and input handling).
 
-- SFML (audio)
+- [SFML](https://github.com/SFML/SFML) (audio).
 
-- Dirent (get directory files)
+- [Dirent](https://github.com/tronkko/dirent) (get directory files).
 
 - Charles Kelly's Net library. 
 
