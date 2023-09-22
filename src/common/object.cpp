@@ -32,32 +32,27 @@ void Object::update()
 
 void Object::executeBack()
 {
-	if (m_playSound)
-		playSoundBack();
+	playSoundBack();
 }
 
 void Object::executeDie()
 {
-	if (m_playSound)
-		playSoundDie();
+	playSoundDie();
 }
 
 void Object::executeForward()
 {
-	if (m_playSound)
-		playSoundForward();
+	playSoundForward();
 }
 
 void Object::executeLeft()
 {
-	if (m_playSound)
-		playSoundLeft();
+	playSoundLeft();
 }
 
 void Object::executeRight()
 {
-	if (m_playSound)
-		playSoundRight();
+	playSoundRight();
 }
 
 void Object::damage(float dmg)

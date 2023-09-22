@@ -25,7 +25,6 @@ public:
 	virtual void draw() const;
 	virtual V3 getRotateCenter() const;
 	int16 getHeight() const { return m_height; }
-	int16 getVertices() const { return m_vertices; }
 	int16 getWidth() const { return m_width; }
 	LPTextureD3D getTexture() const { return m_pTexture->getTexture(); }
 	DxBuffer* getVertexBuffer() const { return m_pVertexBuffer.Get(); }
@@ -64,7 +63,7 @@ protected:
 	int64 m_timeUntilLastUpdate;
 	Microsoft::WRL::ComPtr<DxBuffer> m_pVertexBuffer, m_pStagingBuffer;
 	V3 m_position, m_scalling, m_rotate;
-	int16 m_vertices, m_width, m_height;
+	int16 m_width, m_height;
 	int8_t m_columns, m_rows, m_column, m_row;
 	bool m_initialized;
 

@@ -47,7 +47,6 @@ void Graphics::beginRender()
 
 void Graphics::drawImage(const Image* image)
 {
-	int16 vertices = image->getVertices();
 	DxBuffer* pVB = image->getVertexBuffer();
 	LPTextureD3D texture = image->getTexture();
 	V3 position = image->getPosition(),

@@ -73,7 +73,7 @@ void TanksWar::update()
 	if (m_pInput->isKeyDown(inputNS::E_KEY))
 		tank2.executeAttack();
 	if (GetAsyncKeyState('Q'))
-		tank2.damage(100);
+		tank2.executeDie();
 	if (GetAsyncKeyState('Y'))
 		tank2.executeAnimateRepeat();
 

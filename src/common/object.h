@@ -40,5 +40,4 @@ protected:
 	Map* m_pMap;
 	float m_health, m_velocity;
 	Sound m_soundForward, m_soundBack, m_soundRight, m_soundLeft;
-	bool m_playSound;
 };
