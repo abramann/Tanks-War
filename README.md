@@ -59,6 +59,6 @@ tank-explosion.wav
 - Source: www.youtube.com/watch?v=Q7KmAe8_jZE
 - License: [CC-BY-3.0](https://creativecommons.org/licenses/by/3.0).
 
-bullet-explosion.wav
+bullet-explosion.wav converted from rumble.flac
 - Source: https://opengameart.org/content/rumbleexplosion
 - License: [CC-BY-3.0](https://creativecommons.org/licenses/by/3.0).
