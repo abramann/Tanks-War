@@ -34,18 +34,30 @@ To build the game, you will need Visual Studio 2015(MSVC v140) or above. The nee
 ## Imported Libraries
 
 
-D3D11 (rendering and collision detection)
+- D3D11 (rendering and collision detection)
 
-ImGui (UI and input handling)
+- ImGui (UI and input handling)
 
-SFML (audio)
+- SFML (audio)
 
-Dirent (get directory files)
+- Dirent (get directory files)
 
-Charles Kelly's Net library. 
+- Charles Kelly's Net library. 
 
 
 ## Credits
 
 
 Charles Kelly for the net library and the useful information in his book [Programming 2D Games](http://www.programming2dgames.com).
+
+- Net library license: [CC-BY-3.0](https://creativecommons.org/licenses/by/3.0).
+
+Audio Credits:
+
+tank-explosion.wav
+- Source: www.youtube.com/watch?v=Q7KmAe8_jZE
+- License: [CC-BY-3.0](https://creativecommons.org/licenses/by/3.0).
+
+bullet-explosion.wav
+- Source: https://opengameart.org/content/rumbleexplosion
+- License: [CC-BY-3.0](https://creativecommons.org/licenses/by/3.0).
