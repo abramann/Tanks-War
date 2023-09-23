@@ -193,9 +193,14 @@ void Interface::executeAboutActivity()
 	text("Credits to", WHITE, FONTSIZE_MED2);
 	PushStyleColor(ImGuiCol_Text, YELLOW);
 	BulletText("Charles Kelly for the net library and the useful information in his books (programming2dgames.net)");
+	text("Audio Credits:", WHITE, FONTSIZE_MED);
+	text("tank-explosion.wav");
+	BulletText("Source: www.youtube.com/watch?v=Q7KmAe8_jZE");
+	BulletText("License : CC-BY-3.0 creativecommons.org/licenses/by/3.0");
+	text("bullet-explosion.wav converted from rumble.flac");
+	BulletText("Source: opengameart.org/content/rumbleexplosion");
+	BulletText("License : CC-BY-3.0 creativecommons.org/licenses/by/3.0");
 	PopStyleColor();
-	//text("Assets sources:", WHITE, FONTSIZE_MED2);
-	//BulletText("");
 	endActivity(true, MAIN_ACTIVITY);
 }
 

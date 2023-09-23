@@ -8,8 +8,9 @@
 #include "..\common\data.h"
 #include "..\common\serverplayer.h"
 #include "..\common\timer.h"
+#include "..\common\inlined.inl"
 
-#define TEST_NO_SERVER_INTERFACE
+#//define TEST_NO_SERVER_INTERFACE
 #ifdef TEST_NO_SERVER_INTERFACE
 #include "..\common\input.h"
 #include "..\common\camera.h"
@@ -306,9 +307,7 @@ void TanksWar::applyClientGameAttribute()
 		else
 		{
 			auto remoteClient = findRemoteClientByID(cga.id);
-#ifdef _DEBUG
-			if (remoteClient == nullptr) __debugbreak();
-#endif
+			debuggerBreak();
 			remoteClient->setClientGameAttribute(cga);
 		}
 	}

@@ -30,7 +30,7 @@ void Bullet::update()
 	if (!m_hit)
 	{
 		executeLaunching();
-		if (m_pMap->isCollided(this))
+		if (m_pMap->isCollided(getSpace(), m_pTank))
 			executeHit();
 	}
 }

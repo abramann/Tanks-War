@@ -16,8 +16,7 @@
 #include <stdarg.h>
 #include <Windows.h>
 #include <DirectXMath.h>
-#include <D3D11.h>
-#include <D3D10.h>
+#include <d3d11.h>
 
 #pragma warning(disable : 4200)
 
