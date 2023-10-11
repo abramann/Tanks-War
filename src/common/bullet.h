@@ -21,6 +21,7 @@ public:
 	virtual void update();
 	void executeLaunch();
 	bool isFinished() const { return m_finish; }
+	virtual V3 getRotateCenter() const;
 
 protected:
 

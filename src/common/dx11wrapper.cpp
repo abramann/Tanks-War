@@ -39,7 +39,7 @@ bool Dx11Wrapper::initialize(const Game * pGame)
 		&featureLevel, 1, D3D11_SDK_VERSION, &swapChainDesc, &m_pSwapChain,
 		&m_pDevice, NULL, &m_pDeviceContext)))
 		return false;
-	
+
 	if (!m_initialzed)
 		if (!ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get()))
 			return false;
@@ -59,7 +59,7 @@ bool Dx11Wrapper::d3dInitialize()
 	m_pDevice->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthBuffer);
 	if (FAILED(m_pDevice->CreateDepthStencilView(m_pDepthBuffer.Get(), NULL, &m_pDepthStencilView)))
 		return false;
-	
+
 	D3D11_VIEWPORT viewport;
 	initViewport(viewport);
 	m_pDeviceContext->RSSetViewports(1, &viewport);
@@ -207,7 +207,7 @@ a:
 			}
 		}
 	}
-	
+
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -302,7 +302,7 @@ void Dx11Wrapper::onResize(int32 width, int32 height)
 		D3D11_VIEWPORT vp;
 		vp.Width = static_cast<float>(width);
 		vp.Height = static_cast<float>(height);
-		vp.MinDepth = 0.0f,	vp.MaxDepth = 1.0f;
+		vp.MinDepth = 0.0f, vp.MaxDepth = 1.0f;
 		vp.TopLeftX = 0, vp.TopLeftY = 0;
 		m_pDeviceContext->RSSetViewports(1, &vp);
 	}
@@ -327,7 +327,7 @@ std::vector<DXGI_MODE_DESC> Dx11Wrapper::enurmerateAdapterMode()
 		pAdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM,
 			DXGI_ENUM_MODES_INTERLACED,
 			&numModes, pDisplayModeList);
-		for (uint32 i = 0;  i< numModes; i += 2)
+		for (uint32 i = 0; i < numModes; i += 2)
 			if (pDisplayModeList[i].Width >= gameNS::MIN_RESOLUTION_WIDTH && pDisplayModeList[i].Height >= gameNS::MIN_RESOLUTION_HEIGHT)
 				enurmAdapter.push_back(pDisplayModeList[i]);
 

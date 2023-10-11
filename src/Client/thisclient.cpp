@@ -16,7 +16,7 @@ ThisClient::ThisClient() : m_handleInput(true)
 		m_back = inputNS::S_KEY,
 		m_right = inputNS::D_KEY,
 		m_left = inputNS::A_KEY,
-		m_attack = inputNS::F_KEY;
+		m_attack = inputNS::SPACE_KEY;
 }
 
 ThisClient::~ThisClient()

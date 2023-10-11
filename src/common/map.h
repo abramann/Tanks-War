@@ -6,6 +6,8 @@
 #include "types.h"
 #include <vector>
 #include <wrl\client.h>
+#include <set>
+#include <deque>
 
 class Game;
 class Graphics;
@@ -17,6 +19,29 @@ class Dx11Wrapper;
 
 class Map
 {
+	template <typename T>
+	class CustomSet : public std::set<T>
+	{
+	public:
+
+		T operator[](const size_type& pos) const
+		{
+			/*
+			size_type i = 0;
+			for (auto e : *this)
+			{
+				if (pos == i)
+					return e;
+				else
+					i++;
+			}*/
+
+			std::set<T>::iterator it = begin();
+			std::advance(it, pos);
+			return *it;
+		}
+	};
+
 public:
 
 	Map();
@@ -30,7 +55,7 @@ public:
 	float passY(const Object* object, float y) const;
 	bool isCollided(const Image* image) const;
 	bool isCollided(const Object* object) const; // specific function for Object type for objects collision
-	bool isCollided(const Space& space, const Object* object = 0) const;
+	bool isCollided(const Space& space, const std::vector<const Object*>& pObject = {}) const;
 	bool isOutOfRange(const Space& space) const;
 	Object* getObject(const Space& space) const;
 	bool isMapExist(const std::string name, Crc32 crc32) const { return true; }
@@ -40,17 +65,27 @@ public:
 	void removeObject(Object* pObject);
 	float getVelocityFactor(Space space) const { return getVelocityFactor(space.getCenter()); }
 	float getVelocityFactor(V3 vertex) const;
+	Object* findClosestObject(V3 point, std::vector<Object*> exceptObject) const;
+	std::vector<V3> pathfind(const V3& start, const V3& end);
+	Space findSpaceByVertex(const V3& v3) const;
+	Space getRightFreeSpace(const Space& space) const;
+	Space getLeftFreeSpace(const Space& space) const;
+	Space getTopFreeSpace(const Space& space) const;
+	Space getDownFreeSpace(const Space& space) const;
+	std::set<Node> getAmbientFreeSpace(const Node& node, const std::vector<V3>& sortByDistance = {}) const;
+	bool isVectorUnderFreespace(const Vector3D& vector3d, const std::initializer_list<const Object*>& pExceptObject = {}) const;
+	static std::vector<Space> sortByFCost(const std::vector<V3>& vertexList, const Map::CustomSet<Space>& spaceList);
 
 private:
 
 	bool read();
 	void clearUnnecessaryNospace();
-	Space getRightSpace(Space s) const;
-	Space getLeftSpace(Space s) const;
-	Space getUpSpace(Space s) const;
-	Space getDownSpace(Space s) const;
-	bool isNospaceUseless(const Space& s) const;
-	bool isFreeSpace(const Space& s) const;
+	Space getRightSpace(const Space& space) const;
+	Space getLeftSpace(const Space& space) const;
+	Space getTopSpace(const Space& space) const;
+	Space getDownSpace(const Space& space) const;
+	bool isNospaceUseless(const Space& space) const;
+	bool isFreeSpace(const Space& space) const;
 
 	TextureManger* m_pTextureManger;
 	Texture* m_pTexture[textureNS::TEXTURE_TILEDS];
@@ -61,9 +96,10 @@ private:
 	Microsoft::WRL::ComPtr<DxShaderResourceView> m_pNoSpaceSRV, m_pSpaceSRV, m_pNoSpaceCountSRV, m_pMapRangeSRV;
 	Microsoft::WRL::ComPtr<DxUnorderedAccessView> m_pResultUAV;
 	Microsoft::WRL::ComPtr<DxComputeShader> m_pCollisionCS;
-	std::vector< std::vector<char>> m_map;
 	int32 m_width, m_height;
 	int8 m_usedBitmaps;
+	float m_maxDistance;
+	std::vector< std::vector<char>> m_map;
 	std::vector<int8> m_noSpaceBitmap;
 	std::vector<Space> m_freeSpace, m_noSpace;
 	std::vector<uint32_t> m_startVertex, m_lenVertex;

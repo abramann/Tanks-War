@@ -14,16 +14,11 @@ Player::~Player()
 {
 }
 
-void Player::initialize(PlayerID id, const char* name, PlayerType playerType, const Game * pGame)
+void Player::initialize(PlayerID id, const char* pName, PlayerType playerType, const Game * pGame)
 {
 	m_id = id;
-	strcpy_s(m_name, name);
-	std::string tex;
-	if (playerType == PLAYER_SELF)
-		tex = "player-tank";
-	else if (playerType == PLAYER_ENEMY)
-		tex = "enemy-tank";
-
+	strcpy(m_name, pName);
+	std::string tex = (playerType == PLAYER_SELF) ? "player-tank" : "enemy-tank";
 	Tank::initialize(tex, pGame);
 }
 

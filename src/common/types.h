@@ -20,7 +20,7 @@
 
 #pragma warning(disable : 4200)
 
-struct Color
+/*struct Color
 {
 	float x, y, z;
 	Color() {};
@@ -29,7 +29,7 @@ struct Color
 
 #define COLOR_ARGB(a,b,c) Color(a,b,c)
 #define COLOR_XRGB Color(a,b,c)
-
+*/
 typedef int8_t PlayerID;
 typedef unsigned short Port;
 typedef uint8_t Protocol;
@@ -55,8 +55,8 @@ typedef ID3D11ShaderResourceView DxShaderResourceView;
 typedef ID3D11UnorderedAccessView DxUnorderedAccessView;
 typedef ID3D11ComputeShader DxComputeShader;
 
-#define IN_RANGE(n, a, b) (bool)( (n > a && n < b) || (n > b && n < a))
-#define IN_RANGE_OR_EQUAL(n, a, b) (bool)( (n >= a && n <= b) || (n >= b && n <= a))
+#define IN_RANGE(n, a, b) (bool) ( max(a, b) > n && n > min(a, b) )
+#define IN_RANGE_OR_EQUAL(n, a, b) (bool) ( max(a, b) >= n && n >= min(a, b) )
 
 constexpr const char* strSERVER_STATE[] = { "Not started" , "Waiting for players...", "Preparibg game..." , "Handlubg" };
 constexpr Vec4 colSERVER_STATE[] = { Vec4(0.7f,0.7f,0.7f,0.5f), Vec4(0.87f,0.77f,0,1), Vec4(0,1,0,1) };
@@ -121,23 +121,137 @@ inline void add4(const T amount, T& v1, T& v2, T& v3, T& v4)
 struct Space
 {
 	V3 v1, v2, v3, v4;
-	bool isSame(Space s) const { return ((s.v1 == v1 && s.v2 == v2) || (s.v1 == v2 && s.v2 == v1)) && ((s.v3 == v3 && s.v4 == v4) || (s.v3 == v4 && s.v4 == v3)) ? true : false; }
+
+	Space() { clear(); }
+	Space(const Space& space) { *this = space; }
+	Space(const V3& _v1, const V3& _v2, const V3& _v3, const V3& _v4) : v1(_v1), v2(_v2), v3(_v3), v4(_v4) {}
+	void clear() { v1.clear(), v2.clear(), v3.clear(), v4.clear(); }
+	bool isSame(const Space& s) const { return ((s.v1 == v1 && s.v2 == v2) || (s.v1 == v2 && s.v2 == v1)) && ((s.v3 == v3 && s.v4 == v4) || (s.v3 == v4 && s.v4 == v3)) ? true : false; }
 	bool isValid() const { return (v1.x == mapNS::UNDEFINED_POSITION) ? false : true; }
+	bool isIncluded(const V3& v3) { return (IN_RANGE_OR_EQUAL(v3.x, getMinX(), getMaxX()) && IN_RANGE_OR_EQUAL(v3.y, getMinY(), getMaxY())); }
+	//bool operator<(const Space& s) const { return (v1 < s.v1&& v2 < s.v2 && v3 < s.v3 && v4 < s.v4); } // for using with std::set
 	float getMaxX() const { return getMax<float>({ v1.x,v2.x,v3.x,v4.x }); }
 	float getMinX() const { return getMin<float>({ v1.x,v2.x,v3.x,v4.x }); }
 	float getMaxY() const { return getMax<float>({ v1.y, v2.y, v3.y, v4.y }); }
 	float getMinY() const { return getMin<float>({ v1.y, v2.y, v3.y, v4.y }); }
 	float getWidth() const { return getMaxX() - getMinX(); }
 	float getHeight() const { return getMaxY() - getMinY(); }
+	float getSize() const { return getWidth()*getHeight(); }
 	V3 getCenter() const { return V3(getMinX() + getWidth() / 2, getMinY() + getHeight() / 2, 0); }
+	float getDistanceFromCenter(const V3& v3) const { return getCenter().distance(v3); }
+	float getFCostForCenter(std::vector<V3> v3) const
+	{
+		float fcost = 0;
+		for (const auto& v : v3)
+			fcost += getDistanceFromCenter(v);
+
+		return fcost;
+	}
+
 	void addX(float val) { add4(val, v1.x, v2.x, v3.x, v4.x); }
 	void addY(float val) { add4(val, v1.y, v2.y, v3.y, v4.y); }
+	Space getRightSpace() const
+	{
+		return Space(
+			V3(getMaxX(), getMinY(), 0),
+			V3(getMaxX() + getWidth(), getMinY(), 0),
+			V3(getMaxX() + getWidth(), getMaxY(), 0),
+			V3(getMaxX(), getMaxY(), 0));
+	}
+
+	Space getLeftSpace() const
+	{
+		return Space(
+			V3(getMinX() - getWidth(), getMinY(), 0),
+			V3(getMinX(), getMinY(), 0),
+			V3(getMinX(), getMaxY(), 0),
+			V3(getMinX() - getWidth(), getMaxY(), 0));
+	}
+
+	Space getUpperSpace() const
+	{
+		return Space(
+			V3(getMinX(), getMaxY(), 0),
+			V3(getMaxX(), getMaxY(), 0),
+			V3(getMaxX(), getMaxY() + getHeight(), 0),
+			V3(getMinX(), getMaxY() + getHeight(), 0));
+	}
+
+	Space getDownSpace() const
+	{
+		return Space(
+			V3(getMinX(), getMinY() - getHeight(), 0),
+			V3(getMaxX(), getMinY() - getHeight(), 0),
+			V3(getMaxX(), getMinY(), 0),
+			V3(getMinX(), getMinY(), 0));
+	}
+};
+
+struct Node : public Space
+{
+	Node() : parent(nullptr), fcost(0) {}
+	Node(const Space& space) : parent(nullptr), fcost(0)
+	{
+		memcpy(this, &space, sizeof(Space));
+	};
+
+	Node(const Space& space, const std::vector<V3>& vertexList) : parent(nullptr), fcost(0)
+	{
+		memcpy(this, &space, sizeof(Space));
+		for (auto vertex : vertexList)
+			fcost += vertex.distance(getCenter());
+	}
+
+	Node(const Node& node, const std::vector<V3>& vertexList) : parent(nullptr)
+	{
+		memcpy(this, &node, sizeof(Node));
+		fcost = 0;
+		for (auto vertex : vertexList)
+			fcost += vertex.distance(getCenter());
+	}
+
+	bool operator<(const Node& node) const
+	{
+		if (!(fcost < node.fcost))
+		{
+			static bool inserted = false;
+			if (fcost == node.fcost && !inserted &&
+				!isSame(node))
+			{
+				inserted = true;
+				return true;
+			}
+			else
+				return false;
+		}
+
+		return true;
+	}
+
+	void setSpace(const Space& s)
+	{
+		v1 = s.v1, v2 = s.v2, v3 = s.v3, v4 = s.v4;
+	}
+
+	float fcost;
+	const Node* parent;
+};
+
+struct Vector3D
+{
+	V3 begin, end;
+	float size;
+
+	Vector3D() : size(1) {}
+	Vector3D(const V3& _begin, const V3& _end) : begin(_begin), end(_end) {}
+	Vector3D(const V3& _begin, const V3& _end, float _size) : begin(_begin), end(_end), size(_size) { ; }
+	float getMagnitude() const { return begin.distance(end); }
 };
 
 struct TextureVertices
 {
 	Vertex v1, v2, v3, v4;
-	//v5, v6;
+	bool isValid() const { return (v1.x != mapNS::UNDEFINED_POSITION); }
 	float getMaxX() const { return getMax<float>({ v1.x, v2.x, v3.x, v4.x }); }
 	float getMinX() const { return getMin<float>({ v1.x, v2.x, v3.x, v4.x }); }
 	float getMaxY() const { return getMax<float>({ v1.y, v2.y, v3.y, v4.y }); }
@@ -153,8 +267,16 @@ struct TextureVertices
 	}
 };
 
-inline bool areSpacesCollided(const Space& s1, const Space& s2)
+inline bool areSpacesCollided(const Space& spaceA, const Space& spaceB)
 {
+	float size1 = spaceA.getSize();
+	float size2 = spaceB.getSize();
+	Space s1, s2;
+	if (size1 > size2)
+		s1 = spaceA, s2 = spaceB;
+	else
+		s1 = spaceB, s2 = spaceA;
+
 	float maxX1 = s1.getMaxX(),
 		minX1 = s1.getMinX(),
 		maxY1 = s1.getMaxY(),
@@ -169,6 +291,11 @@ inline bool areSpacesCollided(const Space& s1, const Space& s2)
 			IN_RANGE(s2.v3.y, minY1, maxY1) ||
 			IN_RANGE(s2.v4.y, minY1, maxY1)
 			)
+			return true;
+
+	V3 s2cen = s2.getCenter();
+	if (IN_RANGE(s2cen.x, minX1, maxX1))
+		if (IN_RANGE(s2cen.y, minY1, maxY1))
 			return true;
 
 	return false;

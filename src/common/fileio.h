@@ -19,7 +19,6 @@ public:
 	static 	GameSettings readGameSettings();
 	static MapInfo readMapInfo(std::ifstream& ifs);
 	static Crc32 getCRC32(const std::string& file);
-
 #ifdef _CLIENT_BUILD
 	static ClientInfo readClientInfo();
 	static void createClientInfo(const ClientInfo* pClientInfo);

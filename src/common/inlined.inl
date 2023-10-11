@@ -1,5 +1,6 @@
 #include "types.h"
 #include <memory>
+#include <string>
 
 #pragma once
 
@@ -33,16 +34,19 @@ inline void safeDeleteArray(T ptr)
 	}
 }
 
-inline int32 random(int32 a, int32 b) 
+inline int32 random(int32 a, int32 b)
 {
 	srand(GetTickCount());
 	return (a + (rand() % (b - a + 1)));
 }
 
-inline void debuggerBreak()
+inline void debuggerBreak(const std::string& dbgMsg = "")
 {
 	if (IsDebuggerPresent())
+	{
+		OutputDebugStringA(dbgMsg.c_str());
 		DebugBreak();
+	}
 }
 
 //	https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf

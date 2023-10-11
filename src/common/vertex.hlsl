@@ -85,17 +85,20 @@ cbuffer cbPerFrame : register(b0)
 
 cbuffer cbPerObject : register(b1)
 {
-	float3 g_position, g_scalling, g_rotate, extra;
+	float3 g_position, g_scalling, g_rotate, rotateCenter;
 };
 
 PS_Input main(VS_Input input)
 {
 	float4x4 objectMatrix = identityMatrix4x4();
 	objectMatrix = mul(objectMatrix, scallingMatrix(g_scalling));
+	float4x4 rotateCenterN = translateMatrix(rotateCenter * -1);
+	objectMatrix = mul(objectMatrix, rotateCenterN);
 	for (int i = 2; i >= 0; i--)
 		objectMatrix = mul(objectMatrix, rotateZMatrix(g_rotate[i]));
 
-	objectMatrix = mul(objectMatrix,translateMatrix(g_position));
+	objectMatrix = mul(objectMatrix, translateMatrix(rotateCenter));
+	objectMatrix = mul(objectMatrix, translateMatrix(g_position));
 	objectMatrix = mul(objectMatrix, transpose(g_worldViewMatrix));
 
 	PS_Input output;

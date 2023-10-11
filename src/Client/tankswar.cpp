@@ -10,15 +10,17 @@
 #include "..\common\timer.h"
 #include "..\common\inlined.inl"
 
-#//define TEST_NO_SERVER_INTERFACE
+#define TEST_NO_SERVER_INTERFACE
 #ifdef TEST_NO_SERVER_INTERFACE
 #include "..\common\input.h"
 #include "..\common\camera.h"
 #include "..\common\tank.h"
 #include "..\common\texturemanger.h"
-#include "dx11wrapper.h"
-Image image2;
+#include "..\common\dx11wrapper.h"
+#include "..\common\aiplayer.h"
+
 Tank tank2;
+AIPlayer ai;
 #endif
 
 TanksWar::TanksWar() : m_status(clientNS::CLIENT_UNCONNECTED)
@@ -49,15 +51,17 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hwnd)
 {
 	Game::initialize(hInstance, hwnd);
 #ifdef TEST_NO_SERVER_INTERFACE
-	m_pMap->load("Battle Ground");
+	m_pMap->load("Nova");
 	tank2.initialize("player-tank", this);
-	tank2.setPosition(m_pMap->getRandomEmptySpace().v1);
+	tank2.setPosition(V3(580, 620, 0));
+	ai.initialize(this, 12, "AI1");
+	ai.setPosition(V3(50, 50, 0));
 #else
 	m_pClient->initialize(this);
 	m_pInterface->initialize(this);
+	m_thisClient.initialize(0, this);
 	m_clientInfo = FileIO::readClientInfo();
 #endif
-	m_thisClient.initialize(0, this);
 }
 
 void TanksWar::update()
@@ -79,8 +83,8 @@ void TanksWar::update()
 		tank2.executeAnimateRepeat();
 
 	tank2.update();
-	m_pGraphics->getCamera()->update(tank2.getPosition());
-
+	ai.update();
+	m_pGraphics->getCamera()->update(ai.getSpace().getCenter());
 	return;
 #endif
 }
@@ -91,7 +95,15 @@ void TanksWar::render()
 	updateGame();
 	m_pMap->draw();
 	tank2.draw();
-	return;
+	//ai.draw();
+	m_pGraphics->drawLine(Vector3D(ai.getSpace().getCenter(), tank2.getSpace().getCenter(), 2));
+	m_pGraphics->drawBox(tank2.getSpace());
+/*	auto path = ai.getPath();
+	for (int i = path.size()-1; i >0 ;i--)
+	{
+		m_pGraphics->drawLine(Vector3D(path[i], path[i-1], 5));
+	}*/
+
 #else
 	m_pInterface->render();
 #endif
@@ -222,7 +234,7 @@ bool TanksWar::applyReceivedGameProperties()
 	m_clients = m_pSpsJoin->clients;
 	if (m_clients != m_pRemoteClient.size() + 1)
 		return false;
-	
+
 	return true;
 }
 

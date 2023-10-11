@@ -122,6 +122,12 @@
     <ClInclude Include="..\common\pixelshader.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\aiplayer.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\line.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\texturemanger.cpp">
@@ -172,9 +178,6 @@
     <ClCompile Include="..\common\map.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\net.cpp">
-      <Filter>Common\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\object.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
@@ -222,6 +225,15 @@
     </ClCompile>
     <ClCompile Include="thisclient.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\aiplayer.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\net.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\line.cpp">
+      <Filter>Common\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

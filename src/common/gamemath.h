@@ -15,10 +15,17 @@ namespace gameMathNS
 		return XMVectorSet(vec.x, vec.y, vec.z, 0);
 	}
 
+	inline float getDistance(const V3& v1, const V3& v2)
+	{
+		float dist = sqrtf(pow(v1.x - v2.x, 2) + pow(v1.y - v2.y, 2) + pow(v1.z - v2.z, 2));
+		return dist;
+	}
+
 	inline void matrixTranspose(Matrix* pOut, Matrix* pMat)
 	{
 		*pOut = XMMatrixTranspose(*pMat);
 	}
+
 	inline void matrixTranslation(Matrix* mat, float x, float y, float z)
 	{
 		*mat = XMMatrixTranslation(x, y, z);
@@ -88,5 +95,15 @@ namespace gameMathNS
 		}
 
 		return mat;
+	}
+
+	inline float getAngle(const V3& a, const V3& b)
+	{
+		return atan2(a.x - b.x, a.y - b.y);
+	}
+
+	inline float getAngle(const Vector3D& vector)
+	{
+		return gameMathNS::getAngle(vector.begin, vector.end);
 	}
 }

@@ -104,7 +104,7 @@ void Game::onUpdateDisplay() const
 
 	SetWindowLongPtr(m_hwnd, GWL_STYLE, style);
 	AdjustWindowRect(&rect, style, false);
-	SetWindowPos(m_hwnd, 0, 0, 0, 
+	SetWindowPos(m_hwnd, 0, 0, 0,
 		rect.right - rect.left,
 		rect.bottom - rect.top, 0);
 	m_pDx11Wrapper->onResize(g_pGameSettings->width, g_pGameSettings->height);

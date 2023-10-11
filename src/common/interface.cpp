@@ -125,7 +125,7 @@ void Interface::executeSettingsActivity()
 		pGame->updateGameSettings();
 
 	static auto suppMode = m_pGraphics->getSupportedResolutionAsString();
-	static int32 currMode = m_pGraphics->getIndexCurrentResolution(); 
+	static int32 currMode = m_pGraphics->getIndexCurrentResolution();
 	bool input = ListBox("##resolution", &currMode, vectorOfStringGetter, &suppMode, suppMode.size());
 	if (input)
 	{
@@ -170,7 +170,7 @@ void Interface::executePlayingActivity()
 
 	SetNextWindowPos(Vec2(0, 0));
 	ImGui::Begin("Status", 0, ImGuiWindowFlags_NoTitleBar);
-	PushStyleColor(ImGuiCol_Text, YELLOW); 
+	PushStyleColor(ImGuiCol_Text, YELLOW);
 	PushFont(m_pFont[FONTSIZE_SMALL2]);
 	auto pThisClient = m_pTW->getThisClient();
 	text(strFormat("Health %d", static_cast<int32>(pThisClient->getHealth())));
@@ -471,7 +471,7 @@ void Interface::text(std::string text, Vec4 color, FontSize fontSize)
 
 	Text(text.c_str());
 	if (!color.isEmpty())
-		PopStyleColor(); 
+		PopStyleColor();
 	if (fontSize)
 		PopFont();
 }

@@ -11,8 +11,8 @@
 #include "fileio.h"
 #include "collisionshader.h"
 #include "inlined.inl"
+#include "gamemath.h"
 #include <fstream>
-#include <string>
 
 #pragma warning(disable : 4267) // conversion from size_t to uint32
 
@@ -53,6 +53,7 @@ bool Map::load(const std::string& map)
 	int32 totalBitmaps = m_width*m_height;
 	m_tiledSize.x = static_cast<float>(m_pTexture[0]->getWidth());
 	m_tiledSize.y = static_cast<float>(m_pTexture[0]->getHeight());
+	m_maxDistance = sqrt(pow(m_width*m_tiledSize.x, 2) + pow(m_height*m_tiledSize.y, 2));
 	std::vector<std::vector< std::vector<TextureVertices>>> vertices(m_usedBitmaps);
 	for (auto& element : vertices)
 	{
@@ -70,8 +71,8 @@ bool Map::load(const std::string& map)
 	{
 		for (auto w = 0; w < m_width; w++)
 		{
-			vertices[m_map[h][w]][h][w].v1 = { (w + 1)*m_tiledSize.x ,(h+1)*m_tiledSize.y,0.0f,-1.0f,-1.0f };
-			vertices[m_map[h][w]][h][w].v2 = { (w+1)*m_tiledSize.x,(h)*m_tiledSize.y,0.0f,-1.0f,0.0f };
+			vertices[m_map[h][w]][h][w].v1 = { (w + 1)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,-1.0f,-1.0f };
+			vertices[m_map[h][w]][h][w].v2 = { (w + 1)*m_tiledSize.x,(h)*m_tiledSize.y,0.0f,-1.0f,0.0f };
 			vertices[m_map[h][w]][h][w].v3 = { (w)*m_tiledSize.x ,(h)*m_tiledSize.y,0.0f,0.0f,0.0f };
 			vertices[m_map[h][w]][h][w].v4 = { (w)*m_tiledSize.x ,(h + 1)*m_tiledSize.y,0.0f,0.0f,-1.0f };
 
@@ -98,7 +99,7 @@ bool Map::load(const std::string& map)
 
 	// organize vertices in a 2d vector waith sort each bitmap as series
 	std::vector<Vertex> vertexData;
-	
+
 	struct TextureIndex
 	{
 		uint32 i[6];	// each 2 triangles requires 6 index
@@ -112,7 +113,7 @@ bool Map::load(const std::string& map)
 		{
 			for (auto k = 0; k < m_width; k++)
 			{
-				if (vertices[i][j][k].v1.x == mapNS::UNDEFINED_POSITION)
+				if (!vertices[i][j][k].isValid())
 					continue;	// vertices are allocated by another bitmap type
 
 				vertexData.push_back(vertices[i][j][k].v1);
@@ -129,12 +130,15 @@ bool Map::load(const std::string& map)
 				}
 			}
 		}
-		
+
 		m_lenVertex.push_back(vertexData.size() - m_startVertex[i]);
 	}
 
 	m_pVertexBuf = m_pDx11Wrapper->createVertexBuffer(totalBitmaps * 4, 0, &vertexData[0]);
 	m_pIndexBuf = m_pDx11Wrapper->createIndexBuffer(totalBitmaps * sizeof(uint32) * 6, 0, &index[0]);
+	if (m_noSpace.size() == 0)
+		m_noSpace.push_back(Space());
+
 	m_pNoSpaceBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(Space), m_noSpace.size(), &m_noSpace[0], 0);
 	m_pNoSpaceSRV = m_pDx11Wrapper->createBufferSRV(m_pNoSpaceBuf.Get());
 	uint32 noSpaceCount = m_noSpace.size();
@@ -229,7 +233,7 @@ void Map::draw() const
 	for (int8 i = 0; i < m_usedBitmaps; i++)
 	{
 		m_pGraphics->setTexture(m_pTexture[i]->getTexture());
-		m_pDx11Wrapper->d3dDrawIndexed(m_lenVertex[i] *1.5f, m_startVertex[i] * 1.5, 0); // index per teture vertex = 6 / 4 =  1.5
+		m_pDx11Wrapper->d3dDrawIndexed(m_lenVertex[i] * 1.5f, m_startVertex[i] * 1.5f, 0); // index per texture vertex = 6 / 4 =  1.5
 	}
 }
 
@@ -241,41 +245,41 @@ void Map::clear()
 	m_pObject.clear();
 }
 
-float Map::passX(const Object * object, float x) const
+float Map::passX(const Object * pThisObject, float x) const
 {
-	Space is = object->getSpace(x, 0);
-	float x0 = object->getPosition().x;
-	if (isCollided(is, object))
+	Space is = pThisObject->getSpace(x, 0);
+	float x0 = pThisObject->getPosition().x;
+	if (isCollided(is, { pThisObject }))
 		return x0;
 
 	return x;
 }
 
-float Map::passY(const Object * object, float y) const
+float Map::passY(const Object * pThisObject, float y) const
 {
-	Space is = object->getSpace(0, y);
-	float y0 = object->getPosition().y;
-	if (isCollided(is, object))
+	Space is = pThisObject->getSpace(0, y);
+	float y0 = pThisObject->getPosition().y;
+	if (isCollided(is, { pThisObject }))
 		return y0;
 
 	return y;
 }
 
-bool Map::isCollided(const Image* image) const
+bool Map::isCollided(const Image* pImage) const
 {
-	return isCollided(image->getSpace());
+	return isCollided(pImage->getSpace());
 }
 
-bool Map::isCollided(const Object * object) const
+bool Map::isCollided(const Object * pObject) const
 {
-	return isCollided(object->getSpace(), object);
+	return isCollided(pObject->getSpace(), { pObject });
 }
 
-bool Map::isCollided(const Space& is, const Object* object) const
+bool Map::isCollided(const Space& collidedSpace, const std::vector<const Object*>& pExceptObject) const
 {
 	if (g_pGameSettings->computeShader)
 	{
-		m_pDx11Wrapper->copyToResource(m_pSpaceBuf.Get(), (void*)&is, sizeof(Space));
+		m_pDx11Wrapper->copyToResource(m_pSpaceBuf.Get(), (void*)&collidedSpace, sizeof(Space));
 		DxShaderResourceView* ppSRV[] = { m_pNoSpaceSRV.Get(),m_pNoSpaceCountSRV.Get(), m_pSpaceSRV.Get(), m_pMapRangeSRV.Get() };
 		DxUnorderedAccessView* ppUAV[] = { m_pResultUAV.Get() };
 		m_pDx11Wrapper->runComputeShader(m_pCollisionCS.Get(), ARRAYSIZE(ppSRV), ppSRV, ARRAYSIZE(ppUAV), ppUAV,
@@ -288,20 +292,22 @@ bool Map::isCollided(const Space& is, const Object* object) const
 	}
 	else
 	{
-		if (isOutOfRange(is))
+		if (isOutOfRange(collidedSpace))
 			return true;
 
 		for (auto space : m_noSpace)
-			if (areSpacesCollided(space, is))
+			if (areSpacesCollided(space, collidedSpace))
 				return true;
 	}
-	for (auto pObj : m_pObject)
-	{
-		if (object == pObj)	// is object apply same
-			continue;
-		if (areSpacesCollided(pObj->getSpace(), is))
-			return true;
-	}
+	if (pExceptObject[0] != nullptr)
+		for (const auto& pObj : m_pObject)
+		{
+			if (std::find(pExceptObject.begin(), pExceptObject.end(), pObj) != pExceptObject.end())
+				continue;
+
+			if (areSpacesCollided(pObj->getSpace(), collidedSpace))
+				return true;
+		}
 
 	return false;
 }
@@ -332,9 +338,7 @@ Object * Map::getObject(const Space& space) const
 		Space is = pObj->getSpace();
 		bool collided = areSpacesCollided(is, space);
 		if (collided)
-		{
 			return pObj;
-		}
 	}
 
 	return nullptr;
@@ -384,51 +388,54 @@ bool Map::read()
 	return true;
 }
 
-Space Map::getRightSpace(Space s) const
+Space Map::getRightSpace(const Space& space) const
 {
-	s.addX(m_tiledSize.x);
-	if (isOutOfRange(s))
-		s.v1.x = mapNS::UNDEFINED_POSITION;
+	Space rSpace = space;
+	rSpace.addX(m_tiledSize.x);
+	if (isOutOfRange(rSpace))
+		rSpace.v1.x = mapNS::UNDEFINED_POSITION;
 
-	return s;
+	return rSpace;
 }
 
-Space Map::getLeftSpace(Space s) const
+Space Map::getLeftSpace(const Space& space) const
 {
-	s.addX(-m_tiledSize.x);
-	if (isOutOfRange(s))
-		s.v1.x = mapNS::UNDEFINED_POSITION;
+	Space lSpace = space;
+	lSpace.addX(-m_tiledSize.x);
+	if (isOutOfRange(lSpace))
+		lSpace.v1.x = mapNS::UNDEFINED_POSITION;
 
-	return s;
+	return lSpace;
 }
 
-Space Map::getUpSpace(Space s) const
+Space Map::getTopSpace(const Space& space) const
 {
-	s.addY(m_tiledSize.y);
-	if (isOutOfRange(s))
-		s.v1.x = mapNS::UNDEFINED_POSITION;
+	Space tSpace = space;
+	tSpace.addY(m_tiledSize.y);
+	if (isOutOfRange(tSpace))
+		tSpace.v1.x = mapNS::UNDEFINED_POSITION;
 
-	return s;
+	return tSpace;
 }
 
-Space Map::getDownSpace(Space s) const
+Space Map::getDownSpace(const Space& space) const
 {
-	s.addY(-m_tiledSize.y);
-	if (isOutOfRange(s))
-		s.v1.x = mapNS::UNDEFINED_POSITION;
+	Space dSpace = space;
+	dSpace.addY(-m_tiledSize.y);
+	if (isOutOfRange(dSpace))
+		dSpace.v1.x = mapNS::UNDEFINED_POSITION;
 
-	return s;
+	return dSpace;
 }
 
-bool Map::isNospaceUseless(const Space& s) const
+bool Map::isNospaceUseless(const Space& space) const
 {
-	Space space[] = { getUpSpace(s),getDownSpace(s),getRightSpace(s),getLeftSpace(s) };
+	Space ambient[] = { getTopSpace(space), getDownSpace(space), getRightSpace(space), getLeftSpace(space) };
 	for (int i = 0; i < mapNS::SPACE_VERTICES; i++)
-	{
-		if (space[i].isValid())
-			if (isFreeSpace(space[i]))
+		if (ambient[i].isValid())
+			if (isFreeSpace(ambient[i]))
 				return false;
-	}
+
 	return true;
 }
 
@@ -478,4 +485,215 @@ float Map::getVelocityFactor(V3 vertex) const
 	vertex.y = floor(vertex.y / m_tiledSize.y);
 	int8 n = m_map[vertex.y][vertex.x];
 	return m_bitmapAttribute[n].velocityFactor;
+}
+
+Object * Map::findClosestObject(V3 point, std::vector<Object*> exceptObject) const
+{
+	Object* pClosestObj = nullptr;
+	float dist = m_maxDistance;
+	for (const auto& thisObj : m_pObject)
+	{
+		if (std::find(exceptObject.begin(), exceptObject.end(), thisObj) != exceptObject.end())
+			continue;
+
+		float thisObjDist = thisObj->getSpace().getCenter().distance(point);
+		if (thisObjDist > m_maxDistance)
+			debuggerBreak("Invalid object position!");
+
+		if (min(dist, thisObjDist) == thisObjDist)
+			pClosestObj = thisObj;
+	}
+
+	return pClosestObj;
+}
+
+inline std::vector<Space> Map::sortByFCost(const std::vector<V3>& vertexList, const Map::CustomSet<Space>& spaceList)
+{
+	std::vector<Space> spaceListSort = { spaceList[0] };
+	for (uint32 i = 1; i < spaceList.size(); i++)
+		for (uint32 j = 0; j < spaceListSort.size(); j++)
+		{
+			float fcost = spaceList[i].getFCostForCenter(vertexList);
+			if (spaceListSort[j].getFCostForCenter(vertexList)  > fcost)
+			{
+				spaceListSort.insert(spaceListSort.begin() + j, spaceList[i]);
+				break;
+			}
+			if (j == spaceListSort.size() - 1)
+			{
+				spaceListSort.push_back(spaceList[i]);
+				break;
+			}
+		}
+
+	// Test code check
+	std::vector<float> f;
+	for (auto va : spaceListSort)
+		f.push_back(va.getFCostForCenter(vertexList));
+
+	return spaceListSort;
+}
+
+std::vector<V3> Map::pathfind(const V3 & start, const V3 & end)
+{
+	CustomSet<Node> openList;
+	CustomSet<std::shared_ptr<Node>> pClosedList;
+	Space startSpace = findSpaceByVertex(start);
+	bool done = false;
+	openList.insert(Node(startSpace, { start, end }));
+	Node endSuccessor;
+	std::shared_ptr<Node> pQ;
+	while (!openList.empty())
+	{
+		pQ = std::make_shared<Node>(Node(openList[0], { start,end }));
+		Node& q = *pQ;
+		openList.erase(q);
+		std::shared_ptr<std::set<Node>> pSuccessors(new std::set<Node>(getAmbientFreeSpace(q, { start,end })));
+		std::set<Node>& successors = *pSuccessors;
+		std::vector<V3> vv;
+		for (auto& successor : successors)
+		{
+			vv.push_back(successor.getCenter());
+		}
+		for (auto& successor : successors)
+		{
+			if (successor.getCenter() == end)
+			{
+				endSuccessor = successor;
+				done = true;
+				break;
+			}
+			else
+			{
+				bool add = true;
+				for (auto pClosed : pClosedList)
+					if (successor.isSame(*pClosed))
+						add = false;
+				if (add)
+					openList.insert(successor);
+			}
+		}
+
+		pClosedList.insert(pQ);
+		if (done)
+			break;
+	}
+
+	std::vector<V3> pathfind;
+	if (done)
+		while (1)
+		{
+			if (endSuccessor.getCenter() == start)
+				break;
+
+			pathfind.push_back(endSuccessor.getCenter());
+			if (endSuccessor.parent == nullptr)
+				break;
+
+			endSuccessor = *endSuccessor.parent;
+		}
+
+	return pathfind;
+}
+
+Space Map::findSpaceByVertex(const V3& v3) const
+{
+	Space space;
+	space.v1.x = std::floor(v3.x / 100) * 100,
+		space.v1.y = std::floor(v3.y / 100) * 100;
+	space.v2.x = space.v1.x + m_tiledSize.x,
+		space.v2.y = space.v1.y;
+	space.v3.x = space.v2.x,
+		space.v3.y = space.v2.y + m_tiledSize.y;
+	space.v4.x = space.v1.x,
+		space.v4.y = space.v3.y;
+
+#ifdef _DEBUG
+	std::vector< const Object*> cObj;
+	for (auto obj : m_pObject)
+		cObj.push_back(obj);
+
+	if (isCollided(space, cObj))
+		debuggerBreak("Invalid V3 location or invalid m_freeSpace list!");
+#endif
+
+	return space;
+}
+
+Space Map::getRightFreeSpace(const Space & space) const
+{
+	Space rSpace(space);
+	rSpace.addX(m_tiledSize.x);
+	if (isCollided(rSpace, { nullptr }))
+		rSpace.v1.x = mapNS::UNDEFINED_POSITION;
+
+	return rSpace;
+}
+
+Space Map::getLeftFreeSpace(const Space & space) const
+{
+	Space lSpace(getLeftSpace(space));
+	if (isCollided(lSpace, { nullptr }))
+		lSpace.v1.x = mapNS::UNDEFINED_POSITION;
+
+	return lSpace;
+}
+
+Space Map::getTopFreeSpace(const Space & space) const
+{
+	Space tSpace(getTopSpace(space));
+	if (isCollided(tSpace, { nullptr }))
+		tSpace.v1.x = mapNS::UNDEFINED_POSITION;
+
+	return tSpace;
+}
+
+Space Map::getDownFreeSpace(const Space & space) const
+{
+	Space dSpace(getDownSpace(space));
+	if (isCollided(dSpace, { nullptr }))
+		dSpace.v1.x = mapNS::UNDEFINED_POSITION;
+
+	return dSpace;
+}
+
+std::set<Node> Map::getAmbientFreeSpace(const Node& node, const std::vector<V3>& vertexList) const
+{
+	Node ambient[] = {
+		Node(getRightFreeSpace(node), vertexList),
+		Node(getLeftFreeSpace(node), vertexList),
+		Node(getTopFreeSpace(node), vertexList),
+		Node(getDownFreeSpace(node), vertexList) };
+
+	std::set<Node> setAmbient;
+	for (int i = 0; i < 4; i++)
+		if (ambient[i].isValid())
+		{
+			ambient[i].parent = &node;
+			setAmbient.insert(ambient[i]);
+		}
+
+	if (setAmbient.size() == 0)
+		debuggerBreak();
+
+	return setAmbient;
+}
+
+bool Map::isVectorUnderFreespace(const Vector3D& vector, const std::initializer_list<const Object*>& pExceptObject) const
+{
+	V3 v1, v2, v3, v4;
+	V3 center(0, 0, 0);
+	v1 = V3(vector.begin.x, vector.begin.y);
+	float rotate = gameMathNS::getAngle(vector);
+	v2.x = vector.begin.x + vector.size / 2;
+	v2.y = vector.begin.y + vector.size / 2;
+	if (v1.distance(center) > v2.distance(center))
+		swap(v1, v2);
+
+	v3 = V3(vector.end.x - (vector.size / 2), vector.end.y - (vector.size / 2), 0);
+	v4 = V3(vector.end.x + vector.size / 2, vector.end.y + vector.size / 2, 0);
+	if (v3.distance(center) < v4.distance(center))
+		swap(v3, v4);
+
+	return (isCollided(Space(v1, v2, v3, v4), pExceptObject)) ? false : true;
 }

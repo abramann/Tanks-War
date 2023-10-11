@@ -25,7 +25,7 @@ void Camera::initialize(const Game* pGame)
 }
 
 void Camera::update(V3 lookTo)
-{	
+{
 	V2 mapSize = m_pMap->getMapSize();
 	if (lookTo.x / m_aspectRatio <= abs(m_z))
 		lookTo.x = abs(m_z)*m_aspectRatio;
@@ -46,15 +46,16 @@ void Camera::update(V3 lookTo)
 	gameMathNS::matrixLookAtLH(&eye, &position, &target, &up);
 	Matrix viewMatrix;
 	gameMathNS::matrixIdentity(&viewMatrix);
-	
+
 	// zoom control
 	if (m_pInput->isKeyDown(inputNS::F1_KEY))
-		m_z+=5;
+		m_z += 5;
 	else if (m_pInput->isKeyDown(inputNS::F2_KEY))
-		m_z-=5;
+		m_z -= 5;
 	else if (m_pInput->isKeyDown(inputNS::F3_KEY))
 		m_z = logicNS::CAMERA_HEIGHT;
 
+	// since the camera projection on the surface result Isosceles right triangle
 	float maxZ = max(mapSize.x, mapSize.y) / 2;
 	if (-m_z *m_aspectRatio > maxZ)
 		m_z = -maxZ / m_aspectRatio;

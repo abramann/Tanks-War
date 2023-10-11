@@ -46,11 +46,12 @@ public:
 	void setY(float y) { m_position.y = y; }
 	void setZ(float z) { m_position.z = z; }
 	Space getSpace(float x0 = 0, float y0 = 0) const;
+	float getNegativeRotate() const { return (m_rotate.z <= 0) ? m_rotate.z : -abs(PI - m_rotate.z) - PI; };
 
 protected:
 
 	virtual void createVertexBuffer();
-	virtual void setLocalCoordinate();
+	virtual void updateLocalCoordinate();
 	virtual void executeAnimateRepeat() { m_row = 1, m_column = 1; }
 
 	Graphics* m_pGraphics;

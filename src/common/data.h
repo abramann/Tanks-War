@@ -125,7 +125,6 @@ namespace logicNS
 	constexpr auto VELOCITY_TANK = 3.0f;
 	constexpr auto DEFAULT_BITMAP_DAMAGEFACTOR = 1.0f;
 	constexpr auto DEFAULT_BITMAP_VELOCITYFACTOR = 1.0f;
-
 }
 
 namespace networkNS

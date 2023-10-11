@@ -30,18 +30,28 @@ void Bullet::update()
 	if (!m_hit)
 	{
 		executeLaunching();
-		if (m_pMap->isCollided(getSpace(), m_pTank))
+		if (m_pMap->isCollided(getSpace(), { m_pTank }))
 			executeHit();
 	}
 }
 
 V3 Bullet::getBulletLaunchPosition()
 {
-	Space s = m_pTank->getSpace();
-	V3 position;
-	position.x = (s.v4.x + (s.v3.x - s.v4.x) / 2);
-	position.y = (s.v4.y + (s.v3.y - s.v4.y) / 2);
-	return position;
+	auto tankSpace = m_pTank->getSpace();
+	float angle = m_pTank->getNegativeRotate();
+	V3 start, end;
+	float piOverTwo = angle / (-PI / 2);
+	if (piOverTwo > 3)
+		start = tankSpace.v1, end = tankSpace.v4;
+	else if (piOverTwo > 2)
+		start = tankSpace.v2, end = tankSpace.v1;
+	else if (piOverTwo > 1)
+		start = tankSpace.v3, end = tankSpace.v2;
+	else
+		start = tankSpace.v3, end = tankSpace.v4;
+
+	return V3(getMin<float>({ start.x, end.x }) + (abs(start.x - end.x) / 2),
+		getMin<float>({ start.y, end.y }) + (abs(start.y - end.y) / 2));
 }
 
 void Bullet::executeLaunch()
@@ -55,15 +65,21 @@ void Bullet::executeLaunch()
 	executeLaunching();
 }
 
+V3 Bullet::getRotateCenter() const
+{
+	return V3();
+}
+
 void Bullet::executeHit()
 {
 	m_hit = true;
 	Object* pObject = m_pMap->getObject(getSpace());
-	if (pObject)
+	if (pObject != nullptr)
 	{
 		m_pTank->addInflictedDamage(m_damage);
 		pObject->damage(m_damage);
 	}
+
 	Image::initialize("bullet-destroy", m_pGame, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, logicNS::UPDATE_DELAY_BULLET);
 	m_pAudio->play("bullet-explosion");
 }
@@ -75,7 +91,10 @@ void Bullet::executeAnimateRepeat()
 
 void Bullet::executeLaunching()
 {
-	float factors = m_pTimer->getTimeFactor() * m_pMap->getVelocityFactor(getSpace());
+	m_position = getBulletLaunchPosition();
+	m_rotate = m_pTank->getRotate();
+	return;
+	float factors = m_pTimer->getTimeFactor();
 	float incX = m_speed*sin(m_rotate.z)*factors,
 		incY = m_speed*cos(m_rotate.z)*factors;
 	addX(-incX);

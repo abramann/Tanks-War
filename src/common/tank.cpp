@@ -9,7 +9,7 @@
 #include "texture.h"
 #include "timer.h"
 
-Tank::Tank() : m_bulletSpeed(logicNS::BULLET_SPEED), m_bulletDamage(logicNS::BULLET_DAMAGE), m_rotateAmount(logicNS::TANK_ROTATE_AMOUNT),
+Tank::Tank() : m_bulletSpeed(logicNS::BULLET_SPEED), m_bulletDamage(logicNS::BULLET_DAMAGE), m_rotateAmount(PI / 256),
 m_inflictedDamage(0)
 {
 	m_health = logicNS::HEALTH_TANK;
@@ -45,7 +45,10 @@ void Tank::draw()
 {
 	Object::draw();
 	for (size_t i = 0; i < m_pBullet.size(); i++)
+	{
 		m_pBullet[i]->draw();
+		m_pGraphics->drawBox(m_pBullet[0]->getSpace());
+	}
 }
 
 bool Tank::executeAttack()
@@ -111,6 +114,7 @@ void Tank::executeRight()
 	m_rotate.z -= m_rotateAmount * factors;
 	if (m_pMap->isCollided(this))
 		m_rotate.z += m_rotateAmount * factors;
+
 	Object::executeRight();
 }
 

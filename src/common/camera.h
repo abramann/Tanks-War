@@ -2,6 +2,7 @@
 // Author: abramann
 
 #pragma once
+
 #include "types.h"
 
 class Game;

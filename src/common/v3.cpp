@@ -2,44 +2,44 @@
 #include <math.h>
 #include <assert.h>
 
-V3::V3(const V3 &vec)
+V3::V3(const V3 &v3)
 {
-	x = vec.x;
-	y = vec.y;
-	z = vec.z;
+	x = v3.x;
+	y = v3.y;
+	z = v3.z;
 }
 
 //addition
 
-V3 V3 ::operator+(const V3 &vec)
+V3 V3 ::operator+(const V3 &v3) const
 {
-	return V3(x + vec.x, y + vec.y, z + vec.z);
+	return V3(x + v3.x, y + v3.y, z + v3.z);
 }
 
-V3 &V3 ::operator+=(const V3 &vec)
+V3 &V3 ::operator+=(const V3 &v3)
 {
-	x += vec.x;
-	y += vec.y;
-	z += vec.z;
+	x += v3.x;
+	y += v3.y;
+	z += v3.z;
 	return *this;
 }
 //substraction//
-V3 V3 ::operator-(const V3 &vec)
+V3 V3 ::operator-(const V3 &v3) const
 {
-	return V3(x - vec.x, y - vec.y, z - vec.z);
+	return V3(x - v3.x, y - v3.y, z - v3.z);
 }
 
-V3 &V3::operator-=(const V3 &vec)
+V3 &V3::operator-=(const V3 &v3)
 {
-	x -= vec.x;
-	y -= vec.y;
-	z -= vec.z;
+	x -= v3.x;
+	y -= v3.y;
+	z -= v3.z;
 	return *this;
 }
 
 //scalar multiplication
 
-V3 V3 ::operator*(f value)
+V3 V3 ::operator*(f value) const
 {
 	return V3(x*value, y*value, z*value);
 }
@@ -53,7 +53,7 @@ V3 &V3::operator*=(f value)
 }
 
 //scalar division
-V3 V3 ::operator/(f value)
+V3 V3 ::operator/(f value) const
 {
 	assert(value != 0);
 	return V3(x / value, y / value, z / value);
@@ -68,39 +68,45 @@ V3 &V3 ::operator/=(f value)
 	return *this;
 }
 
-V3 &V3::operator=(const V3 &vec)
+V3 &V3::operator=(const V3 &v3)
 {
-	x = vec.x;
-	y = vec.y;
-	z = vec.z;
+	x = v3.x;
+	y = v3.y;
+	z = v3.z;
 	return *this;
 }
 
-bool V3::operator==(const V3 &vec)
-{
-	return (vec.x == x && vec.y == y && vec.z == z);
-}
 //Dot product
-f V3::dot_product(const V3 &vec)
+f V3::dot_product(const V3 &v3) const
 {
-	return x*vec.x + vec.y*y + vec.z*z;
+	return x*v3.x + v3.y*y + v3.z*z;
+}
+
+bool V3::operator==(const V3 &v3) const
+{
+	return (v3.x == x&&v3.y == y&&v3.z == z);
+}
+
+bool V3::operator<(const V3& v3) const
+{
+	return (v3.x > x&&v3.y > y, v3.z > z);
 }
 
 //cross product
-V3 V3::cross_product(const V3 &vec)
+V3 V3::cross_product(const V3 &v3) const
 {
-	f ni = y*vec.z - z*vec.y;
-	f nj = z*vec.x - x*vec.z;
-	f nk = x*vec.y - y*vec.x;
+	f ni = y*v3.z - z*v3.y;
+	f nj = z*v3.x - x*v3.z;
+	f nk = x*v3.y - y*v3.x;
 	return V3(ni, nj, nk);
 }
 
-f V3::magnitude()
+f V3::magnitude() const
 {
 	return static_cast<f>(sqrt(square()));
 }
 
-f V3::square()
+f V3::square() const
 {
 	return x*x + y*y + z*z;
 }
@@ -112,23 +118,8 @@ V3 V3::normalization()
 	return *this;
 }
 
-f V3::distance(const V3 &vec)
+f V3::distance(const V3 &v3) const
 {
-	V3 dist = *this - vec;
+	V3 dist = *this - v3;
 	return dist.magnitude();
-}
-
-f V3::show_X()
-{
-	return x;
-}
-
-f V3::show_Y()
-{
-	return y;
-}
-
-f V3::show_Z()
-{
-	return z;
 }

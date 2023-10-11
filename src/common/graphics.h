@@ -12,6 +12,7 @@ class Game;
 class Image;
 class Camera;
 class Dx11Wrapper;
+class Line;
 
 struct Resolution
 {
@@ -32,6 +33,8 @@ public:
 	bool loadTexture(const std::string& file, int32& width, int32& height, LPTextureD3D& texture);
 	void beginRender();
 	void drawImage(const Image* image);
+	void drawLine(const Vector3D& line);
+	void drawBox(const Space& space, const float& size = 1);
 	void drawPrimitive(uint32 startVertex, uint32 count);
 	void endRender();
 	void showBackbuffer();
@@ -49,6 +52,7 @@ private:
 	HWND m_hwnd;
 	Matrix m_wvp;
 	std::shared_ptr<Camera> m_pCamera;
+	std::shared_ptr<Line> m_pLine;
 	mutable std::vector<Resolution> m_suppModes;
 	Dx11Wrapper* m_pDx11Wrapper;
 	Microsoft::WRL::ComPtr<DxBuffer> m_pWVMBuf, m_pImageMatrixBuf, m_pImageIndexBuf, m_pViewport;

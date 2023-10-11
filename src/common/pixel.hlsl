@@ -5,5 +5,5 @@ SamplerState gSamplerState;
 
 float4 main(PS_Input input) : SV_TARGET
 {
-    return gTexture.Sample(gSamplerState, input.uv);
+	return gTexture.Sample(gSamplerState, input.uv);
 }

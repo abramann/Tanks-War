@@ -9,8 +9,9 @@
 #include "camera.h"
 #include "game.h"
 #include "gamemath.h"
-#include "inlined.inl"
+#include "line.h"
 #include "dx11wrapper.h"
+#include "inlined.inl"
 
 using Microsoft::WRL::ComPtr;
 
@@ -19,6 +20,7 @@ uint64  g_frameCounter = 0;
 Graphics::Graphics()
 {
 	m_pCamera = std::make_shared<Camera>();
+	m_pLine = std::make_shared<Line>();
 }
 
 Graphics::~Graphics()
@@ -34,9 +36,10 @@ bool Graphics::initialize(const Game* pGame)
 
 	m_pCamera->initialize(pGame);
 	m_pWVMBuf = m_pDx11Wrapper->createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(Matrix));
-	m_pImageMatrixBuf = m_pDx11Wrapper->createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(float[3]) * 3 + 12); // 36 + 12 = 48 size should be of twice 16
-	uint32 imageIndex[] = {0, 1, 2, 2, 1, 3};
+	m_pImageMatrixBuf = m_pDx11Wrapper->createBuffer(D3D11_USAGE_DEFAULT, D3D11_BIND_CONSTANT_BUFFER, 0, sizeof(float[4]) * 4); // 36 + 12 = 48 size should be of twice 16
+	uint32 imageIndex[] = { 0, 1, 2, 2, 1, 3 };
 	m_pImageIndexBuf = m_pDx11Wrapper->createIndexBuffer(sizeof(uint32) * 6, 0, imageIndex);
+	m_pLine->initialize(pGame);
 	return true;
 }
 
@@ -60,6 +63,22 @@ void Graphics::drawImage(const Image* image)
 	m_pDx11Wrapper->d3dDrawIndexed(6, 0, 0);
 }
 
+void Graphics::drawLine(const Vector3D & vector)
+{
+	m_pLine->draw(vector);
+}
+
+void Graphics::drawBox(const Space & space, const float& size)
+{
+	std::vector<Vector3D> boxVector;
+	boxVector.push_back(Vector3D(space.v1, space.v2, size));
+	boxVector.push_back(Vector3D(space.v2, space.v3, size));
+	boxVector.push_back(Vector3D(space.v3, space.v4, size));
+	boxVector.push_back(Vector3D(space.v4, space.v1, size));
+	for (const auto& vector : boxVector)
+		drawLine(vector);
+}
+
 void Graphics::endRender()
 {
 	m_pDx11Wrapper->d3dEnd();
@@ -81,7 +100,7 @@ void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCent
 		position.x, position.y, position.z, 0,
 		scall.x, scall.y, scall.z, 0,
 		rotate.x, rotate.y, rotate.z, 0,
-		0, 0, 0, 0 };
+		rotateCenter.x, rotateCenter.y, rotateCenter.z, 0 };
 	setObjectConstBuffer(v);
 }
 
@@ -124,7 +143,6 @@ int32 Graphics::getIndexCurrentResolution() const
 	int32 index = std::find(suppResol.begin(), suppResol.end(),
 		strFormat("%dx%d", g_pGameSettings->width, g_pGameSettings->height)) - suppResol.begin();
 	return index;
-
 }
 
 void Graphics::onResize()

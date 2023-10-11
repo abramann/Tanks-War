@@ -12,6 +12,7 @@ struct V3
 struct Space
 {
 	V3 v1, v2, v3, v4;
+
 	float getMaxX()
 	{
 		float xMax = max(v1.x, v2.x);
@@ -43,26 +44,86 @@ struct Space
 		yMin = min(yMin, v4.y);
 		return yMin;
 	}
+
+	float getWidth()
+	{ 
+		return getMaxX() - getMinX();
+	}
+
+	float getHeight() 
+	{ 
+		return getMaxY() - getMinY();
+	}
+
+	float getSize()
+	{ 
+		return getHeight()*getWidth();
+	}
+
 };
 
-int areSpacesCollided(Space s1, Space s2)
+int areSpacesCollided(Space spaceA, Space spaceB)
 {
-	float maxX1 = s1.getMaxX(),
-		minX1 = s1.getMinX(),
-		maxY1 = s1.getMaxY(),
-		minY1 = s1.getMinY();
-	if (IN_RANGE(s2.v1.x, minX1, maxX1) ||
-		IN_RANGE(s2.v2.x, minX1, maxX1) ||
-		IN_RANGE(s2.v3.x, minX1, maxX1) ||
-		IN_RANGE(s2.v4.x, minX1, maxX1)
-		)
-		if (IN_RANGE(s2.v1.y, minY1, maxY1) ||
-			IN_RANGE(s2.v2.y, minY1, maxY1) ||
-			IN_RANGE(s2.v3.y, minY1, maxY1) ||
-			IN_RANGE(s2.v4.y, minY1, maxY1)
-			)
-			return 1;
+	/* This leads FXC to crash
+	if (spaceA.getSize() > spaceB.getSize())
+		s1 = spaceA, s2 = spaceB;
+	else
+		s1 = spaceB, s2 = spaceA;*/
+	
+	if (spaceA.getSize() > spaceB.getSize())
+	{
+		Space s1 = spaceA, s2 = spaceB;
 
+		float maxX1 = s1.getMaxX(),
+			minX1 = s1.getMinX(),
+			maxY1 = s1.getMaxY(),
+			minY1 = s1.getMinY();
+		if (IN_RANGE(s2.v1.x, minX1, maxX1) ||
+			IN_RANGE(s2.v2.x, minX1, maxX1) ||
+			IN_RANGE(s2.v3.x, minX1, maxX1) ||
+			IN_RANGE(s2.v4.x, minX1, maxX1) 
+			)
+			if (IN_RANGE(s2.v1.y, minY1, maxY1) ||
+				IN_RANGE(s2.v2.y, minY1, maxY1) ||
+				IN_RANGE(s2.v3.y, minY1, maxY1) ||
+				IN_RANGE(s2.v4.y, minY1, maxY1)
+				)
+				return 1;
+
+		float centerX2 = ((s2.getMaxX() - s2.getMinX()) / 2) + s2.getMinX(),
+			centerY2 = ((s2.getMaxY() - s2.getMinY()) / 2) + s2.getMinY();
+		if (IN_RANGE(centerX2, minX1, maxX1))
+			if (IN_RANGE(centerY2, minY1, maxY1))
+				return 1;
+	}
+	else
+	{
+		Space s1 = spaceB, s2 = spaceA;
+
+		float maxX1 = s1.getMaxX(),
+			minX1 = s1.getMinX(),
+			maxY1 = s1.getMaxY(),
+			minY1 = s1.getMinY();
+		if (IN_RANGE(s2.v1.x, minX1, maxX1) ||
+			IN_RANGE(s2.v2.x, minX1, maxX1) ||
+			IN_RANGE(s2.v3.x, minX1, maxX1) ||
+			IN_RANGE(s2.v4.x, minX1, maxX1)
+			)
+			if (IN_RANGE(s2.v1.y, minY1, maxY1) ||
+				IN_RANGE(s2.v2.y, minY1, maxY1) ||
+				IN_RANGE(s2.v3.y, minY1, maxY1) ||
+				IN_RANGE(s2.v4.y, minY1, maxY1)
+				)
+				return 1;
+
+
+		float centerX2 = ((s2.getMaxX() - s2.getMinX()) / 2) + s2.getMinX(),
+			centerY2 = ((s2.getMaxY() - s2.getMinY()) / 2) + s2.getMinY();
+		if (IN_RANGE(centerX2, minX1, maxX1))
+			if (IN_RANGE(centerY2, minY1, maxY1))
+				return 1;
+	}
+	
 	return 0;
 }
 
