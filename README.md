@@ -7,7 +7,7 @@ Simple multiplayer 2D tank game currently under development.
 ## How to play
 
 
-The player controls a tank and destroys other players tanks. The play style will be improved after basic game functions(audio, interface, server and client) are implemented.
+The player controls a tank and destroys other players tanks. The play style will be improved after basic game functions(AI, interface, server and client) are implemented.
 
 
 ### Controls
