@@ -128,6 +128,12 @@
     <ClInclude Include="..\common\line.h">
       <Filter>Common\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\node.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="thisplayer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\texturemanger.cpp">
@@ -234,6 +240,12 @@
     </ClCompile>
     <ClCompile Include="..\common\line.cpp">
       <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\node.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="thisplayer.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

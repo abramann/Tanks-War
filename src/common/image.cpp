@@ -6,12 +6,16 @@
 #include "timer.h"
 #include "dx11wrapper.h"
 #include "texturemanger.h"
+#include "inlined.inl"
 
 Image::Image() : m_animate(false), m_column(1), m_row(1), m_columns(0), m_rows(0),
 m_timeUntilLastUpdate(0), m_updateDelay(0), m_width(0), m_height(0), m_textureWidth(0),
 m_textureHeight(0), m_pVertexBuffer(0), m_pStagingBuffer(0), m_position(0, 0, 0), m_rotate(0, 0, 0),
 m_scalling(1, 1, 1), m_initialized(false)
 {
+	V3* edge[] = { &m_space.v1,&m_space.v2,&m_space.v3,&m_space.v4 };
+	memcpy(m_edge, edge, sizeof(Space*) * 4);
+	m_spaceAdd1 = 0, m_spaceAdd2 = 0;
 }
 
 Image::~Image()
@@ -28,7 +32,7 @@ void Image::initialize(const std::string& texture, const Game* pGame, int8 colum
 		m_pTimer = pGame->getTimer();
 		m_pTextureManger = pGame->getTextureManger();
 	}
-
+	
 	m_pTexture = m_pTextureManger->getTexture(texture);;
 	m_columns = columns;
 	m_rows = rows;
@@ -79,96 +83,100 @@ V3 Image::getRotateCenter() const
 
 Space Image::getSpace(float x0, float y0) const
 {
-	static Space space;
-	static V3* v[4] = { &space.v1,&space.v2,&space.v3,&space.v4 };
 	if (x0 == 0)
 		x0 = m_position.x;
 	if (y0 == 0)
 		y0 = m_position.y;
 
 	V3 rotateCenter = getRotateCenter();
-	if (rotateCenter.x == 0 && rotateCenter.y == 0)
-	{
-		float f1 = 1 + (-0.636619772f*abs(m_rotate.z));
-		float f2 = ((m_rotate.z < 0) ? -1 : 1) * -(abs(f1) - 1);
-		space.v1.x = x0, space.v1.y = y0;
-		space.v2.x = space.v1.x + m_width*(f1);
-		space.v2.y = space.v1.y + (m_width *f2);
-		space.v3.x = space.v2.x + m_height*(-1 * f2);
-		space.v3.y = space.v2.y + m_height*f1;
-		space.v4.x = space.v1.x + m_height*(-1 * f2);
-		space.v4.y = space.v1.y + m_height*f1;
-		return space;
-	}
-	else
+	if (m_width == m_height && !(rotateCenter == V3(0, 0, 0)))
 	{
 		float x = getNegativeRotate(), f11 = 0,
 			piOverTwo = x / (-PI / 2);
-		static float add1 = 0, add2 = 0;
+#ifdef _DEBUG
+		if (x < -2 * PI || x > 0)
+			debuggerBreak("Invalid angle!\n");
+#endif 
+		const int16& polygon = m_width;
 		if (piOverTwo > 3)
 		{
-			v[0] = &space.v4,
-				v[1] = &space.v1,
-				v[2] = &space.v2,
-				v[3] = &space.v3;
-			x += PI + PI / 2;
+			m_edge[0] = &m_space.v4,
+				m_edge[1] = &m_space.v1,
+				m_edge[2] = &m_space.v2,
+				m_edge[3] = &m_space.v3;
+			x += 3 * PI / 2;
+			m_spaceAdd1 = -polygon / 2, m_spaceAdd2 = -polygon / 4;
 		}
 		else if (piOverTwo > 2)
 		{
-			v[0] = &space.v3,
-				v[1] = &space.v4,
-				v[2] = &space.v1;
-			v[3] = &space.v2;
+			m_edge[0] = &m_space.v3,
+				m_edge[1] = &m_space.v4,
+				m_edge[2] = &m_space.v1;
+			m_edge[3] = &m_space.v2;
 			x += PI;
+			m_spaceAdd1 = -polygon / 2, m_spaceAdd2 = -polygon / 4;
 		}
 		else if (piOverTwo > 1)
 		{
-			v[3] = &space.v1,
-				v[0] = &space.v2,
-				v[1] = &space.v3,
-				v[2] = &space.v4;
+			m_edge[3] = &m_space.v1,
+				m_edge[0] = &m_space.v2,
+				m_edge[1] = &m_space.v3,
+				m_edge[2] = &m_space.v4;
 			x += (PI / 2);
+			m_spaceAdd1 = -polygon / 2, m_spaceAdd2 = -polygon / 4;
 		}
-		else if (v[0] != &space.v1)
+		else if (m_edge[0] != &m_space.v1)
 		{
-			v[0] = &space.v1,
-				v[1] = &space.v2,
-				v[2] = &space.v3,
-				v[3] = &space.v4;
+			m_edge[0] = &m_space.v1,
+				m_edge[1] = &m_space.v2,
+				m_edge[2] = &m_space.v3,
+				m_edge[3] = &m_space.v4;
 			f11 = 1.2732395447351626861510701069801*-PI / 4;
-			add1 = f11 * m_width / 2, add2 = f11*m_height / 4;
+			m_spaceAdd1 = f11 * m_width / 2, m_spaceAdd2 = f11*m_height / 4;
 		}
 
 		f11 = 1.2732395447351626861510701069801*x;
 		if (IN_RANGE(x, 0, -PI / 4))
-			add1 = f11*m_width / 2, add2 = f11*m_width / 4;
+			m_spaceAdd1 = f11*polygon / 2, m_spaceAdd2 = f11*polygon / 4;
 
-		v[0]->x = x0 + add2;
-		v[0]->y = y0 - add1;
-		v[1]->x = m_width + x0 + add1;
-		v[1]->y = y0 + add2;
-		v[2]->x = x0 + m_width - add2;
-		v[2]->y = y0 + m_height + add1;
-		v[3]->x = x0 - add1;
-		v[3]->y = y0 + m_height - add2;
+		m_edge[0]->x = x0 + m_spaceAdd2;
+		m_edge[0]->y = y0 - m_spaceAdd1;
+		m_edge[1]->x = polygon + x0 + m_spaceAdd1;
+		m_edge[1]->y = y0 + m_spaceAdd2;
+		m_edge[2]->x = x0 + polygon - m_spaceAdd2;
+		m_edge[2]->y = y0 + polygon + m_spaceAdd1;
+		m_edge[3]->x = x0 - m_spaceAdd1;
+		m_edge[3]->y = y0 + polygon - m_spaceAdd2;
 
-		static float f22 = 0;
 		if (IN_RANGE_OR_EQUAL(x, -PI / 4, -PI / 2))
 		{
-			f22 = f11 + 1.000000;
-			v[0]->x += 15 * -f22;
-			v[0]->y += 30 * -f22;
-			v[1]->x -= 30 * -f22;
-			v[1]->y += 15 * -f22;
-			v[2]->x -= 15 * -f22;
-			v[2]->y -= 30 * -f22;
-			v[3]->x += 30 * -f22;
-			v[3]->y -= 15 * -f22;
+			float f22 = f11 + 1.000000;
+			m_edge[0]->x += 15 * -f22;
+			m_edge[0]->y += 30 * -f22;
+			m_edge[1]->x -= 30 * -f22;
+			m_edge[1]->y += 15 * -f22;
+			m_edge[2]->x -= 15 * -f22;
+			m_edge[2]->y -= 30 * -f22;
+			m_edge[3]->x += 30 * -f22;
+			m_edge[3]->y -= 15 * -f22;
 		}
 	}
+	else
+	{
+		float f1 = 1 + (-0.636619772f*abs(m_rotate.z));
+		float f2 = ((m_rotate.z < 0) ? -1 : 1) * -(abs(f1) - 1);
+		m_space.v1.x = x0, m_space.v1.y = y0;
+		m_space.v2.x = m_space.v1.x + m_width*(f1);
+		m_space.v2.y = m_space.v1.y + (m_width *f2);
+		m_space.v3.x = m_space.v2.x + m_height*(-1 * f2);
+		m_space.v3.y = m_space.v2.y + m_height*f1;
+		m_space.v4.x = m_space.v1.x + m_height*(-1 * f2);
+		m_space.v4.y = m_space.v1.y + m_height*f1;
+		return m_space;
+	}
 
-	space = Space(*v[0], *v[1], *v[2], *v[3]);
-	return space;
+	m_space = Space(*m_edge[0], *m_edge[1], *m_edge[2], *m_edge[3]);
+	return m_space;
 }
 
 void Image::createVertexBuffer()

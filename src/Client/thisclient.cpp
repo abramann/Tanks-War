@@ -10,13 +10,9 @@
 #include "thisclient.h"
 #include "tankswar.h"
 
-ThisClient::ThisClient() : m_handleInput(true)
+ThisClient::ThisClient()
 {
-	m_forward = inputNS::W_KEY,
-		m_back = inputNS::S_KEY,
-		m_right = inputNS::D_KEY,
-		m_left = inputNS::A_KEY,
-		m_attack = inputNS::SPACE_KEY;
+	
 }
 
 ThisClient::~ThisClient()
@@ -35,14 +31,11 @@ void ThisClient::initialize(PlayerID id, TanksWar * pTW)
 void ThisClient::update()
 {
 	m_act = PLAYER_ACT_NONE;
-	if (m_handleInput)
-		handleInput();
-
+	ThisPlayer::update();
 	if (m_act != PLAYER_ACT_NONE)
 		m_pTW->dispatchPlayerAct();
 
-	m_pCamera->update(m_position);
-	Player::update();
+	
 }
 
 void ThisClient::executeForward()
@@ -97,36 +90,10 @@ bool ThisClient::executeAttack()
 	return true;
 }
 
-void ThisClient::executeAnimateRepeat()
-{
-	m_handleInput = true;
-	m_health = 100;
-	Player::executeAnimateRepeat();
-}
-
 void ThisClient::implementAttack()
 {
 	Player::executeAttack();
 }
 
-void ThisClient::executeDie()
-{
-	m_handleInput = false;
-	Player::executeDie();
-}
-
-void ThisClient::handleInput()
-{
-	if (m_pInput->isKeyDown(m_forward))
-		executeForward();
-	else if (m_pInput->isKeyDown(m_back))
-		executeBack();
-	if (m_pInput->isKeyDown(m_right))
-		executeRight();
-	else if (m_pInput->isKeyDown(m_left))
-		executeLeft();
-	if (m_pInput->isKeyDown(m_attack))
-		executeAttack();
-}
 
 #endif

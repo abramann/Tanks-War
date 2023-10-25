@@ -58,8 +58,6 @@ void Object::executeRight()
 void Object::damage(float dmg)
 {
 	m_health -= dmg;
-#ifdef _SERVER_BUILD
 	if (m_health <= 0)
 		executeDie();
-#endif
 }

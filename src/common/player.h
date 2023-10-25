@@ -21,6 +21,9 @@ public:
 	PlayerID getID() const { return m_id; }
 	void setID(PlayerID id) { m_id = id; }
 	const char* getName() const { return m_name; }
+	virtual void damage(float dmg);
+	virtual void executeDie();
+	virtual void executeAnimateRepeat();
 
 #ifdef _CLIENT_BUILD
 	void setClientGameStatus(const ClientGameStatus& clientGameStatus);

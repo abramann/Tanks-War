@@ -4,6 +4,7 @@
 #pragma once
 
 #include "types.h"
+#include "node.h"
 #include <vector>
 #include <wrl\client.h>
 #include <set>
@@ -74,7 +75,8 @@ public:
 	Space getDownFreeSpace(const Space& space) const;
 	std::set<Node> getAmbientFreeSpace(const Node& node, const std::vector<V3>& sortByDistance = {}) const;
 	bool isVectorUnderFreespace(const Vector3D& vector3d, const std::initializer_list<const Object*>& pExceptObject = {}) const;
-	static std::vector<Space> sortByFCost(const std::vector<V3>& vertexList, const Map::CustomSet<Space>& spaceList);
+	//static std::vector<Space> sortByFCost(const std::vector<V3>& vertexList, const Map::CustomSet<Space>& spaceList);
+	bool isValidObject(const Object* const pObject);
 
 private:
 

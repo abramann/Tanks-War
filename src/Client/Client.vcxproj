@@ -185,6 +185,7 @@
     <ClInclude Include="..\common\line.h" />
     <ClInclude Include="..\common\map.h" />
     <ClInclude Include="..\common\net.h" />
+    <ClInclude Include="..\Common\node.h" />
     <ClInclude Include="..\common\object.h" />
     <ClInclude Include="..\common\pixelshader.h" />
     <ClInclude Include="..\common\player.h" />
@@ -199,6 +200,7 @@
     <ClInclude Include="client.h" />
     <ClInclude Include="thisclient.h" />
     <ClInclude Include="tankswar.h" />
+    <ClInclude Include="thisplayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\aiplayer.cpp" />
@@ -223,6 +225,7 @@
     <ClCompile Include="..\common\line.cpp" />
     <ClCompile Include="..\common\map.cpp" />
     <ClCompile Include="..\common\net.cpp" />
+    <ClCompile Include="..\Common\node.cpp" />
     <ClCompile Include="..\common\object.cpp" />
     <ClCompile Include="..\common\player.cpp" />
     <ClCompile Include="..\common\serverplayer.cpp" />
@@ -236,6 +239,7 @@
     <ClCompile Include="client.cpp" />
     <ClCompile Include="thisclient.cpp" />
     <ClCompile Include="tankswar.cpp" />
+    <ClCompile Include="thisplayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\common\collision.hlsl">

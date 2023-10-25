@@ -24,87 +24,125 @@ void AIPlayer::initialize(Game * pGame, PlayerID id, const char * name)
 
 void AIPlayer::update()
 {
-	if (m_pTargetObject != nullptr)
-	{
-		if (GetAsyncKeyState(VK_F12))
-		{
-			V3 start = m_pMap->findSpaceByVertex(getSpace().getCenter()).getCenter(),
-				end = m_pMap->findSpaceByVertex(m_pTargetObject->getSpace().getCenter()).getCenter();
-			m_path = m_pMap->pathfind(start, end);
-		}
-		
-		if (m_onMoving)
-			moveTowardsObject(m_pTargetObject);
+	Player::update();
+	if (m_health <= 0)
+		return;
+
+	if (m_pMap->isValidObject(m_pTargetObject))
+	{		
+		moveTowardsObject(m_pTargetObject);
 		if (m_onAttack)
 			attackOjbect(m_pTargetObject);
 	}
 	else
 		lookForEnemy();
 
-	if (0)
+	if (GetAsyncKeyState(VK_F12))
 	{
-		m_path.clear();
-		m_pTargetObject = nullptr;
+		V3 start = m_pMap->findSpaceByVertex(getSpace().getCenter()).getCenter(),
+			end = m_pMap->findSpaceByVertex(m_pTargetObject->getSpace().getCenter()).getCenter();
+		m_path = m_pMap->pathfind(start, end);
 	}
+}
 
-	Player::update();
+void AIPlayer::executeAnimateRepeat()
+{
+	m_path.clear();
+	m_pTargetObject = nullptr;
+	Player::executeAnimateRepeat();
 }
 
 void AIPlayer::lookForEnemy()
 {
 	m_pTargetObject = m_pMap->findClosestObject(getSpace().getCenter(), { this });
-	if (m_pTargetObject)
-		m_onMoving = true;
+	if (!m_pTargetObject)
+		return;
+
+	V3 start = m_pMap->findSpaceByVertex(getSpace().getCenter()).getCenter(),
+		end = m_pMap->findSpaceByVertex(m_pTargetObject->getSpace().getCenter()).getCenter();
+	m_path = m_pMap->pathfind(start, end);
+	if (m_path.empty()) // The target object is not accessable
+	{
+		m_pTargetObject = nullptr;
+		return;
+	}
+
+	m_onMoving = true;
 }
 
 void AIPlayer::moveTowardsObject(Object * pObject)
 {
-	return;
 	if (m_path.empty())
 	{
-		V3 start = m_pMap->findSpaceByVertex(getSpace().getCenter()).getCenter(),
-			end = m_pMap->findSpaceByVertex(m_pTargetObject->getSpace().getCenter()).getCenter();
-		m_path = m_pMap->pathfind(start, end);
-		if (m_path.empty()) // The target object is not accessable
-		{
+		if (!m_onAttack)
 			m_pTargetObject = nullptr;
-			return;
-		}
-	}
 
-	if (!m_onAttack)
+		return;
+	}
+	if(moveToward(m_path.back()))
 	{
-		auto bulletWidth = m_pTextureManger->getTexture("bullet")->getWidth();
-		Vector3D toTargetVector = Vector3D(getSpace().getCenter(), m_pTargetObject->getSpace().getCenter(), bulletWidth);
-		if (m_pMap->isVectorUnderFreespace(toTargetVector, { this, m_pTargetObject }))
-			m_onMoving = false, m_onAttack = true;
+		if (!m_onAttack)
+		{
+			auto bulletWidth = m_pTextureManger->getTexture("bullet")->getWidth();
+			Vector3D toTargetVector = Vector3D(getSpace().getCenter(), m_pTargetObject->getSpace().getCenter(), bulletWidth);
+			if (m_pMap->isVectorUnderFreespace(toTargetVector, { this, m_pTargetObject }))
+			{
+				m_onMoving = false, m_onAttack = true;
+				m_path.clear();
+				return;
+			}
+		}
+		if (m_path.empty())
+			m_pTargetObject = nullptr;
+		else
+			m_path.pop_back();
 	}
-
-	if (moveToward(m_path.back()));
-		//m_path.pop_back();
-
-	if (m_path.empty())
-		m_onMoving = false;
 }
 
 void AIPlayer::attackOjbect(Object * pObject)
 {
+	auto bulletWidth = m_pTextureManger->getTexture("bullet")->getWidth();
+	Vector3D toTargetVector = Vector3D(getSpace().getCenter(), m_pTargetObject->getSpace().getCenter(), bulletWidth);
+	if (!m_pMap->isVectorUnderFreespace(toTargetVector, { this, m_pTargetObject }))
+	{
+		m_onMoving = false, m_onAttack = false;
+		m_path.clear();
+		m_pTargetObject = nullptr;
+	}
+	else
+	{
+		rotateToward(pObject->getSpace().getCenter());
+		executeAttack();
+	}
 }
 
 void AIPlayer::rotateToward(const V3 & vertex)
 {
 	Vector3D toVertex = Vector3D(getSpace().getCenter(), vertex);
 	float angle = gameMathNS::getAngle(toVertex);
-	m_rotate.z = PI - angle;
+	angle = PI - angle;
+	float negAngle = angle;
+	if (angle > 0)
+		negAngle = -2 * PI + angle;
+
+	m_rotate.z = negAngle;
+}
+
+bool isSpaceInclude(const Space& space, const V3&  vertex)
+{
+	if (IN_RANGE(vertex.x, space.getMinX(), space.getMaxX()))
+		if (IN_RANGE(vertex.y, space.getMinY(), space.getMaxY()))
+			return true;
+
+	return false;
 }
 
 bool AIPlayer::moveToward(const V3 & vertex)
 {
-	Space targetSpace = m_pMap->findSpaceByVertex(vertex);
-	if (::areSpacesCollided(targetSpace, getSpace()))
+	if (isSpaceInclude(getSpace(), vertex))
 		return true;
 
 	rotateToward(vertex);
-	//executeForward();
+	executeForward();
 	return false;
 }

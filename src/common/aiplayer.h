@@ -4,7 +4,6 @@
 #pragma once
 
 #include "player.h"
-#include <deque>
 
 class Game;
 class Object;
@@ -19,6 +18,7 @@ public:
 	virtual void initialize(Game* pGame, PlayerID id, const char* name);
 	virtual void update();
 	std::vector<V3> getPath() const { return m_path; }
+	virtual void executeAnimateRepeat();
 
 private:
 

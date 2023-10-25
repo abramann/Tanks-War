@@ -40,9 +40,9 @@ inline int32 random(int32 a, int32 b)
 	return (a + (rand() % (b - a + 1)));
 }
 
-inline void debuggerBreak(const std::string& dbgMsg = "")
+inline void debuggerBreak(const bool& condition = true, const std::string& dbgMsg = "")
 {
-	if (IsDebuggerPresent())
+	if (condition && IsDebuggerPresent())
 	{
 		OutputDebugStringA(dbgMsg.c_str());
 		DebugBreak();

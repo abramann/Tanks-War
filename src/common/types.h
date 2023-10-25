@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <stdarg.h>
+#include <memory>
 #include <Windows.h>
 #include <DirectXMath.h>
 #include <d3d11.h>
@@ -185,56 +186,6 @@ struct Space
 			V3(getMaxX(), getMinY(), 0),
 			V3(getMinX(), getMinY(), 0));
 	}
-};
-
-struct Node : public Space
-{
-	Node() : parent(nullptr), fcost(0) {}
-	Node(const Space& space) : parent(nullptr), fcost(0)
-	{
-		memcpy(this, &space, sizeof(Space));
-	};
-
-	Node(const Space& space, const std::vector<V3>& vertexList) : parent(nullptr), fcost(0)
-	{
-		memcpy(this, &space, sizeof(Space));
-		for (auto vertex : vertexList)
-			fcost += vertex.distance(getCenter());
-	}
-
-	Node(const Node& node, const std::vector<V3>& vertexList) : parent(nullptr)
-	{
-		memcpy(this, &node, sizeof(Node));
-		fcost = 0;
-		for (auto vertex : vertexList)
-			fcost += vertex.distance(getCenter());
-	}
-
-	bool operator<(const Node& node) const
-	{
-		if (!(fcost < node.fcost))
-		{
-			static bool inserted = false;
-			if (fcost == node.fcost && !inserted &&
-				!isSame(node))
-			{
-				inserted = true;
-				return true;
-			}
-			else
-				return false;
-		}
-
-		return true;
-	}
-
-	void setSpace(const Space& s)
-	{
-		v1 = s.v1, v2 = s.v2, v3 = s.v3, v4 = s.v4;
-	}
-
-	float fcost;
-	const Node* parent;
 };
 
 struct Vector3D

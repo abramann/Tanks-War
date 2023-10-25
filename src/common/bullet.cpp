@@ -91,9 +91,9 @@ void Bullet::executeAnimateRepeat()
 
 void Bullet::executeLaunching()
 {
-	m_position = getBulletLaunchPosition();
-	m_rotate = m_pTank->getRotate();
-	return;
+	//m_position = getBulletLaunchPosition();
+	//m_rotate = m_pTank->getRotate();
+	//return;
 	float factors = m_pTimer->getTimeFactor();
 	float incX = m_speed*sin(m_rotate.z)*factors,
 		incY = m_speed*cos(m_rotate.z)*factors;

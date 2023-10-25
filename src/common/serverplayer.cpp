@@ -38,15 +38,14 @@ void ServerPlayer::executeDie()
 {
 	Player::executeDie();
 	m_pTWServer->executeServerPlayerDie(this);
-	m_pMap->removeObject(this);
 }
 
 void ServerPlayer::executeAnimateRepeat()
 {
 	m_pTWServer->resetClientGameStatus(this);
 	m_pTWServer->postClientGameStatus(this);
-	Player::executeAnimateRepeat();
-	m_pMap->addObject(this);
+	//Player::executeAnimateRepeat();
+	Tank::executeAnimateRepeate();
 }
 
 ClientGameStatus ServerPlayer::getClientGameStatus() const

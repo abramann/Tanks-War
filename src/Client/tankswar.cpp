@@ -9,6 +9,7 @@
 #include "..\common\serverplayer.h"
 #include "..\common\timer.h"
 #include "..\common\inlined.inl"
+#include "thisplayer.h"
 
 #define TEST_NO_SERVER_INTERFACE
 #ifdef TEST_NO_SERVER_INTERFACE
@@ -19,7 +20,7 @@
 #include "..\common\dx11wrapper.h"
 #include "..\common\aiplayer.h"
 
-Tank tank2;
+ThisPlayer tank2;
 AIPlayer ai;
 #endif
 
@@ -52,7 +53,7 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hwnd)
 	Game::initialize(hInstance, hwnd);
 #ifdef TEST_NO_SERVER_INTERFACE
 	m_pMap->load("Nova");
-	tank2.initialize("player-tank", this);
+	tank2.initialize(this);
 	tank2.setPosition(V3(580, 620, 0));
 	ai.initialize(this, 12, "AI1");
 	ai.setPosition(V3(50, 50, 0));
@@ -67,7 +68,7 @@ void TanksWar::initialize(HINSTANCE hInstance, HWND hwnd)
 void TanksWar::update()
 {
 #ifdef TEST_NO_SERVER_INTERFACE
-	if (m_pInput->isKeyDown(inputNS::W_KEY))
+	/*if (m_pInput->isKeyDown(inputNS::W_KEY))
 		tank2.executeForward();
 	if (m_pInput->isKeyDown(inputNS::S_KEY))
 		tank2.executeBack();
@@ -80,10 +81,12 @@ void TanksWar::update()
 	if (GetAsyncKeyState('Q'))
 		tank2.executeDie();
 	if (GetAsyncKeyState('Y'))
-		tank2.executeAnimateRepeat();
+		tank2.executeAnimateRepeat();*/
 
 	tank2.update();
-	ai.update();
+	//if (GetAsyncKeyState(VK_F4))
+		ai.update();
+
 	m_pGraphics->getCamera()->update(ai.getSpace().getCenter());
 	return;
 #endif
@@ -95,14 +98,15 @@ void TanksWar::render()
 	updateGame();
 	m_pMap->draw();
 	tank2.draw();
-	//ai.draw();
+	ai.draw();
 	m_pGraphics->drawLine(Vector3D(ai.getSpace().getCenter(), tank2.getSpace().getCenter(), 2));
 	m_pGraphics->drawBox(tank2.getSpace());
-/*	auto path = ai.getPath();
-	for (int i = path.size()-1; i >0 ;i--)
+	m_pGraphics->drawBox(ai.getSpace());
+	auto path = ai.getPath();
+	for (int i = path.size() - 1; i > 0; i--)
 	{
 		m_pGraphics->drawLine(Vector3D(path[i], path[i-1], 5));
-	}*/
+	}
 
 #else
 	m_pInterface->render();

@@ -10,6 +10,7 @@
 #include "dx11wrapper.h"
 #include "fileio.h"
 #include "collisionshader.h"
+#include "node.h"
 #include "inlined.inl"
 #include "gamemath.h"
 #include <fstream>
@@ -441,7 +442,7 @@ bool Map::isNospaceUseless(const Space& space) const
 
 bool Map::isFreeSpace(const Space& space) const
 {
-	for (Space freeSpace : m_freeSpace)
+	for (const Space& freeSpace : m_freeSpace)
 		if (space.isSame(freeSpace))
 			return true;
 
@@ -507,33 +508,6 @@ Object * Map::findClosestObject(V3 point, std::vector<Object*> exceptObject) con
 	return pClosestObj;
 }
 
-inline std::vector<Space> Map::sortByFCost(const std::vector<V3>& vertexList, const Map::CustomSet<Space>& spaceList)
-{
-	std::vector<Space> spaceListSort = { spaceList[0] };
-	for (uint32 i = 1; i < spaceList.size(); i++)
-		for (uint32 j = 0; j < spaceListSort.size(); j++)
-		{
-			float fcost = spaceList[i].getFCostForCenter(vertexList);
-			if (spaceListSort[j].getFCostForCenter(vertexList)  > fcost)
-			{
-				spaceListSort.insert(spaceListSort.begin() + j, spaceList[i]);
-				break;
-			}
-			if (j == spaceListSort.size() - 1)
-			{
-				spaceListSort.push_back(spaceList[i]);
-				break;
-			}
-		}
-
-	// Test code check
-	std::vector<float> f;
-	for (auto va : spaceListSort)
-		f.push_back(va.getFCostForCenter(vertexList));
-
-	return spaceListSort;
-}
-
 std::vector<V3> Map::pathfind(const V3 & start, const V3 & end)
 {
 	CustomSet<Node> openList;
@@ -547,14 +521,9 @@ std::vector<V3> Map::pathfind(const V3 & start, const V3 & end)
 	{
 		pQ = std::make_shared<Node>(Node(openList[0], { start,end }));
 		Node& q = *pQ;
-		openList.erase(q);
+		openList.erase(openList[0]);
 		std::shared_ptr<std::set<Node>> pSuccessors(new std::set<Node>(getAmbientFreeSpace(q, { start,end })));
 		std::set<Node>& successors = *pSuccessors;
-		std::vector<V3> vv;
-		for (auto& successor : successors)
-		{
-			vv.push_back(successor.getCenter());
-		}
 		for (auto& successor : successors)
 		{
 			if (successor.getCenter() == end)
@@ -569,6 +538,7 @@ std::vector<V3> Map::pathfind(const V3 & start, const V3 & end)
 				for (auto pClosed : pClosedList)
 					if (successor.isSame(*pClosed))
 						add = false;
+				
 				if (add)
 					openList.insert(successor);
 			}
@@ -666,15 +636,13 @@ std::set<Node> Map::getAmbientFreeSpace(const Node& node, const std::vector<V3>&
 		Node(getDownFreeSpace(node), vertexList) };
 
 	std::set<Node> setAmbient;
+
 	for (int i = 0; i < 4; i++)
 		if (ambient[i].isValid())
 		{
 			ambient[i].parent = &node;
 			setAmbient.insert(ambient[i]);
 		}
-
-	if (setAmbient.size() == 0)
-		debuggerBreak();
 
 	return setAmbient;
 }
@@ -696,4 +664,12 @@ bool Map::isVectorUnderFreespace(const Vector3D& vector, const std::initializer_
 		swap(v3, v4);
 
 	return (isCollided(Space(v1, v2, v3, v4), pExceptObject)) ? false : true;
+}
+
+bool Map::isValidObject(const Object * const pObject)
+{
+	if (!pObject)
+		return false;
+
+	return (std::find(m_pObject.begin(), m_pObject.end(), pObject) != m_pObject.end());
 }

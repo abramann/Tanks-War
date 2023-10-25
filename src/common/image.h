@@ -46,7 +46,7 @@ public:
 	void setY(float y) { m_position.y = y; }
 	void setZ(float z) { m_position.z = z; }
 	Space getSpace(float x0 = 0, float y0 = 0) const;
-	float getNegativeRotate() const { return (m_rotate.z <= 0) ? m_rotate.z : -abs(PI - m_rotate.z) - PI; };
+	float getNegativeRotate() const { return (m_rotate.z <= 0) ? m_rotate.z :-2 * PI + m_rotate.z; };
 
 protected:
 
@@ -72,6 +72,8 @@ private:
 
 	virtual void updateTextureCoordinate(int64 frameTime);
 	virtual void setNextImageTextureCoordinate();
-
+	mutable V3* m_edge[4];
+	mutable Space m_space;
+	mutable float m_spaceAdd1, m_spaceAdd2;
 	bool m_animate;
 };

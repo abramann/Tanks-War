@@ -12,6 +12,13 @@ class ServerPlayer;
 
 typedef ServerPlayer RemoteClient;
 
+
+enum GameType_
+{
+	GAME_SINGLE_PLAYER,
+	GAME_MULTIPLAYER
+};
+
 class TanksWar : public Game
 {
 public:
