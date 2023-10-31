@@ -165,7 +165,7 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> Dx11Wrapper::createBuffer(D3D11_USAGE usage
 
 	if (pBuf == nullptr)
 	{
-		debuggerBreak();
+		debuggerBreak(true, "m_pDevice->CreateBuffer failed");
 		throw GameError(gameErrorNS::FATAL_ERROR, "m_pDevice->CreateBuffer failed");
 	}
 

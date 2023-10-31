@@ -71,3 +71,25 @@ inline V3 getSpaceCenter(Space space)
 	V3 center;
 	center.x = space.getMaxX() - space.getMinX();
 }
+
+inline bool pollMessages()
+{
+	static bool run = true;
+	if (!run)
+		return false;
+
+	MSG msg;
+	while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+	{
+		if (msg.message == WM_QUIT)
+		{
+			run = false;
+			break;
+		}
+
+		TranslateMessage(&msg);
+		DispatchMessageA(&msg);
+	}
+
+	return run;
+}

@@ -7,7 +7,6 @@
 #include "fileio.h"
 #include "game.h"
 
-
 ThisPlayer::ThisPlayer() : m_handleInput(true)
 {
 	m_forward = inputNS::W_KEY,
@@ -16,7 +15,6 @@ ThisPlayer::ThisPlayer() : m_handleInput(true)
 		m_left = inputNS::A_KEY,
 		m_attack = inputNS::SPACE_KEY;
 }
-
 
 ThisPlayer::~ThisPlayer()
 {
@@ -34,7 +32,7 @@ void ThisPlayer::update()
 	if (m_handleInput)
 		handleInput();
 
-	m_pCamera->update(m_position);
+	m_pCamera->update(V3(m_position.x + getWidth() / 2, m_position.y + getHeight() / 2, 0));
 	Player::update();
 }
 

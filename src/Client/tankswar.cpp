@@ -8,23 +8,11 @@
 #include "..\common\data.h"
 #include "..\common\serverplayer.h"
 #include "..\common\timer.h"
+#include "..\common\aiplayer.h"
 #include "..\common\inlined.inl"
 #include "thisplayer.h"
 
-#define TEST_NO_SERVER_INTERFACE
-#ifdef TEST_NO_SERVER_INTERFACE
-#include "..\common\input.h"
-#include "..\common\camera.h"
-#include "..\common\tank.h"
-#include "..\common\texturemanger.h"
-#include "..\common\dx11wrapper.h"
-#include "..\common\aiplayer.h"
-
-ThisPlayer tank2;
-AIPlayer ai;
-#endif
-
-TanksWar::TanksWar() : m_status(clientNS::CLIENT_UNCONNECTED)
+TanksWar::TanksWar() : m_status(clientNS::CLIENT_UNCONNECTED), m_aiLevel(AI_LEVEL_EASY), m_soloGameStarted(false), m_AIPlayersCount(0)
 {
 	m_pClient = std::make_shared<Client>();
 	m_pRData = m_pClient->getReceiveBuffer();
@@ -51,81 +39,53 @@ TanksWar::~TanksWar()
 void TanksWar::initialize(HINSTANCE hInstance, HWND hwnd)
 {
 	Game::initialize(hInstance, hwnd);
-#ifdef TEST_NO_SERVER_INTERFACE
-	m_pMap->load("Nova");
-	tank2.initialize(this);
-	tank2.setPosition(V3(580, 620, 0));
-	ai.initialize(this, 12, "AI1");
-	ai.setPosition(V3(50, 50, 0));
-#else
 	m_pClient->initialize(this);
 	m_pInterface->initialize(this);
 	m_thisClient.initialize(0, this);
+	m_thisPlayer.initialize(this);
 	m_clientInfo = FileIO::readClientInfo();
-#endif
 }
 
 void TanksWar::update()
 {
-#ifdef TEST_NO_SERVER_INTERFACE
-	/*if (m_pInput->isKeyDown(inputNS::W_KEY))
-		tank2.executeForward();
-	if (m_pInput->isKeyDown(inputNS::S_KEY))
-		tank2.executeBack();
-	if (m_pInput->isKeyDown(inputNS::D_KEY))
-		tank2.executeRight();
-	if (m_pInput->isKeyDown(inputNS::A_KEY))
-		tank2.executeLeft();
-	if (m_pInput->isKeyDown(inputNS::E_KEY))
-		tank2.executeAttack();
-	if (GetAsyncKeyState('Q'))
-		tank2.executeDie();
-	if (GetAsyncKeyState('Y'))
-		tank2.executeAnimateRepeat();*/
-
-	tank2.update();
-	//if (GetAsyncKeyState(VK_F4))
-		ai.update();
-
-	m_pGraphics->getCamera()->update(ai.getSpace().getCenter());
-	return;
-#endif
 }
 
 void TanksWar::render()
 {
-#ifdef TEST_NO_SERVER_INTERFACE
-	updateGame();
-	m_pMap->draw();
-	tank2.draw();
-	ai.draw();
-	m_pGraphics->drawLine(Vector3D(ai.getSpace().getCenter(), tank2.getSpace().getCenter(), 2));
-	m_pGraphics->drawBox(tank2.getSpace());
-	m_pGraphics->drawBox(ai.getSpace());
-	auto path = ai.getPath();
-	for (int i = path.size() - 1; i > 0; i--)
-	{
-		m_pGraphics->drawLine(Vector3D(path[i], path[i-1], 5));
-	}
-
-#else
 	m_pInterface->render();
-#endif
 }
 
 void TanksWar::renderScene()
 {
 	m_pMap->draw();
-	m_thisClient.draw();
-	for (auto& pRClient : m_pRemoteClient)
-		pRClient->draw();
+	if (isOnline())
+	{
+		m_thisClient.draw();
+		for (auto& pRClient : m_pRemoteClient)
+			pRClient->draw();
+	}
+	else
+	{
+		m_thisPlayer.draw();
+		for (auto& pAIPlayer : m_pAIPlayer)
+			pAIPlayer->draw();
+	}
 }
 
 void TanksWar::updateScene()
 {
-	m_thisClient.update();
-	for (auto& pRClient : m_pRemoteClient)
-		pRClient->update();
+	if (isOnline())
+	{
+		m_thisClient.update();
+		for (auto& pRClient : m_pRemoteClient)
+			pRClient->update();
+	}
+	else
+	{
+		m_thisPlayer.update();
+		for (auto& pAIPlayer : m_pAIPlayer)
+			pAIPlayer->update();
+	}
 }
 
 void TanksWar::communicate()
@@ -270,6 +230,30 @@ void TanksWar::executeClientAct()
 			m_thisClient.executeDie();
 		break;
 	}
+}
+
+bool TanksWar::onStartSoloPlayerGame()
+{
+	if (!m_pMap->load(m_map))
+		return false;
+
+	m_thisPlayer.setPosition(m_pMap->getRandomEmptySpace(&m_thisPlayer).v1);
+	m_pAIPlayer.resize(m_AIPlayersCount);
+	uint8 c = 1;
+	for (auto& pAIPlayer : m_pAIPlayer)
+	{
+		pAIPlayer->initialize(this, c, strFormat("AIPlayer %d", c++).c_str());
+		pAIPlayer->setPosition(m_pMap->getRandomEmptySpace(pAIPlayer.get()).v1);
+	}
+	m_soloGameStarted = true;
+	return true;
+}
+
+void TanksWar::quitSoloGame()
+{
+	m_pAIPlayer.clear();
+	m_pMap->unload();
+	m_soloGameStarted = false;
 }
 
 void TanksWar::heartbeat()

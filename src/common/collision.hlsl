@@ -3,10 +3,36 @@
 
 #define IN_RANGE(n, a, b) (bool)( (n > a && n < b) || (n > b && n < a))
 #define IN_RANGE_OR_EQUAL(n, a, b) (bool)( (n >= a && n <= b) || (n >= b && n <= a))
+#define X_COLLIDED 1
+#define NEG_X_COLLIDED 2
+#define Y_COLLIDED 3
+#define NEG_Y_COLLIDED 4
+#define EQUAL_COLLIDED 5
+#define NEG_EQUAL_COLLIDED 5
+#define UNDEFINED_POSITION 0xFFFF;
 
 struct V3
 {
 	float x, y, z;
+
+	float square()
+	{
+		return x*x + y*y + z*z;
+	}
+
+	float magnitude()
+	{
+		return sqrt(square());
+	}
+
+	float distance(V3 v3)
+	{
+		V3 dist;
+		dist.x = (x - v3.x);
+		dist.y = (y - v3.y);
+		dist.z = (z - v3.z);
+		return dist.magnitude();
+	}
 };
 
 struct Space
@@ -46,20 +72,19 @@ struct Space
 	}
 
 	float getWidth()
-	{ 
+	{
 		return getMaxX() - getMinX();
 	}
 
-	float getHeight() 
-	{ 
+	float getHeight()
+	{
 		return getMaxY() - getMinY();
 	}
 
 	float getSize()
-	{ 
+	{
 		return getHeight()*getWidth();
 	}
-
 };
 
 int areSpacesCollided(Space spaceA, Space spaceB)
@@ -69,7 +94,7 @@ int areSpacesCollided(Space spaceA, Space spaceB)
 		s1 = spaceA, s2 = spaceB;
 	else
 		s1 = spaceB, s2 = spaceA;*/
-	
+
 	if (spaceA.getSize() > spaceB.getSize())
 	{
 		Space s1 = spaceA, s2 = spaceB;
@@ -81,7 +106,7 @@ int areSpacesCollided(Space spaceA, Space spaceB)
 		if (IN_RANGE(s2.v1.x, minX1, maxX1) ||
 			IN_RANGE(s2.v2.x, minX1, maxX1) ||
 			IN_RANGE(s2.v3.x, minX1, maxX1) ||
-			IN_RANGE(s2.v4.x, minX1, maxX1) 
+			IN_RANGE(s2.v4.x, minX1, maxX1)
 			)
 			if (IN_RANGE(s2.v1.y, minY1, maxY1) ||
 				IN_RANGE(s2.v2.y, minY1, maxY1) ||
@@ -116,14 +141,13 @@ int areSpacesCollided(Space spaceA, Space spaceB)
 				)
 				return 1;
 
-
 		float centerX2 = ((s2.getMaxX() - s2.getMinX()) / 2) + s2.getMinX(),
 			centerY2 = ((s2.getMaxY() - s2.getMinY()) / 2) + s2.getMinY();
 		if (IN_RANGE(centerX2, minX1, maxX1))
 			if (IN_RANGE(centerY2, minY1, maxY1))
 				return 1;
 	}
-	
+
 	return 0;
 }
 
@@ -131,7 +155,7 @@ StructuredBuffer<Space> g_noSpace : register(t0);
 StructuredBuffer<uint> g_mapCells : register(t1);
 StructuredBuffer<Space> g_space : register(t2);
 StructuredBuffer<int> g_mapRange : register(t3);
-RWStructuredBuffer<int> g_result : register(u0);
+RWStructuredBuffer<Space> g_result : register(u0);
 
 bool isOutOfRange(Space space)
 {
@@ -157,10 +181,12 @@ void main(uint3 DTid : SV_DispatchThreadID)
 {
 	uint id = DTid.x;
 	if (id == 0)
-		g_result[0] = 0;
-	if (g_result[0] == 1)
-		return;
-
-	if (isOutOfRange(g_space[0]) || areSpacesCollided(g_noSpace[id], g_space[0]))
-		g_result[0] = 1;
+		g_result[0].v1.x = UNDEFINED_POSITION;
+	if (g_result[0].v1.x == 0xFFFF)
+	{
+		if (isOutOfRange(g_space[0]) || areSpacesCollided(g_noSpace[id], g_space[0]))
+		{
+			g_result[0] = g_noSpace[id];
+		}
+	}
 }

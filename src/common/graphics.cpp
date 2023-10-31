@@ -48,19 +48,21 @@ void Graphics::beginRender()
 	m_pDx11Wrapper->d3dBegin();
 }
 
-void Graphics::drawImage(const Image* image)
+void Graphics::drawImage(const Image* pImage)
 {
-	DxBuffer* pVB = image->getVertexBuffer();
-	LPTextureD3D texture = image->getTexture();
-	V3 position = image->getPosition(),
-		&scalling = image->getScalling(),
-		rotate = image->getRotate(),
-		rotateCenter = image->getRotateCenter();
+	DxBuffer* pVB = pImage->getVertexBuffer();
+	LPTextureD3D texture = pImage->getTexture();
+	V3 position = pImage->getPosition(),
+		&scalling = pImage->getScalling(),
+		rotate = pImage->getRotate(),
+		rotateCenter = pImage->getRotateCenter();
 	setDrawProperties(position, scalling, rotate, rotateCenter);
 	m_pDx11Wrapper->streamVertexBuffer(pVB);
 	m_pDx11Wrapper->iaSetIndexBuffer(m_pImageIndexBuf.Get(), DXGI_FORMAT_R32_UINT, 0);
 	setTexture(texture);
 	m_pDx11Wrapper->d3dDrawIndexed(6, 0, 0);
+	if (g_pGameSettings->debugMode && pImage != m_pLine.get())
+		drawBox(pImage->getSpace());
 }
 
 void Graphics::drawLine(const Vector3D & vector)

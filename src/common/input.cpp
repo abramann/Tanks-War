@@ -3,6 +3,8 @@
 
 #include "input.h"
 
+using namespace inputNS;
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 Input::Input() : m_handleInput(false), m_hwnd(0)

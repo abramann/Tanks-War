@@ -21,30 +21,12 @@
 
 #pragma warning(disable : 4200)
 
-/*struct Color
-{
-	float x, y, z;
-	Color() {};
-	Color(float x, float y, float z) {};
-};
-
-#define COLOR_ARGB(a,b,c) Color(a,b,c)
-#define COLOR_XRGB Color(a,b,c)
-*/
 typedef int8_t PlayerID;
 typedef unsigned short Port;
 typedef uint8_t Protocol;
 typedef uint32_t Crc32;
 typedef ImVec2 Vec2;
 typedef ImVec4 Vec4;
-typedef int8_t int8;
-typedef int16_t int16;
-typedef int32_t int32;
-typedef int64_t int64;
-typedef uint8_t uint8;
-typedef uint16_t uint16;
-typedef uint32_t uint32;
-typedef uint64_t uint64;
 typedef HRESULT Result;
 typedef int8 PlayerAct;
 typedef DirectX::XMMATRIX Matrix;
@@ -73,7 +55,7 @@ struct Vertex
 struct GameSettings
 {
 	int32 width, height;
-	bool windowed, vsync, audio, computeShader;
+	bool windowed, vsync, audio, computeShader, debugMode;
 };
 
 struct BitmapAttribute
@@ -130,6 +112,7 @@ struct Space
 	bool isSame(const Space& s) const { return ((s.v1 == v1 && s.v2 == v2) || (s.v1 == v2 && s.v2 == v1)) && ((s.v3 == v3 && s.v4 == v4) || (s.v3 == v4 && s.v4 == v3)) ? true : false; }
 	bool isValid() const { return (v1.x == mapNS::UNDEFINED_POSITION) ? false : true; }
 	bool isIncluded(const V3& v3) { return (IN_RANGE_OR_EQUAL(v3.x, getMinX(), getMaxX()) && IN_RANGE_OR_EQUAL(v3.y, getMinY(), getMaxY())); }
+	void setInvalid() { v1.x = mapNS::UNDEFINED_POSITION; }
 	//bool operator<(const Space& s) const { return (v1 < s.v1&& v2 < s.v2 && v3 < s.v3 && v4 < s.v4); } // for using with std::set
 	float getMaxX() const { return getMax<float>({ v1.x,v2.x,v3.x,v4.x }); }
 	float getMinX() const { return getMin<float>({ v1.x,v2.x,v3.x,v4.x }); }

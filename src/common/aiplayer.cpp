@@ -10,7 +10,6 @@
 
 AIPlayer::AIPlayer() : m_pTargetObject(nullptr)
 {
-
 }
 
 AIPlayer::~AIPlayer()
@@ -29,13 +28,15 @@ void AIPlayer::update()
 		return;
 
 	if (m_pMap->isValidObject(m_pTargetObject))
-	{		
+	{
 		moveTowardsObject(m_pTargetObject);
 		if (m_onAttack)
 			attackOjbect(m_pTargetObject);
 	}
 	else
+	{
 		lookForEnemy();
+	}
 
 	if (GetAsyncKeyState(VK_F12))
 	{
@@ -56,7 +57,12 @@ void AIPlayer::lookForEnemy()
 {
 	m_pTargetObject = m_pMap->findClosestObject(getSpace().getCenter(), { this });
 	if (!m_pTargetObject)
+	{
+		if (!m_path.empty())
+			m_path.clear();
+
 		return;
+	}
 
 	V3 start = m_pMap->findSpaceByVertex(getSpace().getCenter()).getCenter(),
 		end = m_pMap->findSpaceByVertex(m_pTargetObject->getSpace().getCenter()).getCenter();
@@ -79,7 +85,7 @@ void AIPlayer::moveTowardsObject(Object * pObject)
 
 		return;
 	}
-	if(moveToward(m_path.back()))
+	if (moveToward(m_path.back()))
 	{
 		if (!m_onAttack)
 		{
@@ -119,13 +125,11 @@ void AIPlayer::attackOjbect(Object * pObject)
 void AIPlayer::rotateToward(const V3 & vertex)
 {
 	Vector3D toVertex = Vector3D(getSpace().getCenter(), vertex);
-	float angle = gameMathNS::getAngle(toVertex);
-	angle = PI - angle;
-	float negAngle = angle;
-	if (angle > 0)
-		negAngle = -2 * PI + angle;
-
-	m_rotate.z = negAngle;
+	float posiAngle = PI - gameMathNS::getAngle(toVertex);
+	if (posiAngle > PI)
+		m_rotate.z = -2 * PI + posiAngle;
+	else
+		m_rotate.z = posiAngle;
 }
 
 bool isSpaceInclude(const Space& space, const V3&  vertex)

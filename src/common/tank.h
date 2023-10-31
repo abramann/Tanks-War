@@ -31,6 +31,8 @@ public:
 	float getInflictedDamage() const { return m_inflictedDamage; }
 	bool isBulletLaunching() const { return (m_pBullet.size() > 0); }
 	void addInflictedDamage(const float& infDmg) { m_inflictedDamage += infDmg; }
+	int32 getMadeKills() const { return m_madeKills; }
+	void addMadeKills(int32 newMadeKills) { m_madeKills += newMadeKills; }
 
 protected:
 
@@ -47,4 +49,5 @@ protected:
 	std::string m_tankTexture;
 	std::vector<std::shared_ptr<Bullet>> m_pBullet;
 	Timer* m_pTimer;
+	int32 m_madeKills;
 };

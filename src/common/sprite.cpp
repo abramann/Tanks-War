@@ -14,12 +14,12 @@ using namespace ImGui;
 
 constexpr float FADE_AMOUNT = 0.0005f;
 
-Sprite::Sprite() : m_fade(graphicsNS::FADE_INC), m_fadeInc(graphicsNS::FADE_INC)
+Sprite::Sprite() : m_fade(graphicsNS::FADE_INC_RATE), m_fadeInc(graphicsNS::FADE_INC_RATE)
 {
 	m_windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
 }
 
-Sprite::Sprite(const Game * const pGame, std::string texture, V2 position, V2 scalling) : m_fade(graphicsNS::FADE_INC), m_fadeInc(graphicsNS::FADE_INC)
+Sprite::Sprite(const Game * const pGame, std::string texture, V2 position, V2 scalling) : m_fade(graphicsNS::FADE_INC_RATE), m_fadeInc(graphicsNS::FADE_INC_RATE)
 {
 	m_windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
 	initialize(pGame, texture, position, scalling);

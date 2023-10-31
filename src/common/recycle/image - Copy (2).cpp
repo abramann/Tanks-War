@@ -6,16 +6,12 @@
 #include "timer.h"
 #include "dx11wrapper.h"
 #include "texturemanger.h"
-#include "inlined.inl"
 
 Image::Image() : m_animate(false), m_column(1), m_row(1), m_columns(0), m_rows(0),
 m_timeUntilLastUpdate(0), m_updateDelay(0), m_width(0), m_height(0), m_textureWidth(0),
 m_textureHeight(0), m_pVertexBuffer(0), m_pStagingBuffer(0), m_position(0, 0, 0), m_rotate(0, 0, 0),
 m_scalling(1, 1, 1), m_initialized(false)
 {
-	V3* edge[] = { &m_space.v1,&m_space.v2,&m_space.v3,&m_space.v4 };
-	memcpy(m_edge, edge, sizeof(Space*) * 4);
-	m_spaceAdd1 = 0, m_spaceAdd2 = 0;
 }
 
 Image::~Image()
@@ -83,101 +79,135 @@ V3 Image::getRotateCenter() const
 
 Space Image::getSpace(float x0, float y0) const
 {
-	if (x0 == 0)
-		x0 = m_position.x;
-	if (y0 == 0)
-		y0 = m_position.y;
-
 	V3 rotateCenter = getRotateCenter();
-	if (m_width == m_height && !(rotateCenter == V3(0, 0, 0)))
+	static Space space;
+	static V3* v[4] = { &space.v1,&space.v2,&space.v3,&space.v4 };
+	float x = m_rotate.z;
+	if (rotateCenter.x == 0 && rotateCenter.y == 0)
 	{
-		float x = getNegativeRotate(), f11 = 0,
-			piOverTwo = x / (-PI / 2);
-#ifdef _DEBUG
-		debuggerBreak(x < -2 * PI || x > 0, "Invalid angle!\n");
-#endif
-		const int16& polygon = m_width;
-		if (piOverTwo > 3)
-		{
-			m_edge[0] = &m_space.v4,
-				m_edge[1] = &m_space.v1,
-				m_edge[2] = &m_space.v2,
-				m_edge[3] = &m_space.v3;
-			x += 3 * PI / 2;
-			m_spaceAdd1 = -polygon / 2.0f, m_spaceAdd2 = -polygon / 4.0f;
-		}
-		else if (piOverTwo > 2)
-		{
-			m_edge[0] = &m_space.v3,
-				m_edge[1] = &m_space.v4,
-				m_edge[2] = &m_space.v1;
-			m_edge[3] = &m_space.v2;
-			x += PI;
-			m_spaceAdd1 = -polygon*1.0f / 2.0f, m_spaceAdd2 = -polygon*1.0f / 4.0f;
-		}
-		else if (piOverTwo > 1)
-		{
-			m_edge[3] = &m_space.v1,
-				m_edge[0] = &m_space.v2,
-				m_edge[1] = &m_space.v3,
-				m_edge[2] = &m_space.v4;
-			x += (PI / 2);
-			m_spaceAdd1 = -polygon / 2.0f, m_spaceAdd2 = -polygon / 4.0f;
-		}
-		else if (m_edge[0] != &m_space.v1)
-		{
-			m_edge[0] = &m_space.v1,
-				m_edge[1] = &m_space.v2,
-				m_edge[2] = &m_space.v3,
-				m_edge[3] = &m_space.v4;
-			f11 = 1.2732395447351626861510701069801f*-PI / 4;
-			m_spaceAdd1 = f11 * m_width / 2, m_spaceAdd2 = f11*m_height / 4;
-		}
+		if (x0 == 0)
+			x0 = m_position.x;
+		if (y0 == 0)
+			y0 = m_position.y;
 
-		f11 = 1.2732395447351626861510701069801f*x;
-		if (IN_RANGE(x, 0, -PI / 4))
-			m_spaceAdd1 = f11*polygon / 2, m_spaceAdd2 = f11*polygon / 4;
+		float angle = m_rotate.z;
+		int8 s = 1;
+		if (angle > 0.0001)
+			s = +1;
+		else if (angle < -0.0001)
+			s = -1;
 
-		m_edge[0]->x = x0 + m_spaceAdd2;
-		m_edge[0]->y = y0 - m_spaceAdd1;
-		m_edge[1]->x = polygon + x0 + m_spaceAdd1;
-		m_edge[1]->y = y0 + m_spaceAdd2;
-		m_edge[2]->x = x0 + polygon - m_spaceAdd2;
-		m_edge[2]->y = y0 + polygon + m_spaceAdd1;
-		m_edge[3]->x = x0 - m_spaceAdd1;
-		m_edge[3]->y = y0 + polygon - m_spaceAdd2;
-
-		if (IN_RANGE_OR_EQUAL(x, -PI / 4, -PI / 2))
-		{
-			float f22 = f11 + 1.0f;
-			m_edge[0]->x += 15 * -f22;
-			m_edge[0]->y += 30 * -f22;
-			m_edge[1]->x -= 30 * -f22;
-			m_edge[1]->y += 15 * -f22;
-			m_edge[2]->x -= 15 * -f22;
-			m_edge[2]->y -= 30 * -f22;
-			m_edge[3]->x += 30 * -f22;
-			m_edge[3]->y -= 15 * -f22;
-		}
+		float f1 = 1 + (-0.636619772f*abs(angle));
+		float f2 = -s*(abs(f1) - 1);
+		space.v1.x = x0, space.v1.y = y0;
+		space.v2.x = space.v1.x + m_width*(f1),
+			space.v2.y = space.v1.y + (m_height *f2);
+		space.v3.x = space.v2.x + m_width*(-1 * f2);
+		space.v3.y = space.v2.y + m_height*f1;
+		space.v4.x = space.v1.x + m_width*(-1 * f2);
+		space.v4.y = space.v1.y + m_height*f1;
+		return space;
 	}
 	else
 	{
-		float f1 = 1 + (-0.636619772f*abs(m_rotate.z));
-		float f2 = ((m_rotate.z < 0) ? -1 : 1) * -(abs(f1) - 1);
-		m_space.v1.x = x0, m_space.v1.y = y0;
-		m_space.v2.x = m_space.v1.x + m_width*(f1);
-		m_space.v2.y = m_space.v1.y + (m_width *f2);
-		m_space.v3.x = m_space.v2.x + m_height*(-1 * f2);
-		m_space.v3.y = m_space.v2.y + m_height*f1;
-		m_space.v4.x = m_space.v1.x + m_height*(-1 * f2);
-		m_space.v4.y = m_space.v1.y + m_height*f1;
-		return m_space;
+		float f11 = 0, f33 = 0, f44 = 0;
+		static float inc1 = 0;
+		static float inc2 = 0;
+		float anglee = m_rotate.z;
+		float xw = m_rotate.z / (PI / 2);
+		if (m_rotate.z / (PI / 2) >= 1)
+			anglee = -(PI + PI - m_rotate.z);
+
+		if (PI - abs(anglee) < 0)
+		{
+			v[3] = &space.v2,
+				v[0] = &space.v3,
+				v[1] = &space.v4,
+				v[2] = &space.v1;
+			x = anglee;
+			x += PI;
+		}
+		else if ((PI / 2) - abs(m_rotate.z) < 0)
+		{
+			v[3] = &space.v1,
+				v[0] = &space.v2,
+				v[1] = &space.v3,
+				v[2] = &space.v4;
+			x = m_rotate.z + (PI / 2);
+		}
+		{
+			if (v[0] != &space.v1)
+			{
+				v[0] = &space.v1,
+					v[1] = &space.v2,
+					v[2] = &space.v3,
+					v[3] = &space.v4;
+				f11 = 1.2732395447351626861510701069801*-PI/4;// f(-PI/4)=-1
+				inc1 = 30 * f11, inc2 = 15 * f11;
+			}
+		}
+
+		f11 = 1.2732395447351626861510701069801*x;// f(-PI/4)=-1
+		if (IN_RANGE(x, 0, -PI / 4))
+			inc1 = 30 * f11, inc2 = 15 * f11;
+
+		*v[0] = m_position;
+		v[0]->x += inc2;
+		v[0]->y -= inc1;
+
+		v[1]->x = m_width + m_position.x + inc1;
+		v[1]->y = m_position.y + inc2;
+		v[2]->x = m_position.x + m_width - inc2;
+		v[2]->y = m_position.y + m_height + inc1;
+
+		v[3]->x = m_position.x - inc1;
+		v[3]->y = m_position.y + m_height - inc2;
+
+		static float f22 = 0;
+		if (IN_RANGE_OR_EQUAL(x, -PI / 4, -PI / 2))
+		{
+			f22 = f11 + 1.000000;
+			//f22 = 1.273239*x + 1.000000;
+
+			v[0]->x += 15 * -f22;
+			v[0]->y += 30 * -f22;
+			v[1]->x -= 30 * -f22;
+			v[1]->y += 15 * -f22;
+			v[2]->x -= 15 * -f22;
+			v[2]->y -= 30 * -f22;
+			v[3]->x += 30 * -f22;
+			v[3]->y -= 15 * -f22;
+		}
 	}
 
-	m_space = Space(*m_edge[0], *m_edge[1], *m_edge[2], *m_edge[3]);
-	return m_space;
+	space = Space(*v[0], *v[1], *v[2], *v[3]);
+	return space;
 }
 
+/*space.v1 = m_position;
+
+space.v1.x += 15 * f11;
+space.v1.y -= 30 * f11;
+
+space.v2.x = m_width + m_position.x;
+space.v2.x -=30 * -f11;
+space.v2.y = m_position.y;
+space.v2.y -= 15 * -f11;
+space.v3.x -= 15 * f11;
+space.v3.y = m_position.y + m_height;
+space.v3.y += 30 * f11;
+
+space.v4.x = m_position.x + 30 * -f11;
+space.v4.y = m_position.y + m_height + 15 * -f11;
+
+space.v1 = m_position;
+space.v2.x = space.v1.x + m_width;
+space.v2.y = space.v1.y;
+space.v3.x = space.v2.x;
+space.v3.y = space.v1.y + m_height;
+space.v4.x = space.v1.x;
+space.v4.y = space.v3.y;
+return space; */
 void Image::createVertexBuffer()
 {
 	m_pVertexBuffer = m_pDx11Wrapper->createVertexBuffer(graphicsNS::VERTICES_IMAGE, D3D11_CPU_ACCESS_WRITE, 0);
@@ -193,7 +223,7 @@ void Image::updateLocalCoordinate()
 	vx[1] = Vertex(0, 0, 0.0f, 0.0f, 0.0f);
 	vx[2] = Vertex(width, height, 0.0f, u, -v);
 	vx[3] = Vertex(0, height, 0.0f, 0.0f, -v);
-	m_pDx11Wrapper->copyToResource(m_pVertexBuffer.Get(), vx, 4 * sizeof(Vertex));
+	m_pDx11Wrapper->copyToResource(m_pVertexBuffer.Get(), vx, 4*sizeof(Vertex));
 }
 
 void Image::updateTextureCoordinate(int64 frameTime)

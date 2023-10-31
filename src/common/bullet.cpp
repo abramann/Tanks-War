@@ -74,10 +74,16 @@ void Bullet::executeHit()
 {
 	m_hit = true;
 	Object* pObject = m_pMap->getObject(getSpace());
-	if (pObject != nullptr)
+	if (pObject)
 	{
-		m_pTank->addInflictedDamage(m_damage);
+		float inflectedDamage = m_damage;
+		if (m_pTank == pObject)
+			inflectedDamage *= -1;
+
+		m_pTank->addInflictedDamage(inflectedDamage);
 		pObject->damage(m_damage);
+		if (pObject->getHealth() <= 0)
+			m_pTank->addMadeKills(1);
 	}
 
 	Image::initialize("bullet-destroy", m_pGame, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, textureNS::TEXTURE_BULLET_ROWS_COLUMNS, logicNS::UPDATE_DELAY_BULLET);
@@ -91,9 +97,6 @@ void Bullet::executeAnimateRepeat()
 
 void Bullet::executeLaunching()
 {
-	//m_position = getBulletLaunchPosition();
-	//m_rotate = m_pTank->getRotate();
-	//return;
 	float factors = m_pTimer->getTimeFactor();
 	float incX = m_speed*sin(m_rotate.z)*factors,
 		incY = m_speed*cos(m_rotate.z)*factors;

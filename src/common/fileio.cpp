@@ -81,7 +81,13 @@ GameSettings FileIO::readGameSettings()
 
 	std::string line;
 	readValues<int32>(file, { &gameSettings.width, &gameSettings.height });
-	readValues<bool>(file, { &gameSettings.windowed, &gameSettings.vsync , &gameSettings.audio, &gameSettings.computeShader });
+	readValues<bool>(file,
+	{
+		&gameSettings.windowed, &gameSettings.vsync ,
+		&gameSettings.audio, &gameSettings.computeShader,
+		&gameSettings.debugMode
+	}
+	);
 	return gameSettings;
 }
 
@@ -172,17 +178,10 @@ ServerInfo FileIO::readServerInfo()
 void FileIO::createGameSettings(const GameSettings* info)
 {
 	int16 width, height;
-	bool windowed, vsync, audio, computeShader;
-	if (info == nullptr)
-	{
-		width = gameNS::MIN_RESOLUTION_WIDTH;
-		height = gameNS::MIN_RESOLUTION_HEIGHT;
-		windowed = gameNS::WINDOWED_DEFAULT;
-		vsync = gameNS::VSYNC_DEFAULT;
-		audio = gameNS::AUDIO_DEFAULT;
-		computeShader = gameNS::COMPUTESHADER_DEFAULT;
-	}
-	else
+	bool windowed, vsync,
+		audio, computeShader,
+		debugMode;
+	if (info)
 	{
 		width = info->width;
 		height = info->height;
@@ -190,6 +189,17 @@ void FileIO::createGameSettings(const GameSettings* info)
 		vsync = info->vsync;
 		audio = info->audio;
 		computeShader = info->computeShader;
+		debugMode = info->debugMode;
+	}
+	else
+	{
+		width = gameNS::MIN_RESOLUTION_WIDTH;
+		height = gameNS::MIN_RESOLUTION_HEIGHT;
+		windowed = gameNS::WINDOWED_DEFAULT;
+		vsync = gameNS::VSYNC_DEFAULT;
+		audio = gameNS::AUDIO_DEFAULT;
+		computeShader = gameNS::COMPUTESHADER_DEFAULT;
+		debugMode = gameNS::COMPUTESHADER_DEFAULT;
 	}
 
 	std::ofstream file(fileNS::GAME_INFO_PATH);
@@ -198,7 +208,8 @@ void FileIO::createGameSettings(const GameSettings* info)
 		<< "Windowed=" << std::to_string(windowed) << '\n'
 		<< "VSync=" << std::to_string(vsync) << '\n'
 		<< "Audio=" << std::to_string(audio) << '\n'
-		<< "Compute Shader=" << std::to_string(computeShader) << std::endl;
+		<< "Compute Shader=" << std::to_string(computeShader) << '\n'
+		<< "Compute Shader=" << std::to_string(debugMode) << std::endl;
 }
 
 inline std::string getTargetEqualStringValue(std::string str)

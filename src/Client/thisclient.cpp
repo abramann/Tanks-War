@@ -12,7 +12,6 @@
 
 ThisClient::ThisClient()
 {
-	
 }
 
 ThisClient::~ThisClient()
@@ -34,8 +33,6 @@ void ThisClient::update()
 	ThisPlayer::update();
 	if (m_act != PLAYER_ACT_NONE)
 		m_pTW->dispatchPlayerAct();
-
-	
 }
 
 void ThisClient::executeForward()
@@ -94,6 +91,5 @@ void ThisClient::implementAttack()
 {
 	Player::executeAttack();
 }
-
 
 #endif

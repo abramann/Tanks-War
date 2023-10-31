@@ -1,13 +1,19 @@
 // data.h
 // Author: abramann
 
+#pragma once
 #include "imgui\imgui_impl_win32.h"
 #include "imgui\imgui.h"
 #include <map>
 
-#pragma once
-
-typedef ImGuiKey Key;
+typedef int8_t int8;
+typedef int16_t int16;
+typedef int32_t int32;
+typedef int64_t int64;
+typedef uint8_t uint8;
+typedef uint16_t uint16;
+typedef uint32_t uint32;
+typedef uint64_t uint64;
 
 constexpr float PI = 3.1415926535897f;
 
@@ -33,7 +39,7 @@ namespace graphicsNS
 	constexpr auto PROJECT_FAR_PLANE = 1000.0f;
 	constexpr auto PROJECT_FOV = PI / 2;
 	constexpr auto PROJECT_NEAR_PLANE = 1.0f;
-	constexpr auto FADE_INC = 0.01f;
+	constexpr auto FADE_INC_RATE = 0.01f;
 }
 
 namespace colorNS
@@ -83,12 +89,13 @@ namespace gameNS
 	constexpr auto FRAME_RATE = 60;
 	constexpr auto  MIN_RESOLUTION_HEIGHT = 600;
 	constexpr auto  MIN_RESOLUTION_WIDTH = 800;
-	constexpr auto VSYNC_DEFAULT = 1;
-	constexpr auto WINDOWED_DEFAULT = 1;
+	constexpr auto VSYNC_DEFAULT = true;
+	constexpr auto WINDOWED_DEFAULT = false;
 	constexpr auto UPDATE_DELAY_FPS = 800;
-	constexpr auto AUDIO_DEFAULT = 1;
-	constexpr auto COMPUTESHADER_DEFAULT = 0;
-	constexpr auto LOGO_VIEW_TIME = 4000;
+	constexpr auto AUDIO_DEFAULT = true;
+	constexpr auto COMPUTESHADER_DEFAULT = false;
+	constexpr auto DEBUGMODE_DEFAULT = false;
+	constexpr auto LOGO_SHOW_TIME = 800;
 #ifdef _SRVER_BUILD
 	constexpr auto WINDOW_TITLE = "Tanks War Server";
 #else
@@ -140,6 +147,8 @@ namespace networkNS
 
 namespace inputNS
 {
+	typedef ImGuiKey Key;
+
 	constexpr Key A_KEY = ImGuiKey_A;
 	constexpr Key B_KEY = ImGuiKey_B;
 	constexpr Key C_KEY = ImGuiKey_C;
@@ -166,6 +175,8 @@ namespace inputNS
 	constexpr Key X_KEY = ImGuiKey_X;
 	constexpr Key Y_KEY = ImGuiKey_Y;
 	constexpr Key Z_KEY = ImGuiKey_Z;
+	constexpr Key LMOUSE_KEY = ImGuiKey_MouseLeft;
+	constexpr Key RMOUSE_KEY = ImGuiKey_MouseRight;
 	constexpr Key ENTER_KEY = ImGuiKey_Enter;
 	constexpr Key ESCAPE_KEY = ImGuiKey_Escape;
 	constexpr Key TAB_KEY = ImGuiKey_Tab;
@@ -194,20 +205,25 @@ namespace interfaceNS
 		FONTSIZES,
 		FONTSIZE_DEFAULT
 	};
-	typedef int8_t FontSize;
+
+	typedef uint8 FontSize;
 
 	enum _Activity
 	{
 		MAIN_ACTIVITY,
+		PLAYMODE_ACTIVITY,
 		MULTIPLAYER_ACTIVITY,
+		SOLO_PLAY_ACTIVITY,
 		SETTINGS_ACTIVITY,
 		PLAYING_ACTIVITY,
+		SOLO_PLAYING_ACTIVITY,
 		ABOUT_ACTIVITY,
 		QUIT_ACTIVITY,
 		ACTIVITIES,
 		NO_ACITVITY
 	};
-	typedef int8_t Activity;
+
+	typedef uint8 Activity;
 
 	enum _InputFieldListType
 	{
@@ -216,7 +232,8 @@ namespace interfaceNS
 		LIST_MAIN,
 		LIST_NONE
 	};
-	typedef int8_t ListType;
+
+	typedef uint8 ListType;
 }
 
 namespace serverNS
@@ -227,7 +244,8 @@ namespace serverNS
 		SERVER_RUNNING_HANDLING,
 		SERVER_DISCONNECTED
 	};
-	typedef int8_t ServerStatus;
+
+	typedef uint8 ServerStatus;
 
 	static std::map<ServerStatus, std::pair<const char*, ImVec4>>  SERVER_STATUS = {
 		{ SERVER_NOT_RUNNING,{ "Not Started", colorNS::BROWN } },
@@ -260,27 +278,6 @@ enum MatrixType
 	MATRIX_TYPE_ROTATE,
 };
 
-enum Textures
-{
-	BLACK,
-	PLAYER_TANK,
-	TANK_DESTROY,
-	FIRE_SIMPLE,
-	FIRE_BULLET6,
-	FIRE2,
-	FIRE_HIT,
-	ENEMY_TANK
-};
-
-enum KeyControl
-{
-	KEY_OBJECT_FORWARD,
-	KEY_OBJECT_BACK,
-	KEY_OBJECT_RIGHT,
-	KEY_OBJECT_LEFT,
-	KEY_TANK_ATTACK,
-};
-
 enum PacketType_
 {
 	PACKET_START_SEASSON = 100,
@@ -296,20 +293,18 @@ enum PacketType_
 	PACKET_CLIENT_ACT,
 	PACKET_CLIENT_GAME_ATTRIBUTE
 };
+
 typedef char PacketType;
 
-enum gameTexure
+enum AILevel : uint8
 {
-	/*TEXTURE_LOGO,
-	TEXTURE_PLAYER_TANK,
-	TEXTURE_ENEMY_TANK,
-	TEXTURE_BULLET,
-	TEXTURE_BULLET_DESTROY,
-	TEXTURE_TILED0,
-	TEXTURE_TILED1,
-	TEXTURE_TILED2,
-	TEXTURES*/
+	AI_LEVEL_EASY,
+	AI_LEVEL_MEDUIM,
+	AI_LEVEL_HARD,
+	AI_LEVELS
 };
+
+//typedef uint8 AILevel;
 
 enum PlayerAct_
 {

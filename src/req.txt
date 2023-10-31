@@ -2,8 +2,8 @@
 - Fix timer not limit fps
 - Correct const ptr*  functions / variables
 - Replace DirecrXMath with GLM
-- Add ai player class
 - Improve element search in std::vector in server / client (e.g binary_search)
 - Fix Game::checkGameFiles
 - Process map using compute shader
 - Fix scalling textures
+- correct the tank position after collided rotate.

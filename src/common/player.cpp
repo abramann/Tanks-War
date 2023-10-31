@@ -48,11 +48,8 @@ void Player::executeAnimateRepeat()
 #ifdef _CLIENT_BUILD
 	if (!m_pGame->isOnline())
 	{
-		setPosition(m_pMap->getRandomEmptySpace().getCenter());
-		while (m_pMap->isCollided(this))
-		{
-			setPosition(m_pMap->getRandomEmptySpace().getCenter());
-		}
+		m_health = 100;
+		setPosition(m_pMap->getRandomEmptySpace(this).v1);
 	}
 #endif
 }

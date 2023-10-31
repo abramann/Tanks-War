@@ -94,27 +94,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 1;
 	}
 
-	MSG msg;
 	try
 	{
 		pGame->initialize(hInstance, hwnd);
 #ifndef _DEBUG
 		pGame->showLogo();
 #endif
-		while (true)
-		{
-			// PeekMessage,non-blocking method for checking for Windows messages.
-			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-			{
-				if (msg.message == WM_QUIT)
-					break;
-
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-			else
-				pGame->run();
-		}
+		while (pollMessages())
+			pGame->run();
 	}
 	catch (const GameError& err)
 	{

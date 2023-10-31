@@ -34,7 +34,7 @@ bool vectorOfStringGetter(void* data, int n, const char** out_text)
 	return true;
 }
 
-Interface::Interface() : m_activity(MAIN_ACTIVITY), m_blankActivity(true)
+Interface::Interface() : m_activity(MAIN_ACTIVITY), m_prevActivity(NO_ACITVITY), m_blankActivity(true)
 {
 }
 
@@ -74,23 +74,23 @@ void Interface::executeMainActivity()
 	Vec2 butSize = Vec2(g_pGameSettings->width / 2, g_pGameSettings->height / 5),
 		butPos = Vec2((g_pGameSettings->width / 2) - butSize.x / 2, g_pGameSettings->height / 10);
 	SetCursorPos(butPos);
-	if (button("Multiplayer", butSize))
-		m_activity = MULTIPLAYER_ACTIVITY;
+	if (button("Play", butSize))
+		setActivity(PLAYMODE_ACTIVITY);
 
 	butPos.y += butSize.y + butSize.y * MAINACTIVITY_BUTTON_PADDING_Y;
 	SetCursorPos(butPos);
 	if (button("Settings", butSize))
-		m_activity = SETTINGS_ACTIVITY;
+		setActivity(SETTINGS_ACTIVITY);
 
 	butPos.y += butSize.y + butSize.y*MAINACTIVITY_BUTTON_PADDING_Y;
 	SetCursorPos(butPos);
 	if (button("Quit", butSize))
-		m_activity = QUIT_ACTIVITY;
+		setActivity(QUIT_ACTIVITY);
 
 	PushFont(m_pFont[FONTSIZE_MED]);
 	SetCursorPos(Vec2(0, g_pGameSettings->height * 0.9));
 	if (button("About", Vec2(butSize.x / 4, butSize.y / 4)))
-		m_activity = ABOUT_ACTIVITY;
+		setActivity(ABOUT_ACTIVITY);
 
 	PopFont();
 	endActivity();
@@ -113,6 +113,7 @@ void Interface::executeSettingsActivity()
 	bool cComputeShader = Checkbox("Compute Shader", &g_pGameSettings->computeShader); SameLine();
 	ImGui::PopStyleColor();
 	HelpMarker("Use GPU for collision detection.");
+	bool cDebugMode = Checkbox("Debug mode", &g_pGameSettings->debugMode);
 	PushStyleColor(ImGuiCol_Text, YELLOW);
 	if (cWin)
 	{
@@ -121,7 +122,7 @@ void Interface::executeSettingsActivity()
 		endActivity(1, 1);
 		return;
 	}
-	if (cVsync || cComputeShader)
+	if (cVsync || cComputeShader || cDebugMode)
 		pGame->updateGameSettings();
 
 	static auto suppMode = m_pGraphics->getSupportedResolutionAsString();
@@ -159,7 +160,7 @@ void Interface::executeSettingsActivity()
 
 #endif
 	PopStyleColor();
-	endActivity(true, MAIN_ACTIVITY);
+	endActivity(true);
 }
 
 void Interface::executePlayingActivity()
@@ -172,16 +173,16 @@ void Interface::executePlayingActivity()
 	ImGui::Begin("Status", 0, ImGuiWindowFlags_NoTitleBar);
 	PushStyleColor(ImGuiCol_Text, YELLOW);
 	PushFont(m_pFont[FONTSIZE_SMALL2]);
-	auto pThisClient = m_pTW->getThisClient();
-	text(strFormat("Health %d", static_cast<int32>(pThisClient->getHealth())));
-	text(strFormat("Kills %d", 0, 0), YELLOW);
-	text(strFormat("Score %d", static_cast<int32>(pThisClient->getInflictedDamage())));
+	auto pThis = (m_pTW->isOnline()) ? m_pTW->getThisClient() : m_pTW->getThisPlayer();
+	text(strFormat("Health %d", static_cast<int32>(pThis->getHealth())));
+	text(strFormat("Kills %d", pThis->getMadeKills()), YELLOW);
+	text(strFormat("Score %d", static_cast<int32>(pThis->getInflictedDamage())));
 	text(strFormat("Players %d", m_pTW->getExistClients()));
 	PopFont();
 	PopStyleColor();
 	End();
 	if (m_pInput->isKeyPressed(inputNS::ESCAPE_KEY))
-		m_activity = MULTIPLAYER_ACTIVITY;
+		setActivity(m_prevActivity);
 #endif
 }
 
@@ -192,16 +193,93 @@ void Interface::executeAboutActivity()
 	text("Simple multiplayer game developed by", YELLOW); SameLine(); text("abramann", CYAN); SameLine(); text("(github.com/abramann/Tanks-War).", YELLOW);
 	text("Credits to", WHITE, FONTSIZE_MED2);
 	PushStyleColor(ImGuiCol_Text, YELLOW);
-	BulletText("Charles Kelly for the net library and the useful information in his books (programming2dgames.net)");
+	BulletText("Charles Kelly for the net library and the useful information in his book (programming2dgames.net)");
 	text("Audio Credits:", WHITE, FONTSIZE_MED);
 	text("tank-explosion.wav");
 	BulletText("Source: www.youtube.com/watch?v=Q7KmAe8_jZE");
 	BulletText("License : CC-BY-3.0 creativecommons.org/licenses/by/3.0");
-	text("bullet-explosion.wav converted from rumble.flac");
+	text("bullet-explosion.wav was converted from rumble.flac");
 	BulletText("Source: opengameart.org/content/rumbleexplosion");
 	BulletText("License : CC-BY-3.0 creativecommons.org/licenses/by/3.0");
 	PopStyleColor();
-	endActivity(true, MAIN_ACTIVITY);
+	endActivity(true);
+}
+
+void Interface::executePlayModeActivity()
+{
+	beginActivity(true, FONTSIZE_LARGE2);
+	Vec2 butSize = Vec2(g_pGameSettings->width / 2, g_pGameSettings->height / 5),
+		butPos = Vec2((g_pGameSettings->width / 2) - butSize.x / 2, g_pGameSettings->height / 10);
+	SetCursorPos(butPos);
+	if (button("Solo Play", butSize))
+		setActivity(SOLO_PLAY_ACTIVITY);
+
+	butPos.y += butSize.y + butSize.y * MAINACTIVITY_BUTTON_PADDING_Y;
+	SetCursorPos(butPos);
+	if (button("Multiplayer", butSize))
+		setActivity(MULTIPLAYER_ACTIVITY);
+
+	butPos.y += butSize.y + butSize.y * MAINACTIVITY_BUTTON_PADDING_Y;
+	SetCursorPos(butPos);
+	if (button("Back", butSize))
+		setActivity(MAIN_ACTIVITY);
+
+	endActivity(false);
+}
+
+void Interface::executeSoloPlayActivity()
+{
+	beginActivity(false, FONTSIZE_SMALL2);
+	PushStyleColor(ImGuiCol_Text, colorNS::YELLOW);
+
+	separatorText("Game Config", FONTSIZE_LARGE, RED);
+	bool input = false;
+	int32 aiCount = (int32)m_pTW->getAIPlayerCount();
+	input = inputInt("AI Count", &aiCount, 0);
+	if (aiCount < 0)
+		aiCount = 0;
+
+	Text("AI Level"); SameLine();
+	static const char* const aiLevels[] = { "Easy", "Meduim", "Hard" };
+	int currLevel = m_pTW->getAILevel();
+	if (input)
+		m_pTW->setAIPlayersCount(aiCount);
+
+	input = ListBox("##ailevel", &currLevel, aiLevels, AI_LEVELS);
+	if (input)
+		m_pTW->setAILevel((AILevel)currLevel);
+
+	static auto map = FileIO::getDirFileList(fileNS::MAP_DIR, 0, ".map", false);
+	int32 iCurrMap = std::find(map.begin(), map.end(), m_pTW->getGameMap()) - map.begin();
+	Text("Map"); SameLine();
+	input = ListBox("##map", &iCurrMap, vectorOfStringGetter, &map, map.size());
+	if (input)
+	{
+		m_pTW->setGameMap(map[iCurrMap]);
+		if (m_pTW->isSoloGameStarted())
+			m_pTW->quitSoloGame();
+	}
+	if (!m_pTW->isSoloGameStarted())
+	{
+		input = button("Play");
+		if (input)
+			if (m_pTW->onStartSoloPlayerGame())
+				setActivity(PLAYING_ACTIVITY);
+	}
+	else
+	{
+		input = button("Resume");
+		if (input)
+			setActivity(PLAYING_ACTIVITY);
+
+		SameLine();
+		input = button("Quit");
+		if (input)
+			m_pTW->quitSoloGame();
+	}
+
+	PopStyleColor();
+	endActivity(true, PLAYMODE_ACTIVITY);
 }
 
 void Interface::render()
@@ -211,11 +289,17 @@ void Interface::render()
 	case MAIN_ACTIVITY:
 		executeMainActivity();
 		break;
-	case MULTIPLAYER_ACTIVITY:
-		executeMultiplayerActivity();
+	case PLAYMODE_ACTIVITY:
+		executePlayModeActivity();
 		break;
 	case SETTINGS_ACTIVITY:
 		executeSettingsActivity();
+		break;
+	case SOLO_PLAY_ACTIVITY:
+		executeSoloPlayActivity();
+		break;
+	case MULTIPLAYER_ACTIVITY:
+		executeMultiplayerActivity();
 		break;
 	case PLAYING_ACTIVITY:
 		executePlayingActivity();
@@ -262,12 +346,15 @@ void Interface::endActivity(bool backButton, Activity backActivity)
 	PopFont();
 	if (backButton)
 	{
+		if (backActivity == NO_ACITVITY)
+			backActivity = m_prevActivity;
+
 		Vec2 m_backButPos = Vec2(g_pGameSettings->width / 2.0f, g_pGameSettings->height * 0.7f);
 		Vec2 m_backButSize = Vec2(g_pGameSettings->width / 10, g_pGameSettings->height / 12);
 		PushFont(m_pFont[FONTSIZE_LARGE]);
 		SetCursorPos(m_backButPos);
 		if (button("Back", m_backButSize) || m_pInput->isKeyPressed(inputNS::ESCAPE_KEY))
-			m_activity = backActivity;
+			setActivity(backActivity);
 
 		PopFont();
 	}
@@ -322,7 +409,7 @@ void Interface::executeMultiplayerActivity()
 		SameLine();
 		input = button("Join");
 		if (input)
-			m_activity = PLAYING_ACTIVITY;
+			setActivity(PLAYING_ACTIVITY);
 	}
 
 	PopStyleColor();
@@ -385,7 +472,7 @@ void Interface::executeMultiplayerActivity()
 	int32 clients = m_pTWServer->getConnectedClients();
 	Text(strFormat("Connected clients %d", clients).c_str());
 #endif
-	endActivity(true, MAIN_ACTIVITY);
+	endActivity(true);
 }
 
 bool Interface::inputText(std::string desc, char * buf, size_t length, ImGuiInputTextFlags flags, ListType listType)

@@ -36,10 +36,12 @@ public:
 	void executeSettingsActivity();
 	void executePlayingActivity();
 	void executeAboutActivity();
+	void executePlayModeActivity();
+	void executeSoloPlayActivity();
 	void render();
 	void beginActivity(bool blankActivity, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED);
 	void endActivity(bool backButton = false, interfaceNS::Activity backActivity = interfaceNS::NO_ACITVITY);
-	void setActivity(interfaceNS::Activity activity) { m_activity = activity; }
+	void setActivity(interfaceNS::Activity activity) { m_prevActivity = m_activity, m_activity = activity; }
 
 private:
 
@@ -61,6 +63,6 @@ private:
 	Input* m_pInput;
 	ImFont* m_pFont[interfaceNS::FONTSIZES];
 	bool m_blankActivity;
-	int8 m_activity;
+	interfaceNS::Activity m_activity, m_prevActivity;
 	Vec2 m_inputFieldListPos;
 };

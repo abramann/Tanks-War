@@ -49,7 +49,7 @@ public:
 	void setMaxClients(int32 maxClients);
 	void setMap(std::string map) { m_map = map; }
 	void getIP(char* pIP) { m_pServer->getIP(pIP); }
-	std::string getMap() const { return m_map; }
+	std::string getGameMap() const { return m_map; }
 	serverNS::ServerStatus getStatus() const { return m_status; }
 	void executeServerPlayerDie(Client* pClient);
 	void postClientGameAttribute(Client* pClient);

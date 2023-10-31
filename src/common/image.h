@@ -5,7 +5,6 @@
 
 #include "types.h"
 #include "texture.h"
-#include <wrl\client.h>
 
 class Game;
 class TextureManger;
@@ -46,7 +45,7 @@ public:
 	void setY(float y) { m_position.y = y; }
 	void setZ(float z) { m_position.z = z; }
 	Space getSpace(float x0 = 0, float y0 = 0) const;
-	float getNegativeRotate() const { return (m_rotate.z <= 0) ? m_rotate.z :-2 * PI + m_rotate.z; };
+	float getNegativeRotate() const { return (m_rotate.z <= 0) ? m_rotate.z : -2 * PI + m_rotate.z; };
 
 protected:
 

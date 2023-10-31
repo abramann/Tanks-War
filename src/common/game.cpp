@@ -137,6 +137,10 @@ bool Game::checkGameFiles() const
 
 void Game::showLogo() const
 {
+	static bool showed = false;
+	if (showed)
+		return;
+
 	Sprite logo = Sprite(this, "logo");
 	V2 scall = V2(g_pGameSettings->width*1.0f / logo.getWidth(),
 		g_pGameSettings->height*1.0f / logo.getHeight());
@@ -145,8 +149,8 @@ void Game::showLogo() const
 	do
 	{
 		m_pGraphics->beginRender();
-		end = logo.fadeDraw(800);
+		end = logo.fadeDraw(gameNS::LOGO_SHOW_TIME);
 		m_pGraphics->endRender();
 		m_pGraphics->showBackbuffer();
-	} while (!end);
+	} while (!end && pollMessages() && !m_pInput->isKeyPressed(inputNS::LMOUSE_KEY));
 }

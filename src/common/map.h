@@ -27,16 +27,6 @@ class Map
 
 		T operator[](const size_type& pos) const
 		{
-			/*
-			size_type i = 0;
-			for (auto e : *this)
-			{
-				if (pos == i)
-					return e;
-				else
-					i++;
-			}*/
-
 			std::set<T>::iterator it = begin();
 			std::advance(it, pos);
 			return *it;
@@ -57,11 +47,12 @@ public:
 	bool isCollided(const Image* image) const;
 	bool isCollided(const Object* object) const; // specific function for Object type for objects collision
 	bool isCollided(const Space& space, const std::vector<const Object*>& pObject = {}) const;
+	Space getCollidedSpace(const Space& targetSpace, const std::vector<const Object*>& pExceptObject = {}) const;
 	bool isOutOfRange(const Space& space) const;
 	Object* getObject(const Space& space) const;
 	bool isMapExist(const std::string name, Crc32 crc32) const { return true; }
 	Crc32 getCrc32() const;
-	Space getRandomEmptySpace() const;
+	Space getRandomEmptySpace(const Image* pImage) const;
 	void addObject(Object* pObject);
 	void removeObject(Object* pObject);
 	float getVelocityFactor(Space space) const { return getVelocityFactor(space.getCenter()); }
@@ -77,6 +68,8 @@ public:
 	bool isVectorUnderFreespace(const Vector3D& vector3d, const std::initializer_list<const Object*>& pExceptObject = {}) const;
 	//static std::vector<Space> sortByFCost(const std::vector<V3>& vertexList, const Map::CustomSet<Space>& spaceList);
 	bool isValidObject(const Object* const pObject);
+	V3 getCollidedV3(const Object* pObject) const;
+	void unload();
 
 private:
 
@@ -101,7 +94,7 @@ private:
 	int32 m_width, m_height;
 	int8 m_usedBitmaps;
 	float m_maxDistance;
-	std::vector< std::vector<char>> m_map;
+	std::vector<std::vector<char>> m_map;
 	std::vector<int8> m_noSpaceBitmap;
 	std::vector<Space> m_freeSpace, m_noSpace;
 	std::vector<uint32_t> m_startVertex, m_lenVertex;
