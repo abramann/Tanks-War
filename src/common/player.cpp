@@ -15,12 +15,13 @@ Player::~Player()
 {
 }
 
-void Player::initialize(PlayerID id, const char* pName, PlayerType playerType, const Game * pGame)
+void Player::initialize(PlayerID id, const std::string& name, PlayerType playerType, const Game * pGame)
 {
 	m_id = id;
-	strcpy(m_name, pName);
+	strcpy(m_name, name.c_str());
 	std::string tex = (playerType == PLAYER_SELF) ? "player-tank" : "enemy-tank";
 	Tank::initialize(tex, pGame);
+	m_pMap->addObject(this);
 }
 
 void Player::damage(float dmg)
@@ -48,10 +49,22 @@ void Player::executeAnimateRepeat()
 #ifdef _CLIENT_BUILD
 	if (!m_pGame->isOnline())
 	{
-		m_health = 100;
+		//m_health = 100;
+		//setPosition(m_pMap->getRandomEmptySpace(this).v1);
+		reset();
 		setPosition(m_pMap->getRandomEmptySpace(this).v1);
 	}
 #endif
+}
+
+void Player::reset()
+{
+	m_rotate = V3();
+	m_position = V3();
+	m_health = logicNS::HEALTH_TANK;
+	m_velocity = logicNS::VELOCITY_TANK;
+	m_inflictedDamage = 0;
+	m_madeKills = 0;
 }
 
 #ifdef _CLIENT_BUILD

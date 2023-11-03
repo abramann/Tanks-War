@@ -21,7 +21,6 @@ void Object::initialize(std::string texture, const Game * pGame)
 	m_pGame = pGame;
 	m_pAudio = pGame->getAudio();
 	m_pMap = pGame->getMap();
-	m_pMap->addObject(this);
 	Image::initialize(texture, pGame);
 }
 

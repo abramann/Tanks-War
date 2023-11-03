@@ -17,13 +17,14 @@ public:
 
 	Player();
 	~Player();
-	virtual void initialize(PlayerID id, const char* pName, PlayerType playerType, const Game * pGame);
+	virtual void initialize(PlayerID id, const std::string& name, PlayerType playerType, const Game * pGame);
 	PlayerID getID() const { return m_id; }
 	void setID(PlayerID id) { m_id = id; }
 	const char* getName() const { return m_name; }
 	virtual void damage(float dmg);
 	virtual void executeDie();
 	virtual void executeAnimateRepeat();
+	virtual void reset();
 
 #ifdef _CLIENT_BUILD
 	void setClientGameStatus(const ClientGameStatus& clientGameStatus);

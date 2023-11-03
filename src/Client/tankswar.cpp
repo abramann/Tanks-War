@@ -12,7 +12,7 @@
 #include "..\common\inlined.inl"
 #include "thisplayer.h"
 
-TanksWar::TanksWar() : m_status(clientNS::CLIENT_UNCONNECTED), m_aiLevel(AI_LEVEL_EASY), m_soloGameStarted(false), m_AIPlayersCount(0)
+TanksWar::TanksWar() : m_status(clientNS::CLIENT_UNCONNECTED), m_soloGameStarted(false)
 {
 	m_pClient = std::make_shared<Client>();
 	m_pRData = m_pClient->getReceiveBuffer();
@@ -237,14 +237,16 @@ bool TanksWar::onStartSoloPlayerGame()
 	if (!m_pMap->load(m_map))
 		return false;
 
+	m_pMap->removeObject(&m_thisClient);
+	m_pMap->addObject(&m_thisPlayer);
 	m_thisPlayer.setPosition(m_pMap->getRandomEmptySpace(&m_thisPlayer).v1);
-	m_pAIPlayer.resize(m_AIPlayersCount);
-	uint8 c = 1;
-	for (auto& pAIPlayer : m_pAIPlayer)
+	for (uint32 i = 0; i < g_pGameSettings->aiCount; i++)
 	{
-		pAIPlayer->initialize(this, c, strFormat("AIPlayer %d", c++).c_str());
-		pAIPlayer->setPosition(m_pMap->getRandomEmptySpace(pAIPlayer.get()).v1);
+		m_pAIPlayer.push_back(std::make_shared<AIPlayer>());
+		m_pAIPlayer.back()->initialize(this, i+1, strFormat("AIPlayer %d", i+1));
+		m_pAIPlayer.back()->setPosition(m_pMap->getRandomEmptySpace(m_pAIPlayer[i].get()).v1);
 	}
+
 	m_soloGameStarted = true;
 	return true;
 }

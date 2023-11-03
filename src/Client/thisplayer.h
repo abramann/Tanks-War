@@ -17,6 +17,7 @@ public:
 	virtual void update();
 	virtual void executeDie();
 	virtual void executeAnimateRepeat();
+	virtual void reset();
 
 protected:
 

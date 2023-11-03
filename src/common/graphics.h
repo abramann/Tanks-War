@@ -25,12 +25,12 @@ class Graphics
 {
 public:
 
-	friend class Camera;
+	friend Camera;
 
 	Graphics();
 	~Graphics();
 	bool initialize(const Game* pGame);
-	bool loadTexture(const std::string& file, int32& width, int32& height, LPTextureD3D& texture);
+	bool loadTexture(const std::string& file, uint32& width, uint32& height, LPTextureD3D& texture);
 	void beginRender();
 	void drawImage(const Image* image);
 	void drawLine(const Vector3D& line);

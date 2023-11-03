@@ -22,7 +22,7 @@ public:
 	void d3dDraw(uint32 vertexCount, uint32 startVertex);
 	void d3dDrawIndexed(uint32 indexCount, uint32 startIndex, uint32 baseVertex);
 	void psSetSRV(ID3D11ShaderResourceView** ppSRV, uint32 numViews = 1, uint32 startSlot = 0);
-	bool createSRVFromFile(const std::string& file, ID3D11ShaderResourceView ** ppSRV, int32& width, int32& height);
+	bool createSRVFromFile(const std::string& file, ID3D11ShaderResourceView ** ppSRV, uint32& width, uint32& height);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createBuffer(D3D11_USAGE usage, D3D11_BIND_FLAG bindFlag, uint32 cpuAccess, uint32 byteWidth, uint32 stride = 0,
 		void* initialData = 0, uint32 miscFlag = 0) const;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> createVertexBuffer(uint32 vertices, uint32 cpuAccess, Vertex* data = 0);

@@ -129,7 +129,7 @@ void Dx11Wrapper::psSetSRV(ID3D11ShaderResourceView ** ppSRV, uint32 numViews, u
 	m_pDeviceContext->PSSetShaderResources(startSlot, numViews, ppSRV);
 }
 
-bool Dx11Wrapper::createSRVFromFile(const std::string & file, ID3D11ShaderResourceView ** ppSRV, int32& width, int32& height)
+bool Dx11Wrapper::createSRVFromFile(const std::string & file, ID3D11ShaderResourceView ** ppSRV, uint32& width, uint32& height)
 {
 	D3DX11_IMAGE_INFO info;
 	if (FAILED(D3DX11GetImageInfoFromFileA(file.c_str(), 0, &info, 0)))

@@ -34,8 +34,10 @@
     <ClInclude Include="..\common\image.h" />
     <ClInclude Include="..\common\input.h" />
     <ClInclude Include="..\common\interface.h" />
+    <ClInclude Include="..\common\line.h" />
     <ClInclude Include="..\common\map.h" />
     <ClInclude Include="..\common\net.h" />
+    <ClInclude Include="..\common\node.h" />
     <ClInclude Include="..\common\object.h" />
     <ClInclude Include="..\common\player.h" />
     <ClInclude Include="..\common\serverplayer.h" />
@@ -67,8 +69,10 @@
     <ClCompile Include="..\common\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\common\input.cpp" />
     <ClCompile Include="..\common\interface.cpp" />
+    <ClCompile Include="..\common\line.cpp" />
     <ClCompile Include="..\common\map.cpp" />
     <ClCompile Include="..\common\net.cpp" />
+    <ClCompile Include="..\common\node.cpp" />
     <ClCompile Include="..\common\object.cpp" />
     <ClCompile Include="..\common\player.cpp" />
     <ClCompile Include="..\common\serverplayer.cpp" />

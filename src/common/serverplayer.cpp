@@ -44,8 +44,8 @@ void ServerPlayer::executeAnimateRepeat()
 {
 	m_pTWServer->resetClientGameStatus(this);
 	m_pTWServer->postClientGameStatus(this);
-	//Player::executeAnimateRepeat();
-	Tank::executeAnimateRepeate();
+	//Tank::executeAnimateRepeat();
+	Player::executeAnimateRepeat();
 }
 
 ClientGameStatus ServerPlayer::getClientGameStatus() const

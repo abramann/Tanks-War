@@ -30,8 +30,8 @@ void Line::draw(const Vector3D& vector)
 {
 	setPosition(vector.begin);
 	m_rotate.z = -1 * (gameMathNS::getAngle(vector) + PI);
-	m_width = vector.size;
-	m_height = vector.getMagnitude();
+	m_width = static_cast<uint32>(vector.size);
+	m_height = static_cast<uint32>(vector.getMagnitude());
 	updateLocalCoordinate();
 	Image::draw();
 }

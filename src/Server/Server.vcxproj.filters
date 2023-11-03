@@ -111,6 +111,12 @@
     <ClInclude Include="..\common\inlined.inl">
       <Filter>Common\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\node.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\line.h">
+      <Filter>Common\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\texturemanger.cpp">
@@ -207,6 +213,12 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\common\sprite.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\node.cpp">
+      <Filter>Common\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\line.cpp">
       <Filter>Common\Sources</Filter>
     </ClCompile>
   </ItemGroup>

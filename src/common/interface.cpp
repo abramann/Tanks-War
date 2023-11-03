@@ -74,8 +74,13 @@ void Interface::executeMainActivity()
 	Vec2 butSize = Vec2(g_pGameSettings->width / 2, g_pGameSettings->height / 5),
 		butPos = Vec2((g_pGameSettings->width / 2) - butSize.x / 2, g_pGameSettings->height / 10);
 	SetCursorPos(butPos);
+#ifdef _CLIENT_BUILD
 	if (button("Play", butSize))
 		setActivity(PLAYMODE_ACTIVITY);
+#else
+	if (button("Multiplayer", butSize))
+		setActivity(MULTIPLAYER_ACTIVITY);
+#endif
 
 	butPos.y += butSize.y + butSize.y * MAINACTIVITY_BUTTON_PADDING_Y;
 	SetCursorPos(butPos);
@@ -205,6 +210,7 @@ void Interface::executeAboutActivity()
 	endActivity(true);
 }
 
+#ifdef _CLIENT_BUILD
 void Interface::executePlayModeActivity()
 {
 	beginActivity(true, FONTSIZE_LARGE2);
@@ -234,20 +240,22 @@ void Interface::executeSoloPlayActivity()
 
 	separatorText("Game Config", FONTSIZE_LARGE, RED);
 	bool input = false;
-	int32 aiCount = (int32)m_pTW->getAIPlayerCount();
+	int32 aiCount = (int32)g_pGameSettings->aiCount;
 	input = inputInt("AI Count", &aiCount, 0);
 	if (aiCount < 0)
 		aiCount = 0;
+	if (input)
+	{
+		g_pGameSettings->aiCount = aiCount;
+		m_pTW->updateGameSettings();
+		m_pTW->quitSoloGame();
+	}
 
 	Text("AI Level"); SameLine();
 	static const char* const aiLevels[] = { "Easy", "Meduim", "Hard" };
-	int currLevel = m_pTW->getAILevel();
+	input = ListBox("##ailevel", (int*)&g_pGameSettings->aiLevel, aiLevels, AI_LEVELS);
 	if (input)
-		m_pTW->setAIPlayersCount(aiCount);
-
-	input = ListBox("##ailevel", &currLevel, aiLevels, AI_LEVELS);
-	if (input)
-		m_pTW->setAILevel((AILevel)currLevel);
+		m_pTW->updateGameSettings();
 
 	static auto map = FileIO::getDirFileList(fileNS::MAP_DIR, 0, ".map", false);
 	int32 iCurrMap = std::find(map.begin(), map.end(), m_pTW->getGameMap()) - map.begin();
@@ -281,6 +289,7 @@ void Interface::executeSoloPlayActivity()
 	PopStyleColor();
 	endActivity(true, PLAYMODE_ACTIVITY);
 }
+#endif
 
 void Interface::render()
 {
@@ -289,14 +298,16 @@ void Interface::render()
 	case MAIN_ACTIVITY:
 		executeMainActivity();
 		break;
+#ifdef _CLINET_BUILD
 	case PLAYMODE_ACTIVITY:
 		executePlayModeActivity();
 		break;
-	case SETTINGS_ACTIVITY:
-		executeSettingsActivity();
-		break;
 	case SOLO_PLAY_ACTIVITY:
 		executeSoloPlayActivity();
+		break;
+#endif
+	case SETTINGS_ACTIVITY:
+		executeSettingsActivity();
 		break;
 	case MULTIPLAYER_ACTIVITY:
 		executeMultiplayerActivity();
@@ -437,11 +448,11 @@ void Interface::executeMultiplayerActivity()
 		m_pTWServer->setPort(port);
 
 	static auto map = FileIO::getDirFileList(fileNS::MAP_DIR, 0, ".map", false);
-	int32 iCurrMap = std::find(map.begin(), map.end(), m_pTWServer->getMap()) - map.begin();
+	int32 iCurrMap = std::find(map.begin(), map.end(), m_pTWServer->getGameMap()) - map.begin();
 	input = ListBox("##map", &iCurrMap, vectorOfStringGetter, &map, map.size());
 	if (input && !srvActive)
 		m_pTWServer->setMap(map[iCurrMap]);
-
+		
 	PopStyleColor();
 	Text("status");
 	SameLine();

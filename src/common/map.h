@@ -18,6 +18,8 @@ class Image;
 class Texture;
 class Dx11Wrapper;
 
+const std::vector<const Object*> EXCEPT_ALL_OBJECTS = { nullptr };
+
 class Map
 {
 	template <typename T>
@@ -49,6 +51,7 @@ public:
 	bool isCollided(const Space& space, const std::vector<const Object*>& pObject = {}) const;
 	Space getCollidedSpace(const Space& targetSpace, const std::vector<const Object*>& pExceptObject = {}) const;
 	bool isOutOfRange(const Space& space) const;
+	bool isOutOfRange(const V3& v) const;
 	Object* getObject(const Space& space) const;
 	bool isMapExist(const std::string name, Crc32 crc32) const { return true; }
 	Crc32 getCrc32() const;

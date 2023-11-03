@@ -18,13 +18,13 @@ public:
 	void onResetDevice();
 	void release();
 	LPTextureD3D getTexture() const { return m_lpTexture; }
-	int32 getWidth()	const { return m_width; }
-	int32 getHeight() const { return m_height; }
+	uint32 getWidth()	const { return m_width; }
+	uint32 getHeight() const { return m_height; }
 
 protected:
 
 	std::string m_file;
 	Graphics* m_pGraphics;
 	LPTextureD3D m_lpTexture;
-	int32 m_width, m_height;
+	uint32 m_width, m_height;
 };

@@ -63,8 +63,8 @@ protected:
 	int64 m_timeUntilLastUpdate;
 	Microsoft::WRL::ComPtr<DxBuffer> m_pVertexBuffer, m_pStagingBuffer;
 	V3 m_position, m_scalling, m_rotate;
-	int16 m_width, m_height;
-	int8_t m_columns, m_rows, m_column, m_row;
+	uint32 m_width, m_height;
+	uint32 m_columns, m_rows, m_column, m_row;
 	bool m_initialized;
 
 private:

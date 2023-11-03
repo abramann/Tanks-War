@@ -62,3 +62,13 @@ void ThisPlayer::executeAnimateRepeat()
 	m_health = 100;
 	Player::executeAnimateRepeat();
 }
+
+void ThisPlayer::reset()
+{
+	m_rotate = V3();
+	m_position = V3();
+	m_health = logicNS::HEALTH_TANK;
+	m_velocity = logicNS::VELOCITY_TANK;
+	m_inflictedDamage = 0;
+	m_madeKills = 0;
+}

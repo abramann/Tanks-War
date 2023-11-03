@@ -36,8 +36,6 @@ public:
 	void executeSettingsActivity();
 	void executePlayingActivity();
 	void executeAboutActivity();
-	void executePlayModeActivity();
-	void executeSoloPlayActivity();
 	void render();
 	void beginActivity(bool blankActivity, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED);
 	void endActivity(bool backButton = false, interfaceNS::Activity backActivity = interfaceNS::NO_ACITVITY);
@@ -52,6 +50,9 @@ private:
 	void separatorText(std::string text, interfaceNS::FontSize fontSize = interfaceNS::FONTSIZE_MED, Vec4 color = Vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	void text(std::string text, Vec4 color = Vec4(0, 0, 0, 0), interfaceNS::FontSize fontSize = 0);
 #ifdef _CLIENT_BUILD
+	void executePlayModeActivity();
+	void executeSoloPlayActivity();
+
 	TanksWar* m_pTW;
 	ThisClient* m_pThisClient;
 #else

@@ -80,7 +80,8 @@ GameSettings FileIO::readGameSettings()
 		createGameSettings();
 
 	std::string line;
-	readValues<int32>(file, { &gameSettings.width, &gameSettings.height });
+	readValues<uint32>(file, { &gameSettings.width, &gameSettings.height,
+		&gameSettings.aiLevel, &gameSettings.aiCount });
 	readValues<bool>(file,
 	{
 		&gameSettings.windowed, &gameSettings.vsync ,
@@ -177,7 +178,8 @@ ServerInfo FileIO::readServerInfo()
 
 void FileIO::createGameSettings(const GameSettings* info)
 {
-	int16 width, height;
+	uint32 width, height,
+		aiLevel, aiCount;
 	bool windowed, vsync,
 		audio, computeShader,
 		debugMode;
@@ -189,7 +191,9 @@ void FileIO::createGameSettings(const GameSettings* info)
 		vsync = info->vsync;
 		audio = info->audio;
 		computeShader = info->computeShader;
+		aiLevel = info->aiLevel;
 		debugMode = info->debugMode;
+		aiCount = info->aiCount;
 	}
 	else
 	{
@@ -200,16 +204,20 @@ void FileIO::createGameSettings(const GameSettings* info)
 		audio = gameNS::AUDIO_DEFAULT;
 		computeShader = gameNS::COMPUTESHADER_DEFAULT;
 		debugMode = gameNS::COMPUTESHADER_DEFAULT;
+		aiLevel = gameNS::AILEVEL_DEFAULT;
+		aiCount = 0;
 	}
 
 	std::ofstream file(fileNS::GAME_INFO_PATH);
 	file << "Width=" << std::to_string(width) << '\n'
 		<< "Height=" << std::to_string(height) << '\n'
+		<< "AI Level=" << std::to_string(aiLevel) << '\n'
+		<< "AI Count=" << std::to_string(aiCount) << '\n'
 		<< "Windowed=" << std::to_string(windowed) << '\n'
 		<< "VSync=" << std::to_string(vsync) << '\n'
 		<< "Audio=" << std::to_string(audio) << '\n'
 		<< "Compute Shader=" << std::to_string(computeShader) << '\n'
-		<< "Compute Shader=" << std::to_string(debugMode) << std::endl;
+		<< "Debug Mode=" << std::to_string(debugMode) << std::endl;
 }
 
 inline std::string getTargetEqualStringValue(std::string str)

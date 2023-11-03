@@ -94,6 +94,7 @@ namespace gameNS
 	constexpr auto UPDATE_DELAY_FPS = 800;
 	constexpr auto AUDIO_DEFAULT = true;
 	constexpr auto COMPUTESHADER_DEFAULT = false;
+	constexpr auto AILEVEL_DEFAULT = 1;
 	constexpr auto DEBUGMODE_DEFAULT = false;
 	constexpr auto LOGO_SHOW_TIME = 800;
 #ifdef _SRVER_BUILD
@@ -132,6 +133,20 @@ namespace logicNS
 	constexpr auto VELOCITY_TANK = 3.0f;
 	constexpr auto DEFAULT_BITMAP_DAMAGEFACTOR = 1.0f;
 	constexpr auto DEFAULT_BITMAP_VELOCITYFACTOR = 1.0f;
+
+	enum AIEnemySearchDelay : uint32
+	{
+		AI_SEARCH_EASY = 1000,
+		AI_SEARCH_MEDUIM = 400,
+		AI_SEARCH_HARD = 0
+	};
+
+	enum AIShotDelay : uint32
+	{
+		AI_SHOT_EASY = 300,
+		AI_SHOT_MEDUIM = 80,
+		AI_SHOT_HARD = 0
+	};
 }
 
 namespace networkNS
@@ -278,7 +293,7 @@ enum MatrixType
 	MATRIX_TYPE_ROTATE,
 };
 
-enum PacketType_
+enum PacketType : char
 {
 	PACKET_START_SEASSON = 100,
 	PACKET_DISCONNECT,
@@ -294,9 +309,7 @@ enum PacketType_
 	PACKET_CLIENT_GAME_ATTRIBUTE
 };
 
-typedef char PacketType;
-
-enum AILevel : uint8
+enum AILevel : uint32
 {
 	AI_LEVEL_EASY,
 	AI_LEVEL_MEDUIM,

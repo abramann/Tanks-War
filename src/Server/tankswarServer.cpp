@@ -325,7 +325,7 @@ void TanksWarServer::send(Client* pClient, int32 size, bool sbClear)
 
 void TanksWarServer::resetClientGameStatus(Client* pClient)
 {
-	Space space = m_pMap->getRandomEmptySpace();
+	Space space = m_pMap->getRandomEmptySpace(pClient);
 	V3 position = V3(space.v1.x, space.v1.y, 0);
 	pClient->setPosition(position);
 	pClient->setRotate(V3(0, 0, 0));

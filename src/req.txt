@@ -6,4 +6,4 @@
 - Fix Game::checkGameFiles
 - Process map using compute shader
 - Fix scalling textures
-- correct the tank position after collided rotate.
+- Correct tank position after collided rotate.

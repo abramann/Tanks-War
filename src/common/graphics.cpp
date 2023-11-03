@@ -106,7 +106,7 @@ void Graphics::setDrawProperties(V3 position, V3 scall, V3 rotate, V3 rotateCent
 	setObjectConstBuffer(v);
 }
 
-bool Graphics::loadTexture(const std::string& file, int32& width, int32& height, LPTextureD3D& texture)
+bool Graphics::loadTexture(const std::string& file, uint32& width, uint32& height, LPTextureD3D& texture)
 {
 	return m_pDx11Wrapper->createSRVFromFile(file, &texture, width, height);
 }

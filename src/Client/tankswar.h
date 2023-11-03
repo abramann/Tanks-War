@@ -45,12 +45,8 @@ public:
 	int32 getExistClients() const { return m_pRemoteClient.size() + 1; }
 	std::string getGameMap() const { return m_map; }
 	void setGameMap(const std::string& gameMap) { debuggerBreak(isOnline(), "Invalid call!/n"); strcpy(m_map, gameMap.c_str()); }
-	AILevel getAILevel() const { return m_aiLevel; }
-	void setAILevel(AILevel aiLevel) { m_aiLevel = aiLevel; }
 	bool onStartSoloPlayerGame();
 	bool isSoloGameStarted() const { return m_soloGameStarted; }
-	uint32 getAIPlayerCount() const { return m_AIPlayersCount; }
-	void setAIPlayersCount(uint32 newAIPlayersCount) { m_AIPlayersCount = newAIPlayersCount; }
 	void quitSoloGame();
 
 private:
@@ -61,7 +57,6 @@ private:
 	void applyClientGameAttribute();
 
 	clientNS::ClientStatus m_status;
-	AILevel m_aiLevel;
 	PlayerID m_id;
 	char m_map[gameNS::MAX_NAME_LEN];
 	const char* m_pSData, *m_pRData;
@@ -82,6 +77,5 @@ private:
 	ThisClient m_thisClient;
 	ThisPlayer m_thisPlayer;
 	std::vector<std::shared_ptr<AIPlayer>> m_pAIPlayer;
-	uint32 m_AIPlayersCount;
 	bool m_soloGameStarted;
 };

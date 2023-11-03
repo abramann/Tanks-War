@@ -54,7 +54,8 @@ struct Vertex
 
 struct GameSettings
 {
-	int32 width, height;
+	uint32 width, height;
+	uint32 aiLevel, aiCount;
 	bool windowed, vsync, audio, computeShader, debugMode;
 };
 

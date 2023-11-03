@@ -7,8 +7,11 @@
 #include "gamemath.h"
 #include "object.h"
 #include "texturemanger.h"
+#include "timer.h"
 
-AIPlayer::AIPlayer() : m_pTargetObject(nullptr)
+using namespace logicNS;
+
+AIPlayer::AIPlayer() : m_pTargetObject(nullptr), m_onAttack(false), m_onMoving(false)
 {
 }
 
@@ -16,7 +19,7 @@ AIPlayer::~AIPlayer()
 {
 }
 
-void AIPlayer::initialize(Game * pGame, PlayerID id, const char * name)
+void AIPlayer::initialize(Game * pGame, PlayerID id, const std::string& name)
 {
 	Player::initialize(id, name, PLAYER_ENEMY, pGame);
 }
@@ -27,6 +30,13 @@ void AIPlayer::update()
 	if (m_health <= 0)
 		return;
 
+	static std::map<AILevel, AIEnemySearchDelay> enemySearchDelayAI =
+	{
+		{ AI_LEVEL_EASY, AI_SEARCH_EASY },
+		{ AI_LEVEL_MEDUIM, AI_SEARCH_MEDUIM },
+		{ AI_LEVEL_HARD, AI_SEARCH_HARD }
+	};
+
 	if (m_pMap->isValidObject(m_pTargetObject))
 	{
 		moveTowardsObject(m_pTargetObject);
@@ -35,7 +45,12 @@ void AIPlayer::update()
 	}
 	else
 	{
-		lookForEnemy();
+		int64 timeUntilLastSeacrch = m_pTimer->getCurrentTime() - m_lastSeachEnemyTime;
+		if (timeUntilLastSeacrch >= enemySearchDelayAI[(AILevel)g_pGameSettings->aiLevel])
+		{
+			lookForEnemy();
+			m_lastSeachEnemyTime = m_pTimer->getCurrentTime();
+		}
 	}
 
 	if (GetAsyncKeyState(VK_F12))
@@ -109,6 +124,7 @@ void AIPlayer::attackOjbect(Object * pObject)
 {
 	auto bulletWidth = m_pTextureManger->getTexture("bullet")->getWidth();
 	Vector3D toTargetVector = Vector3D(getSpace().getCenter(), m_pTargetObject->getSpace().getCenter(), bulletWidth);
+	
 	if (!m_pMap->isVectorUnderFreespace(toTargetVector, { this, m_pTargetObject }))
 	{
 		m_onMoving = false, m_onAttack = false;

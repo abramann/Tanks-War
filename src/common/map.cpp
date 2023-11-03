@@ -17,6 +17,8 @@
 
 #pragma warning(disable : 4267) // conversion from size_t to uint32
 
+using namespace mapNS;
+
 Map::Map() : m_pVertexBuf(0), m_pNoSpaceBuf(0), m_pNoSpaceSRV(0), m_pNoSpaceCountBuf(0),
 m_pNoSpaceCountSRV(0), m_pCollisionCS(0), m_pSpaceBuf(0), m_pSpaceSRV(0),
 m_pResultBuf(0), m_pResultUAV(0), m_pResultStagingBuf(0), m_threadGroups(1)
@@ -303,7 +305,8 @@ Space Map::getCollidedSpace(const Space & targetSpace, const std::vector<const O
 			m_threadGroups, 1, 1);
 		m_pDx11Wrapper->copyResourceToResource(m_pResultStagingBuf.Get(), m_pResultBuf.Get());
 		m_pDx11Wrapper->copyResource(&collidedSpace, m_pResultStagingBuf.Get(), 4);
-		return collidedSpace;
+		if (collidedSpace.isValid())
+			return collidedSpace;
 	}
 	else
 	{
@@ -314,7 +317,9 @@ Space Map::getCollidedSpace(const Space & targetSpace, const std::vector<const O
 			if (areSpacesCollided(noSpace, targetSpace))
 				return noSpace;
 	}
-	if (pExceptObject[0] != nullptr)
+
+	//if (pExceptObject[0] != nullptr)
+	if (!pExceptObject.empty() && pExceptObject != EXCEPT_ALL_OBJECTS)
 		for (const auto& pObj : m_pObject)
 		{
 			if (std::find(pExceptObject.begin(), pExceptObject.end(), pObj) != pExceptObject.end())
@@ -343,6 +348,16 @@ bool Map::isOutOfRange(const Space& space) const
 			IN_RANGE_OR_EQUAL(space.v4.y, 0, y)
 			)
 			return false;
+
+	return true;
+}
+
+bool Map::isOutOfRange(const V3 & v) const
+{
+	const auto x = m_width * m_tiledSize.x,
+		y = m_height * m_tiledSize.y;
+	if (IN_RANGE_OR_EQUAL(v.x, 0, x) && IN_RANGE_OR_EQUAL(v.y, 0, y))
+		return false;
 
 	return true;
 }
@@ -530,6 +545,7 @@ Object * Map::findClosestObject(V3 point, std::vector<Object*> exceptObject) con
 
 std::vector<V3> Map::pathfind(const V3 & start, const V3 & end)
 {
+	debuggerBreak(isOutOfRange(start) || isOutOfRange(end), "Invalid start / end location!");
 	CustomSet<Node> openList;
 	CustomSet<std::shared_ptr<Node>> pClosedList;
 	Space startSpace = findSpaceByVertex(start);
@@ -613,7 +629,7 @@ Space Map::getRightFreeSpace(const Space & space) const
 {
 	Space rSpace(space);
 	rSpace.addX(m_tiledSize.x);
-	if (isCollided(rSpace, { nullptr }))
+	if (isCollided(rSpace, EXCEPT_ALL_OBJECTS))
 		rSpace.v1.x = mapNS::UNDEFINED_POSITION;
 
 	return rSpace;
@@ -622,7 +638,7 @@ Space Map::getRightFreeSpace(const Space & space) const
 Space Map::getLeftFreeSpace(const Space & space) const
 {
 	Space lSpace(getLeftSpace(space));
-	if (isCollided(lSpace, { nullptr }))
+	if (isCollided(lSpace, EXCEPT_ALL_OBJECTS))
 		lSpace.v1.x = mapNS::UNDEFINED_POSITION;
 
 	return lSpace;
@@ -631,7 +647,7 @@ Space Map::getLeftFreeSpace(const Space & space) const
 Space Map::getTopFreeSpace(const Space & space) const
 {
 	Space tSpace(getTopSpace(space));
-	if (isCollided(tSpace, { nullptr }))
+	if (isCollided(tSpace, EXCEPT_ALL_OBJECTS))
 		tSpace.v1.x = mapNS::UNDEFINED_POSITION;
 
 	return tSpace;
@@ -640,7 +656,7 @@ Space Map::getTopFreeSpace(const Space & space) const
 Space Map::getDownFreeSpace(const Space & space) const
 {
 	Space dSpace(getDownSpace(space));
-	if (isCollided(dSpace, { nullptr }))
+	if (isCollided(dSpace, EXCEPT_ALL_OBJECTS))
 		dSpace.v1.x = mapNS::UNDEFINED_POSITION;
 
 	return dSpace;
@@ -700,7 +716,8 @@ V3 Map::getCollidedV3(const Object * pObject) const
 
 void Map::unload()
 {
-	m_width = m_height = m_usedBitmaps = m_maxDistance = 0;
+	m_width = m_height = m_usedBitmaps = 0;
+	m_maxDistance = 0;
 	m_map.clear();
 	m_noSpaceBitmap.clear();
 	m_freeSpace.clear();
