@@ -1,0 +1,175 @@
+// aiplayer.cpp
+// Author: abramann
+
+#include "aiplayer.h"
+#include "map.h"
+#include "game.h"
+#include "gamemath.h"
+#include "object.h"
+#include "texturemanger.h"
+#include "timer.h"
+#include "inlined.inl"
+
+using namespace logicNS;
+
+AIPlayer::AIPlayer() : m_pTargetObject(nullptr), m_onAttack(false), m_onMoving(false)
+{
+}
+
+AIPlayer::~AIPlayer()
+{
+}
+
+void AIPlayer::initialize(Game * pGame, PlayerID id, const std::string& name)
+{
+	Player::initialize(id, name, PLAYER_ENEMY, pGame);
+}
+
+void AIPlayer::update()
+{
+	Player::update();
+	if (m_health <= 0)
+		return;
+
+	static std::map<AILevel, AIEnemySearchDelay> enemySearchDelayAI =
+	{
+		{ AI_LEVEL_EASY, AI_SEARCH_EASY },
+		{ AI_LEVEL_MEDUIM, AI_SEARCH_MEDUIM },
+		{ AI_LEVEL_HARD, AI_SEARCH_HARD }
+	};
+
+	if (m_pMap->isValidObject(m_pTargetObject))
+	{
+		moveTowardsObject(m_pTargetObject);
+		if (m_onAttack)
+			attackOjbect(m_pTargetObject);
+	}
+	else
+	{
+		int64 timeUntilLastSeacrch = m_pTimer->getCurrentTime() - m_lastSeachEnemyTime;
+		if (timeUntilLastSeacrch >= enemySearchDelayAI[(AILevel)g_pGameSettings->aiLevel])
+		{
+			lookForEnemy();
+			m_lastSeachEnemyTime = m_pTimer->getCurrentTime();
+		}
+	}
+
+	if (GetKeyState(VK_F12))
+	{
+		V3 start = m_pMap->findSpaceByVertex(getSpace().getCenter()).getCenter(),
+			end = m_pMap->findSpaceByVertex(m_pTargetObject->getSpace().getCenter()).getCenter();
+		m_path = m_pMap->pathfind(start, end);
+	}
+}
+
+void AIPlayer::executeAnimateRepeat()
+{
+	m_path.clear();
+	m_pTargetObject = nullptr;
+	Player::executeAnimateRepeat();
+}
+
+Vector3D AIPlayer::getToTargetVector() const
+{
+	return Vector3D(getSpace().getCenter(), m_pTargetObject->getSpace().getCenter(), m_pTextureManger->getTexture("bullet")->getWidth());
+}
+
+void AIPlayer::lookForEnemy()
+{
+	m_pTargetObject = m_pMap->findClosestObject(getSpace().getCenter(), { this });
+	if (!m_pTargetObject)
+	{
+		if (!m_path.empty())
+			m_path.clear();
+
+		return;
+	}
+
+	V3 start = m_pMap->findSpaceByVertex(getSpace().getCenter()).getCenter(),
+		end = m_pMap->findSpaceByVertex(m_pTargetObject->getSpace().getCenter()).getCenter();
+	m_path = m_pMap->pathfind(start, end);
+	if (m_path.empty()) // The target object is not accessable
+	{
+		m_pTargetObject = nullptr;
+		return;
+	}
+
+	m_onMoving = true;
+}
+
+void AIPlayer::moveTowardsObject(Object * pObject)
+{
+	if (m_path.empty())
+	{
+		if (!m_onAttack)
+			m_pTargetObject = nullptr;
+	}
+	else if (moveToward(m_path.back()))
+	{
+		if (!m_onAttack)
+		{
+			auto bulletWidth = m_pTextureManger->getTexture("bullet")->getWidth();
+			Vector3D toTargetVector = Vector3D(getSpace().getCenter(), m_pTargetObject->getSpace().getCenter(), bulletWidth);
+			if (m_pMap->isVectorUnderFreespace(toTargetVector, { this, m_pTargetObject }))
+			{
+				m_onMoving = false, m_onAttack = true;
+				m_path.clear();
+				return;
+			}
+		}
+		if (m_path.empty())
+			m_pTargetObject = nullptr;
+		else
+			m_path.pop_back();
+	}
+	else
+		debuggerBreak();
+}
+
+void AIPlayer::attackOjbect(Object * pObject)
+{
+	auto bulletWidth = m_pTextureManger->getTexture("bullet")->getWidth();
+	Vector3D toTargetVector = Vector3D(getSpace().getCenter(), m_pTargetObject->getSpace().getCenter(), bulletWidth);
+	
+	if (m_pMap->isVectorUnderFreespace(toTargetVector, { this, m_pTargetObject }))
+	{
+		m_pGraphics->drawLine(V)
+		rotateToward(pObject->getSpace().getCenter());
+		executeAttack(); 
+	}
+	else
+	{
+		m_onMoving = false, m_onAttack = false;
+		m_path.clear();
+		m_pTargetObject = nullptr;
+	}
+}
+
+void AIPlayer::rotateToward(const V3 & vertex)
+{
+	Vector3D toVertex = Vector3D(getSpace().getCenter(), vertex);
+	float posiAngle = PI - gameMathNS::getAngle(toVertex);
+	if (posiAngle > PI)
+		m_rotate.z = -2 * PI + posiAngle;
+	else
+		m_rotate.z = posiAngle;
+}
+
+bool isSpaceInclude(const Space& space, const V3&  vertex)
+{
+	if (IN_RANGE(vertex.x, space.getMinX(), space.getMaxX()))
+		if (IN_RANGE(vertex.y, space.getMinY(), space.getMaxY()))
+			return true;
+
+	return false;
+}
+
+bool AIPlayer::moveToward(const V3 & vertex)
+{
+	if (isSpaceInclude(getSpace(), vertex))
+		return true;
+
+	rotateToward(vertex);
+	executeForward();
+	return false;
+}

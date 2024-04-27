@@ -1,0 +1,108 @@
+#include "types.h"
+#include <memory>
+#include <string>
+
+#pragma once
+
+#define IMPL_ERROR(MESSAGE) 	throw GameError(gameErrorNS::FATAL_ERROR, strFormat("%s\nFile: %s\nLine: %d\n Function: %s", MESSAGE, __FILE__, __LINE__, __FUNCTION__));
+
+#define CHECK_ERROR(RESULT, MESSAGE)\
+		if((RESULT) == 0)\
+			IMPL_ERROR(MESSAGE)
+
+#define IMPL_WARNING(MESSAGE) messageBoxOk(strFormat("%s\nFile: %s\nLine: %d\n Function: %s", MESSAGE, __FILE__, __LINE__, __FUNCTION__), "WARNING");
+
+#define CHECK_WARNING(RESULT, MESSAGE)\
+		if((RESULT) == 0)\
+			IMPL_WARNING(MESSAGE)
+
+
+template <typename T>
+void safeRelease(T ptr)
+{
+	if (ptr)
+	{
+		ptr->Release();
+		ptr = 0;
+	}
+}
+
+template <typename T>
+inline void safeDelete(T ptr)
+{
+	if (ptr)
+	{
+		delete ptr;
+		ptr = 0;
+	}
+}
+
+template <typename T>
+inline void safeDeleteArray(T ptr)
+{
+	if (ptr)
+	{
+		delete[] ptr;
+		ptr = NULL;
+	}
+}
+
+inline int32 random(int32 a, int32 b)
+{
+	srand(GetTickCount());
+	return (a + (rand() % (b - a + 1)));
+}
+
+inline void debuggerBreak(const bool& condition = true, const std::string& dbgMsg = "")
+{
+	if (condition && IsDebuggerPresent())
+	{
+		OutputDebugStringA(dbgMsg.c_str());
+		DebugBreak();
+	}
+}
+
+//	https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
+template<typename ... Args>
+inline std::string strFormat(const std::string& format, Args ... args)
+{
+	int size_s = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
+	if (size_s <= 0) { throw std::runtime_error("Error during formatting."); }
+	auto size = static_cast<size_t>(size_s);
+	std::unique_ptr<char[]> buf = std::make_unique<char[]>(size);
+	std::snprintf(buf.get(), size, format.c_str(), args ...);
+	return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+}
+
+inline void messageBoxOk(std::string msg, std::string title)
+{
+	MessageBoxA(NULL, msg.c_str(), title.c_str(), MB_OK);
+}
+
+inline V3 getSpaceCenter(Space space)
+{
+	V3 center;
+	center.x = space.getMaxX() - space.getMinX();
+}
+
+inline bool pollMessages()
+{
+	static bool run = true;
+	if (!run)
+		return false;
+
+	MSG msg;
+	while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+	{
+		if (msg.message == WM_QUIT)
+		{
+			run = false;
+			break;
+		}
+
+		TranslateMessage(&msg);
+		DispatchMessageA(&msg);
+	}
+
+	return run;
+}
