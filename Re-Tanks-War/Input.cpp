@@ -3,6 +3,8 @@
 #include <Windows.h>
 
 
+std::shared_ptr<CInput> g_pInput;
+
 CInput::CInput()
 {
 }

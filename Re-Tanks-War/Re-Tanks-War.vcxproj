@@ -22,32 +22,32 @@
     <ProjectGuid>{4A08D4C0-5688-4DF9-9CC8-B3A661CDB618}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ReTanksWar</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -89,6 +89,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -104,6 +105,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,15 +152,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AnimatedImage.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="GameSystem.cpp" />
+    <ClCompile Include="LevelSystem.cpp" />
     <ClCompile Include="GameEvents.cpp" />
-    <ClCompile Include="IObject2D.cpp" />
-    <ClCompile Include="TankModel.cpp" />
+    <ClCompile Include="GameLogic.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="DxRenderer.cpp" />
     <ClCompile Include="DxBuffer.cpp" />
     <ClCompile Include="DxTexture.cpp" />
-    <ClCompile Include="GameData.cpp" />
-    <ClCompile Include="IImage.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
     <ClCompile Include="ImGui\imgui_draw.cpp" />
@@ -167,41 +169,43 @@
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="IRenderer.cpp" />
-    <ClCompile Include="Line.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Image.cpp" />
-    <ClCompile Include="ModuleBuilder.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Win32Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimatedImage.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Cell.h" />
+    <ClInclude Include="GameSystem.h" />
+    <ClInclude Include="LevelSystem.h" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="Color.h" />
-    <ClInclude Include="GameEvents.h" />
-    <ClInclude Include="IObject2D.h" />
+    <ClInclude Include="File.hpp" />
+    <ClInclude Include="GameLogic.h" />
+    <ClInclude Include="IControl.h" />
+    <ClInclude Include="IObject.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="Math.h" />
+    <ClInclude Include="MatMath.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="DxBuffer.h" />
     <ClInclude Include="DxTexture.h" />
     <ClInclude Include="IBuffer.h" />
-    <ClInclude Include="IImage.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="IPlayer.h" />
-    <ClInclude Include="ITank.h" />
-    <ClInclude Include="TankModel.h" />
     <ClInclude Include="ITexture.h" />
     <ClInclude Include="keys.h" />
-    <ClInclude Include="ModuleBuilder.h" />
     <ClInclude Include="types.h" />
-    <ClInclude Include="Line.h" />
+    <ClInclude Include="Values.h" />
     <ClInclude Include="VecMath.h" />
     <ClInclude Include="Win32Timer.h" />
     <ClInclude Include="DxRenderer.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameError.h" />
     <ClInclude Include="IGame.h" />
-    <ClInclude Include="Image.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="ITimer.h" />

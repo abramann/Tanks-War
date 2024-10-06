@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IObject2D.h"
+#include "IObject.h"
 #include "Color.h"
 #include "VecMath.h"
 
@@ -8,7 +8,7 @@
 class IBuffer;
 class ITexture;
 
-class CTankModel : public IObject2D
+class CTankModel : public IObject
 {
 public:
 	CTankModel();

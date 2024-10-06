@@ -23,9 +23,9 @@ void CWin32Timer::update()
 	m_prevTime = currentTime;
 	if (timeDelta < FRAME_TIME)
 	{
-		// int64_t sleepTime = static_cast<int64_t>((round(FRAME_TIME * 10) / 10) - timeDelta);
-		// timeDelta += sleepTime;
-		// this->sleep(sleepTime);
+		 int64_t sleepTime = static_cast<int64_t>((round(FRAME_TIME * 10) / 10) - timeDelta);
+		 timeDelta += sleepTime;
+		 this->sleep(sleepTime);
 	}
 
 	m_timeFactor = static_cast<float>(FRAME_RATE / timeDelta);

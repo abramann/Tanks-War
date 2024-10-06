@@ -9,18 +9,27 @@
 
 namespace nsGameConfig
 {
-	const int MIN_WINDOW_HEIGHT = 600;
-	const int MIN_WINDOW_WIDTH = 800;
-	const int FRAME_RATE = 60;
-	const float FRAME_TIME = 1000.0f / FRAME_RATE;
+	constexpr int MIN_WINDOW_HEIGHT = 600;
+	constexpr int MIN_WINDOW_WIDTH = 800;
+	constexpr int FRAME_RATE = 60;
+	constexpr float FRAME_TIME = 1000.0f / FRAME_RATE;
 }
 
 namespace nsGameLogic
 {
-	const float UPDATE_DELAY_IMAGE = 30.0f;
+
 }
 
-namespace nsTextureData
+namespace mapNS
 {
-	inline Vertex getBodyCenter(const wchar_t* texFileName);
+	constexpr  unsigned int UNDEFINED_POSITION = 0xFFFF;
+	constexpr int TILED_DIMENSION = 100;
+	constexpr unsigned int CELL_VERTICES_NUM = 4;
+}
+
+namespace fileNS
+{
+	constexpr auto MAP_INITIALIZE = "Assets\\Map.ini";
+	constexpr auto MAP_DIR = "Assets\\Maps\\";
+	constexpr auto MODEL_DIR = "Assets\\Models\\";
 }

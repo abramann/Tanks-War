@@ -1,7 +1,7 @@
 #pragma once
 
 #include "keys.h"
-
+#include <memory>
 
 
 
@@ -17,3 +17,5 @@ public:
 	bool isKeyPressed(Key key) const;
 	bool isKeyReleased(Key key) const;
 };
+
+extern std::shared_ptr<CInput> g_pInput;

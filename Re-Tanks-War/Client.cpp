@@ -5,10 +5,13 @@
 #include "Win32Timer.h"
 #include "ImGui\imgui_impl_win32.h"
 #include <Windows.h>
-// Temporary while testing
-#include "Line.h"
-#include "AnimatedImage.h"
+#include "ITexture.h"
+#include "Sprite.h"
+#include "Map.h"
+#include "Input.h"
+#include "Camera.h"
 
+#include "Model.h"
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -26,6 +29,9 @@ CClient::CClient()
 {
 	g_pRenderer = new CDxRenderer;
 	g_pTimer = new CWin32Timer;
+	g_pInput = std::make_shared<CInput>();
+	g_pMap = std::make_shared<CMap>();
+	g_pCamera = std::make_shared<CCamera>();
 }
 
 CClient::~CClient()
@@ -33,13 +39,20 @@ CClient::~CClient()
 	safeDelete(g_pRenderer);
 	safeDelete(g_pTimer);
 }
-
+static CModel* mdl;
 void CClient::initialize()
 {
 	readInitializeSettings();
 	createWindow();
 	g_pRenderer->initialize(m_hwnd);
 	g_pTimer->startup();
+	g_pInput->startUp();
+	g_pCamera->startup();
+	g_pMap->initialize();
+	g_pMap->load("Nova");
+
+	mdl = loadOBJModel("Assets\\Models\\tank2.obj");
+	mdl->setPosition(Vertex(250, 250));
 }
 
 void CClient::run()
@@ -163,14 +176,14 @@ void CClient::update()
 
 void CClient::renderScene()
 {
-	static CAnimatedImage* p = new CAnimatedImage(L"Hulls_Color_A\\Hull_01.png");
-	static bool b = false;
-	if (!b)
-	{
-		p->insertTexture(L"Hulls_Color_A\\Hull_02.png");
-		p->setPosition(Vertex(300, 300));
-		b = true;
-	}
+	g_pCamera->freeCamera();
+	g_pRenderer->renderMap();
+	g_pRenderer->renderModels();
+	g_pRenderer->renderSprites();
+	/*static CSprite spr(L"logo.png");
+	.setPosition(Vertex(400, 300));
+	spr.makeRotate(0.01f);*/
+	
 }
 
 LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

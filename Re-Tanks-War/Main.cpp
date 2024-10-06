@@ -1,9 +1,8 @@
 #include "IGame.h"
 #include "GameError.h"
-#include "vld\vld.h" // For detecing  memory leaks
+//#include "vld\vld.h" // For detecing  memory leaks
 #include <memory>
 #include <Windows.h>
-
 
 #pragma comment(lib,"d3d11.lib") // Graphics libraries
 #pragma comment(lib, "dxgi.lib")
@@ -13,8 +12,6 @@
 #else
 #pragma comment(lib, "DirectXTK.lib")
 #endif
-
-
 
 void messageBoxOk(const char* message, const char* title);
 

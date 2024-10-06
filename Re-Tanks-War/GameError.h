@@ -3,8 +3,8 @@
 #include <iostream>
 #include <Windows.h>
 
-#define CHECK_ERROR(RESULT, MSG) if(!RESULT) throw CGameError(MSG, __LINE__, __FUNCTION__, __FILE__)
-#define EXECUION_ERROR(RESULT, MSG) if(!RESULT) DebugBreak();
+#define CHECK_ERROR(RESULT, MSG) if(!RESULT) REPORT_ERROR(MSG)
+#define REPORT_ERROR(MSG) CGameError(MSG, __LINE__, __FUNCTION__, __FILE__)
 
 class CGameError
 {

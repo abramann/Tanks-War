@@ -3,14 +3,15 @@
 #include "IGame.h"
 #include "GameData.h"
 #include "String.h"
+#include "Model.h"
+#include "Sprite.h"
 #include "HLSLVertexShader.h"
 #include "HLSLPixelShader.h"
 #include "ImGui\imgui_impl_win32.h"
 #include "ImGui\imgui_impl_dx11.h"
 #include "DxBuffer.h"
+#include "Map.h"
 #include "DxTexture.h"
-#include "IImage.h"
-#include "CTankModel.h"
 #include "DirectXTK\WICTextureLoader.h"
 #include <map>
 
@@ -35,7 +36,7 @@ void initSampleState(D3D11_SAMPLER_DESC& sampDesc);
 
 void initBlend(D3D11_BLEND_DESC& blendDesc);
 
-void initWCBuffer(D3D11_BUFFER_DESC& desc, uint32_t size);
+void initWCBuffer(D3D11_BUFFER_DESC& desc, uint32_t size, uint stride = 0);
 
 CDxRenderer::CDxRenderer() : m_initialized(false)
 {
@@ -45,7 +46,8 @@ CDxRenderer::CDxRenderer() : m_initialized(false)
 
 CDxRenderer::~CDxRenderer()
 {
-	m_pSwapChain->SetFullscreenState(false, nullptr);
+	if (m_pSwapChain)
+		m_pSwapChain->SetFullscreenState(false, nullptr);
 	if (m_initialized)
 	{
 		ImGui_ImplWin32_Shutdown();
@@ -83,7 +85,8 @@ void CDxRenderer::initialize(HWindow hwnd)
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
 	initDepthStencil(depthStencilDesc);
 	m_pDevice->CreateTexture2D(&depthStencilDesc, NULL, m_pDepthBuffer.GetAddressOf());
-	CHECK_ERROR(SUCCEEDED(m_pDevice->CreateDepthStencilView(m_pDepthBuffer.Get(), NULL, &m_pDepthStencilView)), "CreateDepthStencilView failed");
+	CHECK_ERROR(SUCCEEDED(m_pDevice->CreateDepthStencilView(m_pDepthBuffer.Get(), nullptr, &m_pDepthStencilView)), "CreateDepthStencilView failed");
+	m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
 	
 	// Initializing viewport
 	D3D11_VIEWPORT viewport;
@@ -97,8 +100,8 @@ void CDxRenderer::initialize(HWindow hwnd)
 	// Initializing input layout
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 8, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 	m_pDevice->CreateInputLayout(layout, ARRAYSIZE(layout), g_pHLSLVertexShader, ARRAYSIZE(g_pHLSLVertexShader), m_pInputLayout.GetAddressOf());
 	m_pDeviceContext->IASetInputLayout(m_pInputLayout.Get());
@@ -130,11 +133,15 @@ void CDxRenderer::initialize(HWindow hwnd)
 
 	// Initializing buffer to hold object info
 	D3D11_BUFFER_DESC bufDesc;
-	initWCBuffer(bufDesc, sizeof(CBPerDraw));
+	initWCBuffer(bufDesc, sizeof(VSCBPerDraw));
 	m_pVSInSSOBuffer = createBuffer(bufDesc, nullptr);
 
+	// Initialize world view matrix buffer
+	initWCBuffer(bufDesc, sizeof(VSCBPerFrame));
+	m_pVBPerFrame = createBuffer(bufDesc, nullptr);
+
 	// Initializing color buffer
-	initWCBuffer(bufDesc, 16);
+	initWCBuffer(bufDesc, sizeof(PSCBPerDraw));
 	m_pPSColorBuffer = createBuffer(bufDesc, nullptr);
 
 	m_initialized = true;
@@ -147,6 +154,7 @@ void CDxRenderer::beginRendering()
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();
+	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	IRenderer::beginRendering();
 }
 
@@ -168,9 +176,9 @@ IBuffer * CDxRenderer::createVertexBuffer(uint32_t numVertices, Vertex * pInitDa
 	D3D11_BUFFER_DESC desc;
 	setNull(desc);
 
-	desc.ByteWidth = numVertices * sizeof(Vertex) * 2;
+	desc.ByteWidth = numVertices * sizeof(Vertex);
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	desc.StructureByteStride = sizeof(Vertex) * 2;
+	desc.StructureByteStride = sizeof(Vertex);
 
 	switch (access)
 	{
@@ -191,20 +199,21 @@ IBuffer * CDxRenderer::createVertexBuffer(uint32_t numVertices, Vertex * pInitDa
 	default:
 		CHECK_ERROR(true, "Invalid access passed");
 	}
+
 	ID3D11Buffer * pNewDXOBuffer = createBuffer(desc, pInitData);
 	CDxBuffer * pNewVertexBuffer = new CDxBuffer;
 	pNewVertexBuffer->assign(pNewDXOBuffer);
 	return pNewVertexBuffer;
 }
 
-IBuffer * CDxRenderer::createIndexBuffer(uint32_t length, int * pInitData, int access)
+IBuffer * CDxRenderer::createIndexBuffer(uint32_t length, uint * pInitData, int access)
 {
 	D3D11_BUFFER_DESC desc;
 	setNull(desc);
 
 	desc.ByteWidth = length;
 	desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	desc.StructureByteStride = sizeof(Vertex);
+	desc.StructureByteStride = sizeof(int);
 
 	switch (access)
 	{
@@ -239,111 +248,149 @@ void CDxRenderer::releaseBuffer(IBuffer * pBuffer)
 	}
 }
 
-void CDxRenderer::drawImage(const IImage * pImage) const
+void CDxRenderer::setVSDrawProperties(Vertex position, Vertex scaling, Vertex rotate, Vertex rotateCenter) const
 {
-	IBuffer* pVB = pImage->getVertexBuffer();
-	ID3D11Buffer* pDXOVB = static_cast<ID3D11Buffer*>(pVB->getBufferObject());
-	IBuffer* pIB = pImage->getIndexBuffer();
-	ID3D11Buffer* pDXOIB = static_cast<ID3D11Buffer*>(pIB->getBufferObject());
+	VSCBPerDraw data;
+	data.position[0] = position.x;
+	data.position[1] = position.y;
+	data.position[2] = position.z;
+	data.position[3] = 0;
 
-	uint32_t color = pImage->getColor();
-	uint32_t perVertexSize = sizeof(Vertex) * 2;
+	data.scaling[0] = scaling.x;
+	data.scaling[1] = scaling.y;
+	data.scaling[2] = scaling.z;
+	data.scaling[3] = 0;
+
+	data.rotate[0] = rotate.x;
+	data.rotate[1] = rotate.y;
+	data.rotate[2] = rotate.z;
+	data.rotate[3] = 0;
+
+	data.rotateCenter[0] = rotateCenter.x;
+	data.rotateCenter[1] = rotateCenter.y;
+	data.rotateCenter[2] = rotateCenter.z;
+	data.rotateCenter[3] = 0;
+	m_pDeviceContext->VSSetConstantBuffers(VSCBSLOT_PERDRAW, 1, m_pVSInSSOBuffer.GetAddressOf());
+	m_pDeviceContext->UpdateSubresource(m_pVSInSSOBuffer.Get(), 0, 0, &data, 0,
+		0);
+}
+
+void CDxRenderer::setPSDrawProperties(Color color) const
+{
+	PSCBPerDraw cb;
+	cb.color = color.getAsInteger();
+	
+	m_pDeviceContext->PSSetConstantBuffers(0, 1, m_pPSColorBuffer.GetAddressOf());
+	m_pDeviceContext->UpdateSubresource(m_pPSColorBuffer.Get(), 0, 0, &cb, 0,
+		0);
+}
+
+void CDxRenderer::renderMap() const
+{
+	ID3D11Buffer* pVB = (ID3D11Buffer*)g_pMap->m_pVB->getBufferObject();
+	ID3D11Buffer* pIB = (ID3D11Buffer*)g_pMap->m_pIB->getBufferObject();
+
+	// Default properties
+	setVSDrawProperties();
+	setPSDrawProperties();
+
+	m_pDeviceContext->IASetIndexBuffer(pIB, DXGI_FORMAT_R32_UINT, 0);
+	
+	uint stride = sizeof(Vertex), offset = 0;
+	m_pDeviceContext->IASetVertexBuffers(0, 1, &pVB, &stride, &offset); 
+	
+	for (int i = 0; i < g_pMap->m_numTileds; i++)
+	{
+		ID3D11ShaderResourceView* pTexture = (ID3D11ShaderResourceView*)g_pMap->m_pTextures[i]->getResourceObject();
+		m_pDeviceContext->PSSetShaderResources(0, 1, &pTexture);
+		m_pDeviceContext->DrawIndexed(g_pMap->m_lenVertex[i] * 1.5f, (g_pMap->m_startVertex[i] * 1.5f), 0); // index per texture vertex = 6 / 4 =  1.5
+	}
+}
+
+void CDxRenderer::drawSprite(const CSprite* pSprite) const
+{
+	IBuffer* pVB = pSprite->getVertexBuffer();
+	ID3D11Buffer* pDXOVB = static_cast<ID3D11Buffer*>(pVB->getBufferObject());
+	
+	IBuffer* pIB = pSprite->getIndexBuffer();
+	ID3D11Buffer* pDXOIB = static_cast<ID3D11Buffer*>(pIB->getBufferObject());
+	
+	ITexture* pTexture = pSprite->getTexture();
+	ID3D11ShaderResourceView* pSRV = static_cast<ID3D11ShaderResourceView*>(pTexture->getResourceObject());
+	
+	Color color = pSprite->getColor();
+
+	uint32_t perVertexSize = sizeof(Vertex);
 	uint32_t offset = 0;
 	m_pDeviceContext->IASetVertexBuffers(0, 1, &pDXOVB, &perVertexSize, &offset);
 	m_pDeviceContext->IASetIndexBuffer(pDXOIB, DXGI_FORMAT_R32_UINT, 0);
 
-	CBPerDraw cbImg;
-	setNull(cbImg);
-	cbImg.relativeToCamera = pImage->isRelativeToCamera();
-	cbImg.position = pImage->getPosition();
-	cbImg.rotate = pImage->getRotate();
-	cbImg.scaling = pImage->getScaling();
+	setVSDrawProperties(Vertex(mapNS::UNDEFINED_POSITION, 0));
+	setPSDrawProperties(color);
 
-	copyToResource(m_pVSInSSOBuffer.Get(), &cbImg, sizeof(CBPerDraw));
-	m_pDeviceContext->VSSetConstantBuffers(VSCBSLOT_PERDRAW, 1, m_pVSInSSOBuffer.GetAddressOf());
-
-	copyToResource(m_pPSColorBuffer.Get(), &color, sizeof(Color));
-	m_pDeviceContext->PSSetConstantBuffers(PSCBSLOT_COLOR, 1, m_pPSColorBuffer.GetAddressOf());
-	ITexture* pTexture = pImage->getTexture();
-	if (pTexture)
-	{
-		ID3D11ShaderResourceView* pSRV = static_cast<ID3D11ShaderResourceView*>(pTexture->getResourceObject());
-		m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
-	}
+	m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
+	m_pDeviceContext->PSSetSamplers(0, 1, m_pSampleState.GetAddressOf());
 	m_pDeviceContext->DrawIndexed(6, 0, 0);
 }
 
-void CDxRenderer::drawTank(const CTankModel* pTankModel) const
+void CDxRenderer::drawModel(const CModel* pModel) const
 {
-	IBuffer* pVB = pTankModel->getVertexBuffer();
+	IBuffer* pVB = pModel->getVertexBuffer();
 	ID3D11Buffer* pDXOVB = static_cast<ID3D11Buffer*>(pVB->getBufferObject());
-	IBuffer* pIB = pTankModel->getIndexBuffer();
+
+	IBuffer* pIB = pModel->getIndexBuffer();
 	ID3D11Buffer* pDXOIB = static_cast<ID3D11Buffer*>(pIB->getBufferObject());
 
-	uint32_t perVertexSize = sizeof(Vertex) * 2;
-	uint32_t offset = 0;
-	m_pDeviceContext->IASetVertexBuffers(0, 1, &pDXOVB, &perVertexSize, &offset);
 	m_pDeviceContext->IASetIndexBuffer(pDXOIB, DXGI_FORMAT_R32_UINT, 0);
-	
-	CBPerDraw cbTank;
-	setNull(cbTank);
-	cbTank.position = pTankModel->getPosition();
-	copyToResource(m_pVSInSSOBuffer.Get(), &cbTank, sizeof(CBPerDraw));
-	m_pDeviceContext->VSSetConstantBuffers(VSCBSLOT_PERDRAW, 1, m_pVSInSSOBuffer.GetAddressOf());
 
-	uint32_t color = pTankModel->getColor();
-	copyToResource(m_pPSColorBuffer.Get(), &color,sizeof(Color));
-	m_pDeviceContext->PSSetConstantBuffers(PSCBSLOT_COLOR, 1, m_pPSColorBuffer.GetAddressOf());
+	uint stride = sizeof(Vertex), offset = 0;
+	m_pDeviceContext->IASetVertexBuffers(0, 1, &pDXOVB, &stride, &offset);
 
-	int baseIndex = 0;
-	ID3D11ShaderResourceView* pSRV;
-	int numChains;
-	auto ppChains = pTankModel->getChainsTextures(numChains);
-	for (int i = 0; i < numChains; i++)
+	Vertex position = pModel->getPosition();
+	position.z = -5;
+	std::vector<Face> faces = pModel->getFaces();
+	for (int i = 0; i < faces.size(); i++)
 	{
-		pSRV = static_cast<ID3D11ShaderResourceView*>(ppChains[i]->getResourceObject());
-		m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
-		m_pDeviceContext->DrawIndexed(6, baseIndex += 6, 0);
-		baseIndex += 6;
+		setVSDrawProperties(position, Vertex(1, 1, 1), faces[i].rotate, faces[i].origin);
+		setPSDrawProperties(faces[i].color);
+
+		ID3D11ShaderResourceView* pTexture = (ID3D11ShaderResourceView*)faces[i].pTexture->getResourceObject();
+		m_pDeviceContext->PSSetShaderResources(0, 1, &pTexture);
+		
+		m_pDeviceContext->DrawIndexed(6, i * 6 , 4 * i);
 	}
-	cbTank.rotate = pTankModel->getBodyRotate();
-	cbTank.rotateCenter = pTankModel->getBodyRotateCenter();
-	copyToResource(m_pVSInSSOBuffer.Get(), &cbTank, sizeof(CBPerDraw));
-	m_pDeviceContext->VSSetConstantBuffers(VSCBSLOT_PERDRAW, 1, m_pVSInSSOBuffer.GetAddressOf());
-	auto pBody = pTankModel->getBodyTexture();
-	pSRV = static_cast<ID3D11ShaderResourceView*>(pBody->getResourceObject());
-	m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
-	m_pDeviceContext->DrawIndexed(6, baseIndex += 6, 0);
-	
-	cbTank.rotate = pTankModel->getGunRotate();
-	cbTank.rotateCenter = pTankModel->getGunRotateCenter();
-	copyToResource(m_pVSInSSOBuffer.Get(), &cbTank, sizeof(CBPerDraw));
-	m_pDeviceContext->VSSetConstantBuffers(VSCBSLOT_PERDRAW, 1, m_pVSInSSOBuffer.GetAddressOf());
-	auto pGun = pTankModel->getBodyTexture();
-	pSRV = static_cast<ID3D11ShaderResourceView*>(pGun->getResourceObject());
-	m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
-	m_pDeviceContext->DrawIndexed(6, baseIndex += 6, 0);
+}
+
+void CDxRenderer::setWorldViewMatrix(Matrix* mat)
+{
+	m_pDeviceContext->VSSetConstantBuffers(VSCBSLOT_PERFRAME, 1, m_pVBPerFrame.GetAddressOf());
+	m_pDeviceContext->UpdateSubresource(m_pVBPerFrame.Get(), 0, 0, mat, 0,
+		0);
 }
 
 ITexture * CDxRenderer::loadTextureFromFile(const wchar_t * texFileName)
 {
+	static std::hash<std::wstring> hasher;
+	uint hash = hasher(texFileName);
+
+	static std::map <uint, ITexture*> loaded;
+
+	if (loaded[hash] != nullptr)
+	{
+		return loaded[hash];
+	}
+
 	wchar_t texPath[256] = { 0 };
 	wsprintfW(texPath, L"Assets\\Textures\\%s", texFileName);
-	static std::map <std::wstring, ITexture*> loaded;
-
-	// Check if texture already loaded
-	if (loaded[texFileName] != nullptr)
-	{
-		return loaded[texFileName];
-	}
 
 	// Load the texture
 	ID3D11Resource* pResource;
 	ID3D11ShaderResourceView* pSRV;
+
 	CHECK_ERROR(SUCCEEDED(CreateWICTextureFromFile(m_pDevice.Get(), texPath, &pResource, &pSRV)), strFormat("Failed to load %s", texPath).c_str());
 	CDxTexture* pNewTexture = new CDxTexture;
 	pNewTexture->assign(pResource, pSRV);
-	loaded[texFileName] = pNewTexture;
+	loaded[hash] = pNewTexture;
 	return pNewTexture;
 }
 
@@ -519,13 +566,15 @@ void initViewport(D3D11_VIEWPORT& viewport)
 
 void initSampleState(D3D11_SAMPLER_DESC& sampDesc)
 {
-	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC; //D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	setNull(sampDesc);
+	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;// D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;// CLAMP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;// D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = -FLT_MAX;
 	sampDesc.MaxLOD = FLT_MAX;
+	sampDesc.MaxAnisotropy = 4;
 }
 
 void initBlend(D3D11_BLEND_DESC& blendDesc)
@@ -546,12 +595,12 @@ void initBlend(D3D11_BLEND_DESC& blendDesc)
 	blendDesc.RenderTarget[0] = rtbDesc;
 }
 
-void initWCBuffer(D3D11_BUFFER_DESC & desc, uint32_t size)
+void initWCBuffer(D3D11_BUFFER_DESC & desc, uint32_t size, uint stride)
 {
 	setNull(desc);
-	desc.Usage = D3D11_USAGE_DYNAMIC;
-	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	//desc.StructureByteStride = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;// D3D11_USAGE_DYNAMIC;
+	//desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	desc.StructureByteStride = stride;
 	desc.ByteWidth = size;
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 }

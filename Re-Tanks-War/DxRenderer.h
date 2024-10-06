@@ -26,15 +26,27 @@ class CDxRenderer : public IRenderer
 		VSCBSLOT_PERDRAW,
 	};
 
-	__declspec(align(16)) 
-	struct CBPerDraw
+	struct VSCBPerFrame
 	{
-		uint32_t relativeToCamera;
-		Vertex position;
-		Vertex scaling;
-		float rotate;
-		Vertex rotateCenter;
+		Matrix wvm;
 	};
+
+	//__declspec(align(16)) 
+	struct VSCBPerDraw
+	{
+		//uint32_t relativeToCamera;
+		float position[4];
+		float scaling[4];
+		float rotate[4];
+		float rotateCenter[4];
+	};
+
+	__declspec(align(16)) 
+	struct PSCBPerDraw
+	{
+		uint color;
+	};
+
 public:
 	CDxRenderer();
 	~CDxRenderer();
@@ -44,10 +56,14 @@ public:
 	void showBackbuffer() override;
 	std::vector<AdapterMode_t> getAdapterModes() override;
 	IBuffer* createVertexBuffer(uint32_t numVertices, Vertex * pInitData, int access) override;
-	IBuffer* createIndexBuffer(uint32_t length, int * pInitData, int access) override;
+	IBuffer* createIndexBuffer(uint32_t length, uint * pInitData, int access) override;
 	void releaseBuffer(IBuffer* pBuffer) override;
-	void drawImage(const IImage* pImage) const override;
-	void drawTank(const CTankModel* pTank) const override;
+	void setVSDrawProperties(Vertex position = Vertex(0, 0, 0), Vertex scaling = Vertex(1, 1, 1), Vertex rotate = Vertex(0, 0, 0), Vertex rotateCenter = Vertex(0, 0, 0)) const;
+	void setPSDrawProperties(Color color = Color(255, 255, 255, 255)) const;
+	void renderMap() const override;
+	void drawSprite(const CSprite* pSprite) const override;
+	void drawModel(const CModel* pModel) const override;
+	void setWorldViewMatrix(Matrix* mat) override;
 	ITexture* loadTextureFromFile(const wchar_t* texFileName) override;
 	void releaseTexture(ITexture* pTexture) override;
 
@@ -72,6 +88,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_pBlendState;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pPSColorBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVSInSSOBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVBPerFrame;
 };
 
 extern CDxRenderer * g_pDxRenderer;

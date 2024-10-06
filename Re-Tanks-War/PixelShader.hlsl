@@ -8,21 +8,23 @@ struct PS_Input
 Texture2D gTexture;
 SamplerState gSamplerState;
 
-cbuffer cbColor : register(b0)
+cbuffer cbPerDraw : register(b0)
 {
 	uint color;
 }
 
 float4 main(PS_Input input) : SV_TARGET
-{ 
-	float4 rgba;
-	rgba[0] = (color >> 24 & 0xFF) / 255.0f; // red
-	rgba[1] = (color >> 16 & 0xFF) / 255.0f; // green
-	rgba[2] = (color >> 8 & 0xFF) / 255.0f; // blue
-	rgba[3] = color & 0xFF;	// alpha
-	if (input.uv[0] == 0 && input.uv[1] == 0)
-		{
-			return rgba;
-		}
-	return gTexture.Sample(gSamplerState, input.uv);
+{
+	float r = (color >> 24 & 0xFF) / 255.0f;
+	float g = (color >> 16 & 0xFF) / 255.0f;
+	float b = (color >> 8 & 0xFF) / 255.0f;
+	float a = (color & 0xFF) / 255.0f;
+
+	float4 finalColor = { r, g, b, a };
+	finalColor *= gTexture.Sample(gSamplerState, input.uv);
+
+	if(finalColor[3] == 0)
+		discard;
+
+	return finalColor;
 }

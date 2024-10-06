@@ -4,167 +4,76 @@
 
 
 
-
-struct Vector2D
+struct Vertex2D
 {
-	float x;
-	float y;
-
-	Vector2D() : x(0), y(0) {}
-	Vector2D(float _x, float _y) : x(_x), y(_y) {}
-
-	Vector2D operator+(const Vector2D &vec) const
-	{
-		return Vector2D(x + vec.x, y + vec.y);
-	}
-
-	Vector2D &operator+=(const Vector2D &vec)
-	{
-		x += vec.x;
-		y += vec.y;
-		return *this;
-	}
-
-	Vector2D operator-(const Vector2D &vec) const    //substraction
-	{
-		return Vector2D(x - vec.x, y - vec.y);
-	}
-
-	Vector2D &operator-=(const Vector2D &vec)  //assigning new result to the vector
-	{
-		x -= vec.x;
-		y -= vec.y;
-		return *this;
-	}
-
-	Vector2D operator*(float value) const    //multiplication
-	{
-		return Vector2D(x * value, y * value);
-	}
-
-	Vector2D &operator*=(float value)  //assigning new result to the vector.
-	{
-		x *= value;
-		y *= value;
-		return *this;
-	}
-
-	Vector2D operator/(float value) const    //division
-	{
-		return Vector2D(x / value, y / value);
-	}
-
-	Vector2D &operator/=(float value)  //assigning new result to the vector
-	{
-		x /= value;
-		y /= value;
-		return *this;
-	}
-
-	Vector2D &operator=(const Vector2D &vec)
-	{
-		x = vec.x;
-		y = vec.y;
-	}
-
-	bool operator==(const Vector2D &vec) const
-	{
-		return (x == vec.x && y == vec.y);
-	}
-
-	float magnitude() const
-	{
-		return sqrtf(pow(x, 2) + pow(y, 2));
-	}
-
-	Vector2D normalization() const
-	{
-		float mag = magnitude();
-		Vector2D normalize;
-		normalize.x = x / mag;
-		normalize.y = y / mag;
-		return normalize;
-	}
-
-	Vector2D perpendicular() const
-	{
-		return Vector2D(y, -x);
-	}
-
-	void clear()
-	{
-		x = y = 0;
-	}
+	Vertex2D(float _x, float _y) : x(_x), y(_y) {}
+	Vertex2D() : x(0), y(0) {}
+	float x, y;
 };
 
 struct Vertex
 {
-	float x;
-	float y;
-
-	Vertex() : x(0), y(0) {}
-	Vertex(float _x, float _y) : x(_x), y(_y) {}
+	float x, y, z;
+	float u, v;
+	Vertex() : x(0), y(0), z(0), u(0), v(0) {}
+	Vertex(float _x, float _y) : x(_x), y(_y), z(0), u(0), v(0) {}
+	Vertex(float _x, float _y, float _z) : x(_x), y(_y), z(_z), u(0), v(0) {}
+	Vertex(float _x, float _y, float _z, float _u, float _v) : x(_x), y(_y), z(_z), u(_u), v(_v) {}
 
 	Vertex operator+(const Vertex &vert) const
 	{
-		return Vertex(x + vert.x, y + vert.y);
-	}
-
-	Vertex operator+(const Vector2D &vec) const
-	{
-		return Vertex(x + vec.x, y + vec.y);
+		return Vertex(x + vert.x, y + vert.y, z + vert.z);
 	}
 
 	Vertex &operator+=(const Vertex &vert)
 	{
 		x += vert.x;
 		y += vert.y;
+		z += vert.z;
 		return *this;
 	}
 
-	Vertex operator-(const Vertex &vert) const    //substraction
+	Vertex operator-(const Vertex &vert) const
 	{
-		return Vertex(x - vert.x, y - vert.y);
+		return Vertex(x - vert.x, y - vert.y, z - vert.z);
 	}
 
-	Vertex operator*(const Vertex &vert) const    //substraction
+	Vertex operator*(const Vertex& vert) const
 	{
-		return Vertex(x * vert.x, y * vert.y);
+		return Vertex(x * vert.x, y * vert.y, z * vert.z);
 	}
 
-	Vertex operator-(const Vector2D &vec) const    //substraction
-	{
-		return Vertex(x - vec.x, y - vec.y);
-	}
-
-	Vertex &operator-=(const Vertex &vert)  //assigning new result to the vector
+	Vertex &operator-=(const Vertex &vert)
 	{
 		x -= vert.x;
 		y -= vert.y;
+		z -= vert.z;
 		return *this;
 	}
 
-	Vertex operator*(float value) const    //multiplication
+	Vertex operator*(float value) const
 	{
-		return Vertex(x * value, y * value);
+		return Vertex(x * value, y * value, z * value);
 	}
 
-	Vertex &operator*=(float value)  //assigning new result to the vector.
+	Vertex &operator*=(float value)
 	{
 		x *= value;
 		y *= value;
+		z *= value;
 		return *this;
 	}
 
-	Vertex operator/(float value) const    //division
+	Vertex operator/(float value) const
 	{
-		return Vertex(x / value, y / value);
+		return Vertex(x / value, y / value, z / value);
 	}
 
 	Vertex &operator/=(float value)  //assigning new result to the vector
 	{
 		x /= value;
 		y /= value;
+		z /= value;
 		return *this;
 	}
 
@@ -172,25 +81,23 @@ struct Vertex
 	{
 		x = vert.x;
 		y = vert.y;
+		z = vert.z;
 		return *this;
 	}
 
 	bool operator==(const Vertex &vert) const
 	{
-		return (x == vert.x && y == vert.y);
+		return (x == vert.x && y == vert.y && z == vert.z);
 	}
 
 	float distance(const Vertex& vert) const
 	{
 		Vertex delta = *this - vert;
-		return sqrtf(pow(delta.x, 2) + pow(delta.y, 2));
+		return sqrtf(pow(delta.x, static_cast<float>(2))
+			+ pow(delta.y, static_cast<float>(2))
+			+ pow(delta.z, static_cast<float>(2)));
 	}
 };
-
-inline Vector2D makeVector2D(Vertex vert1, Vertex vert2)
-{
-	return Vector2D(vert2.x - vert1.x, vert2.y - vert1.y);
-}
 
 struct Rect
 {
@@ -211,5 +118,3 @@ struct Rect8
 	Vertex vert7;
 	Vertex vert8;
 };
-
-extern void makeUnitSquare(Vertex& vert);

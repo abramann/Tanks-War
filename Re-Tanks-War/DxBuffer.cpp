@@ -6,7 +6,6 @@ CDxBuffer::CDxBuffer() : m_pDXOBuffer(nullptr)
 {
 }
 
-
 CDxBuffer::~CDxBuffer()
 {
 	m_pDXOBuffer->Release();

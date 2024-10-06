@@ -4,8 +4,8 @@
 #include <d3d11.h>
 
 
-
 class DxRenderer;
+
 class CDxBuffer : public IBuffer
 {
 public:	

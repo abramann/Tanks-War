@@ -8,6 +8,7 @@
 
 class IRenderer;
 class ITimer;
+class CMap;
 
 class IGame
 {

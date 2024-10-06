@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <memory>
+#include <codecvt>
+#include <locale>
 
 //	https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
 template<typename ... Args>
@@ -13,4 +15,30 @@ inline std::string strFormat(const std::string& format, Args ... args)
 	std::unique_ptr<char[]> buf = std::make_unique<char[]>(size);
 	std::snprintf(buf.get(), size, format.c_str(), args ...);
 	return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+}
+
+// https://gist.github.com/danzek/d6a0e4a48a5439e7f808ed1497f6268e?permalink_comment_id=4289664#gistcomment-4289664
+inline std::wstring to_wstring(const std::string& str)
+{
+	std::vector<wchar_t> buf(str.size());
+	std::use_facet<std::ctype<wchar_t>>(std::locale()).widen(str.data(),
+		str.data() + str.size(),
+		buf.data());
+	return std::wstring(buf.data(), buf.size());
+}
+
+inline int strGetRepeatedNum(std::string str, char c)
+{
+	int r = 0;
+	for (int i = 0; i < str.length(); i++)
+	{
+		if (str[i] == c)
+			r++;
+	}
+	return r;
+}
+
+inline bool strIsEqual(std::string str, std::string str2)
+{
+	return str.compare(str2) == 0 ? true : false;
 }
