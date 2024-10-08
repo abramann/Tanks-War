@@ -9,6 +9,10 @@
 using namespace evt;
 using namespace std;
 
+vector<float> CModel::s_radius;
+std::vector<std::vector<Face>> CModel::s_faces;
+std::vector<std::pair<IBuffer*, IBuffer*>> CModel::s_pBuffers;
+
 CModel* CModel::loadOBJModel(const char* name)
 {
 	CModel* model = new CModel();

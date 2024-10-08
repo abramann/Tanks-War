@@ -287,6 +287,9 @@ void CDxRenderer::setPSDrawProperties(Color color) const
 
 void CDxRenderer::renderMap() const
 {
+	if (!g_pMap->isMapLoaded())
+		return;
+
 	ID3D11Buffer* pVB = (ID3D11Buffer*)g_pMap->m_pVB->getBufferObject();
 	ID3D11Buffer* pIB = (ID3D11Buffer*)g_pMap->m_pIB->getBufferObject();
 

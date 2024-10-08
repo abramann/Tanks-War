@@ -34,36 +34,26 @@ int IRenderer::getBackbufferHeight() const
 
 void IRenderer::registerSprite(const CSprite * pSprite)
 {
+	CHECK_ERROR(pSprite == nullptr, "Registring nullptr!");
 	m_pRenderedSprites.emplace(pSprite);
 }
 
 void IRenderer::removeSprite(const CSprite * pSprite)
 {
 	auto itSprite = m_pRenderedSprites.find(pSprite);
-	if (itSprite._Ptr)
-	{
-		m_pRenderedSprites.erase(itSprite);
-	}
-	else
-	{
-		CHECK_ERROR(true, "Trying to remove invalid sprite!");
-	}
+	CHECK_ERROR(itSprite._Ptr == nullptr, "Trying to remove invalid sprite!");
+	m_pRenderedSprites.erase(itSprite);
 }
 
 void IRenderer::registerModel(const CModel* pModel)
 {
+	CHECK_ERROR(pModel == nullptr , "Registring nullptr!");
 	m_pRenderedModels.emplace(pModel);
 }
 
 void IRenderer::removeObject(const CModel* pModel)
 {
 	auto itMdl = m_pRenderedModels.find(pModel);
-	if (itMdl._Ptr)
-	{
-		m_pRenderedModels.erase(itMdl);
-	}
-	else
-	{
-		CHECK_ERROR(true, "Trying to remove invalid model!");
-	}
+	CHECK_ERROR(itMdl._Ptr == nullptr, "Trying to remove invalid model!");
+	m_pRenderedModels.erase(itMdl);
 }

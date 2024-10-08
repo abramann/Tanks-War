@@ -14,7 +14,7 @@ using namespace mapNS;
 
 std::shared_ptr<CMap> g_pMap;
 
-CMap::CMap()
+CMap::CMap() : m_pVB(nullptr), m_pIB(nullptr)
 {
 }
 
@@ -363,15 +363,23 @@ void CMap::clearUnnecessaryBlockedCells()
 	}
 }
 
-/*
-void Map::clear()
+
+void CMap::reset()
 {
-	m_freeCell.clear();
-	m_noCell.clear();
+	//m_freeCell.clear();
+	//m_noCell.clear();
 	m_lenVertex.clear();
-	m_pObject.clear();
+	//m_pObject.clear();
 }
 
+bool CMap::isMapLoaded() const
+{
+	if (m_loadedMap.empty())
+		return false;
+	return true;
+}
+
+/*
 float Map::passX(const Object * pThisObject, float x) const
 {
 	Cell is = pThisObject->getCell(x, 0);

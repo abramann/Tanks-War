@@ -3,14 +3,15 @@
 #include "System.h"
 #include <memory>
 
-class CLevelSystem : ISystem
+class CViewSystem : public ISystem
 {
 public:
+	CViewSystem();
+
 	void startup() override;
 	void update() override;
 	void reset() override;
-
-
 };
 
-extern std::shared_ptr<CLevelSystem> g_pLevelSystem;
+extern std::shared_ptr<CViewSystem> g_pViewSystem;
+

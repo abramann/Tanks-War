@@ -1,7 +1,7 @@
 #pragma once
 
 #include "types.h"
-#include "IBuffer.h"
+#include "Buffer.h"
 #include "Math.h"
 #include <vector>
 #include <memory>

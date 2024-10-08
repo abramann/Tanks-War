@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IBuffer.h"
+#include "Buffer.h"
 #include <d3d11.h>
 
 

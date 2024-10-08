@@ -10,6 +10,7 @@
 #include "Map.h"
 #include "Input.h"
 #include "Camera.h"
+#include "GameSystem.h"
 
 #include "Model.h"
 
@@ -30,8 +31,7 @@ CClient::CClient()
 	g_pRenderer = new CDxRenderer;
 	g_pTimer = new CWin32Timer;
 	g_pInput = std::make_shared<CInput>();
-	g_pMap = std::make_shared<CMap>();
-	g_pCamera = std::make_shared<CCamera>();
+	g_pGameSystem = std::make_shared<CGameSystem>();
 }
 
 CClient::~CClient()
@@ -39,7 +39,7 @@ CClient::~CClient()
 	safeDelete(g_pRenderer);
 	safeDelete(g_pTimer);
 }
-static CModel* mdl;
+
 void CClient::initialize()
 {
 	readInitializeSettings();
@@ -47,12 +47,7 @@ void CClient::initialize()
 	g_pRenderer->initialize(m_hwnd);
 	g_pTimer->startup();
 	g_pInput->startUp();
-	g_pCamera->startup();
-	g_pMap->initialize();
-	g_pMap->load("Nova");
-
-	mdl = loadOBJModel("Assets\\Models\\tank2.obj");
-	mdl->setPosition(Vertex(250, 250));
+	g_pGameSystem->startup();
 }
 
 void CClient::run()
@@ -172,6 +167,9 @@ void CClient::readInitializeSettings()
 void CClient::update()
 {
 	g_pTimer->update();
+	//g_pInput->update();
+	//g_pRenderer->update();
+	g_pGameSystem->update();
 }
 
 void CClient::renderScene()
@@ -180,10 +178,6 @@ void CClient::renderScene()
 	g_pRenderer->renderMap();
 	g_pRenderer->renderModels();
 	g_pRenderer->renderSprites();
-	/*static CSprite spr(L"logo.png");
-	.setPosition(Vertex(400, 300));
-	spr.makeRotate(0.01f);*/
-	
 }
 
 LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

@@ -22,10 +22,10 @@ public:
 	~CMap();
 	void initialize();
 	bool load(const std::string& map);
-	void draw() const;
-	void clear();
+	void reset();
 	Vertex2D getMapDimensions() const { return Vertex2D(m_width, m_height); }
 	Vertex2D getMapSizeInPixels() const { return Vertex2D(m_width * mapNS::TILED_DIMENSION, m_height * mapNS::TILED_DIMENSION); }
+	bool isMapLoaded() const;
 	/*float passX(const Object* object, float x) const;
 	float passY(const Object* object, float y) const;
 	bool isCollided(const Image* image) const;
