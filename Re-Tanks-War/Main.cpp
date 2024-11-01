@@ -1,5 +1,6 @@
 #include "IGame.h"
 #include "GameError.h"
+#include "Values.h"
 //#include "vld\vld.h" // For detecing  memory leaks
 #include <memory>
 #include <Windows.h>
@@ -8,16 +9,17 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "winmm.lib") // Time(Begin/End)Period
 #ifdef _DEBUG
-#include "vld/vld.h"
-#pragma comment(lib, "vld.lib")
-
 #pragma comment(lib, "DirectXTKd.lib")
 #else
 #pragma comment(lib, "DirectXTK.lib")
 #endif
 
+#ifdef _DEBUG
+#include "vld/vld.h"
+#pragma comment(lib, "vld.lib")
+#endif
 
-void messageBoxOk(const char* message, const char* title);
+void messageBoxOk(std::string msg);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -29,17 +31,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	catch (const CGameError& err)
 	{
-		messageBoxOk(err.getMessage(), "ERROR");
+		messageBoxOk(ERROR + err.getMessage().c_str());
 	}
 	catch (...)
 	{
-		messageBoxOk("Unknown error occurded", "ERROR");
+		messageBoxOk("ERROR: Unknown error occurded");
 	}
 
 	return 0;
 }
 
-void messageBoxOk(const char* msg, const char* title)
+void messageBoxOk(std::string msg)
 {
-	MessageBoxA(NULL, msg, title, MB_OK);
+	MessageBoxA(NULL, msg.c_str(), GAME_NAME, MB_OK);
 }

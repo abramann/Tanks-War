@@ -7,19 +7,17 @@
 #include <memory>
 #include <set>
 
-
-class CSprite;
-class CModel;
-class ITexture;
-
-typedef struct AdapterMode_s
+struct AdapterMode
 {
 	int width;
 	int height;
 	int format;
-} AdapterMode_t;
+};
 
 class IBuffer;
+class CSprite;
+class CModel;
+class ITexture;
 
 class IRenderer
 {
@@ -41,7 +39,7 @@ public:
 	virtual void showBackbuffer() = 0;
 	virtual int getBackbufferWidth() const;
 	virtual int getBackbufferHeight() const;
-	virtual std::vector<AdapterMode_t> getAdapterModes() = 0;
+	virtual std::vector<AdapterMode> getAdapterModes() = 0;
 	virtual IBuffer* createVertexBuffer(uint32_t numVertices, Vertex * pInitData, int access) = 0;
 	virtual IBuffer* createIndexBuffer(uint32_t length, uint * pInitData, int access) = 0;
 	virtual void releaseBuffer(IBuffer* pBuffer) = 0;

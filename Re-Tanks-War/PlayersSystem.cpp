@@ -10,11 +10,17 @@ void CPlayersSystem::startup()
 
 void CPlayersSystem::update()
 {
+	for (auto pPlayer : m_pPlayers)
+		pPlayer->update();
 }
 
 void CPlayersSystem::reset()
 {
 	m_pPlayers.clear();
+}
+
+void CPlayersSystem::perform()
+{
 }
 
 void CPlayersSystem::registerPlayer(IPlayer* pPlayer)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IGame.h" // HWindow definition
-#include "IRenderer.h"
+#include "Renderer.h"
 #include <set>
 #include <stdint.h>
 #include <d3d11.h>
@@ -54,7 +54,7 @@ public:
 	void initialize(HWindow hwnd) override;
 	void beginRendering() override;
 	void showBackbuffer() override;
-	std::vector<AdapterMode_t> getAdapterModes() override;
+	std::vector<AdapterMode> getAdapterModes() override;
 	IBuffer* createVertexBuffer(uint32_t numVertices, Vertex * pInitData, int access) override;
 	IBuffer* createIndexBuffer(uint32_t length, uint * pInitData, int access) override;
 	void releaseBuffer(IBuffer* pBuffer) override;

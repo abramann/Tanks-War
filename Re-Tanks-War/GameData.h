@@ -32,4 +32,5 @@ namespace fileNS
 	constexpr auto MAP_INITIALIZE = "Assets\\Map.ini";
 	constexpr auto MAP_DIR = "Assets\\Maps\\";
 	constexpr auto MODEL_DIR = "Assets\\Models\\";
+	constexpr auto FONT_PATH = "Assets\\Fonts\\Tahoma.ttf";
 }

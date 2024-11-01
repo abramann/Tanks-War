@@ -1,9 +1,9 @@
 #include "Model.h"
-#include "IRenderer.h"
+#include "Renderer.h"
 #include "File.hpp"
 #include "String.h"
 #include "GameError.h"
-#include "IRenderer.h"
+#include "Renderer.h"
 #include "GameData.h"
 
 using namespace evt;

@@ -1,5 +1,5 @@
 #include "VecMath.h"
-#include "IRenderer.h"
+#include "Renderer.h"
 
 
 Vertex rotateVertex(Vertex vertex, float angle, Vertex origin)

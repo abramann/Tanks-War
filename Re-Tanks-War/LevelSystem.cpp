@@ -13,3 +13,7 @@ void CLevelSystem::update()
 void CLevelSystem::reset()
 {
 }
+
+void CLevelSystem::perform()
+{
+}

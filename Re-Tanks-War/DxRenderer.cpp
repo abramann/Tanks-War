@@ -22,7 +22,7 @@ CDxRenderer* g_pDxRenderer = nullptr;
 
 using namespace Microsoft::WRL;
 
-std::vector<AdapterMode_t> dxgiGetAdapterModes();
+std::vector<AdapterMode> dxgiGetAdapterModes();
 
 void initSwapChainWindowed(DXGI_SWAP_CHAIN_DESC& swapChainDesc);
 
@@ -166,7 +166,7 @@ void CDxRenderer::showBackbuffer()
 	m_pSwapChain->Present(0, 0);
 }
 
-std::vector<AdapterMode_t> CDxRenderer::getAdapterModes()
+std::vector<AdapterMode> CDxRenderer::getAdapterModes()
 {
 	return dxgiGetAdapterModes();
 }
@@ -448,9 +448,9 @@ ID3D11Buffer * CDxRenderer::createBuffer(D3D11_BUFFER_DESC desc, void* pInitData
 	return pNewBuffer;
 }
 
-std::vector<AdapterMode_t> dxgiGetAdapterModes()
+std::vector<AdapterMode> dxgiGetAdapterModes()
 {
-	static std::vector<AdapterMode_t> adapterModes;
+	static std::vector<AdapterMode> adapterModes;
 	if (adapterModes.empty())
 	{
 		ComPtr<IDXGIFactory> pFactory;
@@ -475,7 +475,7 @@ std::vector<AdapterMode_t> dxgiGetAdapterModes()
 		{
 			if (pDisplayModeList[i].Width >= nsGameConfig::MIN_WINDOW_WIDTH && pDisplayModeList[i].Height >= nsGameConfig::MIN_WINDOW_HEIGHT)
 			{
-				AdapterMode_t adapterMode;
+				AdapterMode adapterMode;
 				adapterMode.width = pDisplayModeList[i].Width;
 				adapterMode.height = pDisplayModeList[i].Height;
 				adapterMode.format = pDisplayModeList[i].Format;
@@ -517,7 +517,7 @@ void initSwapChain(DXGI_SWAP_CHAIN_DESC& swapChainDesc, HWindow hwnd)
 
 		for (uint32_t i = 0; i < modes.size(); i++)
 		{
-			AdapterMode_t mode = modes[i];
+			AdapterMode mode = modes[i];
 
 			if (mode.width == winWidth && mode.height == winHeight)
 			{
@@ -607,3 +607,5 @@ void initWCBuffer(D3D11_BUFFER_DESC & desc, uint32_t size, uint stride)
 	desc.ByteWidth = size;
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 }
+
+std::shared_ptr<IRenderer> g_pRenderer;

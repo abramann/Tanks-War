@@ -21,15 +21,13 @@ using namespace std;
 static CClient client;
 IGame* g_pGame = &client;
 
-IRenderer* g_pRenderer = nullptr;
-ITimer* g_pTimer = nullptr;
 
 LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 CClient::CClient()
 {
 	g_pRenderer = new CDxRenderer;
-	g_pTimer = new CWin32Timer;
+	g_pTimer = std::make_shared<CWin32Timer>();
 	g_pInput = std::make_shared<CInput>();
 	g_pGameSystem = std::make_shared<CGameSystem>();
 }

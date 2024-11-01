@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SystemComponent.h"
 #include <string>
 
 enum PlayerRelationship
@@ -16,15 +17,17 @@ struct Score
 	int killCount;
 };
 
-class IPlayer
+class IPlayer : public ISystemComponent
 {
 public:
+	virtual std::string getName() { return "Player"; }
+
 	virtual int getTeam() const
 	{
 		return m_teamID;
 	}
 
-	virtual std::string getName()
+	virtual std::string getPlayerName() const
 	{
 		return m_name;
 	};
@@ -50,11 +53,6 @@ public:
 	{
 		m_id = id;
 	}
-	
-	virtual int getID() const
-	{
-		return m_id;
-	}
 
 	virtual void getPing() = 0;
 
@@ -69,7 +67,6 @@ protected:
 class CHumanPlayer : IPlayer
 {
 	bool isObserver();
-
 };
 
 class CServerPlayer : CHumanPlayer

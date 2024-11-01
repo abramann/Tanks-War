@@ -7,7 +7,7 @@
 #include "Input.h"
 #include "Values.h"
 #include "keys.h"
-#include "IRenderer.h"
+#include "Renderer.h"
 
 std::shared_ptr<CCamera> g_pCamera;
 

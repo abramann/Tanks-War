@@ -20,3 +20,7 @@ void CViewSystem::update()
 void CViewSystem::reset()
 {
 }
+
+void CViewSystem::perform()
+{
+}

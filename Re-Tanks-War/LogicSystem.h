@@ -17,6 +17,7 @@ public:
 	void startup() override;
 	void update() override;
 	void reset() override;
+	void perform() override;
 
 	void registerObject(IObject* pObject);
 	void unregisterObject(IObject* pObject);

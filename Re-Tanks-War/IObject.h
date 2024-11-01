@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types.h"
+#include "Entity.h"
 #include <string>
 #include <vector>
 
@@ -24,20 +25,11 @@ class IControl;
 struct Attack;
 struct Command;
 
-class IEntity
-{
-	virtual void update() = 0;
-	virtual void reset() = 0;
-	virtual bool isBumpable() = 0;
-	virtual bool isMoveable() = 0;
-protected:
-	std::string m_name;
-	int m_id;
-};
-
 class IObject : IEntity
 {
 public:
+	virtual std::string getName() const { return "Object"; }
+
 	virtual void handleCommand(Command* command) = 0;
 	virtual void onStriked(Attack* attack) = 0;
 	virtual void onDestroyed(Attack* attack) = 0;

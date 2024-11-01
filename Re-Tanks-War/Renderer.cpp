@@ -1,4 +1,4 @@
-#include "IRenderer.h"
+#include "Renderer.h"
 #include "GameError.h"
 
 
@@ -34,7 +34,7 @@ int IRenderer::getBackbufferHeight() const
 
 void IRenderer::registerSprite(const CSprite * pSprite)
 {
-	CHECK_ERROR(pSprite == nullptr, "Registring nullptr!");
+	CHECK_ERROR(pSprite == nullptr, "Registiring nullptr!");
 	m_pRenderedSprites.emplace(pSprite);
 }
 

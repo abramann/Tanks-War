@@ -4,6 +4,8 @@ constexpr float PI = 3.141592653589f;
 
 #define RENDER_CLASS CDxRenderer
 
+constexpr auto GAME_NAME = "Tanks-War";
+
 namespace logicNS
 {
 }

@@ -1,30 +1,26 @@
 #pragma once
 
-#include <iostream>
+#include "String.h"
 #include <Windows.h>
 
 #define CHECK_ERROR(RESULT, MSG) if(!(RESULT)) REPORT_ERROR(MSG)
 #define REPORT_ERROR(MSG) CGameError(MSG, __LINE__, __FUNCTION__, __FILE__)
-
+#define DEBUG_BREAK_IF_PRESETN if(IsDebuggerPresent()) \
+									DebugBreak();
 class CGameError
 {
 public:
 	CGameError(const char* errMsg, int line, const char* function, const char* file)
 	{
-		sprintf(m_msg, "Error: %s\n Line: %d\n Function: %s\n File: %s", errMsg, line, function, file);
-		DebugBreak();
+		m_msg = strFormat("Error: %s\n Line: %d\n Function: %s\n File: %s", errMsg, line, function, file);
+		DEBUG_BREAK_IF_PRESETN;
 	}
 
-	const char* getMessage() const { return m_msg; }
+	std::string getMessage() const { return m_msg; }
 
 private:
-	char m_msg[1024];
+	std::string m_msg;
 };
-
-inline void messageBoxOk(std::string msg)
-{
-	MessageBoxA(NULL, msg.c_str(), "WARNING", MB_OK);
-}
 
 template <typename T>
 inline void safeDelete(T ptr)

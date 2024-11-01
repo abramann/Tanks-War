@@ -49,11 +49,23 @@ void CGameSystem::reset()
 	g_pMap->reset();
 }
 
+void CGameSystem::perform()
+{
+	g_pUISystem->perform();
+	if (m_runningGame)
+	{
+		g_pLevelSystem->perform();
+		g_pLogicSystem->perform();
+		g_pPlayersSystem->perform();
+	}
+}
+
 void CGameSystem::onStartGame()
 {
 	if (m_runningGame)
 		reset();
 
+	g_pUISystem->startup();
 	g_pLevelSystem->startup();
 	g_pLogicSystem->startup();
 	g_pPlayersSystem->startup();
@@ -62,10 +74,10 @@ void CGameSystem::onStartGame()
 
 void CGameSystem::onQuitGame()
 {
+	g_pUISystem->reset();
 	g_pLevelSystem->reset();
-	g_pLevelSystem->startup();
-	g_pLogicSystem->startup();
-	g_pPlayersSystem->startup();
+	g_pLogicSystem->reset();
+	g_pPlayersSystem->reset();
 }
 
 void CGameSystem::setMap(std::string map)

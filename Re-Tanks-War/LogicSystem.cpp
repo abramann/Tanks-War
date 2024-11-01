@@ -1,5 +1,5 @@
 #include "LogicSystem.h"
-#include "IRenderer.h"
+#include "Renderer.h"
 #include "IObject.h"
 
 std::shared_ptr<CLogicSystem> g_pLogicSystem;
@@ -21,6 +21,10 @@ void CLogicSystem::update()
 }
 
 void CLogicSystem::reset()
+{
+}
+
+void CLogicSystem::perform()
 {
 }
 

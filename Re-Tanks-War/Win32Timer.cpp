@@ -7,6 +7,7 @@
 
 using namespace nsGameConfig;
 
+std::shared_ptr<ITimer> g_pTimer;
 
 void CWin32Timer::startup()
 {

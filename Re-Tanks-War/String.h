@@ -4,6 +4,7 @@
 #include <memory>
 #include <codecvt>
 #include <locale>
+#include <vector>
 
 //	https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
 template<typename ... Args>

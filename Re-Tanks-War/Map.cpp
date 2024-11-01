@@ -4,7 +4,7 @@
 #include "Map.h"
 #include "GameData.h"
 #include "File.hpp"
-#include "IRenderer.h"
+#include "Renderer.h"
 #include "String.h"
 
 using namespace evt;
