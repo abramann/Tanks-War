@@ -1,6 +1,6 @@
 #include "Client.h"
 #include "GameError.h"
-#include "GameData.h"
+#include "Values.h"
 #include "DxRenderer.h"
 #include "Win32Timer.h"
 #include "ImGui\imgui_impl_win32.h"
@@ -11,7 +11,6 @@
 #include "Input.h"
 #include "Camera.h"
 #include "GameSystem.h"
-
 #include "Model.h"
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -26,34 +25,27 @@ LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 CClient::CClient()
 {
-	g_pRenderer = new CDxRenderer;
-	g_pTimer = std::make_shared<CWin32Timer>();
-	g_pInput = std::make_shared<CInput>();
-	g_pGameSystem = std::make_shared<CGameSystem>();
 }
 
 CClient::~CClient()
 {
-	safeDelete(g_pRenderer);
-	safeDelete(g_pTimer);
+
 }
 
 void CClient::initialize()
 {
 	readInitializeSettings();
 	createWindow();
-	g_pRenderer->initialize(m_hwnd);
-	g_pTimer->startup();
-	g_pInput->startUp();
 	g_pGameSystem->startup();
+	g_pTimer->startup();
+	g_pInput->initialize();
 }
 
 void CClient::run()
 {
-	g_pRenderer->beginRendering();
-	update();
-	renderScene();
-	g_pRenderer->showBackbuffer();
+	g_pTimer->update();
+	g_pGameSystem->run();
+	g_pCamera->freeCamera();
 }
 
 void CClient::shutdown()
@@ -115,6 +107,11 @@ int CClient::getWindowHeight() const
 	return m_settings.windHeight;
 }
 
+HWindow CClient::getWindowHandle() const
+{
+	return m_hwnd;
+}
+
 bool CClient::isWindowed() const
 {
 	return m_settings.windowed;
@@ -157,25 +154,10 @@ void CClient::createWindow()
 
 void CClient::readInitializeSettings()
 {
-	m_settings.windWidth = nsGameConfig::MIN_WINDOW_WIDTH;
-	m_settings.windHeight = nsGameConfig::MIN_WINDOW_HEIGHT;
+	// TODO: read Tanks-War.ini
+	m_settings.windWidth = values::MIN_WINDOW_WIDTH;
+	m_settings.windHeight = values::MIN_WINDOW_HEIGHT;
 	m_settings.windowed = true;
-}
-
-void CClient::update()
-{
-	g_pTimer->update();
-	//g_pInput->update();
-	//g_pRenderer->update();
-	g_pGameSystem->update();
-}
-
-void CClient::renderScene()
-{
-	g_pCamera->freeCamera();
-	g_pRenderer->renderMap();
-	g_pRenderer->renderModels();
-	g_pRenderer->renderSprites();
 }
 
 LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

@@ -242,7 +242,7 @@ namespace evt {
 			while (1)
 			{
 				values.push_back(std::stoi(strValues));
-				int i = strValues.find(',');
+				size_t i = strValues.find(',');
 				if (i == -1)
 					break;
 				strValues = strValues.substr(i + 1);

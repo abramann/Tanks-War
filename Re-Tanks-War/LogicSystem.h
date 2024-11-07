@@ -1,16 +1,18 @@
 #pragma once
 
-#include "System.h"
+#include "Subsystem.h"
 #include "Types.h"
-#include <memory>
-#include <set>
+#include <vector>
 
 class IObject;
-class Attack;
+class ISystemComponent;
+struct Attack;
 
-class CLogicSystem : ISystem
+class CLogicSystem : public ISubsystem
 {
 public:
+	std::string getName() const override { return "LogicSystem"; }
+	
 	CLogicSystem();
 	~CLogicSystem();
 	
@@ -18,25 +20,29 @@ public:
 	void update() override;
 	void reset() override;
 	void perform() override;
+	void onStartGame() override;
+	void onQuitGame() override;
+	void onPauseGame() override;
+	void onResumGame() override;
+	void registerComponent(ISystemComponent* pObject) override;
+	void unregisterComponent(ISystemComponent* pObject) override;
+	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
 
-	void registerObject(IObject* pObject);
-	void unregisterObject(IObject* pObject);
-
-	void registerAttack(Attack* pAttack); // Every object attack should register his attack to be updated by this class
-	void unregisterAttack(Attack* pAttack); // Used when player attack his allies or attack canceled due long range
-
-	bool requestAttack(IObject* pObject);
+	/*bool requestAttack(IObject* pObject);
 	bool requestMove(IObject* pObject);
 	bool requestHeal(IObject* pObject);
 	bool requestDestroy(IObject* pObject);
 	bool requestReset(IObject* pObject);
-	bool requestFree(IObject* pObject);
+	bool requestFree(IObject* pObject);*/
 
 	uint getObjecstCount() const;
 
 private:
-	std::set<IObject*> m_pObjects;
-	std::set<Attack*> m_pAttacks;
+	void registerAttack(Attack* pAttack); // Every object attack should register his attack to be updated by this class
+	void unregisterAttack(Attack* pAttack); // Used when player attack his allies or attack canceled due long range
+
+	std::vector<IObject*> m_pObjects;
+	std::vector<Attack*> m_pAttacks;
 };
 
-extern std::shared_ptr<CLogicSystem> g_pLogicSystem;
+extern CLogicSystem* g_pLogicSystem;

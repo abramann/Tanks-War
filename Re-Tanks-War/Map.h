@@ -9,8 +9,9 @@
 #include <set>
 #include <deque>
 #include <memory>
+#include <string>
 
-class CModel;
+class CMesh;
 class ITexture;
 class IBuffer;
 
@@ -24,7 +25,7 @@ public:
 	bool load(const std::string& map);
 	void reset();
 	Vertex2D getMapDimensions() const { return Vertex2D(m_width, m_height); }
-	Vertex2D getMapSizeInPixels() const { return Vertex2D(m_width * mapNS::TILED_DIMENSION, m_height * mapNS::TILED_DIMENSION); }
+	Vertex2D getMapSizeInPixels() const { return Vertex2D(m_width * values::TILED_DIMENSION, m_height * values::TILED_DIMENSION); }
 	bool isMapLoaded() const;
 	/*float passX(const Object* object, float x) const;
 	float passY(const Object* object, float y) const;
@@ -93,8 +94,8 @@ private:
 	//std::vector<int> m_numNoCellBitmap;
 	//std::vector<Cell> m_freeCell, m_noCell;
 	std::vector<uint> m_startVertex, m_lenVertex;
-	std::vector<CModel*> m_pObjects;
+	std::vector<CMesh*> m_pObjects;
 	std::string m_loadedMap;
 };
 
-extern std::shared_ptr<CMap> g_pMap;
+extern CMap* g_pMap;

@@ -1,7 +1,8 @@
 #include "Renderer.h"
+#include "RenderSystem.h"
 #include "ITexture.h"
 #include "Sprite.h"
-
+#include "Buffer.h"
 
 CSprite::CSprite(const wchar_t * texFileName)
 {
@@ -11,8 +12,7 @@ CSprite::CSprite(const wchar_t * texFileName)
 	m_scaling = Vertex(1, 1, 1);
 	m_pTexture = g_pRenderer->loadTextureFromFile(texFileName);
 	createVertexBuffer();
-	createIndexBuffer();	
-	g_pRenderer->registerSprite(this);
+	createIndexBuffer();
 }
 
 CSprite::~CSprite()
@@ -20,13 +20,11 @@ CSprite::~CSprite()
 	g_pRenderer->releaseTexture(m_pTexture);
 	g_pRenderer->releaseBuffer(m_pVertexBuffer);
 	g_pRenderer->releaseBuffer(m_pIndexBuffer);
-	g_pRenderer->removeSprite(this);
 }
 
 void CSprite::setPosition(Vertex position)
 {
-	m_position = position;
-	m_rotateCenter = m_position;
+	m_rotateCenter = m_position = position;
 	updateVertexBuffer();
 }
 

@@ -1,9 +1,11 @@
 #pragma once
 
 #include "VecMath.h"
-#include "types.h"
-#include <vector>
+#include "ColorTable.h"
 #include "Values.h"
+#include "Subsystem.h"
+#include "RenderComponent.h"
+#include <vector>
 
 class IBuffer;
 class ITexture;
@@ -16,7 +18,7 @@ struct Face
 	Color color;
 };
 
-class CModel
+class CMesh : public ISystem, public IRenderComponent
 {
 	static std::vector<std::pair<IBuffer*, IBuffer*>> s_pBuffers;
 	static std::vector<float> s_radius;
@@ -24,23 +26,29 @@ class CModel
 
 	friend class RENDER_CLASS;
 public:
-	CModel();
-	virtual ~CModel();
+	std::string getName() const override { return "Mesh"; }
+	
+	~CMesh();
+	
+	virtual void startup() = 0;
+	virtual void update() = 0;
+	virtual void reset() = 0;
+	virtual void perform() = 0;
+	virtual void onStartGame() = 0;
+	virtual void onQuitGame() = 0;
+	virtual void onPauseGame() = 0;
+	virtual void onResumGame() = 0;
+	virtual void registerComponent(ISystemComponent* pComponent) = 0;
+	virtual void unregisterComponent(ISystemComponent* pComponent) = 0;
+	virtual void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) {};
 
-	virtual void setPosition(Vertex newPosition);
-	virtual Vertex getPosition() const;
-
-	static CModel* loadOBJModel(const char* modelPath);
+	// void loadOBJFile
+	static CMesh* loadOBJModel(const char* modelPath);
 
 private:
-	IBuffer* getVertexBuffer() const;
-	IBuffer* getIndexBuffer() const; 
-	void assignVertexBuffer(IBuffer* pVB);
-	void assignIndexBuffer(IBuffer* pIB);
-
 	void setFaces(std::vector<Face> faces);
 	std::vector<Face> getFaces() const;
-	
+private:
 	float radius;
 	std::vector<Face> m_faces;
 	Vertex m_position;
@@ -48,4 +56,4 @@ private:
 	IBuffer* m_pIndexBuffer;
 };
 
-extern CModel* loadOBJModel(const char* modelPath);
+extern CMesh* loadOBJModel(const char* modelPath);

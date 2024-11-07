@@ -1,23 +1,16 @@
 #include "GameSystem.h"
-#include "Camera.h"
-#include "Map.h"
-#include "GameError.h"
 #include "PlayersSystem.h"
 #include "LevelSystem.h"
 #include "UISystem.h"
 #include "LogicSystem.h"
 #include "ViewSystem.h"
+#include "RenderSystem.h"
 
-std::shared_ptr<CGameSystem> g_pGameSystem;
+static CGameSystem gameSystem;
+CGameSystem* g_pGameSystem = &gameSystem;
 
 CGameSystem::CGameSystem()
 {
-	g_pUISystem = std::make_shared<CUISystem>();
-	g_pPlayersSystem = std::make_shared<CPlayersSystem>();
-	g_pLevelSystem = std::make_shared<CLevelSystem>();
-	g_pLogicSystem = std::make_shared<CLogicSystem>();
-	g_pViewSystem = std::make_shared<CViewSystem>();
-	g_pMap = std::make_shared<CMap>();
 }
 
 CGameSystem::~CGameSystem()
@@ -26,61 +19,69 @@ CGameSystem::~CGameSystem()
 
 void CGameSystem::startup()
 {
-	g_pMap->initialize();
+	registerComponent(g_pRenderSystem);
+	registerComponent(g_pUISystem);
+	registerComponent(g_pPlayersSystem);
+	registerComponent(g_pLevelSystem);
+	registerComponent(g_pLogicSystem);
+	registerComponent(g_pViewSystem);
+
+	subsystemsDo(m_pSubSystems, startup);
+	subsystemsDo2(m_pSubSystems, setSystemHandler, this);
 }
 
 void CGameSystem::update()
 {
-	g_pUISystem->update();
-	if (m_runningGame)
-	{
-		g_pLevelSystem->update();
-		g_pLogicSystem->update();
-		g_pPlayersSystem->update();
-	}
+	systemsDo(m_pSubSystems, update);
 }
 
 void CGameSystem::reset()
 {
-	g_pLevelSystem->reset();
-	g_pLogicSystem->reset();
-	g_pPlayersSystem->reset();
-
-	g_pMap->reset();
+	systemsDo(m_pSubSystems, reset);
 }
 
 void CGameSystem::perform()
 {
-	g_pUISystem->perform();
-	if (m_runningGame)
-	{
-		g_pLevelSystem->perform();
-		g_pLogicSystem->perform();
-		g_pPlayersSystem->perform();
-	}
+	subsystemsDo(m_pSubSystems, perform);
 }
 
 void CGameSystem::onStartGame()
 {
-	if (m_runningGame)
-		reset();
-
-	g_pUISystem->startup();
-	g_pLevelSystem->startup();
-	g_pLogicSystem->startup();
-	g_pPlayersSystem->startup();
-	m_runningGame = true;
+	subsystemsDo(m_pSubSystems, onStartGame);
 }
 
 void CGameSystem::onQuitGame()
 {
-	g_pUISystem->reset();
-	g_pLevelSystem->reset();
-	g_pLogicSystem->reset();
-	g_pPlayersSystem->reset();
+	subsystemsDo(m_pSubSystems, onQuitGame);
 }
 
-void CGameSystem::setMap(std::string map)
+void CGameSystem::onPauseGame()
 {
-	m_map = map;
+	subsystemsDo(m_pSubSystems, onPauseGame);
 }
+
+void CGameSystem::onResumGame()
+{
+	subsystemsDo(m_pSubSystems, onResumGame);
+}
+
+void CGameSystem::registerComponent(ISystemComponent* pSubSystem)
+{
+	subsystemRegister(m_pSubSystems, dynamic_cast<ISubsystem*>(pSubSystem));
+}
+
+void CGameSystem::unregisterComponent(ISystemComponent* pSubSystem)
+{
+	subsystemUnregister(m_pSubSystems, dynamic_cast<ISubsystem*>(pSubSystem));
+}
+
+void CGameSystem::handleEvent(ISystemComponent* pSubSystem, int eventCode, void* event)
+{
+}
+
+void CGameSystem::run()
+{
+	update();
+	perform();
+}
+

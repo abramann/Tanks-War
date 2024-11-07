@@ -2,7 +2,8 @@
 #include "Renderer.h"
 #include "IObject.h"
 
-std::shared_ptr<CLogicSystem> g_pLogicSystem;
+static CLogicSystem logicSystem;
+CLogicSystem* g_pLogicSystem = &logicSystem;
 
 CLogicSystem::CLogicSystem()
 {
@@ -18,29 +19,50 @@ void CLogicSystem::startup()
 
 void CLogicSystem::update()
 {
+	subsystemsDo(m_pObjects, update);
 }
 
 void CLogicSystem::reset()
 {
+	subsystemsDo(m_pObjects, reset);
 }
 
 void CLogicSystem::perform()
 {
 }
 
-void CLogicSystem::registerObject(IObject* pObject)
+void CLogicSystem::onStartGame()
 {
-	m_pObjects.emplace(pObject);
-	//g_pRenderer->registerModel(pObject->getModel());
 }
 
-void CLogicSystem::unregisterObject(IObject* pObject)
+void CLogicSystem::onQuitGame()
 {
-	m_pObjects.erase(pObject);
-	//g_pRenderer->removeObject(pObject->getModel());
 }
 
-void CLogicSystem::registerAttack(Attack* pAttack)
+void CLogicSystem::onPauseGame()
+{
+}
+
+void CLogicSystem::onResumGame()
+{
+}
+
+void CLogicSystem::registerComponent(ISystemComponent* pObject)
+{
+	subsystemRegister(m_pObjects, dynamic_cast<IObject*>(pObject));
+}
+
+
+void CLogicSystem::unregisterComponent(ISystemComponent* pObject)
+{
+	subsystemUnregister(m_pObjects, dynamic_cast<IObject*>(pObject));
+}
+
+void CLogicSystem::handleEvent(ISystemComponent* pComponent, int eventCode, void* event)
+{
+}
+
+/*void CLogicSystem::registerAttack(Attack* pAttack)
 {
 	m_pAttacks.emplace(pAttack);
 }
@@ -77,9 +99,9 @@ bool CLogicSystem::requestReset(IObject* pObject)
 
 bool CLogicSystem::requestFree(IObject* pObject)
 {
-	unregisterObject(pObject);
+	//unregisterComponent(pObject);
 	return false;
-}
+}*/
 
 uint CLogicSystem::getObjecstCount() const
 {

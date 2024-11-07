@@ -12,4 +12,4 @@ public:
 	virtual void sleep(int64_t millsec) const = 0;
 };
 
-extern std::shared_ptr<ITimer> g_pTimer;
+extern ITimer* g_pTimer;

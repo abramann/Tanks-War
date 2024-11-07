@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Math.h"
-#include "GameData.h"
-
+#include "Values.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -25,9 +24,9 @@ struct Cell
 
 	void clear() { v1 = v2 = v3 = v4 = Vertex(0, 0, 0); }
 	bool isSame(const Cell& s) const { return ((s.v1 == v1 && s.v2 == v2) || (s.v1 == v2 && s.v2 == v1)) && ((s.v3 == v3 && s.v4 == v4) || (s.v3 == v4 && s.v4 == v3)) ? true : false; }
-	bool isValid() const { return (v1.x != mapNS::UNDEFINED_POSITION); }
+	bool isValid() const { return (v1.x != values::UNDEFINED_POSITION); }
 	bool isIncluded(const Vertex& v3) { return (IN_RANGE_OR_EQUAL(v3.x, getMinX(), getMaxX()) && IN_RANGE_OR_EQUAL(v3.y, getMinY(), getMaxY())); }
-	void setInvalid() { v1.x = mapNS::UNDEFINED_POSITION; }
+	void setInvalid() { v1.x = values::UNDEFINED_POSITION; }
 	//bool operator<(const Cell& s) const { return (v1 < s.v1&& v2 < s.v2 && v3 < s.v3 && v4 < s.v4); } // for using with std::set
 	float getMaxX() const { return gameMathNS::getMax<float>({ v1.x,v2.x,v3.x,v4.x }); }
 	float getMinX() const { return gameMathNS::getMin<float>({ v1.x,v2.x,v3.x,v4.x }); }

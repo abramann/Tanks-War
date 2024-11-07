@@ -1,13 +1,11 @@
 #pragma once
 
-#include "System.h"
+#include "Subsystem.h"
 #include "UI.h"
 #include "Types.h"
+#include "String.h"
 #include "ImGui/imgui.h"
-#include <string>
-#include <memory>
 #include <map>
-#include <set>
 
 
 typedef ImFont Font;
@@ -15,36 +13,47 @@ typedef ImFont Font;
 struct UIMessage
 {
 	std::string text;
-	uchar r, g, b, a;
-	float period;
+	Color color;
+	float liveSeconds;
 };
 
 class UI;
 
-class CUISystem : public ISystem
+class CUISystem : public ISubsystem
 {
 public:
+	enum Events
+	{
+		SWITCH_UI,
+	};
+
+	std::string getName() const override { return "UISystem"; }
+	
 	CUISystem();
 
 	void startup() override;
 	void update() override;
 	void reset() override;
 	void perform() override;
-
-	void registerUI(UI* pUI);
-	void unregisterUI(UI* pUI);
-	void activateUI(UI* pUI);
-	void printMessage(UIMessage* pMessage);
+	void onStartGame() override;
+	void onQuitGame() override;
+	void onPauseGame() override;
+	void onResumGame() override;
+	void registerComponent(ISystemComponent* pUIComp) override;
+	void unregisterComponent(ISystemComponent* pUIComp) override;
+	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
+	
 	Font* requestFont(int size);
-	bool requestButtonClick();
 
 private:
 	Font* createFont();
-
+	void switchUI(UI* pUI);
+	void printMessage(UIMessage* pMessage);
+private:
 	UI* m_pCurrentUI;
 	UI* m_pPreviousUI;
 	std::map<int, Font*> m_loadedFonts;
-	std::set<UI*> m_pRegestredUIs;
+	std::vector<UI*> m_pUIs;
 };
 
-extern std::shared_ptr<CUISystem> g_pUISystem;
+extern CUISystem* g_pUISystem;

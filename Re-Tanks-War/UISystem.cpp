@@ -1,50 +1,74 @@
 #include "UISystem.h"
 #include "UI.h"
-#include "ImGui/imgui.h"
-#include "GameData.h"
+#include "Values.h"
+#include "StartUI.h"
 
-std::shared_ptr<CUISystem> g_pUISystem;
+static CUISystem uiSystem;
+CUISystem* g_pUISystem = &uiSystem;
 
-CUISystem::CUISystem()
+CUISystem::CUISystem() :
+	m_pCurrentUI(nullptr),
+	m_pPreviousUI(nullptr)
 {
 }
 
 void CUISystem::startup()
 {
+	registerComponent(g_pStartUI);
+
+	subsystemsStartup<UI>(this, m_pUIs);
+
+	switchUI(g_pStartUI);
 }
 
 void CUISystem::update()
 {
-	for (auto& pUI : m_pRegestredUIs)
-	{
-		pUI->update();
-	}
+	doSystem(m_pCurrentUI, update);
 }
 
 void CUISystem::reset()
 {
-	for (auto& pUI : m_pRegestredUIs)
-	{
-		pUI->reset();
-	}
+	systemsDo(m_pUIs, reset);
 }
 
 void CUISystem::perform()
 {
-	m_pCurrentUI->show();
+	m_pCurrentUI->perform();
 }
 
-void CUISystem::registerUI(UI* pUI)
+void CUISystem::onStartGame()
 {
-	m_pRegestredUIs.emplace(pUI);
+	// m_pCurrentUI = &ingameUI;
 }
 
-void CUISystem::unregisterUI(UI* pUI)
+void CUISystem::onQuitGame()
 {
-	m_pRegestredUIs.erase(pUI);
+	//m_pCurrentUI = &quitgameUI;
 }
 
-void CUISystem::activateUI(UI* pUI)
+void CUISystem::onPauseGame()
+{
+}
+
+void CUISystem::onResumGame()
+{
+}
+
+void CUISystem::registerComponent(ISystemComponent* pUIComp)
+{
+	subsystemRegister(m_pUIs, dynamic_cast<UI*>(pUIComp));
+}
+
+void CUISystem::unregisterComponent(ISystemComponent* pUIComp)
+{
+	subsystemUnregister(m_pUIs, dynamic_cast<UI*>(pUIComp));
+}
+
+void CUISystem::handleEvent(ISystemComponent* pComponent, int eventCode, void* event)
+{
+}
+
+void CUISystem::switchUI(UI* pUI)
 {
 	m_pPreviousUI = m_pCurrentUI;
 	m_pCurrentUI = pUI;
@@ -61,14 +85,9 @@ Font* CUISystem::requestFont(int size)
 		return pFont;
 
 	ImGuiIO& io = ImGui::GetIO();
-	pFont = io.Fonts->AddFontFromFileTTF(fileNS::FONT_PATH, size);
+	pFont = io.Fonts->AddFontFromFileTTF(values::FONT_PATH, size);
 	
 	m_loadedFonts[size] = pFont;
 
 	return pFont;
-}
-
-bool CUISystem::requestButtonClick()
-{
-	return false;
 }

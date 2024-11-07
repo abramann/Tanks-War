@@ -1,10 +1,19 @@
+// Author: Wefaq
+// Brief: CGameError: handling errors.
 #pragma once
 
 #include "String.h"
 #include <Windows.h>
 
+// TODO: Make use of.
+enum ErrorType
+{
+	ERROR_LOGIC,
+	ERROR_INVALID_EXECUTION
+};
+
 #define CHECK_ERROR(RESULT, MSG) if(!(RESULT)) REPORT_ERROR(MSG)
-#define REPORT_ERROR(MSG) CGameError(MSG, __LINE__, __FUNCTION__, __FILE__)
+#define REPORT_ERROR(MSG) throw CGameError(MSG, __LINE__, __FUNCTION__, __FILE__)
 #define DEBUG_BREAK_IF_PRESETN if(IsDebuggerPresent()) \
 									DebugBreak();
 class CGameError

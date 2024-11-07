@@ -1,15 +1,10 @@
 #pragma once
 
-#include "IGame.h" // HWindow definition
+#include "ColorTable.h"
 #include "Renderer.h"
-#include <set>
-#include <stdint.h>
 #include <d3d11.h>
 #include <dxgi.h>
 #include <wrl.h>
-
-
-
 
 class CDxRenderer : public IRenderer
 {
@@ -51,18 +46,19 @@ public:
 	CDxRenderer();
 	~CDxRenderer();
 
-	void initialize(HWindow hwnd) override;
-	void beginRendering() override;
-	void showBackbuffer() override;
-	std::vector<AdapterMode> getAdapterModes() override;
+	void initialize() override;
+	void newFrame() override;
+	void renderFrame() override;
+	std::vector<AdapterMode>& getAdapterModes() override;
 	IBuffer* createVertexBuffer(uint32_t numVertices, Vertex * pInitData, int access) override;
 	IBuffer* createIndexBuffer(uint32_t length, uint * pInitData, int access) override;
 	void releaseBuffer(IBuffer* pBuffer) override;
 	void setVSDrawProperties(Vertex position = Vertex(0, 0, 0), Vertex scaling = Vertex(1, 1, 1), Vertex rotate = Vertex(0, 0, 0), Vertex rotateCenter = Vertex(0, 0, 0)) const;
 	void setPSDrawProperties(Color color = Color(255, 255, 255, 255)) const;
+	void renderUI(bool rendered) const override;
 	void renderMap() const override;
 	void drawSprite(const CSprite* pSprite) const override;
-	void drawModel(const CModel* pModel) const override;
+	void drawModel(const CMesh* pModel) const override;
 	void setWorldViewMatrix(Matrix* mat) override;
 	ITexture* loadTextureFromFile(const wchar_t* texFileName) override;
 	void releaseTexture(ITexture* pTexture) override;

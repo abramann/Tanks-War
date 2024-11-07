@@ -2,7 +2,7 @@
 
 #include "SystemComponent.h"
 
-class IEntity : ISystemComponent
+class IEntity : public ISystemComponent
 {
 public:
 	virtual std::string getName() const { return "Entity"; }

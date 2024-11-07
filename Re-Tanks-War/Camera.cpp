@@ -6,15 +6,18 @@
 #include "Map.h"
 #include "Input.h"
 #include "Values.h"
-#include "keys.h"
+#include "KeyTable.h"
 #include "Renderer.h"
 
-std::shared_ptr<CCamera> g_pCamera;
+static CCamera camera;
+CCamera* g_pCamera = &camera;
 
-CCamera::CCamera() :m_z(cameraNS::CAMERA_DEFAULT_HEIGHT), m_nearPlane(cameraNS::CAMERA_NEARPLANE), m_farPlane(cameraNS::CAMERA_FARPLANE),
-m_fov(cameraNS::CAMERA_FOV)
+CCamera::CCamera() :
+	m_z(values::CAMERA_DEFAULT_HEIGHT),
+	m_nearPlane(values::CAMERA_NEARPLANE),
+	m_farPlane(values::CAMERA_FARPLANE),
+	m_fov(values::CAMERA_FOV)
 {
-	startup();
 }
 
 CCamera::~CCamera()
@@ -50,12 +53,12 @@ void CCamera::update(Vertex lookTo)
 	gameMathNS::matrixIdentity(&viewMatrix);
 
 	// zoom control
-	if (g_pInput->isKeyDown(inputNS::F1_KEY))
+	if (g_pInput->isKeyDown(keyTable::F1_KEY))
 		m_z += 5;
-	else if (g_pInput->isKeyDown(inputNS::F2_KEY))
+	else if (g_pInput->isKeyDown(keyTable::F2_KEY))
 		m_z -= 5;
-	else if (g_pInput->isKeyDown(inputNS::F3_KEY))
-		m_z = cameraNS::CAMERA_DEFAULT_HEIGHT;
+	else if (g_pInput->isKeyDown(keyTable::F3_KEY))
+		m_z = values::CAMERA_DEFAULT_HEIGHT;
 
 	if (m_z == 0)
 		m_z = -1;
@@ -72,32 +75,33 @@ void CCamera::update(Vertex lookTo)
 void CCamera::freeCamera()
 {
 	//m_aspectRatio = 0;
-	if (g_pInput->isKeyDown(inputNS::R_KEY))
+	if (g_pInput->isKeyDown(keyTable::R_KEY))
 		m_aspectRatio += 0.01f;
 	static Vertex lookTo;
-	if (g_pInput->isKeyDown(inputNS::A_KEY))
+	if (g_pInput->isKeyDown(keyTable::A_KEY))
 	{
 		lookTo.x -= 10;
 	}
-	if (g_pInput->isKeyDown(inputNS::D_KEY))
+	if (g_pInput->isKeyDown(keyTable::D_KEY))
 	{
 		lookTo.x += 10;
 	}
-	if (g_pInput->isKeyDown(inputNS::W_KEY))
+	if (g_pInput->isKeyDown(keyTable::W_KEY))
 	{
 		lookTo.y += 10;
 	}
-	if (g_pInput->isKeyDown(inputNS::S_KEY))
+	if (g_pInput->isKeyDown(keyTable::S_KEY))
 	{
 		lookTo.y -= 10;
 	}
+
 	// zoom control
-	if (g_pInput->isKeyDown(inputNS::F_KEY))
+	if (g_pInput->isKeyDown(keyTable::F_KEY))
 		m_z += 5;
-	else if (g_pInput->isKeyDown(inputNS::G_KEY))
+	else if (g_pInput->isKeyDown(keyTable::G_KEY))
 		m_z -= 5;
-	else if (g_pInput->isKeyDown(inputNS::H_KEY))
-		m_z = cameraNS::CAMERA_DEFAULT_HEIGHT;
+	else if (g_pInput->isKeyDown(keyTable::H_KEY))
+		m_z = values::CAMERA_DEFAULT_HEIGHT;
 	if (m_z == 0)
 		m_z = -1;
 
@@ -118,12 +122,12 @@ void CCamera::freeCamera()
 
 	float px = pxp + round(lookTo.x * 10) / 10,
 			py = pyp + round(lookTo.y * 10) / 10;
-	if (g_pInput->isKeyDown(inputNS::Q_KEY))
+	if (g_pInput->isKeyDown(keyTable::Q_KEY))
 	{
 		pxp += 5;
 		pyp += 5;
 	}
-	else if (g_pInput->isKeyDown(inputNS::E_KEY))
+	else if (g_pInput->isKeyDown(keyTable::E_KEY))
 	{
 		pxp -= 5;
 		pyp -= 5;

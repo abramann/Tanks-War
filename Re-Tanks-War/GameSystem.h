@@ -1,13 +1,13 @@
+// Brief GameSystem: the end system of systems.
 #pragma once
 
 #include "System.h"
 #include <string>
-#include <memory>
-#include <set>
+#include <vector>
 
-class IPlayer;
+class ISubsystem;
 
-class CGameSystem : ISystem
+class CGameSystem : public ISystem
 {
 public:
 	CGameSystem();
@@ -17,15 +17,21 @@ public:
 	void update() override;
 	void reset() override;
 	void perform() override;
+	void onStartGame() override;
+	void onQuitGame() override;
+	void onPauseGame() override;
+	void onResumGame() override;
+	void registerComponent(ISystemComponent* pSystem) override;
+	void unregisterComponent(ISystemComponent* pSystem) override;
+	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
 
-	void onStartGame();
-	void onQuitGame();
-
-	void setMap(std::string map);
+	void run();
+	//void setMap(std::string map); Move to worldsystem
 	
 private:
-	std::string m_map;
+	std::vector<ISubsystem*> m_pSubSystems;
+	//std::string m_map; Move to worldsystem
 	bool m_runningGame;
 };
 
-extern std::shared_ptr<CGameSystem> g_pGameSystem;
+extern CGameSystem* g_pGameSystem;

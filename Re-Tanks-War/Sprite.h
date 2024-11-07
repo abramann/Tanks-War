@@ -1,23 +1,28 @@
 #pragma once
 
-#include "GameData.h"
 #include "Math.h"
+#include "SystemComponent.h"
+#include "ColorTable.h"
 #include <iostream>
-
-
-
+#include "Model.h"
 
 class ITexture;
+class IBuffer;
 
-class CSprite
+class CSprite : public ISystemComponent
 {
 public:
+	std::string getName() const override { return "Sprite"; };
+	
 	CSprite(const wchar_t* texFileName);
 	virtual ~CSprite();
 
-public:
-	void setPosition(Vertex position);
-	Vertex getPosition() const;
+	// ISystemComponent
+	void update() override {};
+	void reset() override {};
+
+	virtual void setPosition(Vertex position);
+	virtual Vertex getPosition() const;
 	virtual void setScaling(Vertex newScaling);
 	virtual Vertex getScaling() const;
 	virtual void makeRotate(float newRotate);

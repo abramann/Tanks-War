@@ -20,12 +20,12 @@ enum ObjectState
 
 };
 
-class CModel;
+class CMesh;
 class IControl;
 struct Attack;
 struct Command;
 
-class IObject : IEntity
+class IObject : public IEntity
 {
 public:
 	virtual std::string getName() const { return "Object"; }
@@ -47,7 +47,7 @@ public:
 	virtual float getWeight() const { return m_weight; }
 	virtual float getVelocity() const { return m_velocity; };
 	virtual float getEnergy() const { return m_energy; }
-	virtual CModel* getModel() const { return m_pModel; };
+	virtual CMesh* getModel() const { return m_pModel; };
 
 protected:
 	int m_state;
@@ -55,5 +55,5 @@ protected:
 	float m_weight;
 	float m_velocity;
 	float m_energy;
-	CModel* m_pModel;
+	CMesh* m_pModel;
 };

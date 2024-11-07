@@ -1,13 +1,11 @@
 #include "Win32Timer.h"
-#include "GameData.h"
+#include "Values.h"
 #include <chrono>
 #include <thread>
 #include <Windows.h>
 
-
-using namespace nsGameConfig;
-
-std::shared_ptr<ITimer> g_pTimer;
+static CWin32Timer timer;
+ITimer* g_pTimer = &timer;
 
 void CWin32Timer::startup()
 {
@@ -22,14 +20,14 @@ void CWin32Timer::update()
 	int64_t currentTime = getTime();
 	int64_t timeDelta = currentTime - m_prevTime;
 	m_prevTime = currentTime;
-	if (timeDelta < FRAME_TIME)
+	if (timeDelta < values::FRAME_TIME)
 	{
-		 int64_t sleepTime = static_cast<int64_t>((round(FRAME_TIME * 10) / 10) - timeDelta);
+		 int64_t sleepTime = static_cast<int64_t>((round(values::FRAME_TIME * 10) / 10) - timeDelta);
 		 timeDelta += sleepTime;
 		 this->sleep(sleepTime);
 	}
 
-	m_timeFactor = static_cast<float>(FRAME_RATE / timeDelta);
+	m_timeFactor = static_cast<float>(values::FRAME_RATE / timeDelta);
 }
 
 float CWin32Timer::getTimeFactor() const
@@ -50,12 +48,12 @@ void CWin32Timer::sleep(int64_t millsec) const
 	int64_t now = 0;
 	int64_t delta = 0;
 
-	timeBeginPeriod(1);
 	do
 	{
+		timeBeginPeriod(1);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		timeEndPeriod(1);
 		now = getTime();
 		delta = now - start;
 	} while (delta < millsec);
-	timeEndPeriod(1);
 }

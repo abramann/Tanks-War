@@ -3,7 +3,8 @@
 #include <Windows.h>
 
 
-std::shared_ptr<CInput> g_pInput;
+CInput input;
+CInput* g_pInput = &input;
 
 CInput::CInput()
 {
@@ -14,14 +15,10 @@ CInput::~CInput()
 {
 }
 
-void CInput::startUp()
+void CInput::initialize()
 {
 	ImGui::GetIO().KeyRepeatDelay = 0.0f;
 	ImGui::GetIO().KeyRepeatRate = 0.05f;
-}
-
-void CInput::handle()
-{
 }
 
 bool CInput::isKeyDown(Key key) const

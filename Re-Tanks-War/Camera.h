@@ -25,4 +25,4 @@ private:
 		m_z;
 };
 
-extern std::shared_ptr<CCamera> g_pCamera;
+extern CCamera* g_pCamera;

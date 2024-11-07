@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IGame.h"
-#include <memory>
 
 typedef struct GameSettings_s
 {
@@ -23,13 +22,12 @@ public:
 	LRESULT messageHandler(HWindow hwnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 	int getWindowWidth() const override;
 	int getWindowHeight() const  override;
+	HWindow getWindowHandle() const override;
 	bool isWindowed() const override;
 
 private:
 	void createWindow() override;
 	void readInitializeSettings() override;
-	void update() override;
-	void renderScene() override;
 
 	GameSettings_t m_settings;
 	HWindow m_hwnd;

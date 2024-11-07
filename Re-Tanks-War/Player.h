@@ -20,7 +20,7 @@ struct Score
 class IPlayer : public ISystemComponent
 {
 public:
-	virtual std::string getName() { return "Player"; }
+	std::string getName() const override { return "Player"; }
 
 	virtual int getTeam() const
 	{

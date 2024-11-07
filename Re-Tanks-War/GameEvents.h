@@ -1,7 +1,8 @@
 #pragma once
 
 #include "System.h"
-#include <memory>
+
+class ISystemComponent;
 
 class CEventSystem : public ISystem
 {
@@ -10,6 +11,13 @@ public:
 	void update() override;
 	void reset() override;
 	void perform() override;
+	void onStartGame() override;
+	void onQuitGame() override;
+	void onPauseGame() override;
+	void onResumGame() override;
+	void registerComponent(ISystemComponent* pComponent) override;
+	void unregisterComponent(ISystemComponent* pComponent) override;
+	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
 };
 
-extern std::shared_ptr<CEventSystem> m_pEventSystem;
+extern CEventSystem* m_pEventSystem;

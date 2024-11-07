@@ -1,8 +1,10 @@
 #include "PlayersSystem.h"
 #include "Player.h"
 #include "GameError.h"
+#include <algorithm>
 
-std::shared_ptr<CPlayersSystem> g_pPlayersSystem;
+static CPlayersSystem playersSystem;
+CPlayersSystem* g_pPlayersSystem = &playersSystem;
 
 void CPlayersSystem::startup()
 {
@@ -10,8 +12,7 @@ void CPlayersSystem::startup()
 
 void CPlayersSystem::update()
 {
-	for (auto pPlayer : m_pPlayers)
-		pPlayer->update();
+	std::for_each(m_pPlayers.begin(), m_pPlayers.end(), [](IPlayer* pPlayer) {pPlayer->update(); });
 }
 
 void CPlayersSystem::reset()
@@ -23,30 +24,49 @@ void CPlayersSystem::perform()
 {
 }
 
-void CPlayersSystem::registerPlayer(IPlayer* pPlayer)
+void CPlayersSystem::onStartGame()
 {
-	int id = pPlayer->getID();
-	CHECK_ERROR(hasPlayerRegistered(pPlayer), "Trying to register player twice!");
-	m_pPlayers.emplace(pPlayer);
 }
 
-void CPlayersSystem::removePlayer(IPlayer* pPlayer)
+void CPlayersSystem::onQuitGame()
 {
-	int id = pPlayer->getID();
-	CHECK_ERROR(!hasPlayerRegistered(pPlayer), "Trying to remove unregistred player!");
-	auto itpPlayer = m_pPlayers.find(pPlayer);
-	m_pPlayers.erase(itpPlayer);
 }
 
-bool CPlayersSystem::hasPlayerRegistered(IPlayer* pPlayer)
+void CPlayersSystem::onPauseGame()
 {
-	int id = pPlayer->getID();
-	for (auto pPlayer : m_pPlayers)
-	{
-		if (pPlayer->getID() == id)
-		{
-			return true;
-		}
-	}
-	return false;
+}
+
+void CPlayersSystem::onResumGame()
+{
+}
+
+void CPlayersSystem::registerComponent(ISystemComponent* pPlayer)
+{
+#ifdef _TEST
+	auto it = findPlayer(static_cast<IPlayer*>(pPlayer));
+	CHECK_ERROR(it != m_pPlayers.end(), "Trying to register player twice!");
+#endif
+	m_pPlayers.push_back(static_cast<IPlayer*>(pPlayer));
+}
+
+void CPlayersSystem::unregisterComponent(ISystemComponent* pPlayer)
+{
+	auto it = findPlayer(static_cast<IPlayer*>(pPlayer));
+#ifdef _TEST
+	CHECK_ERROR(it == m_pPlayers.end(), "Trying to remove unregistered player!");
+#endif
+	m_pPlayers.erase(it);
+}
+
+void CPlayersSystem::handleEvent(ISystemComponent* pComponent, int eventCode, void* event)
+{
+}
+
+ std::vector<IPlayer*>::iterator& CPlayersSystem::findPlayer(IPlayer* pPlayer)
+{
+	auto it = std::find_if(m_pPlayers.begin(), m_pPlayers.end(),
+		[pPlayer](IPlayer* pExist) {
+			return pExist->getComponentID() == pPlayer->getComponentID();
+		});
+	return it;
 }

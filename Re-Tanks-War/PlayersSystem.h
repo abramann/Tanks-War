@@ -1,24 +1,31 @@
 #pragma once
-#include "System.h"
-#include <memory>
-#include <set>
+#include "Subsystem.h"
+#include <vector>
 
 class IPlayer;
 
-class CPlayersSystem : public ISystem
+class CPlayersSystem : public ISubsystem
 {
 public:
+	std::string getName() const override { return "PlayersSystem"; }
+
+	// System
 	void startup() override;
 	void update() override;
 	void reset() override;
 	void perform() override;
-
-	void registerPlayer(IPlayer* pPlayer);
-	void removePlayer(IPlayer* pPlayer);
-	bool hasPlayerRegistered(IPlayer* pPlayer);
+	void onStartGame() override;
+	void onQuitGame() override;
+	void onPauseGame() override;
+	void onResumGame() override;
+	void registerComponent(ISystemComponent* pPlayer) override;
+	void unregisterComponent(ISystemComponent* pPlayer) override;
+	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
 
 private:
-	std::set<IPlayer*> m_pPlayers;
+	std::vector<IPlayer*>::iterator& findPlayer(IPlayer* pPlayer);
+	
+	std::vector<IPlayer*> m_pPlayers;
 };
 
-extern std::shared_ptr<CPlayersSystem> g_pPlayersSystem;
+extern CPlayersSystem* g_pPlayersSystem;

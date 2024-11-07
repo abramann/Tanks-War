@@ -1,19 +1,19 @@
 #pragma once
 
-#include "UIComponent.h"
-#include "ImGui/imgui.h"
+#include "Widget.h"
 
-class CButton : public IUIComponent
+class CButton : public IWidget
 {
 public:
 	virtual void update();
 	virtual void reset();
 	virtual void draw();
-	virtual bool wasClicked() const;
  	virtual void setText(std::string text);
- 	
-protected:
+	virtual void setOnClickColor(Color color);
+
+protected:	
 	mutable bool m_clicked;
  	std::string m_text;
+	ImVec4 m_activeColor;
  };
-
+ 

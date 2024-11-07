@@ -2,19 +2,22 @@
 // Author: abramann
 
 #include "Map.h"
-#include "GameData.h"
 #include "File.hpp"
 #include "Renderer.h"
 #include "String.h"
+#include "Values.h"
 
 using namespace evt;
-using namespace mapNS;
+using namespace values;
 
 //#pragma warning(disable : 4267) // conversion from size_t to uint
 
-std::shared_ptr<CMap> g_pMap;
+static CMap map;
+CMap* g_pMap = &map;
 
-CMap::CMap() : m_pVB(nullptr), m_pIB(nullptr)
+CMap::CMap() :
+	m_pVB(nullptr),
+	m_pIB(nullptr)
 {
 }
 
@@ -39,7 +42,7 @@ void CMap::initialize()
 
 void CMap::readInitializeSettings()
 {
-	auto hFile = FileIO::plainText(fileNS::MAP_INITIALIZE);
+	auto hFile = FileIO::plainText(values::MAP_INITIALIZE);
 	m_numTileds = hFile.readValueAsInteger("NumTileds");
 	m_pTextures.resize(m_numTileds);
 	m_factors.resize(m_numTileds);
@@ -66,7 +69,7 @@ bool CMap::isBlockedCellID(int id)
 
 bool CMap::read()
 {
-	std::string mappath = strFormat("%s%s.map", fileNS::MAP_DIR, m_loadedMap.c_str());
+	std::string mappath = strFormat("%s%s.map", values::MAP_DIR, m_loadedMap.c_str());
 	if (!BaseFileIO::exists(mappath))
 		return false;
 
@@ -117,7 +120,7 @@ struct CellMesh
 	CellMesh() {};
 	Vertex v1, v2, v3, v4;
 
-	bool isValid() const { return (v1.x != mapNS::UNDEFINED_POSITION); }
+	bool isValid() const { return (v1.x != values::UNDEFINED_POSITION); }
 	float getMaxX() const { return gameMathNS::getMax<float>({ v1.x, v2.x, v3.x, v4.x }); }
 	float getMinX() const { return gameMathNS::getMin<float>({ v1.x, v2.x, v3.x, v4.x }); }
 	float getMaxY() const { return gameMathNS::getMax<float>({ v1.y, v2.y, v3.y, v4.y }); }
@@ -141,7 +144,7 @@ bool CMap::load(const std::string& map)
 		return false;
 
 	int numCells = m_width * m_height;
-	m_maxDistance = sqrt(pow(m_width * TILED_DIMENSION, 2) + pow(m_height * TILED_DIMENSION, 2));
+	m_maxDistance = sqrt(pow(m_width * values::TILED_DIMENSION, 2) + pow(m_height * values::TILED_DIMENSION, 2));
 	std::vector<std::vector< std::vector<CellMesh>>> mesh(m_numTileds);
 	for (auto& element : mesh)
 	{
@@ -150,7 +153,7 @@ bool CMap::load(const std::string& map)
 		{
 			element2.resize(m_width);
 			for (auto& element3 : element2)
-				element3.v1.x = mapNS::UNDEFINED_POSITION;
+				element3.v1.x = UNDEFINED_POSITION;
 		}
 	}
 	
@@ -159,7 +162,6 @@ bool CMap::load(const std::string& map)
 	{
 		for (auto w = 0; w < m_width; w++)
 		{
-
 			mesh[m_map[h][w]][h][w].v1 = { static_cast<float>((w)*TILED_DIMENSION), static_cast<float>((h)*TILED_DIMENSION),0.0f,0.0f,0.0f };
 			mesh[m_map[h][w]][h][w].v1.u = 0, mesh[m_map[h][w]][h][w].v1.v = 1;
 
@@ -250,7 +252,7 @@ Cell CMap::getRightCell(const Cell& cell) const
 	Cell rCell = cell;
 	rCell.addX(TILED_DIMENSION);
 	if (isOutOfRange(rCell))
-		rCell.v1.x = mapNS::UNDEFINED_POSITION;
+		rCell.v1.x = values::UNDEFINED_POSITION;
 
 	return rCell;
 }
@@ -260,7 +262,7 @@ Cell CMap::getLeftCell(const Cell& cell) const
 	Cell lCell = cell;
 	lCell.addX(-TILED_DIMENSION);
 	if (isOutOfRange(lCell))
-		lCell.v1.x = mapNS::UNDEFINED_POSITION;
+		lCell.v1.x = values::UNDEFINED_POSITION;
 
 	return lCell;
 }
@@ -270,7 +272,7 @@ Cell CMap::getTopCell(const Cell& cell) const
 	Cell tCell = cell;
 	tCell.addY(TILED_DIMENSION);
 	if (isOutOfRange(tCell))
-		tCell.v1.x = mapNS::UNDEFINED_POSITION;
+		tCell.v1.x = values::UNDEFINED_POSITION;
 
 	return tCell;
 }
@@ -280,7 +282,7 @@ Cell CMap::getDownCell(const Cell& cell) const
 	Cell dCell = cell;
 	dCell.addY(-TILED_DIMENSION);
 	if (isOutOfRange(dCell))
-		dCell.v1.x = mapNS::UNDEFINED_POSITION;
+		dCell.v1.x = values::UNDEFINED_POSITION;
 
 	return dCell;
 }
@@ -288,7 +290,7 @@ Cell CMap::getDownCell(const Cell& cell) const
 bool CMap::isBlockedCellUseless(const Cell& cell) const
 {
 	Cell ambient[] = { getTopCell(cell), getDownCell(cell), getRightCell(cell), getLeftCell(cell) };
-	for (int i = 0; i < mapNS::CELL_VERTICES_NUM; i++)
+	for (int i = 0; i < values::CELL_VERTICES_NUM; i++)
 		if (ambient[i].isValid())
 			if (isFreeCell(ambient[i]))
 				return false;

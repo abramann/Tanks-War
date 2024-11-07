@@ -3,8 +3,6 @@
 #include "VecMath.h"
 #include <stdint.h>
 
-
-
 class IBuffer
 {
 public:

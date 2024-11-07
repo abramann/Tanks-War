@@ -5,6 +5,7 @@
 #include <codecvt>
 #include <locale>
 #include <vector>
+#include <algorithm>
 
 //	https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
 template<typename ... Args>
@@ -30,16 +31,18 @@ inline std::wstring to_wstring(const std::string& str)
 
 inline int strGetRepeatedNum(std::string str, char c)
 {
-	int r = 0;
-	for (int i = 0; i < str.length(); i++)
-	{
-		if (str[i] == c)
-			r++;
-	}
-	return r;
+	int count;
+	std::for_each(str.begin(), str.end(), [&count](char cstr) { count++; });
+	return count;
 }
 
 inline bool strIsEqual(std::string str, std::string str2)
 {
 	return str.compare(str2) == 0 ? true : false;
+}
+
+inline size_t strHash(const std::string& str)
+{
+	std::hash<std::string> hasher; 
+	return hasher(str);
 }

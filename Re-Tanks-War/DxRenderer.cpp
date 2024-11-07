@@ -1,7 +1,7 @@
 #include "DxRenderer.h"
 #include "GameError.h"
 #include "IGame.h"
-#include "GameData.h"
+#include "Values.h"
 #include "String.h"
 #include "Model.h"
 #include "Sprite.h"
@@ -18,11 +18,13 @@
 
 using namespace DirectX;
 
-CDxRenderer* g_pDxRenderer = nullptr;
+CDxRenderer renderer;
+IRenderer* g_pRenderer = &renderer;
+CDxRenderer* g_pDxRenderer = &renderer;
 
 using namespace Microsoft::WRL;
 
-std::vector<AdapterMode> dxgiGetAdapterModes();
+std::vector<AdapterMode>& dxgiGetAdapterModes();
 
 void initSwapChainWindowed(DXGI_SWAP_CHAIN_DESC& swapChainDesc);
 
@@ -57,8 +59,10 @@ CDxRenderer::~CDxRenderer()
 	}
 }
 
-void CDxRenderer::initialize(HWindow hwnd)
+void CDxRenderer::initialize()
 {
+	HWindow hwnd = g_pGame->getWindowHandle();
+
 	// Initializing swapchain
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	initSwapChain(swapChainDesc, hwnd);
@@ -69,7 +73,8 @@ void CDxRenderer::initialize(HWindow hwnd)
 	D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
 	CHECK_ERROR(SUCCEEDED(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags,
 		&featureLevel, 1, D3D11_SDK_VERSION, &swapChainDesc, m_pSwapChain.GetAddressOf(),
-		m_pDevice.GetAddressOf(), NULL, m_pDeviceContext.GetAddressOf())), "D3D11CreateDeviceAndSwapChain failed");
+		m_pDevice.GetAddressOf(), NULL, m_pDeviceContext.GetAddressOf())),
+		"D3D11CreateDeviceAndSwapChain failed");
 	
 	m_backbufferWidth = swapChainDesc.BufferDesc.Width;
 	m_backbufferHeight = swapChainDesc.BufferDesc.Height;
@@ -147,26 +152,25 @@ void CDxRenderer::initialize(HWindow hwnd)
 	m_initialized = true;
 }
 
-void CDxRenderer::beginRendering()
+void CDxRenderer::newFrame()
 {
 	float bgColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	
 	m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), bgColor);
+	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();
-	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	IRenderer::beginRendering();
+	
 }
 
-void CDxRenderer::showBackbuffer()
+void CDxRenderer::renderFrame()
 {
-	ImGui::EndFrame();
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	m_pSwapChain->Present(0, 0);
 }
 
-std::vector<AdapterMode> CDxRenderer::getAdapterModes()
+std::vector<AdapterMode>& CDxRenderer::getAdapterModes()
 {
 	return dxgiGetAdapterModes();
 }
@@ -174,6 +178,7 @@ std::vector<AdapterMode> CDxRenderer::getAdapterModes()
 IBuffer * CDxRenderer::createVertexBuffer(uint32_t numVertices, Vertex * pInitData, int access)
 {
 	D3D11_BUFFER_DESC desc;
+
 	setNull(desc);
 
 	desc.ByteWidth = numVertices * sizeof(Vertex);
@@ -197,7 +202,7 @@ IBuffer * CDxRenderer::createVertexBuffer(uint32_t numVertices, Vertex * pInitDa
 		desc.Usage = D3D11_USAGE_DYNAMIC;
 		break;
 	default:
-		CHECK_ERROR(true, "Invalid access passed");
+		REPORT_ERROR("Invalid access passed");
 	}
 
 	ID3D11Buffer * pNewDXOBuffer = createBuffer(desc, pInitData);
@@ -251,6 +256,7 @@ void CDxRenderer::releaseBuffer(IBuffer * pBuffer)
 void CDxRenderer::setVSDrawProperties(Vertex position, Vertex scaling, Vertex rotate, Vertex rotateCenter) const
 {
 	VSCBPerDraw data;
+
 	data.position[0] = position.x;
 	data.position[1] = position.y;
 	data.position[2] = position.z;
@@ -270,19 +276,30 @@ void CDxRenderer::setVSDrawProperties(Vertex position, Vertex scaling, Vertex ro
 	data.rotateCenter[1] = rotateCenter.y;
 	data.rotateCenter[2] = rotateCenter.z;
 	data.rotateCenter[3] = 0;
+
 	m_pDeviceContext->VSSetConstantBuffers(VSCBSLOT_PERDRAW, 1, m_pVSInSSOBuffer.GetAddressOf());
-	m_pDeviceContext->UpdateSubresource(m_pVSInSSOBuffer.Get(), 0, 0, &data, 0,
-		0);
+	m_pDeviceContext->UpdateSubresource(m_pVSInSSOBuffer.Get(), 0, 0, &data, 0, 0);
 }
 
 void CDxRenderer::setPSDrawProperties(Color color) const
 {
 	PSCBPerDraw cb;
+
 	cb.color = color.getAsInteger();
 	
 	m_pDeviceContext->PSSetConstantBuffers(0, 1, m_pPSColorBuffer.GetAddressOf());
-	m_pDeviceContext->UpdateSubresource(m_pPSColorBuffer.Get(), 0, 0, &cb, 0,
-		0);
+	m_pDeviceContext->UpdateSubresource(m_pPSColorBuffer.Get(), 0, 0, &cb, 0, 0);
+}
+
+void CDxRenderer::renderUI(bool rendered) const
+{
+	ImGui::EndFrame();
+
+	if (rendered)
+	{
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
 }
 
 void CDxRenderer::renderMap() const
@@ -328,7 +345,7 @@ void CDxRenderer::drawSprite(const CSprite* pSprite) const
 	m_pDeviceContext->IASetVertexBuffers(0, 1, &pDXOVB, &perVertexSize, &offset);
 	m_pDeviceContext->IASetIndexBuffer(pDXOIB, DXGI_FORMAT_R32_UINT, 0);
 
-	setVSDrawProperties(Vertex(mapNS::UNDEFINED_POSITION, 0));
+	setVSDrawProperties(Vertex(values::UNDEFINED_POSITION, 0));
 	setPSDrawProperties(color);
 
 	m_pDeviceContext->PSSetShaderResources(0, 1, &pSRV);
@@ -336,7 +353,7 @@ void CDxRenderer::drawSprite(const CSprite* pSprite) const
 	m_pDeviceContext->DrawIndexed(6, 0, 0);
 }
 
-void CDxRenderer::drawModel(const CModel* pModel) const
+void CDxRenderer::drawModel(const CMesh* pModel) const
 {
 	IBuffer* pVB = pModel->getVertexBuffer();
 	ID3D11Buffer* pDXOVB = static_cast<ID3D11Buffer*>(pVB->getBufferObject());
@@ -349,9 +366,12 @@ void CDxRenderer::drawModel(const CModel* pModel) const
 	uint stride = sizeof(Vertex), offset = 0;
 	m_pDeviceContext->IASetVertexBuffers(0, 1, &pDXOVB, &stride, &offset);
 
-	Vertex position = pModel->getPosition();
+	Vertex position = pModel->getTranslation();
+
 	position.z = -5;
+
 	std::vector<Face> faces = pModel->getFaces();
+
 	for (int i = 0; i < faces.size(); i++)
 	{
 		setVSDrawProperties(position, Vertex(1, 1, 1), faces[i].rotate, faces[i].origin);
@@ -397,12 +417,11 @@ ITexture * CDxRenderer::loadTextureFromFile(const wchar_t * texFileName)
 	return pNewTexture;
 }
 
-void CDxRenderer::releaseTexture(ITexture * pTexture)
+void CDxRenderer::releaseTexture(ITexture* pTexture)
 {
-	if (pTexture)
-	{
-		safeDelete(pTexture);
-	}
+	CHECK_ERROR(pTexture == nullptr, "Releasing null texture");
+
+	safeDelete(pTexture);
 }
 
 void CDxRenderer::copyResourceToResource(ID3D11Resource * pDest, ID3D11Resource * pSource) const
@@ -448,7 +467,7 @@ ID3D11Buffer * CDxRenderer::createBuffer(D3D11_BUFFER_DESC desc, void* pInitData
 	return pNewBuffer;
 }
 
-std::vector<AdapterMode> dxgiGetAdapterModes()
+std::vector<AdapterMode>& dxgiGetAdapterModes()
 {
 	static std::vector<AdapterMode> adapterModes;
 	if (adapterModes.empty())
@@ -473,7 +492,7 @@ std::vector<AdapterMode> dxgiGetAdapterModes()
 
 		for (uint32_t i = 0; i < numModes; i += 2)
 		{
-			if (pDisplayModeList[i].Width >= nsGameConfig::MIN_WINDOW_WIDTH && pDisplayModeList[i].Height >= nsGameConfig::MIN_WINDOW_HEIGHT)
+			if (pDisplayModeList[i].Width >= values::MIN_WINDOW_WIDTH && pDisplayModeList[i].Height >= values::MIN_WINDOW_HEIGHT)
 			{
 				AdapterMode adapterMode;
 				adapterMode.width = pDisplayModeList[i].Width;
@@ -607,5 +626,3 @@ void initWCBuffer(D3D11_BUFFER_DESC & desc, uint32_t size, uint stride)
 	desc.ByteWidth = size;
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 }
-
-std::shared_ptr<IRenderer> g_pRenderer;

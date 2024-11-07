@@ -26,8 +26,7 @@ namespace gameMathNS
 
 	inline float getDistance(const Vertex& v1, const Vertex& v2)
 	{
-		float dist = sqrtf(pow(v1.x - v2.x, 2) + pow(v1.y - v2.y, 2) + pow(v1.z - v2.z, 2));
-		return dist;
+		return static_cast<float>(sqrtf(powf(v1.x - v2.x, 2) + powf(v1.y - v2.y, 2) + powf(v1.z - v2.z, 2)));
 	}
 
 	inline void matrixTranspose(Matrix* pOut, Matrix* pMat)

@@ -1,11 +1,11 @@
 #include "ViewSystem.h"
 #include "Camera.h"
 
-std::shared_ptr<CViewSystem> g_pViewSystem;
+static CViewSystem viewSystem;
+CViewSystem* g_pViewSystem = &viewSystem;
 
 CViewSystem::CViewSystem()
 {
-	g_pCamera = std::make_shared<CCamera>();
 }
 
 void CViewSystem::startup()
@@ -22,5 +22,33 @@ void CViewSystem::reset()
 }
 
 void CViewSystem::perform()
+{
+}
+
+void CViewSystem::onStartGame()
+{
+}
+
+void CViewSystem::onQuitGame()
+{
+}
+
+void CViewSystem::onPauseGame()
+{
+}
+
+void CViewSystem::onResumGame()
+{
+}
+
+void CViewSystem::registerComponent(ISystemComponent* pViewComp)
+{
+}
+
+void CViewSystem::unregisterComponent(ISystemComponent* pViewComp)
+{
+}
+
+void CViewSystem::handleEvent(ISystemComponent* pComponent, int eventCode, void* event)
 {
 }
