@@ -19,15 +19,19 @@ void CLogicSystem::startup()
 
 void CLogicSystem::update()
 {
-	subsystemsDo(m_pObjects, update);
+	//subsystemsDo(m_pObjects, update);
 }
 
 void CLogicSystem::reset()
 {
-	subsystemsDo(m_pObjects, reset);
+	//subsystemsDo(m_pObjects, reset);
 }
 
 void CLogicSystem::perform()
+{
+}
+
+void CLogicSystem::shutdown()
 {
 }
 
@@ -49,13 +53,13 @@ void CLogicSystem::onResumGame()
 
 void CLogicSystem::registerComponent(ISystemComponent* pObject)
 {
-	subsystemRegister(m_pObjects, dynamic_cast<IObject*>(pObject));
+	//subsystemRegister(m_pObjects, dynamic_cast<IObject*>(pObject));
 }
 
 
 void CLogicSystem::unregisterComponent(ISystemComponent* pObject)
 {
-	subsystemUnregister(m_pObjects, dynamic_cast<IObject*>(pObject));
+	//subsystemUnregister(m_pObjects, dynamic_cast<IObject*>(pObject));
 }
 
 void CLogicSystem::handleEvent(ISystemComponent* pComponent, int eventCode, void* event)
@@ -102,8 +106,3 @@ bool CLogicSystem::requestFree(IObject* pObject)
 	//unregisterComponent(pObject);
 	return false;
 }*/
-
-uint CLogicSystem::getObjecstCount() const
-{
-	return m_pObjects.size();
-}

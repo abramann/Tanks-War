@@ -35,6 +35,7 @@ public:
 	void update() override;
 	void reset() override;
 	void perform() override;
+	void shutdown() override;
 	void onStartGame() override;
 	void onQuitGame() override;
 	void onPauseGame() override;
@@ -43,12 +44,11 @@ public:
 	void unregisterComponent(ISystemComponent* pUIComp) override;
 	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
 	
-	Font* requestFont(int size);
-
 private:
-	Font* createFont();
 	void switchUI(UI* pUI);
 	void printMessage(UIMessage* pMessage);
+	void setupStyles();
+
 private:
 	UI* m_pCurrentUI;
 	UI* m_pPreviousUI;

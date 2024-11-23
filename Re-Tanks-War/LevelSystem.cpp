@@ -19,6 +19,10 @@ void CLevelSystem::perform()
 {
 }
 
+void CLevelSystem::shutdown()
+{
+}
+
 void CLevelSystem::onStartGame()
 {
 }

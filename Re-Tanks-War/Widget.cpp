@@ -26,11 +26,6 @@ void IWidget::setColor(Color color)
 	m_color = ColorToVec4(color);
 }
 
-void IWidget::setOnHoverColor(Color color)
-{
-	m_hoverColor = ColorToVec4(color);
-}
-
 void IWidget::setBorderSize(float size)
 {
 	m_borderSize = size;
@@ -41,7 +36,3 @@ void IWidget::setBorderColor(Color color)
 	m_borderColor = ColorToVec4(color);
 }
 
-void IWidget::setAlign(ImVec2 align)
-{
-	m_align = align;
-}

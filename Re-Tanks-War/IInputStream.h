@@ -8,6 +8,5 @@ public:
 	
 	void update() override;
 	void reset() override;
-
 };
 

@@ -20,7 +20,7 @@ enum ObjectState
 
 };
 
-class CMesh;
+class IModel;
 class IControl;
 struct Attack;
 struct Command;
@@ -47,7 +47,7 @@ public:
 	virtual float getWeight() const { return m_weight; }
 	virtual float getVelocity() const { return m_velocity; };
 	virtual float getEnergy() const { return m_energy; }
-	virtual CMesh* getModel() const { return m_pModel; };
+	virtual IModel* getModel() const { return m_pModel; };
 
 protected:
 	int m_state;
@@ -55,5 +55,5 @@ protected:
 	float m_weight;
 	float m_velocity;
 	float m_energy;
-	CMesh* m_pModel;
+	IModel* m_pModel;
 };

@@ -12,7 +12,6 @@ void CWin32Timer::startup()
 	LARGE_INTEGER frequency;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 	m_countsPerMillisecond = frequency.QuadPart / 1000;
-	m_prevTime = getTime();
 }
 
 void CWin32Timer::update()
@@ -22,9 +21,9 @@ void CWin32Timer::update()
 	m_prevTime = currentTime;
 	if (timeDelta < values::FRAME_TIME)
 	{
-		 int64_t sleepTime = static_cast<int64_t>((round(values::FRAME_TIME * 10) / 10) - timeDelta);
-		 timeDelta += sleepTime;
-		 this->sleep(sleepTime);
+		int64_t sleepTime = static_cast<int64_t>((round(values::FRAME_TIME * 10) / 10) - timeDelta);
+		timeDelta += sleepTime;
+		this->sleep(sleepTime);
 	}
 
 	m_timeFactor = static_cast<float>(values::FRAME_RATE / timeDelta);

@@ -99,13 +99,14 @@ struct Vertex
 	}
 };
 
-struct Rect
+// TODO: move to collision header.
+typedef struct Rect
 {
-	Vertex vert1;
-	Vertex vert2;
-	Vertex vert3;
-	Vertex vert4;
-};
+	Vertex topLeft;
+	Vertex topRight;
+	Vertex bottomRight;
+	Vertex bottomLeft;
+} Bound;
 
 struct Rect8
 {

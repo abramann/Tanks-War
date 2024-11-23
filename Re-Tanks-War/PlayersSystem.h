@@ -14,6 +14,7 @@ public:
 	void update() override;
 	void reset() override;
 	void perform() override;
+	void shutdown() override;
 	void onStartGame() override;
 	void onQuitGame() override;
 	void onPauseGame() override;
@@ -21,7 +22,7 @@ public:
 	void registerComponent(ISystemComponent* pPlayer) override;
 	void unregisterComponent(ISystemComponent* pPlayer) override;
 	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
-
+	
 private:
 	std::vector<IPlayer*>::iterator& findPlayer(IPlayer* pPlayer);
 	

@@ -14,7 +14,19 @@ struct AdapterMode
 class IBuffer;
 class CSprite;
 class ITexture;
-class CMesh;
+class IModel;
+
+struct MeshSegmentData
+{
+	int indexCount;
+	ITexture* pTexture;
+};
+
+struct MeshData
+{
+	std::vector<MeshSegmentData> segments;
+	IBuffer* pVB, * pIB;
+};
 
 class IRenderer
 {
@@ -33,11 +45,14 @@ public:
 	virtual std::vector<AdapterMode>& getAdapterModes() = 0;
 	virtual IBuffer* createVertexBuffer(uint32_t numVertices, Vertex * pInitData, int access) = 0;
 	virtual IBuffer* createIndexBuffer(uint32_t length, uint * pInitData, int access) = 0;
+	virtual void bindVertexBuffer(IBuffer* pBuffer, uint32_t startIndex = 0) = 0;
+	virtual void bindIndexBuffer(IBuffer* pBuffer, uint32_t startIndex = 0) = 0;
+	virtual void bindTexture(ITexture* pTexuture) = 0;
 	virtual void releaseBuffer(IBuffer* pBuffer) = 0;
-	virtual void renderUI(bool rendered) const = 0;
-	virtual void renderMap() const = 0;
-	virtual void drawSprite(const CSprite* pSprite) const = 0;
-	virtual void drawModel(const CMesh* pModel) const = 0;
+	virtual void renderUI() = 0;
+	virtual void drawMesh(const MeshData& meshData) = 0;
+	virtual void drawSprite(const CSprite* pSprite) = 0;
+	virtual void drawModel(const IModel* pModel) = 0;
 	virtual void setWorldViewMatrix(Matrix* mat) = 0;
 	virtual class ITexture* loadTextureFromFile(const wchar_t* texFileName) = 0;
 	virtual void releaseTexture(ITexture* pTexture) = 0;

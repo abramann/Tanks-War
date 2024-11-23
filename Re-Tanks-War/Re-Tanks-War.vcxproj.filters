@@ -15,12 +15,48 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{ed590826-3583-4583-a4dc-80f1daeac5f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Systems">
+      <UniqueIdentifier>{2569510e-bec6-4730-a475-0c7ce6c665fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Systems">
+      <UniqueIdentifier>{c1296f7e-6d77-4ef0-9197-063d89a65306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Consts">
+      <UniqueIdentifier>{09f59c45-e8a5-4d46-bebd-6f70cbd16545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{153e7f8a-bd67-4e56-99e4-3f20cb0ac0c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI\Widgets">
+      <UniqueIdentifier>{f389aacd-4945-46ed-b2e9-067362558424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{afac0ce5-ddc4-4818-84a6-31db91475d0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\Widgets">
+      <UniqueIdentifier>{7d37b767-b3ef-4b09-8a00-cc35c96f4cd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Internals">
+      <UniqueIdentifier>{108d0dff-c33c-46de-bbeb-3ddf2394772b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Internals">
+      <UniqueIdentifier>{e904f723-0fef-4429-aba6-53cc2794f8ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Render">
+      <UniqueIdentifier>{6b8cb21e-45a1-481e-8f31-b04c6effd453}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Comps">
+      <UniqueIdentifier>{42af7fd5-f600-455c-a8b6-21515d6a1519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Comps">
+      <UniqueIdentifier>{ef7eed2d-1fb2-4468-8a64-704d1961739e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Render">
+      <UniqueIdentifier>{e25d86f5-e2c1-44e3-9e46-99547e2ce541}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DxRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_impl_win32.cpp">
@@ -47,46 +83,100 @@
     <ClCompile Include="Client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Win32Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DxBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DxTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Math.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameEvents.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files\UI\Widgets</Filter>
     </ClCompile>
-    <ClCompile Include="GameLogic.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="StartUI.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="InputSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="GameSystem.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="LevelSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="LogicSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayersSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="UISystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="IntroUI.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Source Files\UI\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayUI.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32Timer.cpp">
+      <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget.cpp">
+      <Filter>Source Files\UI\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemComponent.cpp">
+      <Filter>Source Files\Comps</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Comps</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderComponent.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="DxRenderer.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="DxTexture.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="DxBuffer.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="DiskLoader.cpp">
+      <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -100,19 +190,7 @@
     <ClInclude Include="Client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DxRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="String.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ITimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Win32Timer.h">
@@ -121,43 +199,10 @@
     <ClInclude Include="VecMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DxBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ITexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DxTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="keys.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameLogic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MatMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Values.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
@@ -169,19 +214,133 @@
     <ClInclude Include="Cell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Values.h">
+      <Filter>Header Files\Consts</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyTable.h">
+      <Filter>Header Files\Consts</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorTable.h">
+      <Filter>Header Files\Consts</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayUI.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="StartUI.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Source Files\UI\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Source Files\UI\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget.h">
+      <Filter>Source Files\UI\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="DiskLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IntroUI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
     <ClInclude Include="File.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="IObject.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="IControl.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ITimer.h">
+      <Filter>Header Files\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="GameSystem.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="PlayersSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Subsystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="UISystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="LogicSystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="LevelSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="DxTexture.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="DxRenderer.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="DxBuffer.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ITexture.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemComponent.h">
+      <Filter>Source Files\Comps</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Comps</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\Comps</Filter>
+    </ClInclude>
+    <ClInclude Include="IInputStream.h">
+      <Filter>Header Files\Comps</Filter>
+    </ClInclude>
+    <ClInclude Include="IObject.h">
+      <Filter>Header Files\Comps</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\Comps</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderComponent.h">
+      <Filter>Source Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -192,5 +351,9 @@
     <FxCompile Include="PixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>

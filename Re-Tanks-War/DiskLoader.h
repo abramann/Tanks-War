@@ -4,18 +4,21 @@
 
 #include "Types.h"
 #include "String.h"
+#include "Model.h"
 
-class CMesh;
+class IModel;
 
 // It's supposed to be namespace but we need dtor to release the saved copies safely.
-class diskLoader
+class DiskLoader
 {
+	// For models
+	static std::vector<std::pair<IBuffer*, IBuffer*>> s_pBuffers;
+	static std::vector<std::vector<Poly>> s_polys;
 public:
-	~diskLoader();
+	~DiskLoader();
 
 	static void loadBinary(const std::string& filepath, uchar* pInBuf, bool savecopy);
-	static void loadMesh(const std::string& filepath, CMesh* pMesh);
-
+	static void parseModel(IModel* pParsedModel, const std::string& filepath);
 	static void saveCopy(const std::string& filepath, uchar* pIn, uint size);
 	static void getCopy(const std::string& filepath, uchar* pOut);
 	static void releaseCopy(const std::string& filepath);

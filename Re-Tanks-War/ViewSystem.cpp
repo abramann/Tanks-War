@@ -25,6 +25,10 @@ void CViewSystem::perform()
 {
 }
 
+void CViewSystem::shutdown()
+{
+}
+
 void CViewSystem::onStartGame()
 {
 }

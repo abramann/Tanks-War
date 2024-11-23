@@ -1,16 +1,26 @@
+// Author: Wefaq
+// Brief: CLogicSystem: handle all world objects interactions
 #pragma once
 
 #include "Subsystem.h"
 #include "Types.h"
 #include <vector>
 
-class IObject;
-class ISystemComponent;
-struct Attack;
+class IEvent;
 
 class CLogicSystem : public ISubsystem
 {
 public:
+	enum Event
+	{
+		ATTACK,
+		MOVE,
+		DESTROY,
+		HEAL,
+		RESET,
+		FREE,
+	};
+
 	std::string getName() const override { return "LogicSystem"; }
 	
 	CLogicSystem();
@@ -20,6 +30,7 @@ public:
 	void update() override;
 	void reset() override;
 	void perform() override;
+	void shutdown() override;
 	void onStartGame() override;
 	void onQuitGame() override;
 	void onPauseGame() override;
@@ -28,21 +39,8 @@ public:
 	void unregisterComponent(ISystemComponent* pObject) override;
 	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
 
-	/*bool requestAttack(IObject* pObject);
-	bool requestMove(IObject* pObject);
-	bool requestHeal(IObject* pObject);
-	bool requestDestroy(IObject* pObject);
-	bool requestReset(IObject* pObject);
-	bool requestFree(IObject* pObject);*/
-
-	uint getObjecstCount() const;
-
 private:
-	void registerAttack(Attack* pAttack); // Every object attack should register his attack to be updated by this class
-	void unregisterAttack(Attack* pAttack); // Used when player attack his allies or attack canceled due long range
-
-	std::vector<IObject*> m_pObjects;
-	std::vector<Attack*> m_pAttacks;
+	std::vector<IEvent*> m_pEvents;
 };
 
 extern CLogicSystem* g_pLogicSystem;

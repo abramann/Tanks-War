@@ -5,15 +5,19 @@
 class CButton : public IWidget
 {
 public:
-	virtual void update();
-	virtual void reset();
-	virtual void draw();
- 	virtual void setText(std::string text);
-	virtual void setOnClickColor(Color color);
+	void update() override;
+	void reset() override;
+	void draw() override;
+
+ 	void setText(std::string text);
+	void setOnClickColor(Color color);
+	void setOnHoverColor(Color color);
+	void setAlign(ImVec2 align);
 
 protected:	
-	mutable bool m_clicked;
+	bool m_clicked;
  	std::string m_text;
-	ImVec4 m_activeColor;
- };
+	ImVec4 m_hoverColor = INVALID_VEC4;
+	ImVec2 m_align = INVALID_VEC2;
+};
  

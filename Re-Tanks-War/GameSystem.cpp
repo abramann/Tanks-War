@@ -5,6 +5,8 @@
 #include "LogicSystem.h"
 #include "ViewSystem.h"
 #include "RenderSystem.h"
+#include "InputSystem.h"
+#include "DiskLoader.h"
 
 static CGameSystem gameSystem;
 CGameSystem* g_pGameSystem = &gameSystem;
@@ -20,11 +22,16 @@ CGameSystem::~CGameSystem()
 void CGameSystem::startup()
 {
 	registerComponent(g_pRenderSystem);
+	registerComponent(g_pInputSystem);
 	registerComponent(g_pUISystem);
 	registerComponent(g_pPlayersSystem);
 	registerComponent(g_pLevelSystem);
 	registerComponent(g_pLogicSystem);
 	registerComponent(g_pViewSystem);
+
+	g_pRenderSystem->setRenderState(CRenderSystem::RenderType::UI, false);
+	//g_pRenderSystem->setRenderState(CRenderSystem::RenderType::WORLD, true);
+	g_pRenderSystem->setRenderState(CRenderSystem::RenderType::MODEL, true);
 
 	subsystemsDo(m_pSubSystems, startup);
 	subsystemsDo2(m_pSubSystems, setSystemHandler, this);
@@ -43,6 +50,13 @@ void CGameSystem::reset()
 void CGameSystem::perform()
 {
 	subsystemsDo(m_pSubSystems, perform);
+}
+
+void CGameSystem::shutdown()
+{
+	DiskLoader::releaseAllCopies();
+
+	subsystemsDo(m_pSubSystems, shutdown);
 }
 
 void CGameSystem::onStartGame()

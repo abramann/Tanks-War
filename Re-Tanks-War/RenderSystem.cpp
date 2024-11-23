@@ -2,15 +2,19 @@
 #include "RenderComponent.h"
 #include "RenderSystem.h"
 #include "Renderer.h"
+#include "Sprite.h"
+#include "Model.h"
+#include "ImGui/imgui_impl_dx11.h"
+#include "WorldSystem.h"
 
 static CRenderSystem renderSystem;
 CRenderSystem* g_pRenderSystem = &renderSystem;
 
 CRenderSystem::CRenderSystem() :
-	m_renderSprites(false),
-	m_renderObjects(false),
-	m_renderMap(false),
-	m_renderUI(true)
+	m_doRenderSprites(false),
+	m_doRenderModels(false),
+	m_doRenderMap(false),
+	m_doRenderUI(true)
 {
 }
 
@@ -39,22 +43,22 @@ void CRenderSystem::perform()
 			switch (rtype)
 			{
 			case MODEL:
-				if (m_renderObjects);
-				//g_pRenderer->drawModel(pRenderComp);
+				if (m_doRenderModels)
+					renderModel(dynamic_cast<IModel*>(pRenderComp));
 				break;
 			case SPRITE:
-				if (m_renderSprites);
-				//g_pRenderer->drawSprite(pRenderComp);
+				if (m_doRenderSprites)
+					renderSprite(dynamic_cast<CSprite*>(pRenderComp));
 				break;
 			default:
 				break;
 			}
 		});
 
-	if (m_renderMap)
-		g_pRenderer->renderMap();
+	if (m_doRenderMap)
+		renderWorld();
 
-	g_pRenderer->renderUI(m_renderUI);
+	renderUI(m_doRenderUI);
 
 	g_pRenderer->renderFrame();
 
@@ -62,34 +66,38 @@ void CRenderSystem::perform()
 	g_pRenderer->newFrame();
 }
 
+void CRenderSystem::shutdown()
+{
+}
+
 void CRenderSystem::onStartGame()
 {
-	m_renderSprites = true;
-	m_renderObjects = true;
-	m_renderMap = true;
+	m_doRenderSprites = true;
+	m_doRenderModels = true;
+	m_doRenderMap = true;
 }
 
 void CRenderSystem::onQuitGame()
 {
-	m_renderSprites = false;
-	m_renderObjects = false;
-	m_renderMap = false;
+	m_doRenderSprites = false;
+	m_doRenderModels = false;
+	m_doRenderMap = false;
 }
 
 void CRenderSystem::onPauseGame()
 {
-	m_renderMap = false;
-	m_renderObjects = false;
-	m_renderSprites = false;
-	m_renderUI = true;
+	m_doRenderMap = false;
+	m_doRenderModels = false;
+	m_doRenderSprites = false;
+	m_doRenderUI = true;
 }
 
 void CRenderSystem::onResumGame()
 {
-	m_renderMap = true;
-	m_renderObjects = true;
-	m_renderSprites = true;
-	//m_renderUI = false;
+	m_doRenderMap = true;
+	m_doRenderModels = true;
+	m_doRenderSprites = true;
+	m_doRenderUI = false;
 }
 
 void CRenderSystem::registerComponent(ISystemComponent* pRenderComp)
@@ -106,9 +114,55 @@ void CRenderSystem::handleEvent(ISystemComponent* pComponent, int eventCode, voi
 {
 }
 
-CRenderSystem::RenderComp CRenderSystem::getRenderType(ISystemComponent* pComponent) const
+void CRenderSystem::setRenderState(RenderType renderType, bool state)
 {
-	std::string name = pComponent->getName();
+	switch (renderType)
+	{
+	case MODEL:
+		m_doRenderModels = state;
+		break;
+	case SPRITE:
+		m_doRenderSprites = state;
+		break;
+	case WORLD:
+		m_doRenderMap = state;
+		break;
+	case UI:
+		m_doRenderUI = state;
+		break;
+	default:
+		REPORT_ERROR("Invalid state");
+	}
+}
+
+void CRenderSystem::renderSprite(CSprite* pSprite)
+{
+	g_pRenderer->drawSprite(pSprite);
+}
+
+void CRenderSystem::renderModel(IModel* pModel)
+{
+	g_pRenderer->drawModel(pModel);
+}
+
+void CRenderSystem::renderUI(bool state)
+{
+	ImGui::EndFrame();
+
+	if (state)
+	{
+		g_pRenderer->renderUI();
+	}
+}
+
+void CRenderSystem::renderWorld()
+{
+	g_pRenderer->drawMesh(g_pWorldSystem->getWorldMesh());
+}
+
+CRenderSystem::RenderType CRenderSystem::getRenderType(ISystemComponent* pRenderComponent) const
+{
+	std::string name = pRenderComponent->getName();
 
 	if (name.compare("Sprite") == 0)
 		return SPRITE;

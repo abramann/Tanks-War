@@ -24,6 +24,10 @@ void CPlayersSystem::perform()
 {
 }
 
+void CPlayersSystem::shutdown()
+{
+}
+
 void CPlayersSystem::onStartGame()
 {
 }

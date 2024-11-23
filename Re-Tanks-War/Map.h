@@ -11,7 +11,7 @@
 #include <memory>
 #include <string>
 
-class CMesh;
+class IModel;
 class ITexture;
 class IBuffer;
 
@@ -94,7 +94,7 @@ private:
 	//std::vector<int> m_numNoCellBitmap;
 	//std::vector<Cell> m_freeCell, m_noCell;
 	std::vector<uint> m_startVertex, m_lenVertex;
-	std::vector<CMesh*> m_pObjects;
+	std::vector<IModel*> m_pObjects;
 	std::string m_loadedMap;
 };
 

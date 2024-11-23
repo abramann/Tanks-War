@@ -11,22 +11,14 @@ public:
 	void reset() override;
 	void handleEvent(ISystemComponent* pWidget, int eventCode, void* event) override;
 
-	static int s_fontSize;
-	static ImVec2 s_butsBeginPos;
-	// Buttons style
-	static float s_butsBorderSize;
-	static ImVec2 s_butsAlign;
-	static ImVec2 s_butsSize;
-	// Buttons Colors
-	static Color s_butsColor;
-	static Color s_butsHoverColor;
-	static Color s_butsOnClickColor;
-	static Color s_butsBorderColor;
-
 private:
 	void beginUI() override;
 	void endUI() override;
 	void setupProperties() override;
+
+private:
+	ImVec2 s_butsBeginPos;
+	ImVec2 s_butsSize;
 };
 
 extern UI* g_pStartUI;

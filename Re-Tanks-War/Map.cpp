@@ -230,20 +230,7 @@ bool CMap::load(const std::string& map)
 	m_pIB = g_pRenderer->createIndexBuffer(numCells * sizeof(uint) * 6, (uint*) & index[0], IRenderer::BUFFER_IMMUTABLE);
 	//if (m_noCell.size() == 0)
 	//	m_noCell.push_back(Cell());
-	/*
-	m_pNoCellBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(Cell), m_noCell.size(), &m_noCell[0], 0);
-	m_pNoCellSRV = m_pDx11Wrapper->createBufferSRV(m_pNoCellBuf.Get());
-	uint32 noCellCount = m_noCell.size();
-	m_pNoCellCountBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(uint32), 1, (void*)&noCellCount, 0);
-	m_pNoCellCountSRV = m_pDx11Wrapper->createBufferSRV(m_pNoCellCountBuf.Get());
-	int32 mapRange[] = { static_cast<int32>(TILED_DIMENSION*m_width), static_cast<int32>(TILED_DIMENSION*m_height) };
-	m_pMapRangeBuf = m_pDx11Wrapper->createStructuredBuffer(sizeof(int32), 2, mapRange, 0);
-	m_pMapRangeSRV = m_pDx11Wrapper->createBufferSRV(m_pMapRangeBuf.Get());
-	m_threadGroups = (m_noCell.size() / dxNS::THREADS_PER_GROUP);
-	float f = ((m_noCell.size()*1.0f) / (dxNS::THREADS_PER_GROUP*1.0f)) - m_threadGroups;
-	if (f > 0.001f)
-		m_threadGroups++;
-		*/
+
 	return true;
 }
 

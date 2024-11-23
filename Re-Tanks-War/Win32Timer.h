@@ -12,7 +12,6 @@ public:
 	virtual void sleep(int64_t millsec) const override;
 
 private:
-	int64_t m_prevTime;
 	int64_t m_countsPerMillisecond;
 	float m_timeFactor;
 };

@@ -41,6 +41,9 @@ namespace gameMathNS
 			v3 += amount,
 			v4 += amount;
 	}
+
+	inline float DegToRad(const float& angle) { return angle * 0.0174532925199432957f; }
+	inline float RadToDeg(const float& angle) { return angle * 57.295779513082320876f; }
 }
 
 extern void makeUnitSquare(Vertex& vert);

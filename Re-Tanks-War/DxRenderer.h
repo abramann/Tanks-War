@@ -55,10 +55,13 @@ public:
 	void releaseBuffer(IBuffer* pBuffer) override;
 	void setVSDrawProperties(Vertex position = Vertex(0, 0, 0), Vertex scaling = Vertex(1, 1, 1), Vertex rotate = Vertex(0, 0, 0), Vertex rotateCenter = Vertex(0, 0, 0)) const;
 	void setPSDrawProperties(Color color = Color(255, 255, 255, 255)) const;
-	void renderUI(bool rendered) const override;
-	void renderMap() const override;
-	void drawSprite(const CSprite* pSprite) const override;
-	void drawModel(const CMesh* pModel) const override;
+	void renderUI() override;
+	void drawMesh(const MeshData& meshData) override;
+	void drawSprite(const CSprite* pSprite) override;
+	void drawModel(const IModel* pModel) override;
+	void bindVertexBuffer(IBuffer* pBuffer, uint32_t startIndex = 0) override;
+	void bindIndexBuffer(IBuffer* pBuffer, uint32_t startIndex = 0) override;
+	void bindTexture(ITexture* pTexture) override;
 	void setWorldViewMatrix(Matrix* mat) override;
 	ITexture* loadTextureFromFile(const wchar_t* texFileName) override;
 	void releaseTexture(ITexture* pTexture) override;

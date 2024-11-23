@@ -12,11 +12,12 @@ void CAudio::initialize()
 {
 }
 
-void CAudio::play(const std::string& sound)
+int CAudio::play(const std::string& sound, float volume)
 {
+	return 0;
 }
 
-void CAudio::stop(const std::string& sound)
+void CAudio::stop(int id)
 {
 }
 

@@ -88,8 +88,8 @@ IBuffer* CSprite::getIndexBuffer() const
 
 void CSprite::createVertexBuffer()
 {
-	Rect pVertices = makeVertexBufferData();
-	m_pVertexBuffer = g_pRenderer->createVertexBuffer(4, &pVertices.vert1, IRenderer::BUFFER_WRITE_ONLY);
+	//Rect pVertices = makeVertexBufferData();
+	//m_pVertexBuffer = g_pRenderer->createVertexBuffer(4, &pVertices.vert1, IRenderer::BUFFER_WRITE_ONLY);
 }
 
 void CSprite::createIndexBuffer()
@@ -102,8 +102,8 @@ void CSprite::createIndexBuffer()
 
 void CSprite::updateVertexBuffer()
 {
-	Rect vbData = makeVertexBufferData();
-	m_pVertexBuffer->writeData(&vbData.vert1, sizeof(Rect));
+	//Rect vbData = makeVertexBufferData();
+	//m_pVertexBuffer->writeData(&vbData.vert1, sizeof(Rect));
 }
 
 Rect CSprite::makeVertexBufferData()
@@ -112,7 +112,7 @@ Rect CSprite::makeVertexBufferData()
 	int texHeight = m_pTexture->getHeight();
 
 	Rect vbData;
-	vbData.vert1 = m_position;
+	/*.vert1 = m_position;
 	vbData.vert1.u = 0;
 	vbData.vert1.v = 1;
 	vbData.vert2 = Vertex(vbData.vert1.x + (texWidth * m_scaling.x), vbData.vert1.y, 0);
@@ -133,6 +133,6 @@ Rect CSprite::makeVertexBufferData()
 	makeUnitSquare(vbData.vert2);
 	makeUnitSquare(vbData.vert3);
 	makeUnitSquare(vbData.vert4);
-
+	*/
 	return vbData;
 }

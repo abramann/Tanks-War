@@ -11,8 +11,8 @@ public:
 	CAudio();
 	~CAudio();
 	void initialize();
-	void play(const std::string& sound);
-	void stop(const std::string& sound);
+	int play(const std::string& sound, float volume);
+	void stop(int id);
 	void stopAll();
 	void release();
 

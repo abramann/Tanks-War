@@ -10,6 +10,7 @@ public:
 	virtual void update() = 0;
 	virtual void reset() = 0;
 	virtual void perform() = 0;
+	virtual void shutdown() = 0;
 	virtual void onStartGame() = 0;
 	virtual void onQuitGame() = 0;
 	virtual void onPauseGame() = 0;

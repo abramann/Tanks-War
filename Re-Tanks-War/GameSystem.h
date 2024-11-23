@@ -17,6 +17,7 @@ public:
 	void update() override;
 	void reset() override;
 	void perform() override;
+	void shutdown() override;
 	void onStartGame() override;
 	void onQuitGame() override;
 	void onPauseGame() override;

@@ -89,7 +89,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -105,7 +105,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,6 +123,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,6 +143,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,12 +154,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="GameSystem.cpp" />
-    <ClCompile Include="LevelSystem.cpp" />
-    <ClCompile Include="GameEvents.cpp" />
-    <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="DiskLoader.cpp" />
+    <ClCompile Include="InputSystem.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="IntroUI.cpp" />
+    <ClCompile Include="PlayUI.cpp" />
+    <ClCompile Include="RenderComponent.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="GameSystem.cpp" />
+    <ClCompile Include="StartUI.cpp" />
+    <ClCompile Include="SystemComponent.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="TimeSystem.cpp" />
+    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="UISystem.cpp" />
+    <ClCompile Include="LevelSystem.cpp" />
+    <ClCompile Include="LogicSystem.cpp" />
     <ClCompile Include="DxRenderer.cpp" />
     <ClCompile Include="DxBuffer.cpp" />
     <ClCompile Include="DxTexture.cpp" />
@@ -169,23 +185,47 @@
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="PlayersSystem.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="ViewSystem.cpp" />
+    <ClCompile Include="Widget.cpp" />
     <ClCompile Include="Win32Timer.cpp" />
+    <ClCompile Include="WorldSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="DiskLoader.h" />
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="InputSystem.h" />
+    <ClInclude Include="ColorTable.h" />
+    <ClInclude Include="IInputStream.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="IntroUI.h" />
+    <ClInclude Include="PlayUI.h" />
+    <ClInclude Include="RenderComponent.h" />
+    <ClInclude Include="RenderSystem.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Subsystem.h" />
+    <ClInclude Include="SystemComponent.h" />
     <ClInclude Include="GameSystem.h" />
+    <ClInclude Include="StartUI.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="TimeSystem.h" />
+    <ClInclude Include="UI.h" />
+    <ClInclude Include="Widget.h" />
+    <ClInclude Include="UISystem.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="System.h" />
     <ClInclude Include="LevelSystem.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="File.hpp" />
-    <ClInclude Include="GameLogic.h" />
-    <ClInclude Include="IControl.h" />
+    <ClInclude Include="LogicSystem.h" />
     <ClInclude Include="IObject.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Math.h" />
@@ -193,22 +233,24 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="DxBuffer.h" />
     <ClInclude Include="DxTexture.h" />
-    <ClInclude Include="IBuffer.h" />
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="ITexture.h" />
-    <ClInclude Include="keys.h" />
-    <ClInclude Include="types.h" />
+    <ClInclude Include="KeyTable.h" />
+    <ClInclude Include="PlayersSystem.h" />
+    <ClInclude Include="Types.h" />
     <ClInclude Include="Values.h" />
     <ClInclude Include="VecMath.h" />
+    <ClInclude Include="ViewSystem.h" />
     <ClInclude Include="Win32Timer.h" />
     <ClInclude Include="DxRenderer.h" />
-    <ClInclude Include="GameData.h" />
     <ClInclude Include="GameError.h" />
     <ClInclude Include="IGame.h" />
     <ClInclude Include="Sprite.h" />
-    <ClInclude Include="IRenderer.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="ITimer.h" />
+    <ClInclude Include="WorldSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
@@ -247,6 +289,10 @@
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_pHLSLVertexShader</VariableName>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">HLSLVertexShader.h</HeaderFileOutput>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

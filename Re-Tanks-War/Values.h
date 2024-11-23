@@ -14,7 +14,8 @@ namespace values
 	constexpr int MIN_WINDOW_WIDTH = 800;
 	constexpr int FRAME_RATE = 60;
 	constexpr float FRAME_TIME = 1000.0f / FRAME_RATE;
-	
+	constexpr auto USED_FONT = "Perfect DOS VGA";
+
 	// Camera values
 	constexpr auto CAMERA_FARPLANE = 10000.0f;
 	constexpr auto CAMERA_FOV = 1.5707963f;
@@ -34,5 +35,5 @@ namespace values
 	constexpr auto MAP_INITIALIZE = "Assets\\Map.ini";
 	constexpr auto MAP_DIR = "Assets\\Maps\\";
 	constexpr auto MODEL_DIR = "Assets\\Models\\";
-	constexpr auto FONT_PATH = "Assets\\Fonts\\Tahoma.ttf";
+	constexpr auto FONTS_DIR = "Assets\\Fonts\\";
 }

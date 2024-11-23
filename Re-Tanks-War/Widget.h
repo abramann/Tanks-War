@@ -12,12 +12,9 @@ public:
 
 	IWidget() :
 		m_position(0, 0),
-		m_align(0, 0),
 		m_size(0, 0),
 		m_borderSize(0)
 	{}
-
-	void reset() override {}
 
 	virtual void draw() = 0;
 
@@ -26,19 +23,19 @@ public:
 	void setSize(int width, int height);
 	void setSize(ImVec2 size);
 	void setColor(Color color);
-	void setOnHoverColor(Color color);
 	void setBorderSize(float size);
 	void setBorderColor(Color color);
-	void setAlign(ImVec2 align);
 
 protected:
-	ImVec2 m_position;
-	ImVec2 m_align;
-	ImVec2 m_size;
-	float m_borderSize;
+	const ImVec4 INVALID_VEC4 = ImVec4(-6553, -6553, -6553, -6553);
+	const float INVALID_BORDERSIZE = -1;
+	const ImVec2 INVALID_VEC2 = ImVec2(-6553, -6553); 
+	
+	ImVec2 m_position = INVALID_VEC2;
+	ImVec2 m_size = ImVec2(0, 0);
+	float m_borderSize = -1;
 	// Colors
-	ImVec4 m_color;
-	ImVec4 m_hoverColor;
-	ImVec4 m_onClickColor;
-	ImVec4 m_borderColor;
+	ImVec4 m_color = INVALID_VEC4;
+	ImVec4 m_activeColor = INVALID_VEC4;
+	ImVec4 m_borderColor = INVALID_VEC4;
 };

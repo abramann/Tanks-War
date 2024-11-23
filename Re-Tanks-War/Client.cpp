@@ -38,7 +38,6 @@ void CClient::initialize()
 	createWindow();
 	g_pGameSystem->startup();
 	g_pTimer->startup();
-	g_pInput->initialize();
 }
 
 void CClient::run()
@@ -50,6 +49,7 @@ void CClient::run()
 
 void CClient::shutdown()
 {
+	g_pGameSystem->shutdown();
 }
 
 bool CClient::pollMessages()
