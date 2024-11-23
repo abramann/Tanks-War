@@ -1,7 +1,6 @@
 #include "IGame.h"
 #include "GameError.h"
 #include "Values.h"
-#include "vld\vld.h" // For detecing  memory leaks
 #include <memory>
 #include <Windows.h>
 
@@ -15,9 +14,9 @@
 #pragma comment(lib, "DirectXTK.lib")
 #endif
 
-#ifdef _WIN64
-#pragma comment(lib, "Lib/x64/vld.lib")
-#else
+#ifndef _WIN64
+#include "vld\vld.h" // For detecing memory leaks
+
 #pragma comment(lib, "Lib/Win32/vld.lib")
 #endif
 
