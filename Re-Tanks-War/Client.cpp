@@ -37,12 +37,11 @@ void CClient::initialize()
 	readInitializeSettings();
 	createWindow();
 	g_pGameSystem->startup();
-	g_pTimer->startup();
+	g_pTime->startup();
 }
 
 void CClient::run()
 {
-	g_pTimer->update();
 	g_pGameSystem->run();
 	g_pCamera->freeCamera();
 }

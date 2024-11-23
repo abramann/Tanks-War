@@ -20,10 +20,6 @@ CCamera::CCamera() :
 {
 }
 
-CCamera::~CCamera()
-{
-}
-
 void CCamera::startup()
 {
 	updatePerspectiveMatrix();

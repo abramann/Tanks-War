@@ -21,7 +21,7 @@
 #pragma comment(lib, "Lib/Win32/vld.lib")
 #endif
 
-void messageBoxOk(std::string msg);
+void messageBoxOk(const std::string& msg);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -43,7 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	return 0;
 }
 
-void messageBoxOk(std::string msg)
+void messageBoxOk(const std::string& msg)
 {
 	MessageBoxA(NULL, msg.c_str(), values::GAME_NAME, MB_OK);
 }

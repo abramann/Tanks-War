@@ -157,6 +157,8 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="FPSTimer.cpp" />
+    <ClCompile Include="ITime.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="DiskLoader.cpp" />
     <ClCompile Include="InputSystem.cpp" />
@@ -202,6 +204,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DiskLoader.h" />
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="FPSTimer.h" />
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="ColorTable.h" />
     <ClInclude Include="IInputStream.h" />
@@ -249,7 +252,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="String.h" />
-    <ClInclude Include="ITimer.h" />
+    <ClInclude Include="ITime.h" />
     <ClInclude Include="WorldSystem.h" />
   </ItemGroup>
   <ItemGroup>
@@ -289,10 +292,6 @@
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_pHLSLVertexShader</VariableName>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">HLSLVertexShader.h</HeaderFileOutput>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

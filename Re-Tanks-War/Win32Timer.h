@@ -1,17 +1,13 @@
 #pragma once
 
-#include "ITimer.h"
+#include "ITime.h"
 
-class CWin32Timer : public ITimer
+class CWin32Timer : public ITime
 {
 public:
-	virtual void startup() override;
-	virtual void update() override;
-	virtual float getTimeFactor() const override;
-	virtual int64_t getTime() const override;
-	virtual void sleep(int64_t millsec) const override;
+	void startup() override;
+	int64_t getTime() const override;
 
 private:
 	int64_t m_countsPerMillisecond;
-	float m_timeFactor;
 };

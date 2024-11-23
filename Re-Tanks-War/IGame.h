@@ -5,7 +5,7 @@
 #include "types.h"
 
 class IRenderer;
-class ITimer;
+class ITime;
 
 class IGame
 {

@@ -2,7 +2,7 @@
 
 #include "Subsystem.h"
 
-class CTimer;
+class ITimer;
 
 class CTimeSystem : public ISubsystem
 {
@@ -23,7 +23,8 @@ public:
 	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
 
 private:
-	std::vector<CTimer*> m_pTimers;
+	std::vector<ITimer*> m_pTimers;
 	int64_t m_prevTime;
 };
 
+extern CTimeSystem* g_pTimeSystem;

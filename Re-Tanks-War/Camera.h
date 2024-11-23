@@ -9,16 +9,13 @@
 class CCamera
 {
 public:
-
 	CCamera();
-	~CCamera();
 	void startup();
 	void update(Vertex lookTo);
 	void freeCamera();
 	void updatePerspectiveMatrix();
 	
 private:
-
 	Matrix m_proj, m_camera;
 	float m_fov, m_aspectRatio,
 		m_nearPlane, m_farPlane,

@@ -6,6 +6,7 @@
 #include "ViewSystem.h"
 #include "RenderSystem.h"
 #include "InputSystem.h"
+#include "TimeSystem.h"
 #include "DiskLoader.h"
 
 static CGameSystem gameSystem;
@@ -28,10 +29,12 @@ void CGameSystem::startup()
 	registerComponent(g_pLevelSystem);
 	registerComponent(g_pLogicSystem);
 	registerComponent(g_pViewSystem);
+	registerComponent(g_pTimeSystem);
 
-	g_pRenderSystem->setRenderState(CRenderSystem::RenderType::UI, false);
+	// Testing
+	g_pRenderSystem->setRenderState(CRenderSystem::RenderType::UI, true);
 	//g_pRenderSystem->setRenderState(CRenderSystem::RenderType::WORLD, true);
-	g_pRenderSystem->setRenderState(CRenderSystem::RenderType::MODEL, true);
+	//g_pRenderSystem->setRenderState(CRenderSystem::RenderType::MODEL, true);
 
 	subsystemsDo(m_pSubSystems, startup);
 	subsystemsDo2(m_pSubSystems, setSystemHandler, this);

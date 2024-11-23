@@ -9,17 +9,8 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{65a0d69c-2037-436e-8481-c4512555fbe5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ImGui">
       <UniqueIdentifier>{ed590826-3583-4583-a4dc-80f1daeac5f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Systems">
-      <UniqueIdentifier>{2569510e-bec6-4730-a475-0c7ce6c665fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Systems">
-      <UniqueIdentifier>{c1296f7e-6d77-4ef0-9197-063d89a65306}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Consts">
       <UniqueIdentifier>{09f59c45-e8a5-4d46-bebd-6f70cbd16545}</UniqueIdentifier>
@@ -45,14 +36,50 @@
     <Filter Include="Header Files\Render">
       <UniqueIdentifier>{6b8cb21e-45a1-481e-8f31-b04c6effd453}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Comps">
-      <UniqueIdentifier>{42af7fd5-f600-455c-a8b6-21515d6a1519}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Comps">
-      <UniqueIdentifier>{ef7eed2d-1fb2-4468-8a64-704d1961739e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Render">
       <UniqueIdentifier>{e25d86f5-e2c1-44e3-9e46-99547e2ce541}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Render\Legacy">
+      <UniqueIdentifier>{c0e954a1-8af0-411b-b9bc-6d0428164a41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{43d28ecf-6a3c-42bf-9e61-cad50e561b54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Terrible Engine">
+      <UniqueIdentifier>{5c709438-f63b-444d-81c7-0e44d636b113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Input">
+      <UniqueIdentifier>{0123ffd0-a7f6-42ac-b616-2877271f3cc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Time">
+      <UniqueIdentifier>{59091e4f-c0ed-4fbd-baa7-676d16e9ef29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Time">
+      <UniqueIdentifier>{c835a4f8-fea0-4d1d-b449-0da96e12719d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components%28Not specified%29">
+      <UniqueIdentifier>{ef7eed2d-1fb2-4468-8a64-704d1961739e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Systems%28Not specified%29">
+      <UniqueIdentifier>{c1296f7e-6d77-4ef0-9197-063d89a65306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components%28Not specified%29">
+      <UniqueIdentifier>{42af7fd5-f600-455c-a8b6-21515d6a1519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Systems%28Not specified%29">
+      <UniqueIdentifier>{2569510e-bec6-4730-a475-0c7ce6c665fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Render\Legacy">
+      <UniqueIdentifier>{63e208a0-96fc-4dbe-95ff-1ac51049573b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{2d772b35-36dc-4f6e-8b15-07b3ed51027f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{82fc5508-85c6-4dc3-844f-7a5bf9a91eb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{8ec01248-c99a-4e99-97f3-f69b818147fb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -80,38 +107,29 @@
     <ClCompile Include="ImGui\imgui_impl_dx11.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>Source Files\UI\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="StartUI.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="InputSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="GameSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
+      <Filter>Source Files\Systems%28Not specified%29</Filter>
     </ClCompile>
     <ClCompile Include="LevelSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
+      <Filter>Source Files\Systems%28Not specified%29</Filter>
     </ClCompile>
     <ClCompile Include="LogicSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
+      <Filter>Source Files\Systems%28Not specified%29</Filter>
     </ClCompile>
     <ClCompile Include="PlayersSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
+      <Filter>Source Files\Systems%28Not specified%29</Filter>
     </ClCompile>
     <ClCompile Include="ViewSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
+      <Filter>Source Files\Systems%28Not specified%29</Filter>
     </ClCompile>
     <ClCompile Include="UISystem.cpp">
-      <Filter>Source Files\Systems</Filter>
+      <Filter>Source Files\Systems%28Not specified%29</Filter>
     </ClCompile>
     <ClCompile Include="IntroUI.cpp">
       <Filter>Source Files\UI</Filter>
@@ -125,26 +143,11 @@
     <ClCompile Include="PlayUI.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Audio.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
-    <ClCompile Include="Win32Timer.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
     <ClCompile Include="Widget.cpp">
       <Filter>Source Files\UI\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="WorldSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="SystemComponent.cpp">
-      <Filter>Source Files\Comps</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Comps</Filter>
+      <Filter>Source Files\Systems%28Not specified%29</Filter>
     </ClCompile>
     <ClCompile Include="RenderComponent.cpp">
       <Filter>Source Files\Render</Filter>
@@ -158,62 +161,59 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files\Render</Filter>
     </ClCompile>
-    <ClCompile Include="DxRenderer.cpp">
-      <Filter>Source Files\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="DxTexture.cpp">
-      <Filter>Source Files\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="DxBuffer.cpp">
-      <Filter>Source Files\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Math.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
     <ClCompile Include="DiskLoader.cpp">
       <Filter>Source Files\Internals</Filter>
     </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>Header Files\Terrible Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Header Files\Terrible Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Header Files\Terrible Engine</Filter>
+    </ClCompile>
     <ClCompile Include="TimeSystem.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="DxTexture.cpp">
+      <Filter>Source Files\Render\Legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="DxRenderer.cpp">
+      <Filter>Source Files\Render\Legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="DxBuffer.cpp">
+      <Filter>Source Files\Render\Legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32Timer.cpp">
+      <Filter>Source Files\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="InputSystem.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemComponent.cpp">
+      <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSTimer.cpp">
+      <Filter>Source Files\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="ITime.cpp">
+      <Filter>Source Files\Time</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameError.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="String.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Win32Timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VecMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MatMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Values.h">
       <Filter>Header Files\Consts</Filter>
     </ClInclude>
@@ -223,80 +223,29 @@
     <ClInclude Include="ColorTable.h">
       <Filter>Header Files\Consts</Filter>
     </ClInclude>
-    <ClInclude Include="PlayUI.h">
-      <Filter>Source Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="StartUI.h">
-      <Filter>Source Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="UI.h">
-      <Filter>Source Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Source Files\UI\Widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>Source Files\UI\Widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget.h">
-      <Filter>Source Files\UI\Widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="DiskLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IntroUI.h">
       <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Audio.h">
-      <Filter>Header Files\Internals</Filter>
     </ClInclude>
     <ClInclude Include="File.hpp">
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
-    <ClInclude Include="ITimer.h">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
     <ClInclude Include="PlayersSystem.h">
-      <Filter>Header Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="System.h">
-      <Filter>Header Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Subsystem.h">
-      <Filter>Header Files\Systems</Filter>
+      <Filter>Header Files\Systems%28Not specified%29</Filter>
     </ClInclude>
     <ClInclude Include="RenderSystem.h">
-      <Filter>Header Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="UISystem.h">
-      <Filter>Header Files\Systems</Filter>
+      <Filter>Header Files\Systems%28Not specified%29</Filter>
     </ClInclude>
     <ClInclude Include="ViewSystem.h">
-      <Filter>Header Files\Systems</Filter>
+      <Filter>Header Files\Systems%28Not specified%29</Filter>
     </ClInclude>
     <ClInclude Include="LogicSystem.h">
-      <Filter>Header Files\Systems</Filter>
+      <Filter>Header Files\Systems%28Not specified%29</Filter>
     </ClInclude>
     <ClInclude Include="LevelSystem.h">
-      <Filter>Header Files\Systems</Filter>
+      <Filter>Header Files\Systems%28Not specified%29</Filter>
     </ClInclude>
     <ClInclude Include="GameSystem.h">
-      <Filter>Header Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="InputSystem.h">
-      <Filter>Header Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="DxTexture.h">
-      <Filter>Header Files\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="DxRenderer.h">
-      <Filter>Header Files\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="DxBuffer.h">
-      <Filter>Header Files\Render</Filter>
+      <Filter>Header Files\Systems%28Not specified%29</Filter>
     </ClInclude>
     <ClInclude Include="Buffer.h">
       <Filter>Header Files\Render</Filter>
@@ -304,29 +253,17 @@
     <ClInclude Include="ITexture.h">
       <Filter>Header Files\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Header Files\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemComponent.h">
-      <Filter>Source Files\Comps</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\Comps</Filter>
-    </ClInclude>
     <ClInclude Include="Entity.h">
-      <Filter>Header Files\Comps</Filter>
-    </ClInclude>
-    <ClInclude Include="IInputStream.h">
-      <Filter>Header Files\Comps</Filter>
+      <Filter>Header Files\Components%28Not specified%29</Filter>
     </ClInclude>
     <ClInclude Include="IObject.h">
-      <Filter>Header Files\Comps</Filter>
+      <Filter>Header Files\Components%28Not specified%29</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Header Files\Comps</Filter>
+      <Filter>Header Files\Components%28Not specified%29</Filter>
     </ClInclude>
     <ClInclude Include="WorldSystem.h">
-      <Filter>Header Files\Systems</Filter>
+      <Filter>Header Files\Systems%28Not specified%29</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Header Files\Render</Filter>
@@ -334,26 +271,121 @@
     <ClInclude Include="Sprite.h">
       <Filter>Header Files\Render</Filter>
     </ClInclude>
-    <ClInclude Include="RenderComponent.h">
-      <Filter>Source Files\Render</Filter>
+    <ClInclude Include="DxRenderer.h">
+      <Filter>Header Files\Render\Legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="DxBuffer.h">
+      <Filter>Header Files\Render\Legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="DxTexture.h">
+      <Filter>Header Files\Render\Legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="GameError.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="DiskLoader.h">
+      <Filter>Header Files\Internals</Filter>
     </ClInclude>
     <ClInclude Include="TimeSystem.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Time</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="MatMath.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="VecMath.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32Timer.h">
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Header Files\Terrible Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Header Files\Terrible Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSystem.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="IInputStream.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="ITime.h">
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Header Files\Terrible Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Terrible Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="IGame.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="String.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Subsystem.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="UISystem.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\UI\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Header Files\UI\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget.h">
+      <Filter>Header Files\UI\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayUI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="StartUI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemComponent.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderComponent.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="FPSTimer.h">
+      <Filter>Header Files\Time</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="VertexShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
