@@ -9,9 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="ImGui">
-      <UniqueIdentifier>{ed590826-3583-4583-a4dc-80f1daeac5f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Consts">
       <UniqueIdentifier>{09f59c45-e8a5-4d46-bebd-6f70cbd16545}</UniqueIdentifier>
     </Filter>
@@ -57,15 +54,6 @@
     <Filter Include="Source Files\Time">
       <UniqueIdentifier>{c835a4f8-fea0-4d1d-b449-0da96e12719d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Components%28Not specified%29">
-      <UniqueIdentifier>{ef7eed2d-1fb2-4468-8a64-704d1961739e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Systems%28Not specified%29">
-      <UniqueIdentifier>{c1296f7e-6d77-4ef0-9197-063d89a65306}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Components%28Not specified%29">
-      <UniqueIdentifier>{42af7fd5-f600-455c-a8b6-21515d6a1519}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Systems%28Not specified%29">
       <UniqueIdentifier>{2569510e-bec6-4730-a475-0c7ce6c665fb}</UniqueIdentifier>
     </Filter>
@@ -81,31 +69,49 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{8ec01248-c99a-4e99-97f3-f69b818147fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Components%28Unspecified%29">
+      <UniqueIdentifier>{ef7eed2d-1fb2-4468-8a64-704d1961739e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Systems%28Unspecified%29">
+      <UniqueIdentifier>{c1296f7e-6d77-4ef0-9197-063d89a65306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components%28Unspecified%29">
+      <UniqueIdentifier>{42af7fd5-f600-455c-a8b6-21515d6a1519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{b78648ff-6a71-4f72-a440-dec34545c156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\ImGui">
+      <UniqueIdentifier>{ed590826-3583-4583-a4dc-80f1daeac5f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\FileIO">
+      <UniqueIdentifier>{7b09206b-03a1-42a1-b441-b438ef4305c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_impl_win32.cpp">
-      <Filter>ImGui</Filter>
+      <Filter>Dependencies\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_tables.cpp">
-      <Filter>ImGui</Filter>
+      <Filter>Dependencies\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_widgets.cpp">
-      <Filter>ImGui</Filter>
+      <Filter>Dependencies\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui.cpp">
-      <Filter>ImGui</Filter>
+      <Filter>Dependencies\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_demo.cpp">
-      <Filter>ImGui</Filter>
+      <Filter>Dependencies\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_draw.cpp">
-      <Filter>ImGui</Filter>
+      <Filter>Dependencies\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_impl_dx11.cpp">
-      <Filter>ImGui</Filter>
+      <Filter>Dependencies\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>Source Files\UI\Widgets</Filter>
@@ -226,26 +232,23 @@
     <ClInclude Include="IntroUI.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="File.hpp">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
     <ClInclude Include="PlayersSystem.h">
-      <Filter>Header Files\Systems%28Not specified%29</Filter>
+      <Filter>Header Files\Systems%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="RenderSystem.h">
-      <Filter>Header Files\Systems%28Not specified%29</Filter>
+      <Filter>Header Files\Systems%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="ViewSystem.h">
-      <Filter>Header Files\Systems%28Not specified%29</Filter>
+      <Filter>Header Files\Systems%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="LogicSystem.h">
-      <Filter>Header Files\Systems%28Not specified%29</Filter>
+      <Filter>Header Files\Systems%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="LevelSystem.h">
-      <Filter>Header Files\Systems%28Not specified%29</Filter>
+      <Filter>Header Files\Systems%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="GameSystem.h">
-      <Filter>Header Files\Systems%28Not specified%29</Filter>
+      <Filter>Header Files\Systems%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="Buffer.h">
       <Filter>Header Files\Render</Filter>
@@ -254,16 +257,16 @@
       <Filter>Header Files\Render</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
-      <Filter>Header Files\Components%28Not specified%29</Filter>
+      <Filter>Header Files\Components%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="IObject.h">
-      <Filter>Header Files\Components%28Not specified%29</Filter>
+      <Filter>Header Files\Components%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Header Files\Components%28Not specified%29</Filter>
+      <Filter>Header Files\Components%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="WorldSystem.h">
-      <Filter>Header Files\Systems%28Not specified%29</Filter>
+      <Filter>Header Files\Systems%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Header Files\Render</Filter>
@@ -378,6 +381,9 @@
     </ClInclude>
     <ClInclude Include="FPSTimer.h">
       <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="File.hpp">
+      <Filter>Dependencies\FileIO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
