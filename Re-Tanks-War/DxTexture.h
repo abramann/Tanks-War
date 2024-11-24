@@ -1,10 +1,7 @@
 #pragma once
 
-#include "ITexture.h"
+#include "Texture.h"
 #include <d3d11.h>
-
-
-
 
 class CDxTexture : public ITexture
 {

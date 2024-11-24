@@ -1,6 +1,5 @@
 #include "LogicSystem.h"
 #include "Renderer.h"
-#include "IObject.h"
 
 static CLogicSystem logicSystem;
 CLogicSystem* g_pLogicSystem = &logicSystem;
@@ -19,12 +18,12 @@ void CLogicSystem::startup()
 
 void CLogicSystem::update()
 {
-	//subsystemsDo(m_pObjects, update);
+	//subsystemsDo(m_pEvents, update);
 }
 
 void CLogicSystem::reset()
 {
-	//subsystemsDo(m_pObjects, reset);
+	//subsystemsDo(m_pEvents, reset);
 }
 
 void CLogicSystem::perform()

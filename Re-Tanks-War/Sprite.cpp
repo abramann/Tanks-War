@@ -1,6 +1,6 @@
 #include "Renderer.h"
 #include "RenderSystem.h"
-#include "ITexture.h"
+#include "Texture.h"
 #include "Sprite.h"
 #include "Buffer.h"
 

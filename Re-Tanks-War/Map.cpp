@@ -42,7 +42,7 @@ void CMap::initialize()
 
 void CMap::readInitializeSettings()
 {
-	auto hFile = FileIO::plainText(values::MAP_INITIALIZE);
+	auto hFile = FileIO::plainText(values::MAP_INITIALIZE_FILE);
 	m_numTileds = hFile.readValueAsInteger("NumTileds");
 	m_pTextures.resize(m_numTileds);
 	m_factors.resize(m_numTileds);
@@ -69,7 +69,7 @@ bool CMap::isBlockedCellID(int id)
 
 bool CMap::read()
 {
-	std::string mappath = strFormat("%s%s.map", values::MAP_DIR, m_loadedMap.c_str());
+	std::string mappath = strFormat("%s%s.map", values::MAPS_DIR, m_loadedMap.c_str());
 	if (!BaseFileIO::exists(mappath))
 		return false;
 

@@ -1,17 +1,8 @@
 #include "Client.h"
 #include "GameError.h"
-#include "Values.h"
-#include "DxRenderer.h"
-#include "Win32Timer.h"
-#include "ImGui\imgui_impl_win32.h"
-#include <Windows.h>
-#include "ITexture.h"
-#include "Sprite.h"
-#include "Map.h"
-#include "Input.h"
-#include "Camera.h"
 #include "GameSystem.h"
-#include "Model.h"
+#include "Values.h"
+#include "ImGui\imgui_impl_win32.h"
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -37,13 +28,11 @@ void CClient::initialize()
 	readInitializeSettings();
 	createWindow();
 	g_pGameSystem->startup();
-	g_pTime->startup();
 }
 
 void CClient::run()
 {
 	g_pGameSystem->run();
-	g_pCamera->freeCamera();
 }
 
 void CClient::shutdown()

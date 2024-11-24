@@ -12,9 +12,13 @@ void ITime::sleep(int64_t millsec) const
 	do
 	{
 		timeBeginPeriod(1);
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
 		timeEndPeriod(1);
+
 		now = getTime();
+
 		delta = now - start;
 	} while (delta < millsec);
 }

@@ -87,6 +87,9 @@
     <Filter Include="Dependencies\FileIO">
       <UniqueIdentifier>{7b09206b-03a1-42a1-b441-b438ef4305c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Input\Legacy">
+      <UniqueIdentifier>{26da1a6a-5f03-47af-b11f-6c197c64f867}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -253,13 +256,10 @@
     <ClInclude Include="Buffer.h">
       <Filter>Header Files\Render</Filter>
     </ClInclude>
-    <ClInclude Include="ITexture.h">
+    <ClInclude Include="Texture.h">
       <Filter>Header Files\Render</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
-      <Filter>Header Files\Components%28Unspecified%29</Filter>
-    </ClInclude>
-    <ClInclude Include="IObject.h">
       <Filter>Header Files\Components%28Unspecified%29</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
@@ -319,7 +319,7 @@
     <ClInclude Include="InputSystem.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="IInputStream.h">
+    <ClInclude Include="InputStream.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="ITime.h">
@@ -348,9 +348,6 @@
     </ClInclude>
     <ClInclude Include="Subsystem.h">
       <Filter>Header Files\Internals</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="UISystem.h">
       <Filter>Header Files\UI</Filter>
@@ -384,6 +381,9 @@
     </ClInclude>
     <ClInclude Include="File.hpp">
       <Filter>Dependencies\FileIO</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files\Input\Legacy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

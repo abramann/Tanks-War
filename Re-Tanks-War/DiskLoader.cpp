@@ -51,7 +51,7 @@ void DiskLoader::parseModel(IModel* model, const std::string& modelName)
 	std::vector<PolyVertices> vertices;
 	std::vector<uint> indices;
 
-	auto hFile = FileIO::plainText(strFormat("%s%s", values::MODEL_DIR, modelName));
+	auto hFile = FileIO::plainText(strFormat("%s%s", values::MODELS_DIR, modelName));
 	std::string line;
 
 	size_t vertIndex = 0;

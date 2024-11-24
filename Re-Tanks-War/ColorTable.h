@@ -14,15 +14,6 @@ struct Color
 	}
 };
 
-inline ImVec4 ColorToVec4(Color color)
-{
-	float r = color.r / 255.0f;
-	float g = color.g / 255.0f;
-	float b = color.b / 255.0f;
-	float alpha = color.a / 255.0f;
-	return ImVec4(r, g, b, alpha);
-}
-
 namespace colorTable
 {
 	const Color BLUE = Color(0, 0, 255);
@@ -31,4 +22,14 @@ namespace colorTable
 	const Color CYAN = Color(255, 100, 0);
 	const Color WHITE = Color(255, 255, 255);
 	const Color BLACK = Color(0, 0, 0);
+	// TODO: Add more colors
+}
+
+inline ImVec4 ColorToVec4(Color color)
+{
+	float r = color.r / 255.0f;
+	float g = color.g / 255.0f;
+	float b = color.b / 255.0f;
+	float alpha = color.a / 255.0f;
+	return ImVec4(r, g, b, alpha);
 }

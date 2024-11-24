@@ -207,7 +207,7 @@
     <ClInclude Include="FPSTimer.h" />
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="ColorTable.h" />
-    <ClInclude Include="IInputStream.h" />
+    <ClInclude Include="InputStream.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="IntroUI.h" />
     <ClInclude Include="PlayUI.h" />
@@ -229,7 +229,6 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="File.hpp" />
     <ClInclude Include="LogicSystem.h" />
-    <ClInclude Include="IObject.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="MatMath.h" />
@@ -238,7 +237,7 @@
     <ClInclude Include="DxTexture.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="ITexture.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="KeyTable.h" />
     <ClInclude Include="PlayersSystem.h" />
     <ClInclude Include="Types.h" />

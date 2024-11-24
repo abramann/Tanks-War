@@ -1,10 +1,8 @@
 #include "IGame.h"
 #include "GameError.h"
-#include "Values.h"
-#include <memory>
 #include <Windows.h>
 
-#pragma comment(lib,"d3d11.lib") // Graphics libraries
+#pragma comment(lib,"d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "winmm.lib") // Time(Begin/End)Period
 
@@ -14,10 +12,10 @@
 #pragma comment(lib, "DirectXTK.lib")
 #endif
 
-#ifndef _WIN64
+#ifndef _WIN64	// Trouble with x64 Win10-11
 #include "vld\vld.h" // For detecing memory leaks
 
-#pragma comment(lib, "Lib/Win32/vld.lib")
+#pragma comment(lib, "vld.lib")
 #endif
 
 void messageBoxOk(const std::string& msg);
@@ -27,6 +25,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	try
 	{
 		g_pGame->initialize();
+
 		while (g_pGame->pollMessages())
 			g_pGame->run();
 	}

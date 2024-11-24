@@ -1,5 +1,5 @@
 // Author: Wefaq
-// Brief: CLogicSystem: handle all world objects interactions
+// Brief: CLogicSystem: handle all world interactions
 #pragma once
 
 #include "Subsystem.h"
@@ -11,8 +11,9 @@ class IEvent;
 class CLogicSystem : public ISubsystem
 {
 public:
-	enum Event
+	enum EventType
 	{
+		// Entity events
 		ATTACK,
 		MOVE,
 		DESTROY,

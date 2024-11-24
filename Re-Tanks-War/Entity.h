@@ -1,5 +1,5 @@
 #pragma once
-
+// brief: IEntity: the shared interface between all worldsystem objects
 #include "SystemComponent.h"
 #include "VecMath.h"
 
@@ -13,14 +13,15 @@ enum SubstanceType
 
 struct Strike;
 class IDynamicEntity;
+class IModel;
 
 class IEntity : public ISystemComponent
 {
 public:
 	virtual void onCreated() = 0;
 	virtual void onBeginBumped(IDynamicEntity* pBumper) = 0;
-	virtual void onEndBumped() = 0; 
-	virtual void onStriked(IEntity* pAttacker ,Strike* pStrike) = 0;
+	virtual void onEndBumped() = 0;
+	virtual void onStriked(IEntity* pAttacker, Strike* pStrike) = 0;
 	virtual bool isMoveable() = 0;
 	virtual SubstanceType getSubstanceType() const = 0;
 	virtual const Bound& getBound() const = 0;
@@ -29,6 +30,7 @@ public:
 
 protected:
 	Vertex m_location;
+	IModel* m_pModel;
 };
 
 class IDynamicEntity : public IEntity
@@ -38,8 +40,7 @@ public:
 
 	virtual void onBeginMove() = 0;// do animation | audio | paritcles
 	virtual void onEndMove() = 0;
-	
-	// virtual .. onDirect(angle/point)
+	// virtual .. onRotated(angle/point)
 
 	Vertex getDirection() const { return m_direction; }
 	float getEnergy() const { return m_energy; }
