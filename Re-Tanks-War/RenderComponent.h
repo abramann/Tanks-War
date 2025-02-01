@@ -10,14 +10,15 @@ class IRenderComponent : public ISystemComponent
 public:
 	virtual std::string getName() const { return "RenderComponent"; }
 
-    void translate(const Vertex& translation);
-    void rotate(const float& angle);
-    void scale(const float& scale);
-    Vertex getTranslation() const;
-    float getRotate() const;
-    float getScale() const;
-    IBuffer* getVertexBuffer() const;
-    IBuffer* getIndexBuffer() const;
+    void translate(const Vertex& translation) { m_translation = translation; };
+    void rotate(const float& angle) { m_rotate = angle; };
+    void scale(const float& scale) { m_scale = scale; };
+
+    Vertex getTranslation() const { return m_translation; };
+    float getRotate() const { return m_rotate; };
+    float getScale() const { return m_scale; };
+    IBuffer* getVertexBuffer() const { return m_pVB; };
+    IBuffer* getIndexBuffer() const { return m_pIB; };
 
 protected:
     Vertex m_translation;

@@ -29,6 +29,7 @@
 #include <string>
 #include <stdexcept>
 #include <memory>
+#include <vector>
 
 namespace evt {
 
@@ -167,9 +168,14 @@ namespace evt {
 
 		PlainTextFileIO(const std::string& fileName) : BaseFileIO(fileName) {}
 
+		const std::string& getFileName() const
+		{
+			return fileName_;
+		}
+
 		template <typename Type>
 		void write(const Type& contentToWrite, bool appendContent = true) {
-
+			
 			if (appendContent) { open(std::ios::out | std::ios::in | std::ios::app); }
 			else { open(std::ios::out | std::ios::in | std::ios::trunc); }
 

@@ -1,6 +1,6 @@
 #include "Image.h"
 #include "Renderer.h"
-#include "String.h"
+#include "StrUtility.h"
 
 void CImage::draw()
 {
@@ -11,9 +11,9 @@ void CImage::draw()
 
 	int style_vars = 0;
 
-	if (m_borderSize != INVALID_BORDERSIZE)
+	if (!m_borderSize.isNan())
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, m_borderSize);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, m_borderSize.f);
 		style_vars++;
 	}
 

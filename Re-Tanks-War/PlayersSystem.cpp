@@ -56,9 +56,9 @@ void CPlayersSystem::registerComponent(ISystemComponent* pPlayer)
 void CPlayersSystem::unregisterComponent(ISystemComponent* pPlayer)
 {
 	auto it = findPlayer(static_cast<IPlayer*>(pPlayer));
-#ifdef _TEST
+
 	CHECK_ERROR(it == m_pPlayers.end(), "Trying to remove unregistered player!");
-#endif
+
 	m_pPlayers.erase(it);
 }
 
@@ -66,7 +66,7 @@ void CPlayersSystem::handleEvent(ISystemComponent* pComponent, int eventCode, vo
 {
 }
 
- std::vector<IPlayer*>::iterator& CPlayersSystem::findPlayer(IPlayer* pPlayer)
+ std::vector<IPlayer*>::iterator CPlayersSystem::findPlayer(IPlayer* pPlayer)
 {
 	auto it = std::find_if(m_pPlayers.begin(), m_pPlayers.end(),
 		[pPlayer](IPlayer* pExist) {

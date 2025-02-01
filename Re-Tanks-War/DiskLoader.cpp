@@ -24,7 +24,7 @@ void DiskLoader::loadBinary(const std::string& filepath, uchar* pInBuf, bool sav
 
 void DiskLoader::parseModel(IModel* model, const std::string& modelName)
 {
-	static std::map<size_t, int> s_loaded;
+	/*static std::map<size_t, int> s_loaded;
 
 	size_t hash = strHash(modelName);
 
@@ -147,7 +147,7 @@ void DiskLoader::parseModel(IModel* model, const std::string& modelName)
 	IBuffer* ib = g_pRenderer->createIndexBuffer(sizeof(int) * indices.size(), (uint*)&indices[0], IRenderer::BUFFER_IMMUTABLE);
 	model->assignIndexBuffer(ib);
 
-	model->assignPolys(modelQuads);
+	model->assignPolys(modelQuads);*/
 }
 
 void DiskLoader::saveCopy(const std::string& filepath, uchar* pIn, uint size)

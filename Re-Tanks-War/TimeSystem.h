@@ -18,8 +18,8 @@ public:
 	void onQuitGame() override;
 	void onPauseGame() override;
 	void onResumGame() override;
-	void registerComponent(ISystemComponent* pRenderComp) override;
-	void unregisterComponent(ISystemComponent* pRenderComp) override;
+	void registerComponent(ISystemComponent* pTimeComp) override;
+	void unregisterComponent(ISystemComponent* pTimeComp) override;
 	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
 
 private:

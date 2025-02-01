@@ -9,8 +9,8 @@ class ISubsystem : public ISystem, public ISystemComponent
 {
 public:
 	virtual std::string getName() const { return "Subsystem"; };
-	virtual void __declspec(deprecated) ISystemComponent::reset() = 0;
-	virtual void __declspec(deprecated) ISystemComponent::update() = 0;
+	//virtual void __declspec(deprecated) ISystemComponent::reset() = 0;
+	//virtual void __declspec(deprecated) ISystemComponent::update() = 0;
 
 	// For ambiguous(update, reset)
 	__forceinline ISystem* getSystem() { return this; }

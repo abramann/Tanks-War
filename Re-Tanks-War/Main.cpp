@@ -1,5 +1,6 @@
-#include "IGame.h"
+#include "Game.h"
 #include "GameError.h"
+#include "Values.h"
 #include <Windows.h>
 
 #pragma comment(lib,"d3d11.lib")
@@ -24,18 +25,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	try
 	{
-		g_pGame->initialize();
-
-		while (g_pGame->pollMessages())
-			g_pGame->run();
+		g_pGame->start();
 	}
 	catch (const CGameError& err)
 	{
-		messageBoxOk(ERROR + err.getMessage().c_str());
+		messageBoxOk(err.getMessage());
 	}
 	catch (...)
 	{
-		messageBoxOk("ERROR: Unknown error occurded");
+		messageBoxOk("Unknown exception occurded");
 	}
 
 	return 0;

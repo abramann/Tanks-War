@@ -10,7 +10,9 @@ class ISystemComponent
 
 public:
 	ISystemComponent() : m_componenetID(++s_nextComponentID) {}
-	
+
+	virtual void onCreate() = 0;
+	virtual void onDelete() = 0;
 	virtual void update() = 0;
 	virtual void reset() = 0;
 	virtual std::string getName() const = 0;

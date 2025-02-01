@@ -12,9 +12,9 @@ namespace values
 	constexpr auto GAME_NAME = "Tanks-War";
 	constexpr auto MIN_WINDOW_HEIGHT = 600;
 	constexpr auto MIN_WINDOW_WIDTH = 800;
-	constexpr auto FRAME_RATE = 60;
-	constexpr float FRAME_TIME = 1000.0f / FRAME_RATE;
 	constexpr auto USED_FONT = "Perfect DOS VGA";
+	constexpr auto WINDOW_INI = "Assets\\startup.ini";
+	constexpr auto RENDERER_INI = "Assets\\startup.ini";
 
 	// Camera values
 	constexpr auto CAMERA_FARPLANE = 10000.0f;

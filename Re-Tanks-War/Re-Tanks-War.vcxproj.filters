@@ -152,9 +152,6 @@
     <ClCompile Include="PlayUI.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Widget.cpp">
-      <Filter>Source Files\UI\Widgets</Filter>
-    </ClCompile>
     <ClCompile Include="WorldSystem.cpp">
       <Filter>Source Files\Systems%28Not specified%29</Filter>
     </ClCompile>
@@ -220,6 +217,15 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="INI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32Window.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -337,10 +343,10 @@
     <ClInclude Include="Client.h">
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="IGame.h">
+    <ClInclude Include="Game.h">
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="String.h">
+    <ClInclude Include="StrUtility.h">
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
     <ClInclude Include="System.h">
@@ -384,6 +390,18 @@
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Header Files\Input\Legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="INI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32Window.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

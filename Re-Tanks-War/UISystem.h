@@ -3,7 +3,7 @@
 #include "Subsystem.h"
 #include "UI.h"
 #include "Types.h"
-#include "String.h"
+#include "StrUtility.h"
 #include "ImGui/imgui.h"
 #include <map>
 

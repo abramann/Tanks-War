@@ -7,7 +7,6 @@
 #include "RenderSystem.h"
 #include "InputSystem.h"
 #include "TimeSystem.h"
-#include "DiskLoader.h"
 
 static CGameSystem gameSystem;
 CGameSystem* g_pGameSystem = &gameSystem;
@@ -57,8 +56,6 @@ void CGameSystem::perform()
 
 void CGameSystem::shutdown()
 {
-	DiskLoader::releaseAllCopies();
-
 	subsystemsDo(m_pSubSystems, shutdown);
 }
 
@@ -99,6 +96,7 @@ void CGameSystem::handleEvent(ISystemComponent* pSubSystem, int eventCode, void*
 void CGameSystem::run()
 {
 	update();
+
 	perform();
 }
 

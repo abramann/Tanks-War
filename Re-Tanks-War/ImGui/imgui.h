@@ -66,6 +66,8 @@ Index of this file:
 #include <stdarg.h>                 // va_list, va_start, va_end
 #include <stddef.h>                 // ptrdiff_t, NULL
 #include <string.h>                 // memset, memmove, memcpy, strlen, strchr, strcpy, strcmp
+#include <stdexcept>
+#include <limits>
 
 // Define attributes of all API symbols declarations (e.g. for DLL under Windows)
 // IMGUI_API is used for core imgui functions, IMGUI_IMPL_API is used for the default backends files (imgui_impl_xxx.h)
@@ -260,6 +262,17 @@ struct ImVec2
     bool isEmpty() const { return(x == 0 && y == 0); }
     bool operator==(const ImVec2& vec) const { return(x == vec.x && y == vec.y); }
 
+	void invalidate()
+	{
+		x = y = std::numeric_limits<float>::quiet_NaN();
+	}
+
+	bool isNan() const
+	{
+		return isnan(x) ||
+            isnan(y);
+	}
+
 #ifdef IM_VEC2_CLASS_EXTRA
     IM_VEC2_CLASS_EXTRA     // Define additional constructors and implicit cast operators in imconfig.h to convert back and forth between your math types and ImVec2.
 #endif
@@ -273,6 +286,19 @@ struct ImVec4
     constexpr ImVec4(float _x, float _y, float _z, float _w)  : x(_x), y(_y), z(_z), w(_w) { }
 	bool isEmpty() const { return (x == 0.0f && y == 0.0f && z == 0.0f) ? true : false; }
 	bool operator==(const ImVec4 vec4) { return (vec4.x == x && vec4.y == y && vec4.z == z) ? true : false; }
+
+	void invalidate()
+	{
+		x = y = z = w = std::numeric_limits<float>::quiet_NaN();
+	}
+
+	bool isNan() const
+	{
+		return isnan(x) ||
+            isnan(y) ||
+            isnan(z) ||
+            isnan(w);
+	}
 
 #ifdef IM_VEC4_CLASS_EXTRA
     IM_VEC4_CLASS_EXTRA     // Define additional constructors and implicit cast operators in imconfig.h to convert back and forth between your math types and ImVec4.

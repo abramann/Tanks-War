@@ -4,7 +4,7 @@
 #include "Map.h"
 #include "File.hpp"
 #include "Renderer.h"
-#include "String.h"
+#include "StrUtility.h"
 #include "Values.h"
 
 using namespace evt;
@@ -35,7 +35,7 @@ void CMap::initialize()
 	readInitializeSettings();
 	for (int i = 0; i < m_numTileds; i++)
 	{
-		std::wstring wName = to_wstring(strFormat("tiled-%d.png", i + 1));
+		std::wstring wName;// = to_wstring(strFormat("tiled-%d.png", i + 1));
 		m_pTextures[i] = g_pRenderer->loadTextureFromFile(wName.c_str());
 	}
 }
@@ -54,8 +54,8 @@ void CMap::readInitializeSettings()
 			continue;
 
 		m_factors[i].id = id;
-		m_factors[i].damage = hFile.readValueAsFloat(strFormat("Factor(%d).Damage", id).c_str());
-		m_factors[i].velocity = hFile.readValueAsFloat(strFormat("Factor(%d).Velocity", id).c_str());
+	//	m_factors[i].damage = hFile.readValueAsFloat(strFormat("Factor(%d).Damage", id).c_str());
+	//	m_factors[i].velocity = hFile.readValueAsFloat(strFormat("Factor(%d).Velocity", id).c_str());
 	}
 }
 
@@ -69,7 +69,7 @@ bool CMap::isBlockedCellID(int id)
 
 bool CMap::read()
 {
-	std::string mappath = strFormat("%s%s.map", values::MAPS_DIR, m_loadedMap.c_str());
+	std::string mappath;// = strFormat("%s%s.map", values::MAPS_DIR, m_loadedMap.c_str());
 	if (!BaseFileIO::exists(mappath))
 		return false;
 

@@ -24,7 +24,7 @@ public:
 	void handleEvent(ISystemComponent* pComponent, int eventCode, void* event) override;
 	
 private:
-	std::vector<IPlayer*>::iterator& findPlayer(IPlayer* pPlayer);
+	std::vector<IPlayer*>::iterator findPlayer(IPlayer* pPlayer);
 	
 	std::vector<IPlayer*> m_pPlayers;
 };

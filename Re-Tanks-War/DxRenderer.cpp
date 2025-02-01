@@ -1,19 +1,21 @@
 #include "DxRenderer.h"
-#include "GameError.h"
-#include "IGame.h"
-#include "Values.h"
-#include "String.h"
 #include "Model.h"
 #include "Sprite.h"
-#include "HLSLVertexShader.h"
-#include "HLSLPixelShader.h"
+#include "DxBuffer.h"
+#include "DxTexture.h"
+#include "GameError.h"
+#include "Utility.h"
+#include "Window.h"
+#include "Values.h"
+#include "INI.h"
+
 #include "ImGui\imgui_impl_win32.h"
 #include "ImGui\imgui_impl_dx11.h"
-#include "DxBuffer.h"
-#include "Map.h"
-#include "DxTexture.h"
 #include "DirectXTK\WICTextureLoader.h"
 #include <map>
+
+#include "HLSLVertexShader.h"
+#include "HLSLPixelShader.h"
 
 using namespace DirectX;
 
@@ -25,13 +27,13 @@ using namespace Microsoft::WRL;
 
 std::vector<AdapterMode>& dxgiGetAdapterModes();
 
-void initSwapChainWindowed(DXGI_SWAP_CHAIN_DESC& swapChainDesc);
+void initSwapChainWindowed(DXGI_SWAP_CHAIN_DESC& swapChainDesc, int w, int h, bool fs, int refRate);
 
-void initSwapChain(DXGI_SWAP_CHAIN_DESC& swapChainDesc, HWindow hwnd);
+void initSwapChain(DXGI_SWAP_CHAIN_DESC& swapChainDesc, HWindow handle, int w, int h, bool fs, int refRate);
 
-void initDepthStencil(D3D11_TEXTURE2D_DESC& depthStencilDesc);
+void initDepthStencil(D3D11_TEXTURE2D_DESC& depthStencilDesc, int w, int h);
 
-void initViewport(D3D11_VIEWPORT& viewport);
+void initViewport(D3D11_VIEWPORT& viewport, int w, int h);
 
 void initSampleState(D3D11_SAMPLER_DESC& sampDesc);
 
@@ -59,11 +61,24 @@ CDxRenderer::~CDxRenderer()
 
 void CDxRenderer::initialize()
 {
-	HWindow hwnd = g_pGame->getWindowHandle();
+	HWindow handle = g_pWindow->getHandle();
+
+	int w, h;
+	int fs;
+	int refRate;
+
+	CINI renderINI(values::RENDERER_INI);
+
+	renderINI.readInteger("width", w);
+	renderINI.readInteger("height", h);
+
+	renderINI.readInteger("fullscreen", fs);
+
+	renderINI.readInteger("fullscreen", refRate);
 
 	// Initializing swapchain
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
-	initSwapChain(swapChainDesc, hwnd);
+	initSwapChain(swapChainDesc, handle, w, h, fs, refRate);
 	uint32_t flags = NULL;
 #ifdef _DEBUG
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -86,14 +101,14 @@ void CDxRenderer::initialize()
 
 	// Initializing depth buffer
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
-	initDepthStencil(depthStencilDesc);
+	initDepthStencil(depthStencilDesc, w, h);
 	m_pDevice->CreateTexture2D(&depthStencilDesc, NULL, m_pDepthBuffer.GetAddressOf());
 	CHECK_ERROR(SUCCEEDED(m_pDevice->CreateDepthStencilView(m_pDepthBuffer.Get(), nullptr, &m_pDepthStencilView)), "CreateDepthStencilView failed");
 	m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
 
 	// Initializing viewport
 	D3D11_VIEWPORT viewport;
-	initViewport(viewport);
+	initViewport(viewport, w, h);
 	m_pDeviceContext->RSSetViewports(1, &viewport);
 
 	// Initializing vertex shader
@@ -130,7 +145,7 @@ void CDxRenderer::initialize()
 
 	// Initializing ImGui
 	ImGui::CreateContext();
-	CHECK_ERROR(ImGui_ImplWin32_Init(hwnd), "ImGui_ImplWin32_Init failed");
+	CHECK_ERROR(ImGui_ImplWin32_Init(handle), "ImGui_ImplWin32_Init failed");
 	CHECK_ERROR(ImGui_ImplDX11_Init(m_pDevice.Get(), m_pDeviceContext.Get()), "ImGui_ImplDX11_Init failed");
 	ImGui::GetIO().IniFilename = 0;
 
@@ -282,8 +297,8 @@ void CDxRenderer::setPSDrawProperties(Color color) const
 {
 	PSCBPerDraw cb;
 
-	cb.color = color.getAsInteger();
-
+	cb.color = color.toInteger();
+	
 	m_pDeviceContext->PSSetConstantBuffers(0, 1, m_pPSColorBuffer.GetAddressOf());
 	m_pDeviceContext->UpdateSubresource(m_pPSColorBuffer.Get(), 0, 0, &cb, 0, 0);
 }
@@ -307,7 +322,7 @@ void CDxRenderer::drawMesh(const MeshData& meshData)
 
 	int drawedCount = 0;
 
-	for (int i = 0; i < segment.size(); i++)
+	for (size_t i = 0; i < segment.size(); i++)
 	{
 		bindTexture(segment[i].pTexture);
 
@@ -344,7 +359,7 @@ void CDxRenderer::drawModel(const IModel* pModel)
 
 	setPSDrawProperties();
 	
-	for (int i = 0; i < polys.size(); i++)
+	for (size_t i = 0; i < polys.size(); i++)
 	{
 		setVSDrawProperties(position, polys[i].scale, polys[i].rotate, polys[i].origin);
 
@@ -506,38 +521,35 @@ std::vector<AdapterMode>& dxgiGetAdapterModes()
 	return adapterModes;
 }
 
-void initSwapChainWindowed(DXGI_SWAP_CHAIN_DESC& swapChainDesc)
+void initSwapChainWindowed(DXGI_SWAP_CHAIN_DESC& swapChainDesc, int w, int h, bool fs, int refRate)
 {
 	DXGI_MODE_DESC modeDesc = { 0 };
-	modeDesc.Width = g_pGame->getWindowWidth();
-	modeDesc.Height = g_pGame->getWindowHeight();
-	modeDesc.RefreshRate.Numerator = 60;
+
+	modeDesc.Width = w;
+	modeDesc.Height = h;
+	modeDesc.RefreshRate.Numerator = refRate;
 	modeDesc.RefreshRate.Denominator = 1;
 	modeDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	modeDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	modeDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	swapChainDesc.Windowed = true;
+
+	swapChainDesc.Windowed = fs;
 	swapChainDesc.BufferDesc = modeDesc;
 }
 
-void initSwapChain(DXGI_SWAP_CHAIN_DESC& swapChainDesc, HWindow hwnd)
+void initSwapChain(DXGI_SWAP_CHAIN_DESC& swapChainDesc, HWindow handle, int w, int h, bool fs, int refRate)
 {
 	setNull(swapChainDesc);
-	if (g_pGame->isWindowed())
-	{
-		initSwapChainWindowed(swapChainDesc);
-	}
-	else
+
+	if (fs)
 	{
 		auto modes = dxgiGetAdapterModes();
-		int winWidth = g_pGame->getWindowWidth();
-		int winHeight = g_pGame->getWindowHeight();
 
-		for (uint32_t i = 0; i < modes.size(); i++)
+		for (size_t i = 0; i < modes.size(); i++)
 		{
 			AdapterMode mode = modes[i];
 
-			if (mode.width == winWidth && mode.height == winHeight)
+			if (mode.width == w && mode.height == h)
 			{
 				swapChainDesc.BufferDesc.Width = mode.width;
 				swapChainDesc.BufferDesc.Height = mode.height;
@@ -545,25 +557,28 @@ void initSwapChain(DXGI_SWAP_CHAIN_DESC& swapChainDesc, HWindow hwnd)
 				break;
 			}
 			else
-			{
-				CHECK_ERROR(i == modes.size() - 1, strFormat("Graphics adapter does not support fullscreen %dx%d mode. Restart to switch to windowed mode", winWidth, winHeight).c_str());
-			}
+				CHECK_ERROR(i == (modes.size() - 1),
+					strFormat("Graphics adapter does not support fullscreen %dx%d mode. Restart to switch to windowed mode", w, h).c_str());
 		}
 	}
+	else
+		initSwapChainWindowed(swapChainDesc, w, h, fs, refRate);
+
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 1;
-	swapChainDesc.OutputWindow = hwnd;
+	swapChainDesc.OutputWindow = handle;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 }
 
-void initDepthStencil(D3D11_TEXTURE2D_DESC& depthStencilDesc)
+void initDepthStencil(D3D11_TEXTURE2D_DESC& depthStencilDesc, int w, int h)
 {
 	setNull(depthStencilDesc);
-	depthStencilDesc.Width = g_pGame->getWindowWidth();
-	depthStencilDesc.Height = g_pGame->getWindowHeight();
+
+	depthStencilDesc.Width = w;
+	depthStencilDesc.Height = h;
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -575,12 +590,13 @@ void initDepthStencil(D3D11_TEXTURE2D_DESC& depthStencilDesc)
 	depthStencilDesc.MiscFlags = NULL;
 }
 
-void initViewport(D3D11_VIEWPORT& viewport)
+void initViewport(D3D11_VIEWPORT& viewport, int w, int h)
 {
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width = static_cast<float>(g_pGame->getWindowWidth());
-	viewport.Height = static_cast<float>(g_pGame->getWindowHeight());
+	viewport.Width = static_cast<float>(w);
+	viewport.Height = static_cast<float>(h); 
+
+	viewport.TopLeftX = viewport.TopLeftY = 0;
+
 	viewport.MinDepth = 0;
 	viewport.MaxDepth = 1.0f;
 }
@@ -588,6 +604,7 @@ void initViewport(D3D11_VIEWPORT& viewport)
 void initSampleState(D3D11_SAMPLER_DESC& sampDesc)
 {
 	setNull(sampDesc);
+
 	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;// D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;// CLAMP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;

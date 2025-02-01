@@ -4,7 +4,7 @@
 #pragma once
 
 #include "Cell.h"
-#include "types.h"
+#include "Types.h"
 #include <vector>
 #include <set>
 #include <deque>

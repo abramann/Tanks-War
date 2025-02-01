@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Subsystem.h"
-#include "String.h"
+#include "StrUtility.h"
 #include "Widget.h"
 #include "Values.h"
 #include <map>
